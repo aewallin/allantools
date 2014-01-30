@@ -22,7 +22,7 @@ import allantools as allan
 # with datasets that have known deviations.
 #
 # nbs14 datasets are from http://www.ieee-uffc.org/frequency-control/learning-riley.asp
-# PHASE.DAT dataset comes with Timelab32, and Timelab32 was used to calculate deviation
+# PHASE.DAT dataset comes with Stable32, and Stable32 was used to calculate deviation
 # results in files such as phade_dat_adev.txt
 #
 # More datasets along with known deviations (or calculated with known-good programs) are welcome.
