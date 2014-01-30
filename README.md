@@ -25,3 +25,6 @@ These statistics are currently included:
 * HDEV, Hadamard deviation
 
 see /tests for tests that compare allantools output to other programs.
+
+No profiling or optimization attempt was made. Patches that give speedups are welcome.
+Make sure your patch does not break any of the tests, and does not significantly reduce the readability of the code.
