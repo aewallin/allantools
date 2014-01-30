@@ -7,7 +7,7 @@ Input data should be evenly spaced observations of either fractional frequency,
 or phase in seconds. Deviations are calculated for given tau values in seconds.
 
 Usage:
-'''python
+```python
 import allantools
 rate = 1/float(data_interval) # in Hz
 taus = [1,2,4,8,16] # in seconds
@@ -15,7 +15,7 @@ taus = [1,2,4,8,16] # in seconds
 (taus_used, adev, adeverror, adev_n) = allantools.adev(fract_freqdata, rate, taus)
 # phase data
 (taus_used, adev, adeverror, adev_n) = allantools.adev_phase(phasedata, rate, taus)
-'''
+```
 
 These statistics are currently included:
 * ADEV, Allan deviation
