@@ -16,6 +16,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+import sys
+sys.path.append("..") # hack to import from parent directory
+# remove if you have allantools installed in your python path
+
 import allantools as allan
 
 # This program tests allantools (https://github.com/aewallin/allantools)
