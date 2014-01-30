@@ -27,7 +27,9 @@ import matplotlib.pyplot as plt # only for plotting, not required for calculatio
 # code see e.g.:
 # http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
 # http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified
+# http://www.leapsecond.com/tools/adev_lib.c
 
+#
 # Allan deviation of phase data
 # Inputs:
 # 	phase = list of phase measurements in seconds
@@ -193,7 +195,6 @@ def hdev(freqdata, rate, taus):
 	return hdev_phase(phase,rate,taus) 
 
 # Hadamard deviation of phase data
-
 def hdev_phase(data,rate,taus):
 	rate = float(rate)
 	m = tau_m(data,rate,taus)
