@@ -16,7 +16,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import math
 import sys
 sys.path.append("..") # hack to import from parent directory
 # remove if you have allantools installed in your python path
@@ -70,24 +70,54 @@ def nbs14_tester( function, fdata, correct_devs ):
 	(taus2, devs, deverrs, ns) = function( fdata, rate, taus)
 	for i in range(3):
 		assert( check_devs( devs[i], correct_devs[i] ) )
-	
+
+def nbs14_totdev_test():
+	rate=1.0
+	taus =[1, 10, 100]
+	fdata = nbs14_1000()
+	correct_devs = nbs14_1000_devs[3] 
+	(taus2, devs, deverrs, ns) = allan.totdev( fdata, rate, taus)
+	(taus2, adevs, adeverrs, ans) = allan.adev( fdata, rate, taus)
+	for i in range(3):
+		totdev_corrected = devs[i]
+		if i != 0:
+			# bias removal is used in the published results
+			a = 0.481 # flicker frequency-noise
+			#a = 0.750 # flicker frequency-noise
+			ratio = pow(devs[i],2)/pow(adevs[i],2)
+			print ratio-1
+			print -a*taus2[i]/((len(fdata)+1)*(1/float(rate)))
+			ratio_corrected = ratio*( 1-a* taus2[i]/((len(fdata)+1)*(1/float(rate))) )
+			totdev_corrected = ratio_corrected * pow(adevs[i],2)
+			totdev_corrected = math.sqrt( totdev_corrected )
+			print totdev_corrected, devs[i], correct_devs[i]
+		assert( check_devs( totdev_corrected, correct_devs[i] ) )
+
 def nbs14_1000_test():
 	fdata = nbs14_1000()
+	print "nbs13 adev"
 	nbs14_tester( allan.adev, fdata, nbs14_1000_devs[0] )
+	print "nbs13 oadev"
 	nbs14_tester( allan.oadev, fdata, nbs14_1000_devs[1] )
+	print "nbs13 mdev"
 	nbs14_tester( allan.mdev, fdata, nbs14_1000_devs[2] )
+	print "nbs13 totdev"
+	nbs14_totdev_test()
+	print "nbs13 hdev"
 	nbs14_tester( allan.hdev, fdata, nbs14_1000_devs[4] )
+	print "nbs13 tdev"
 	nbs14_tester( allan.tdev, fdata, nbs14_1000_devs[5] )
-
-	print "nbs14_1000 test OK"
 	
+	print "nbs14_1000 test OK"
+
 def check_devs(dev2, dev1):
 	rel_error = (dev2-dev1)/dev1
 	tol = 1e-6
 	verbose = 1
-	if verbose:
-		print "   %0.6f \t 	%0.6f \t %0.6f" % (dev1,dev2, rel_error)
+
 	if ( abs(rel_error) < tol ):
+		if verbose:
+			print "OK   %0.6f \t 	%0.6f \t %0.6f" % (dev1,dev2, rel_error)
 		return True
 	else:
 		print "ERROR   %0.6f \t %0.6f \t %0.6f" % (dev1,dev2, rel_error)
@@ -221,7 +251,7 @@ def test( function, datafile, datainterval, resultfile, verbose=0):
 		try:
 			assert( abs(rel_error) < tol )
 			if verbose:
-				print "OK %d %d &d \t %0.6f \t %0.6f \t %0.6f" % (t1,n1,a1,a2, rel_error)
+				print "OK %d %d  \t %0.6f \t %0.6f \t %0.6f" % (t1,n1,a1,a2, rel_error)
 		except:
 			print "ERROR %d  %0.6f \t %0.6f \t %0.6f" % (t1,a1,a2, rel_error)
 	print "test of function ",function, " Done."
@@ -239,10 +269,11 @@ if __name__ == "__main__":
 	mdev_result = 'phase_dat_mdev.txt'
 	tdev_result = 'phase_dat_tdev.txt'
 	hdev_result = 'phase_dat_hdev.txt'
-	
+	totdev_result = 'phase_dat_totdev.txt'
 	verbose = 0
 	test( allan.adev_phase, data_file, 1.0, adev_result , verbose)
 	test( allan.oadev_phase, data_file, 1.0, oadev_result, verbose )
 	test( allan.mdev_phase, data_file, 1.0, mdev_result, verbose )
 	test( allan.tdev_phase, data_file, 1.0, tdev_result, verbose )
 	test( allan.hdev_phase, data_file, 1.0, hdev_result, verbose )
+	test( allan.totdev_phase, data_file, 1.0, totdev_result, verbose )

@@ -183,8 +183,11 @@ def oadev(data,rate, taus):
 		odevn.append( len(z1) )
 	return ([x/float(rate) for x in m], odev, odeverr, odevn)
 
-# Hadamard deviation
-def hdev(freqdata, rate, taus):
+def phase2freqeuncy( phasedata, rate):
+	freqdata = [ x*float(rate) for x in numpy.diff( phasedata ) ]
+	return freqdata 
+
+def frequency2phase( freqdata, rate):
 	# integrrate freqdata to phase
 	phase=[0]*( len(freqdata)+1 ) # initialize to zero
 	for i in range( len(freqdata)+1 ):
@@ -192,6 +195,11 @@ def hdev(freqdata, rate, taus):
 			phase[i] = 0
 		else:
 			phase[i] = phase[i-1] + freqdata[i-1]*(1/float(rate))
+	return phase
+	
+# Hadamard deviation
+def hdev(freqdata, rate, taus):
+	phase= frequency2phase(freqdata, rate)
 	return hdev_phase(phase,rate,taus) 
 
 # Hadamard deviation of phase data
@@ -224,6 +232,66 @@ def hdev_phase_calc(data,mj, stride):
 	s = s/6.0
 	h = math.sqrt( s / float(n)) / float(mj)
 	return (h,n)
+
+def totdev(freqdata,rate,taus):
+	phasedata = frequency2phase( freqdata, rate)
+	return totdev_phase(phasedata,rate,taus)
+
+# See:
+# David A. Howe, 
+# The total deviation approach to long-term characterization
+# of frequency stability, 
+# IEEE tr. UFFC vol 47 no 5 (2000)
+# 
+#                  1         N-1
+# totvar(t) = ------------  sum   [ x*(i-m) - 2x*(i)+x*(i+m) ]**2
+#             2 t**2 (N-2)  i=2
+# where x* is a new dataset with 'reflected' data at start/end
+def totdev_phase(data,rate,taus):
+	rate = float(rate)
+	m = tau_m(data,rate,taus)
+	n = len(data)
+	
+	# totdev requires a new dataset 
+	x1=[]
+	for j in range(n-2):
+		x1.append(float(2.0)*data[0]-data[j+1])
+	x1.reverse()
+	
+	x2=[]
+	for j in range(n-2):
+		x2.append(float(2.0)*data[len(data)-1]-data[len(data)-1-(j+1)])
+
+	x=[]
+	for d in x1: # reflected data at start
+		x.append(d)
+	for d in data: # original data
+		x.append(d)
+	for d in x2: # reflected data at end
+		x.append(d)
+	
+	# original dataset is now in the middle of the new dataset
+	assert( data[0] == x[len(x1)] )
+	devs=[]
+	deverrs=[]
+	ns=[]
+	for mj in m:
+		dev = 0
+		ncount=0
+		for i in range(1,len(data)-1):
+			i = i + len(x1) # i=0 corresponds to start of original data
+			dev = dev + pow( x[i-mj] - 2*x[i] + x[i+mj] , 2 )
+			ncount=ncount+1
+		dev = dev /float(2* pow(mj/rate, 2) * (n-2))
+		dev = math.sqrt(dev)
+		devs.append(dev)
+		deverrs.append(dev/math.sqrt(ncount))
+		ns.append(ncount) 
+		
+	taus2 = [x/float(rate) for x in m]
+	return (taus2, devs, deverrs, ns)
+
+# ----- end of code, sample usage below ----
 
 def plotallan(plt,y,rate,taus, style):
 	(t2, ad, ade,adn) = oadev(y,rate,taus)
