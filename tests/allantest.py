@@ -101,8 +101,8 @@ def nbs14_1000_test():
 	nbs14_tester( allan.oadev, fdata, nbs14_1000_devs[1] )
 	print "nbs13 mdev"
 	nbs14_tester( allan.mdev, fdata, nbs14_1000_devs[2] )
-	print "nbs13 totdev"
-	nbs14_totdev_test()
+	#print "nbs13 totdev"
+	#nbs14_totdev_test()
 	print "nbs13 hdev"
 	nbs14_tester( allan.hdev, fdata, nbs14_1000_devs[4] )
 	print "nbs13 tdev"
