@@ -29,12 +29,12 @@ import numpy
 # ohdev() and ohdev_phase()   Overlapping Hadamard deviation
 # totdev() and totdev_phase() Total deviation
 # mtie() and mtie_phase()     Maximum Time Interval Error
+# tierms() and tierms_phase() Time Interval Error RMS
 
 # to do:
 # Modified Total
 # Time Total (modified total variance scaled by (t^2/3) )
 # Hadamard Total
-# TIE rms
 
 
 # References
@@ -361,6 +361,10 @@ def mtie_phase(phase, rate, taus):
     taus2 = [x/float(rate) for x in m]
     return (taus2, devs, deverrs, ns)
 
+def tierms(freqdata,rate,taus):
+	phasedata = frequency2phase( freqdata, rate)
+	return tierms_phase(phasedata,rate,taus)
+    
 # TIE rms
 def tierms_phase(phase, rate, taus):
     rate = float(rate)
