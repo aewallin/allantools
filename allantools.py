@@ -33,6 +33,15 @@ import numpy
 
 # to do:
 # Modified Total
+# The modified total variance, MTOT, is total version of the modified Allan variance.  
+# It is defined for phase data as:
+#                          1           N-3m+1  1  N+3m-1
+# Mod s^2 total(t) = ----------------- sum     -- sum      [0zi*(m)]^2
+#                     2m^2t0^2(N-3m+1) n=1     6m i=n-3m
+# where the 0zi*(m) terms are the phase averages from a triply-extended 
+# sequence created by uninverted even reflection at each end, 
+# and the prefix 0 denotes that the linear trend has been removed.
+
 # Time Total (modified total variance scaled by (t^2/3) )
 # Hadamard Total
 
