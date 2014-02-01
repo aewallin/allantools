@@ -37,6 +37,7 @@ import allantools as allan
 
 # small dataset from
 # http://www.ieee-uffc.org/frequency-control/learning-riley.asp
+# http://www.wriley.com/paper1ht.htm
 nbs14_phase = [ 0.00000, 103.11111, 123.22222, 157.33333, 166.44444, 48.55555,-96.33333,-2.22222, 111.88889, 0.00000 ]
 nbs14_f     = [892,809,823,798,671,644,883,903,677]
 nbs14_devs= [ (91.22945,115.8082),  # ADEV(tau=1,tau=2)
@@ -269,6 +270,7 @@ if __name__ == "__main__":
 	mdev_result = 'phase_dat_mdev.txt'
 	tdev_result = 'phase_dat_tdev.txt'
 	hdev_result = 'phase_dat_hdev.txt'
+	ohdev_result = 'phase_dat_ohdev.txt'
 	totdev_result = 'phase_dat_totdev.txt'
 	verbose = 0
 	test( allan.adev_phase, data_file, 1.0, adev_result , verbose)
@@ -276,4 +278,5 @@ if __name__ == "__main__":
 	test( allan.mdev_phase, data_file, 1.0, mdev_result, verbose )
 	test( allan.tdev_phase, data_file, 1.0, tdev_result, verbose )
 	test( allan.hdev_phase, data_file, 1.0, hdev_result, verbose )
+	test( allan.ohdev_phase, data_file, 1.0, ohdev_result, verbose )
 	test( allan.totdev_phase, data_file, 1.0, totdev_result, verbose )
