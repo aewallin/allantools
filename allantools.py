@@ -18,7 +18,15 @@
 
 import math
 import numpy
-import matplotlib.pyplot as plt # only for plotting, not required for calculations
+
+
+# Implemented functions:
+# adev() and adev_phase()     Allan deviation
+# oadev() and oadev_phase()   Overlapping Allan deviation
+# mdev() and mdev_phase()     Modified Allan deviation
+# hdev() and hdev_phase()     Hadamard deviation
+# tdev() and tdev_phase()     Time deviation
+# totdev() and totdev_phase() Total deviation
 
 # References
 # http://www.wriley.com/paper4ht.htm
@@ -291,109 +299,6 @@ def totdev_phase(data,rate,taus):
 	taus2 = [x/float(rate) for x in m]
 	return (taus2, devs, deverrs, ns)
 
-# ----- end of code, sample usage below ----
-
-def plotallan(plt,y,rate,taus, style):
-	(t2, ad, ade,adn) = oadev(y,rate,taus)
-	plt.loglog(t2, ad, style)
-
-def plotallan_phase(plt,y,rate,taus, style):
-	(t2, ad, ade,adn) = oadev_phase(y,rate,taus)
-	plt.loglog(t2, ad, style)
-
-# plot a line with the slope alpha
-def plotline(plt, alpha, taus,style):
-	y = [ pow(tt,alpha) for tt in taus]
-	plt.loglog(taus,y,style)
-
-
-# pink noise generator
-# from http://pydoc.net/Python/lmj.sound/0.1.1/lmj.sound.noise/
-def iterpink(depth=20):
-    '''Generate a sequence of samples of pink noise.
-
-    Based on the Voss-McCartney algorithm, discussion and code examples at
-    http://www.firstpr.com.au/dsp/pink-noise/
-
-    depth: Use this many samples of white noise to calculate the output. A
-      higher  number is slower to run, but renders low frequencies with more
-      correct power spectra.
-
-    Generates a never-ending sequence of floating-point values. Any continuous
-    set of these samples will tend to have a 1/f power spectrum.
-    '''
-    values = numpy.random.randn(depth)
-    smooth = numpy.random.randn(depth)
-    source = numpy.random.randn(depth)
-    sum = values.sum()
-    i = 0
-    while True:
-        yield sum + smooth[i]
-
-        # advance the index by 1. if the index wraps, generate noise to use in
-        # the calculations, but do not update any of the pink noise values.
-        i += 1
-        if i == depth:
-            i = 0
-            smooth = numpy.random.randn(depth)
-            source = numpy.random.randn(depth)
-            continue
-
-        # count trailing zeros in i
-        c = 0
-        while not (i >> c) & 1:
-            c += 1
-
-        # replace value c with a new source element
-        sum += source[i] - values[c]
-        values[c] = source[i]
-
-def pinknoise(N):
-	a=[]
-	s = iterpink(80)
-	for n in range(N):
-		a.append( s.next() )
-	
-	return a
-
 if __name__ == "__main__":
-	
-	# we test ADEV etc. by calculations on synthetic data
-	# with known slopes of ADEV
-	
-	t = numpy.logspace( 0 ,4,50)
-	plt.subplot(111, xscale="log", yscale="log")
-	N=10000 
-	
-	# Colors: http://en.wikipedia.org/wiki/Colors_of_noise
-	
-	# pink frequency noise => constant ADEV 
-	freq_pink = pinknoise(N)
-	phase_p = numpy.cumsum( pinknoise(N) ) # integrate to get phase, color??
-	plotallan_phase(plt, phase_p, 1, t, 'co')
-	plotallan(plt, freq_pink, 1, t, 'c.')
-	plotline(plt, 0, t ,'c')
-	
-	# white phase noise => 1/tau ADEV
-	phase_white = numpy.random.randn(N)
-	plotallan_phase(plt, phase_white, 1, t, 'ro')
-	freq_w = numpy.diff( numpy.random.randn(N) ) # diff to get frequency, "Violet noise"
-	plotallan(plt, freq_w, 1, t, 'r.')
-	plotline(plt, -1, t ,'r')
-	
-	# white frequency modulation => 1/sqrt(tau) ADEV
-	freq_white = numpy.random.randn(N)
-	phase_rw = numpy.cumsum( numpy.random.randn(N) ) # integrate to get Brownian, or random walk phase
-	plotallan(plt, freq_white, 1, t, 'b.')
-	plotallan_phase(plt, phase_rw, 1, t, 'bo')
-	plotline(plt, -0.5, t, 'b')
-	
-	# Brownian a.k.a random walk  frequency => sqrt(tau) ADEV
-	freq_rw = numpy.cumsum( numpy.random.randn(N) )
-	phase_rw_rw =numpy.cumsum( numpy.cumsum( numpy.random.randn(N) ) ) # integrate to get  phase
-	plotallan(plt, freq_rw, 1, t, 'm.')
-	plotallan_phase(plt, phase_rw_rw, 1, t, 'mo')
-	plotline(plt, +0.5, t ,'m')
-	
-	plt.grid()
-	plt.show()
+	print "Nothing to see here."
+
