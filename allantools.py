@@ -24,9 +24,18 @@ import numpy
 # adev() and adev_phase()     Allan deviation
 # oadev() and oadev_phase()   Overlapping Allan deviation
 # mdev() and mdev_phase()     Modified Allan deviation
+# tdev() and tdev_phase()     Time deviation ( modified variance scaled by (t^2/3) )
 # hdev() and hdev_phase()     Hadamard deviation
-# tdev() and tdev_phase()     Time deviation
+# ohdev() and ohdev_phase()   Overlapping Hadamard deviation
 # totdev() and totdev_phase() Total deviation
+# mtie() and mtie_phase()     Maximum Time Interval Error
+
+# to do:
+# Modified Total
+# Time Total (modified total variance scaled by (t^2/3) )
+# Hadamard Total
+# TIE rms
+
 
 # References
 # http://www.wriley.com/paper4ht.htm
@@ -129,7 +138,7 @@ def tau_m(data,rate,taus):
 	n = len(data)
 	m=[]
 	for tau in taus:
-		if tau < (1/float(rate))*float(len(data))/3: # max tau corresponds to half-way point of dataseries
+		if tau < (1/float(rate))*float(len(data))/1.5: # limit the maximum tau 
 			m.append(  int( math.floor( float(tau*rate) )) )  # m is tau in units of datapoints
 	m = list(set(m)) # this removes duplicates
 	m.sort() # sort from small tau to large tau
@@ -299,7 +308,7 @@ def totdev_phase(data,rate,taus):
 		x.append(d)
 	for d in x2: # reflected data at end
 		x.append(d)
-	
+
 	# original dataset is now in the middle of the new dataset
 	assert( data[0] == x[len(x1)] )
 	devs=[]
@@ -321,6 +330,64 @@ def totdev_phase(data,rate,taus):
 	taus2 = [x/float(rate) for x in m]
 	return (taus2, devs, deverrs, ns)
 
+def mtie(freqdata,rate,taus):
+	phasedata = frequency2phase( freqdata, rate)
+	return mtie_phase(phasedata,rate,taus)
+    
+# maximum time interval error
+# this seems to correspond to Stable32 setting "Fast(u)"
+# Stable32 also has "Decade" and "Octave" modes where the dataset is extended somehow?
+def mtie_phase(phase, rate, taus):
+    rate = float(rate)
+    m = tau_m(phase,rate,taus)
+    n = len(phase)
+    devs=[]
+    deverrs=[]
+    ns=[]
+    for mj in m:
+        dev=0
+        ncount=0
+        for i in range( len(phase)-mj):
+            phases = phase[i:i+mj+1] # data window of length mj
+            tie = max(phases) - min(phases) # largest error in this window
+            if tie>dev:
+                dev = tie
+            ncount = ncount + 1
+            
+        devs.append(dev)
+        deverrs.append(dev/math.sqrt(ncount))
+        ns.append(ncount)
+        
+    taus2 = [x/float(rate) for x in m]
+    return (taus2, devs, deverrs, ns)
+
+# TIE rms
+def tierms_phase(phase, rate, taus):
+    rate = float(rate)
+    m = tau_m(phase,rate,taus)
+    n = len(phase)
+    devs=[]
+    deverrs=[]
+    ns=[]
+    for mj in m:
+        dev=0
+        ncount=0
+        tie = []
+        for i in range( len(phase)-mj):
+            phases = [ phase[i], phase[i+mj] ] # pair of phases at distance mj from eachother
+            tie.append( max(phases) - min(phases) ) # phase error
+            ncount = ncount + 1
+        # RMS of tie vector
+        tie = [ pow(x,2) for x in tie ] # square
+        tie =  numpy.mean( tie ) # mean
+        tie = math.sqrt( tie ) # root
+        devs.append(tie)
+        deverrs.append(dev/math.sqrt(ncount))
+        ns.append(ncount)
+        
+    taus2 = [x/float(rate) for x in m]
+    return (taus2, devs, deverrs, ns)
+    
 if __name__ == "__main__":
 	print "Nothing to see here."
 

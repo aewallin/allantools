@@ -210,7 +210,7 @@ def read_resultfile(filename):
 				row = []
 				l2 = line.split(" ")
 				l2 = filter(None, l2)
-				for n in range(7):
+				for n in range(len(l2)):
 					row.append( float(l2[n]) )
 				rows.append(row)
 	return rows
@@ -227,16 +227,29 @@ def test( function, datafile, datainterval, resultfile, verbose=0):
 	taus = []
 	devs = []
 	ns   = []
+
 	for row in devresults:
-		tau_n = row[0] # tau in number of datapoints
-		tau_s = row[1] # tau in seconds
-		taus.append( tau_s )
-		n = row[2] # n averages
-		a = row[5]
-		devs.append(a)
-		ns.append(n)
-		
+		if len(row)==7:
+			tau_n = row[0] # tau in number of datapoints
+			tau_s = row[1] # tau in seconds
+			taus.append( tau_s )
+			n = row[2] # n averages
+			a = row[5]
+			devs.append(a)
+			ns.append(n)
+		elif len(row)==4: # the MTIE results
+			tau_n = row[0] # tau in number of datapoints
+			tau_s = row[1] # tau in seconds
+			taus.append( tau_s )
+			n = row[2] # n averages
+			a = row[3]
+			devs.append(a)
+			ns.append(n)
+	#print "testing ",len(taus),"taus"    
 	(taus2,devs2,errs2,ns2) = function(phase, datainterval, taus)
+	assert( len(taus) == len(taus2) )
+	assert( len(devs) == len(devs2) )
+	assert( len(ns) == len(ns2) )
 	for (t1,a1,n1,t2,a2,n2) in zip(taus,devs,ns, taus2,devs2,ns2):
 		try:
 			assert( t1 == t2 )
@@ -254,7 +267,7 @@ def test( function, datafile, datainterval, resultfile, verbose=0):
 			if verbose:
 				print "OK %d %d  \t %0.6f \t %0.6f \t %0.6f" % (t1,n1,a1,a2, rel_error)
 		except:
-			print "ERROR %d  %0.6f \t %0.6f \t %0.6f" % (t1,a1,a2, rel_error)
+			print "ERROR %d  %d %0.6f \t %0.6f \t %0.6f" % (t1,n1,a1,a2, rel_error)
 	print "test of function ",function, " Done."
 
 
@@ -272,6 +285,8 @@ if __name__ == "__main__":
 	hdev_result = 'phase_dat_hdev.txt'
 	ohdev_result = 'phase_dat_ohdev.txt'
 	totdev_result = 'phase_dat_totdev.txt'
+	mtie_result = 'phase_dat_mtie.txt'
+	tierms_result = 'phase_dat_tierms.txt'
 	verbose = 0
 	test( allan.adev_phase, data_file, 1.0, adev_result , verbose)
 	test( allan.oadev_phase, data_file, 1.0, oadev_result, verbose )
@@ -280,3 +295,5 @@ if __name__ == "__main__":
 	test( allan.hdev_phase, data_file, 1.0, hdev_result, verbose )
 	test( allan.ohdev_phase, data_file, 1.0, ohdev_result, verbose )
 	test( allan.totdev_phase, data_file, 1.0, totdev_result, verbose )
+	test( allan.mtie_phase, data_file, 1.0, mtie_result, 1 )
+	test( allan.tierms_phase, data_file, 1.0, tierms_result, 1 )
