@@ -18,11 +18,15 @@ taus = [1,2,4,8,16] # in seconds
 ```
 
 These statistics are currently included:
-* ADEV, Allan deviation
-* OADEV, overlapping Allan deviation,
-* MDEV, modified Allan deviation,
-* TDEV, time deviation
-* HDEV, Hadamard deviation
+* ADEV    Allan deviation
+* OADEV   overlapping Allan deviation,
+* MDEV    modified Allan deviation,
+* TDEV    Time deviation
+* HDEV    Hadamard deviation
+* OHDEV   overlapping Hadamard deviation
+* TOTDEV  Total deviation
+* MTIE    Maximum time interval error
+* TIERMS  Time interval error RMS
 
 see /tests for tests that compare allantools output to other programs.
 
