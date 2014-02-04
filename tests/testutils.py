@@ -1,3 +1,5 @@
+import sys
+
 # read a simple data-file with phase or frequency numbers on each line
 def read_datafile(filename):
 	p=[]

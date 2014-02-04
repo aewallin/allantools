@@ -11,7 +11,16 @@ import testutils
 # results in files such as phade_dat_adev.txt
 #
 
+import os
+
+
 def run():
+	# hack to run script from its own directory
+	abspath = os.path.abspath(__file__)
+	dname = os.path.dirname(abspath)
+	os.chdir(dname)
+	print dname
+
 	data_file = 'PHASE.DAT'
 	adev_result = 'phase_dat_adev.txt'
 	oadev_result = 'phase_dat_oadev.txt'

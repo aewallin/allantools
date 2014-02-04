@@ -8,7 +8,8 @@ sys.path.append("..") # allows importing allantools from parent dir
 
 
 from nbs14 import nbs14_test
-from phase.dat import phase_dat_test
+from phasedat import phase_dat_test
+from pink_frequency import pink
 
 if __name__ == "__main__":
 	
@@ -16,6 +17,7 @@ if __name__ == "__main__":
 	
 	nbs14_test.run()
 	phase_dat_test.run()
+	pink.run()
 	
 	end = time.clock()
 	print "Tests done in %2.3f s" % (end-start)
