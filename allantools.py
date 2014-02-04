@@ -238,7 +238,7 @@ def ohdev_phase(data,rate,taus):
 	hdeverrs = []
 	ns = []
 	for mj in m:
-		(h,n ) = hdev_phase_calc(data,mj,1) # stride = 1
+		(h,n ) = hdev_phase_calc(data,rate,mj,1) # stride = 1
 		hdevs.append(h)
 		hdeverrs.append( h/math.sqrt(n) )
 		ns.append(n)
@@ -260,7 +260,7 @@ def hdev_phase(data,rate,taus):
 	hdeverrs = []
 	ns = []
 	for mj in m:
-		(h,n ) = hdev_phase_calc(data,mj,mj) # stride = mj
+		(h,n ) = hdev_phase_calc(data,rate,mj,mj) # stride = mj
 		hdevs.append(h)
 		hdeverrs.append( h/math.sqrt(n) )
 		ns.append(n)
@@ -268,17 +268,18 @@ def hdev_phase(data,rate,taus):
 	return (taus, hdevs, hdeverrs, ns)
 
 # http://www.leapsecond.com/tools/adev_lib.c
-def hdev_phase_calc(data,mj, stride):
+def hdev_phase_calc(data,rate,mj, stride):
 	s = 0
 	n = 0
 	i = 0
+	tau0 = 1/float(rate)
 	while (i + 3*mj) < len(data):
 		v = data[i + 3*mj] - 3 * data[i + 2*mj] + 3 * data[i + mj] - data[i]
 		s = s + v * v
 		n = n + 1 
 		i = i + stride
 	s = s/6.0
-	h = math.sqrt( s / float(n)) / float(mj)
+	h = math.sqrt( s / float(n)) / float(tau0*mj)
 	return (h,n)
 
 def totdev(freqdata,rate,taus):

@@ -33,9 +33,9 @@ def run():
 	testutils.test( allan.oadev, data_file, rate, oadev_result, 0, tolerance )
 	testutils.test( allan.mdev, data_file, rate, mdev_result, 0, tolerance )
 	testutils.test( allan.tdev, data_file, rate, tdev_result, 0, tolerance )
-	testutils.test( allan.hdev, data_file, rate, hdev_result, verbose, tolerance )
-	#testutils.test( allan.ohdev_phase, data_file, 1.0, ohdev_result, verbose, tolerance )
-	#testutils.test( allan.totdev, data_file, rate, totdev_result, verbose, tolerance )
+	testutils.test( allan.hdev, data_file, rate, hdev_result, 0, tolerance )
+	testutils.test( allan.ohdev, data_file, rate, ohdev_result, 0, tolerance )
+	testutils.test( allan.totdev, data_file, rate, totdev_result, 0, tolerance )
 
 if __name__ == "__main__":
 	run()
