@@ -101,6 +101,6 @@ def pinknoise_to_file(N=10000):
 	#print sum(n)/float(len(n))
 
 if __name__ == "__main__":
-	pinknoise_to_file()
+	#pinknoise_to_file()
 	print "Nothing to see here."
 	

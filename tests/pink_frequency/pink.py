@@ -22,7 +22,7 @@ def run():
 	tdev_result = 'tdev.txt'
 	hdev_result = 'hdev.txt'
 	ohdev_result = 'ohdev.txt'
-	totdev_result = 'totdev.txt'
+	totdev_result = 'totdev_alpha0.txt'
 	mtie_result = 'mtie.txt'
 	tierms_result = 'tierms.txt'
 	verbose = 1

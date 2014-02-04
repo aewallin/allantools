@@ -216,11 +216,12 @@ def phase2freqeuncy( phasedata, rate):
 def frequency2phase( freqdata, rate):
 	# integrrate freqdata to phase
 	phase=[0]*( len(freqdata)+1 ) # initialize to zero
+	dt = 1/float(rate)
 	for i in range( len(freqdata)+1 ):
 		if i == 0:
 			phase[i] = 0
 		else:
-			phase[i] = phase[i-1] + freqdata[i-1]*(1/float(rate))
+			phase[i] = phase[i-1] + freqdata[i-1]*dt
 	return phase
 
 # Overlapping Hadamard deviation
