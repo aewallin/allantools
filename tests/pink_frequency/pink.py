@@ -25,20 +25,17 @@ def run():
 	totdev_result = 'totdev.txt'
 	mtie_result = 'mtie.txt'
 	tierms_result = 'tierms.txt'
-	verbose = 0
+	verbose = 1
 	
 	tolerance = 1e-4
 	rate = 1/float(42.0) # stable32 runs were done with this data-interval
-	testutils.test( allan.adev, data_file, rate, adev_result , verbose, tolerance)
-	#testutils.test( allan.oadev_phase, data_file, 1.0, oadev_result, verbose, tolerance )
-	#testutils.test( allan.mdev_phase, data_file, 1.0, mdev_result, verbose, tolerance )
-	#testutils.test( allan.tdev_phase, data_file, 1.0, tdev_result, verbose, tolerance )
-	#testutils.test( allan.hdev_phase, data_file, 1.0, hdev_result, verbose, tolerance )
+	testutils.test( allan.adev, data_file, rate, adev_result , 0, tolerance)
+	testutils.test( allan.oadev, data_file, rate, oadev_result, 0, tolerance )
+	testutils.test( allan.mdev, data_file, rate, mdev_result, 0, tolerance )
+	testutils.test( allan.tdev, data_file, rate, tdev_result, 0, tolerance )
+	testutils.test( allan.hdev, data_file, rate, hdev_result, verbose, tolerance )
 	#testutils.test( allan.ohdev_phase, data_file, 1.0, ohdev_result, verbose, tolerance )
-	#testutils.test( allan.totdev_phase, data_file, 1.0, totdev_result, verbose, tolerance )
-	#testutils.test( allan.mtie_phase, data_file, 1.0, mtie_result, verbose, tolerance )
-	#testutils.test( allan.tierms_phase, data_file, 1.0, tierms_result, verbose, tolerance )
-	
+	#testutils.test( allan.totdev, data_file, rate, totdev_result, verbose, tolerance )
 
 if __name__ == "__main__":
 	run()

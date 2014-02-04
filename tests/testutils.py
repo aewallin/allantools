@@ -75,7 +75,7 @@ def test( function, datafile, datainterval, resultfile, verbose=0, tolerance = 1
 		try:
 			assert( t1 == t2 )
 		except:
-			print "ERROR t1=", t1, " t2=", t2
+			print "ERROR tau1=", t1, " tau2=", t2
 			n_errors = n_errors + 1
 		try:
 			assert( n1 == n2 )
@@ -89,10 +89,10 @@ def test( function, datafile, datainterval, resultfile, verbose=0, tolerance = 1
 		try:
 			assert( abs(rel_error) < tolerance )
 			if verbose:
-				print "OK %d %d  \t %0.6f \t %0.6f \t %0.6f" % (t1,n1,a1,a2, rel_error)
+				print "OK %d %d  \t %0.6g \t %0.6g \t %0.6f" % (t1,n1,a1,a2, rel_error)
 		except:
 			n_errors = n_errors + 1
-			print "ERROR %d  %d %0.6f \t %0.6f \t %0.6f" % (t1,n1,a1,a2, rel_error)
+			print "ERROR %d  %d %0.6g \t %0.6g \t %0.6f" % (t1,n1,a1,a2, rel_error)
 			n_errors = n_errors + 1
 	assert( n_errors == 0) # no errors allowed!
 	print "test of function ",function, " Done. Errors=", n_errors
