@@ -96,17 +96,17 @@ def nbs14_totdev_test():
 
 def nbs14_1000_test():
 	fdata = nbs14_1000()
-	print "nbs13 adev"
+	print "nbs14_1000 adev"
 	nbs14_tester( allan.adev, fdata, nbs14_1000_devs[0] )
-	print "nbs13 oadev"
+	print "nbs14_1000 oadev"
 	nbs14_tester( allan.oadev, fdata, nbs14_1000_devs[1] )
-	print "nbs13 mdev"
+	print "nbs14_1000 mdev"
 	nbs14_tester( allan.mdev, fdata, nbs14_1000_devs[2] )
-	#print "nbs13 totdev"
+	#print "nbs13 totdev" # this test does not work, becaus we don't know how to do bias correction
 	#nbs14_totdev_test()
-	print "nbs13 hdev"
+	print "nbs14_1000 hdev"
 	nbs14_tester( allan.hdev, fdata, nbs14_1000_devs[4] )
-	print "nbs13 tdev"
+	print "nbs14_1000 tdev"
 	nbs14_tester( allan.tdev, fdata, nbs14_1000_devs[5] )
 	
 	print "nbs14_1000 test OK"
@@ -114,7 +114,7 @@ def nbs14_1000_test():
 def check_devs(dev2, dev1):
 	rel_error = (dev2-dev1)/dev1
 	tol = 1e-6
-	verbose = 1
+	verbose = 0
 
 	if ( abs(rel_error) < tol ):
 		if verbose:
@@ -295,5 +295,5 @@ if __name__ == "__main__":
 	test( allan.hdev_phase, data_file, 1.0, hdev_result, verbose )
 	test( allan.ohdev_phase, data_file, 1.0, ohdev_result, verbose )
 	test( allan.totdev_phase, data_file, 1.0, totdev_result, verbose )
-	test( allan.mtie_phase, data_file, 1.0, mtie_result, 1 )
-	test( allan.tierms_phase, data_file, 1.0, tierms_result, 1 )
+	test( allan.mtie_phase, data_file, 1.0, mtie_result, verbose )
+	test( allan.tierms_phase, data_file, 1.0, tierms_result, verbose )
