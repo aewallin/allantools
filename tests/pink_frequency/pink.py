@@ -25,7 +25,7 @@ def run():
 	totdev_result = 'totdev_alpha0.txt'
 	mtie_result = 'mtie.txt'
 	tierms_result = 'tierms.txt'
-	verbose = 1
+	#verbose = 1
 	
 	tolerance = 1e-4
 	rate = 1/float(42.0) # stable32 runs were done with this data-interval

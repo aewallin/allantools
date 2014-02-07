@@ -92,6 +92,8 @@ def test_row_by_row( function, datafile, datarate, resultfile, verbose=0, tolera
 
 	(taus,devs,ns) = read_stable32(resultfile,datarate)
 	
+	if verbose:
+		print "Tau N  \t DEV(Stable32) \t DEV(allantools) \t relative error"
 	# run allantools algorithm, row by row
 	for (tau, dev, n) in zip(taus,devs,ns):
 		(taus2,devs2,errs2,ns2) = function(phase, datarate, [tau])
@@ -117,7 +119,7 @@ def check_deviations((t1,a1,n1,t2,a2,n2), tolerance, verbose):
 	try:
 		assert( abs(rel_error) < tolerance )
 		if verbose:
-			print "OK %d %d  \t %0.6g \t %0.6g \t %0.6f" % (t1,n1,a1,a2, rel_error)
+			print "%d %d  \t %0.6g \t %0.6g \t %0.6f OK!" % (t1,n1,a1,a2, rel_error)
 	except:
 		n_errors = n_errors + 1
 		print "ERROR %d  %d %0.6g \t %0.6g \t %0.6f" % (t1,n1,a1,a2, rel_error)
