@@ -66,7 +66,7 @@ def run():
 	testutils.test_row_by_row( allan.mtie_phase, data_file, rate, mtie_result, verbose, tolerance ) # 13 s
 	start = print_elapsed(start)
 
-	print " all tests took %.2f s"% ( time.clock()-start0 ) # i7 CPU: ca 40s (without MTIE)
+	print " Cs5071A_decade tests took %.2f s"% ( time.clock()-start0 ) # i7 CPU: ca 40s (without MTIE)
 	
 if __name__ == "__main__":
 	run()

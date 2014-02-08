@@ -91,7 +91,7 @@ def tdev(data, rate, taus):
 # 
 # see http://www.leapsecond.com/tools/adev_lib.c
 def mdev_phase(data,rate,taus):
-	ms = tau_m(data,rate,taus)
+	(ms,taus_used) = tau_m(data,rate,taus)
 	taus = []
 	md = []
 	mderr = []
@@ -115,13 +115,12 @@ def mdev_phase(data,rate,taus):
 			n = n+1
 			i = i+1
 		s = s / float( 2.0 * m * m * tau * tau * n )
-		assert( n == len(data)-3*m+1 ) # n is the normalization (N-3m+1) before the sums
+		#assert( n == len(data)-3*m+1 ) # n is the normalization (N-3m+1) before the sums
 		s = math.sqrt( s ) 
 		md.append( s ) 
-		taus.append(tau)
 		mderr.append( s / math.sqrt(n) )
 		ns.append(n)
-	return (taus, md, mderr, ns)
+	return (taus_used, md, mderr, ns)
 
 # modified Allan deviation, fractional frequency data
 def mdev(freqdata, rate, taus):
@@ -144,7 +143,9 @@ def tau_m(data,rate,taus):
 	if len(m)==0:
 		print "Warning: sanity-check on tau failed!"
 		print "   len(data)=",len(data)," rate=",rate,"taus= ",taus
-	return m
+	taus2 = [x/float(rate) for x in m]
+
+	return (m,taus2)
 
 # Allan deviation
 # data is a time-series of fractional frequency
@@ -155,8 +156,7 @@ def adev(data, rate, taus):
 	return adev_phase(phase,rate,taus) 
 
 def adev_phase(data,rate,taus):
-	m = tau_m(data,rate,taus)
-	#n = len(data)
+	(m,taus_used) = tau_m(data,rate,taus)
 	ad    = []
 	ade   = []
 	adn   = []
@@ -165,7 +165,7 @@ def adev_phase(data,rate,taus):
 		ad.append( dev ) 
 		ade.append( deverr )
 		adn.append( n )
-	return ([x/float(rate) for x in m], ad, ade, adn) # tau, adev, adeverror, naverages
+	return (taus_used, ad, ade, adn) # tau, adev, adeverror, naverages
 
 def calc_adev_phase(data,rate,mj,stride):
 	s=0
@@ -184,7 +184,7 @@ def calc_adev_phase(data,rate,mj,stride):
 
 # overlapping Allan deviation of phase data
 def oadev_phase(data, rate, taus):
-	m = tau_m(data,rate,taus)
+	(m,taus_used) = tau_m(data,rate,taus)
 	ad    = []
 	ade   = []
 	adn   = []
@@ -193,7 +193,7 @@ def oadev_phase(data, rate, taus):
 		ad.append( dev ) 
 		ade.append( deverr )
 		adn.append( n )
-	return ([x/float(rate) for x in m], ad, ade, adn) # tau, adev, adeverror, naverages
+	return (taus_used, ad, ade, adn) # tau, adev, adeverror, naverages
 
 # overlapping Allan deviation
 def oadev(freqdata, rate, taus):
@@ -223,19 +223,16 @@ def ohdev(freqdata, rate, taus):
 # Overlapping Hadamard deviation of phase data
 def ohdev_phase(data,rate,taus):
 	rate = float(rate)
-	m = tau_m(data,rate,taus)
-	n = len(data)
-
+	(m,taus_used) = tau_m(data,rate,taus)
 	hdevs = [] 
 	hdeverrs = []
 	ns = []
 	for mj in m:
-		(h,n ) = hdev_phase_calc(data,rate,mj,1) # stride = 1
+		(h,n) = hdev_phase_calc(data,rate,mj,1) # stride = 1
 		hdevs.append(h)
 		hdeverrs.append( h/math.sqrt(n) )
 		ns.append(n)
-	taus = [x/float(rate) for x in m]
-	return (taus, hdevs, hdeverrs, ns)
+	return (taus_used, hdevs, hdeverrs, ns)
     
 # Hadamard deviation
 def hdev(freqdata, rate, taus):
@@ -245,9 +242,7 @@ def hdev(freqdata, rate, taus):
 # Hadamard deviation of phase data
 def hdev_phase(data,rate,taus):
 	rate = float(rate)
-	m = tau_m(data,rate,taus)
-	n = len(data)
-
+	(m,taus_used) = tau_m(data,rate,taus)
 	hdevs = [] 
 	hdeverrs = []
 	ns = []
@@ -256,8 +251,8 @@ def hdev_phase(data,rate,taus):
 		hdevs.append(h)
 		hdeverrs.append( h/math.sqrt(n) )
 		ns.append(n)
-	taus = [x/float(rate) for x in m]
-	return (taus, hdevs, hdeverrs, ns)
+
+	return (taus_used, hdevs, hdeverrs, ns)
 
 # http://www.leapsecond.com/tools/adev_lib.c
 def hdev_phase_calc(data,rate,mj, stride):
@@ -290,7 +285,7 @@ def totdev(freqdata,rate,taus):
 # where x* is a new dataset with 'reflected' data at start/end
 def totdev_phase(data,rate,taus):
 	rate = float(rate)
-	m = tau_m(data,rate,taus)
+	(m,taus_used) = tau_m(data,rate,taus)
 	n = len(data)
 	
 	# totdev requires a new dataset 
@@ -328,9 +323,8 @@ def totdev_phase(data,rate,taus):
 		devs.append(dev)
 		deverrs.append(dev/math.sqrt(ncount))
 		ns.append(ncount) 
-		
-	taus2 = [x/float(rate) for x in m]
-	return (taus2, devs, deverrs, ns)
+
+	return (taus_used, devs, deverrs, ns)
 
 def mtie(freqdata,rate,taus):
 	phasedata = frequency2phase( freqdata, rate)
@@ -341,7 +335,7 @@ def mtie(freqdata,rate,taus):
 # Stable32 also has "Decade" and "Octave" modes where the dataset is extended somehow?
 def mtie_phase(phase, rate, taus):
 	rate = float(rate)
-	m = tau_m(phase,rate,taus)
+	(m,taus_used) = tau_m(phase,rate,taus)
 	n = len(phase)
 	devs=[]
 	deverrs=[]
@@ -389,9 +383,8 @@ def mtie_phase(phase, rate, taus):
 		devs.append(dev)
 		deverrs.append(dev/math.sqrt(ncount))
 		ns.append(ncount)
-        
-	taus2 = [x/float(rate) for x in m]
-	return (taus2, devs, deverrs, ns)
+
+	return (taus_used, devs, deverrs, ns)
 
 def tierms(freqdata,rate,taus):
 	phasedata = frequency2phase( freqdata, rate)
@@ -400,8 +393,8 @@ def tierms(freqdata,rate,taus):
 # TIE rms
 def tierms_phase(phase, rate, taus):
     rate = float(rate)
-    m = tau_m(phase,rate,taus)
-    #n = len(phase)
+    (m,taus_used) = tau_m(phase,rate,taus)
+    count = len(phase)
     devs=[]
     deverrs=[]
     ns=[]
@@ -409,7 +402,7 @@ def tierms_phase(phase, rate, taus):
         dev=0
         ncount=0
         tie = []
-        for i in range( len(phase)-mj):
+        for i in range( count-mj ):
             phases = [ phase[i], phase[i+mj] ] # pair of phases at distance mj from eachother
             tie.append( max(phases) - min(phases) ) # phase error
             ncount = ncount + 1
@@ -421,8 +414,7 @@ def tierms_phase(phase, rate, taus):
         deverrs.append(dev/math.sqrt(ncount))
         ns.append(ncount)
         
-    taus2 = [x/float(rate) for x in m]
-    return (taus2, devs, deverrs, ns)
+    return (taus_used, devs, deverrs, ns)
     
 if __name__ == "__main__":
 	print "Nothing to see here."
