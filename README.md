@@ -3,6 +3,8 @@ allantools
 
 A small Python library for calculating Allan deviation and related statistics.
 
+Also available on PyPi at https://pypi.python.org/pypi/AllanTools
+
 Input data should be evenly spaced observations of either fractional frequency,
 or phase in seconds. Deviations are calculated for given tau values in seconds.
 
