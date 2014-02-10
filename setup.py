@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='AllanTools',
-      version='0.21',
+      version='0.22',
       description='Allan deviation and relates time/frequency statistics',
       author='Anders Wallin',
       author_email='anders.e.e.wallin@gmail.com',
