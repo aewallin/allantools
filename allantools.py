@@ -120,7 +120,7 @@ def mdev_phase(data,rate,taus):
 		md.append( s ) 
 		mderr.append( s / math.sqrt(n) )
 		ns.append(n)
-	return (taus_used, md, mderr, ns)
+	return remove_small_ns(taus_used, md, mderr, ns)
 
 # modified Allan deviation, fractional frequency data
 def mdev(freqdata, rate, taus):
@@ -135,7 +135,7 @@ def tau_m(data,rate,taus):
 	n = len(data)
 	m=[]
 	for tau in taus:
-		if tau < (1/float(rate))*float(len(data)): # limit the maximum tau ??
+		if tau > 0 and tau < (1/float(rate))*float(len(data)): # tau should be in [0, len(data)/rate]
 			m.append(  int( math.floor( float(tau*rate) )) )  # m is tau in units of datapoints
 	m = list(set(m)) # this removes duplicates
 	m.sort() # sort from small tau to large tau
@@ -144,7 +144,6 @@ def tau_m(data,rate,taus):
 		print "Warning: sanity-check on tau failed!"
 		print "   len(data)=",len(data)," rate=",rate,"taus= ",taus
 	taus2 = [x/float(rate) for x in m]
-
 	return (m,taus2)
 
 # Allan deviation
@@ -165,7 +164,7 @@ def adev_phase(data,rate,taus):
 		ad.append( dev ) 
 		ade.append( deverr )
 		adn.append( n )
-	return (taus_used, ad, ade, adn) # tau, adev, adeverror, naverages
+	return remove_small_ns(taus_used, ad, ade, adn) # tau, adev, adeverror, naverages
 
 def calc_adev_phase(data,rate,mj,stride):
 	s=0
@@ -178,9 +177,26 @@ def calc_adev_phase(data,rate,mj,stride):
 		i = i + stride
 		n=n+1
 	s = s/float(2.0)
-	dev = math.sqrt( s /float(n)) / float(mj*(1/float(rate)))
-	deverr = dev/math.sqrt(n)
+	dev = 0
+	deverr = 0
+	if not n==0:
+		dev = math.sqrt( s /float(n)) / float(mj*(1/float(rate)))
+		deverr = dev/math.sqrt(n)
 	return (dev,deverr,n) 
+
+# if n is small (==1), reject the result
+def remove_small_ns(taus,devs,deverrs,ns):
+	o_taus=[]
+	o_dev = []
+	o_err = []
+	o_n = []
+	for (t,d,e,n) in zip(taus,devs,deverrs,ns):
+		if n > 1:
+			o_taus.append(t)
+			o_dev.append(d)
+			o_err.append(e)
+			o_n.append(n)
+	return (o_taus, o_dev, o_err, o_n)
 
 # overlapping Allan deviation of phase data
 def oadev_phase(data, rate, taus):
@@ -193,7 +209,7 @@ def oadev_phase(data, rate, taus):
 		ad.append( dev ) 
 		ade.append( deverr )
 		adn.append( n )
-	return (taus_used, ad, ade, adn) # tau, adev, adeverror, naverages
+	return remove_small_ns(taus_used, ad, ade, adn) # tau, adev, adeverror, naverages
 
 # overlapping Allan deviation
 def oadev(freqdata, rate, taus):
@@ -228,11 +244,11 @@ def ohdev_phase(data,rate,taus):
 	hdeverrs = []
 	ns = []
 	for mj in m:
-		(h,n) = hdev_phase_calc(data,rate,mj,1) # stride = 1
+		(h,e,n) = hdev_phase_calc(data,rate,mj,1) # stride = 1
 		hdevs.append(h)
-		hdeverrs.append( h/math.sqrt(n) )
+		hdeverrs.append( e )
 		ns.append(n)
-	return (taus_used, hdevs, hdeverrs, ns)
+	return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
     
 # Hadamard deviation
 def hdev(freqdata, rate, taus):
@@ -247,12 +263,12 @@ def hdev_phase(data,rate,taus):
 	hdeverrs = []
 	ns = []
 	for mj in m:
-		(h,n ) = hdev_phase_calc(data,rate,mj,mj) # stride = mj
+		(h,e, n ) = hdev_phase_calc(data,rate,mj,mj) # stride = mj
 		hdevs.append(h)
-		hdeverrs.append( h/math.sqrt(n) )
+		hdeverrs.append( e )
 		ns.append(n)
 
-	return (taus_used, hdevs, hdeverrs, ns)
+	return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
 # http://www.leapsecond.com/tools/adev_lib.c
 def hdev_phase_calc(data,rate,mj, stride):
@@ -266,8 +282,12 @@ def hdev_phase_calc(data,rate,mj, stride):
 		n = n + 1 
 		i = i + stride
 	s = s/6.0
+
+	if n == 0:
+		n=1
 	h = math.sqrt( s / float(n)) / float(tau0*mj)
-	return (h,n)
+	e = h/math.sqrt(n)
+	return (h,e,n)
 
 def totdev(freqdata,rate,taus):
 	phasedata = frequency2phase( freqdata, rate)
@@ -324,7 +344,7 @@ def totdev_phase(data,rate,taus):
 		deverrs.append(dev/math.sqrt(ncount))
 		ns.append(ncount) 
 
-	return (taus_used, devs, deverrs, ns)
+	return remove_small_ns(taus_used, devs, deverrs, ns)
 
 def mtie(freqdata,rate,taus):
 	phasedata = frequency2phase( freqdata, rate)
@@ -384,7 +404,7 @@ def mtie_phase(phase, rate, taus):
 		deverrs.append(dev/math.sqrt(ncount))
 		ns.append(ncount)
 
-	return (taus_used, devs, deverrs, ns)
+	return remove_small_ns(taus_used, devs, deverrs, ns)
 
 def tierms(freqdata,rate,taus):
 	phasedata = frequency2phase( freqdata, rate)
@@ -414,7 +434,7 @@ def tierms_phase(phase, rate, taus):
         deverrs.append(dev/math.sqrt(ncount))
         ns.append(ncount)
         
-    return (taus_used, devs, deverrs, ns)
+    return remove_small_ns(taus_used, devs, deverrs, ns)
     
 if __name__ == "__main__":
 	print "Nothing to see here."
