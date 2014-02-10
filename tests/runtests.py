@@ -11,6 +11,7 @@ from nbs14 import nbs14_test
 from phasedat import phase_dat_test
 from pink_frequency import pink
 from Cs5071A import Cs5071A_test_decade
+import test_ns
 
 if __name__ == "__main__":
 	
@@ -20,6 +21,7 @@ if __name__ == "__main__":
 	phase_dat_test.run()      # phase.dat from Stable32
 	pink.run()                # synthetic pink frequency noise
 	Cs5071A_test_decade.run() # HP 5071A Cs-clock measured against H-maser
+	test_ns.run()
 	
 	end = time.clock()
-	print "Tests done in %2.3f s" % (end-start) # ca 58 seconds on an i7 CPU
+	print "All tests done in %2.3f s" % (end-start) # ca 58 seconds on an i7 CPU

@@ -16,7 +16,7 @@ def test( function, data, rate, taus):
 		assert( n > 1 ) # n should be 2 or more for each tau
 	print "test_ns of function ",function, " OK."
 	
-def main():
+def run():
 	
 	# this test asks for resolts at unreasonable tau-values
 	# either zero, not an integer multiple of the data-interval
@@ -37,4 +37,4 @@ def main():
 	test( allan.tierms_phase, phase_white, rate, taus_try)
 
 if __name__ == "__main__":
-	main()
+	run()
