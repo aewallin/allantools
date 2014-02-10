@@ -8,6 +8,10 @@ Also available on PyPi at https://pypi.python.org/pypi/AllanTools
 Input data should be evenly spaced observations of either fractional frequency,
 or phase in seconds. Deviations are calculated for given tau values in seconds.
 
+Installation
+
+> sudo python setup.py install
+
 Usage:
 ```python
 import allantools # https://github.com/aewallin/allantools/
