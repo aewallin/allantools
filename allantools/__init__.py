@@ -1,4 +1,6 @@
 __all__ = ['allantools']
+from allantools import three_cornered_hat_phase
+
 from allantools import adev
 from allantools import adev_phase
 

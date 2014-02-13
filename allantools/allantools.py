@@ -435,7 +435,32 @@ def tierms_phase(phase, rate, taus):
         ns.append(ncount)
         
     return remove_small_ns(taus_used, devs, deverrs, ns)
-    
+
+# Three Cornered Hat Method
+#
+# Three clocks with unknown variances sa^2, sb^2, sc^3
+# Three pairwise measurements give variances:
+# sab^2, sbc^2, sca^2
+# Assuming covariances are zero, we get:
+# sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
+# (and cyclic permutations for sb and sc)
+def three_cornered_hat_phase(phasedataAB, phasedataBC, phasedataCA, rate, taus, function):
+	(tauAB,devAB,errAB,nsAB) = function(phasedataAB, rate, taus)
+	(tauBC,devBC,errBC,nsBC) = function(phasedataBC, rate, taus)
+	(tauCA,devCA,errCA,nsCA) = function(phasedataCA, rate, taus)
+	varAB = [x*x for x in devAB]
+	varBC = [x*x for x in devBC]
+	varCA = [x*x for x in devCA]
+	assert( len(varAB) == len(varBC) == len(varCA) )
+	varA = [ 0.5*(ab + ca - bc) for (ab,bc,ca) in zip(varAB,varBC,varCA) ]
+	devA = []
+	for va in varA:
+		try:
+			devA.append( math.sqrt( va ) )
+		except:
+			devA.append( 0 )
+	return ( tauAB, devA )
+
 if __name__ == "__main__":
 	print "Nothing to see here."
 
