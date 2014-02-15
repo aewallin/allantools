@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(name='AllanTools',
       version='0.22',
-      description='Allan deviation and relates time/frequency statistics',
+      description='Allan deviation and related time/frequency statistics',
       author='Anders Wallin',
       author_email='anders.e.e.wallin@gmail.com',
       url='https://github.com/aewallin/allantools',
