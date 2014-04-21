@@ -20,6 +20,9 @@
 import numpy
 import math
 
+# Functions for generating noise
+# AW 2014
+#
 # See: http://en.wikipedia.org/wiki/Colors_of_noise
 
 

@@ -216,12 +216,15 @@ def oadev(freqdata, rate, taus):
 	phase = frequency2phase(freqdata,rate)
 	return oadev_phase(phase,rate,taus) 
 
-def phase2freqeuncy( phasedata, rate):
+# this function is never used!?
+"""
+def phase2frequency( phasedata, rate):
 	freqdata = [ x*float(rate) for x in numpy.diff( phasedata ) ]
 	return freqdata 
+"""
 
+# integrate fractional freqyency data and output phase data
 def frequency2phase( freqdata, rate):
-	# integrrate freqdata to phase
 	phase=[0]*( len(freqdata)+1 ) # initialize to zero
 	dt = 1/float(rate)
 	for i in range( len(freqdata)+1 ):

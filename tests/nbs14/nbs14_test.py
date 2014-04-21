@@ -19,7 +19,7 @@
 import math
 import time
 import sys
-sys.path.append("../..") # hack to import from parent directory
+#sys.path.append("../..") # hack to import from parent directory
 # remove if you have allantools installed in your python path
 
 import allantools as allan

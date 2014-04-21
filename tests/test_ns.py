@@ -18,7 +18,7 @@ def test( function, data, rate, taus):
 	
 def run():
 	
-	# this test asks for resolts at unreasonable tau-values
+	# this test asks for results at unreasonable tau-values
 	# either zero, not an integer multiple of the data-interval
 	# or too large, given the length of the dataset
 	N = 500

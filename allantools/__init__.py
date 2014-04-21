@@ -1,4 +1,7 @@
 __all__ = ['allantools']
+
+from allantools import frequency2phase
+
 from allantools import three_cornered_hat_phase
 
 from allantools import adev

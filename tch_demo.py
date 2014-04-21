@@ -16,6 +16,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# Three-cornered-hat test
+#
+# See http://www.wriley.com/3-CornHat.htm
+# 
 
 import numpy
 import matplotlib.pyplot as plt # only for plotting, not required for calculations
