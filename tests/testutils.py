@@ -55,7 +55,7 @@ def read_stable32(resultfile, datarate):
 			devs.append(a)
 			ns.append(n)
 	return (taus,devs,ns)
-	
+
 # test a deviation function by:
 # - running the function on the datafile
 # - reading the correct answers from the resultfile

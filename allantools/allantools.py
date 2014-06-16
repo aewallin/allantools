@@ -136,10 +136,12 @@ def tau_m(data,rate,taus):
 	m=[]
 	for tau in taus:
 		if tau > 0 and tau < (1/float(rate))*float(len(data)): # tau should be in [0, len(data)/rate]
-			m.append(  int( math.floor( float(tau*rate) )) )  # m is tau in units of datapoints
+			mvalue = int( math.floor( float(tau*rate) ))
+			if mvalue != 0:
+				m.append( mvalue  )  # m is tau in units of datapoints
 	m = list(set(m)) # this removes duplicates
 	m.sort() # sort from small tau to large tau
-	#print "tau_m: ",m
+	print "tau_m: ",m
 	if len(m)==0:
 		print "Warning: sanity-check on tau failed!"
 		print "   len(data)=",len(data)," rate=",rate,"taus= ",taus
