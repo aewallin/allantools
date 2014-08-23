@@ -53,36 +53,42 @@ if __name__ == "__main__":
     # Colors: http://en.wikipedia.org/wiki/Colors_of_noise
 
     # pink frequency noise => constant ADEV
+    print "Pink frequency noise - should have constant ADEV"
     freq_pink = noise.pink(N)
     phase_p = numpy.cumsum(noise.pink(N))  # integrate to get phase, color??
     plotallan_phase(plt, phase_p, 1, t, 'co')
     plotallan(plt, freq_pink, 1, t, 'c.')
     plotline(plt, 0, t, 'c')
-    print "Pink frequency noise"
+    
 
     # white phase noise => 1/tau ADEV
+    print "White phase noise - should have 1/tau ADEV"
     phase_white = noise.white(N)
     plotallan_phase(plt, phase_white, 1, t, 'ro')
     freq_w = noise.violet(N)  # diff to get frequency, "Violet noise"
     plotallan(plt, freq_w, 1, t, 'r.')
     plotline(plt, -1, t, 'r')
-    print "White phase noise"
+    
 
     # white frequency modulation => 1/sqrt(tau) ADEV
+    print "White frequency noise - should have 1/sqrt(tau) ADEV"
     freq_white = noise.white(N)
     phase_rw = noise.brown(N)  # integrate to get Brownian, or random walk phase
     plotallan(plt, freq_white, 1, t, 'b.')
     plotallan_phase(plt, phase_rw, 1, t, 'bo')
     plotline(plt, -0.5, t, 'b')
-    print "White frequency noise"
+    
 
     # Brownian a.k.a random walk  frequency => sqrt(tau) ADEV
+    print "Random Walk frequency noise - should have sqrt(tau) ADEV"
     freq_rw = noise.brown(N)
     phase_rw_rw = numpy.cumsum(noise.brown(N))  # integrate to get  phase
     plotallan(plt, freq_rw, 1, t, 'm.')
     plotallan_phase(plt, phase_rw_rw, 1, t, 'mo')
     plotline(plt, +0.5, t, 'm')
-    print "Random Walk frequency noise"
-
+    
+    plt.xlabel('Tau')
+    plt.ylabel('Overlapping Allan deviation')
+    print "Done."
     plt.grid()
     plt.show()
