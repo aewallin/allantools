@@ -125,7 +125,6 @@ if __name__ == '__main__':
     #########
     # SETUP TEST DATA
     #########
-
     rate      = 1000.0          # 1000 Hz sample rate
     obs_s     = 60 * 60         # 1 hour
     n_samples = rate * obs_s
@@ -140,7 +139,7 @@ if __name__ == '__main__':
     pcol, pcol2  = '#0b566c', '#cc0000'
 
     t1 = time.time()
-    taus, avars = avar_series(h, spacing=1.25, mintau=1, minest=4)
+    taus, avars = avar_series(h, spacing=1.25, mintau=1, minest=4, verbose=True)
     adevs = np.sqrt(avars)
     t2 = time.time()
 

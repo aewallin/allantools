@@ -147,7 +147,7 @@ def tau_m(data, rate, taus):
                 m.append(mvalue)  # m is tau in units of datapoints
     m = list(set(m))  # this removes duplicates
     m.sort()  # sort from small tau to large tau
-    print "tau_m: ", m
+    #print "tau_m: ", m
     if len(m) == 0:
         print "Warning: sanity-check on tau failed!"
         print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
