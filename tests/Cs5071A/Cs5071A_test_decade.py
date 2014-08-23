@@ -1,10 +1,21 @@
-# phase in s for a 5071A Cs clock against a H-maser
-# 1PPS time-interval counter measurements
-# AW2014-02-07
-#
-# first datapoint          1391174210 2014-01-31 13:16:50 UTC 
-# last datapoint           1391731199 2014-02-06 23:59:59 UTC
-# 556990 datapoints in total
+"""
+  Test for allantools (https://github.com/aewallin/allantools)
+  Stable32 was used to calculate the deviations we compare against.
+
+  The 5071A_phase.txt is a dataset collected with a time-interval-counter
+  between 1 pulse-per-second outputs from a 5071A Cs clock against a H-maser
+ 
+  first datapoint          1391174210 2014-01-31 13:16:50 UTC 
+  last datapoint           1391731199 2014-02-06 23:59:59 UTC
+  556990 datapoints in total
+
+  This test uses log-spaced tau-values (i.e. 1, 2, 4, 10, etc.)
+  The CS5071A_test_all.py test much more tau-values (1,2,3,4, etc.) but is slower.
+
+  AW2014-02-07
+"""
+
+
 
 import math
 import sys

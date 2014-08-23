@@ -1,3 +1,8 @@
+"""
+ Useful collection of functions for the allantools test-suite
+ 
+"""
+
 import sys
 
 # read a simple data-file with phase or frequency numbers on each line
@@ -59,7 +64,7 @@ def read_stable32(resultfile, datarate):
 # test a deviation function by:
 # - running the function on the datafile
 # - reading the correct answers from the resultfile
-# - checking that tau, n, and dev are correct 
+# - checking that tau, n, and dev (to within a given tolerance) are correct 
 def test( function, datafile, datarate, resultfile, verbose=0, tolerance = 1e-4):
 	# if Stable32 results were given with more digits we could decrease tolerance
 	
@@ -115,7 +120,6 @@ def check_deviations((t1,a1,n1,t2,a2,n2), tolerance, verbose):
 	
 	# check the DEV result, with a given relative error tolerance        
 	rel_error = (a2-a1)/a1
-	#tolerance = 1e-4 # if Stable32 results were given with more digits we could decrease tol
 	try:
 		assert( abs(rel_error) < tolerance )
 		if verbose:
@@ -128,4 +132,5 @@ def check_deviations((t1,a1,n1,t2,a2,n2), tolerance, verbose):
 	return n_errors
 
 if __name__ == "__main__":
+	print "nothing to see here, try runtests.py instead!"
 	pass

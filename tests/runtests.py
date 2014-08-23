@@ -1,12 +1,16 @@
-# Allan deviation tools
-# https://github.com/aewallin/allantools
+"""
+  top-level tests for Allan deviation tools
+  https://github.com/aewallin/allantools
 
-# this files runs all the tests defined in the subdirectories
+  this files runs all the tests defined in the /tests/ subdirectories
+  
+  More datasets along with known deviations (or calculated with known-good programs) are welcome.
+  
+  results from allantools seem correct, they agree to within 4 to 6 digits of precision with other ADEV tools.
+"""
 
 import time
 import sys
-#sys.path.append("..") # allows importing allantools from parent dir
-
 
 from nbs14 import nbs14_test
 from phasedat import phase_dat_test
@@ -25,4 +29,6 @@ if __name__ == "__main__":
 	test_ns.run()             # sanity-checks for tau values
 	
 	end = time.clock()
-	print "All tests done in %2.3f s" % (end-start) # ca 58 seconds on an i7 CPU
+	print "-------------------------"
+	print "All tests done in %2.3f s" % (end-start) # takes ca 58 seconds on an i7 CPU
+	print "if we came this far without assertions or errors all is OK!"

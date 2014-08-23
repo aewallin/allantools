@@ -1,9 +1,9 @@
 allantools
 ==========
 
-A small Python library for calculating Allan deviation and related statistics.
+A small GPL v3+ Python library for calculating Allan deviation and related statistics.
 
-Also available on PyPi at https://pypi.python.org/pypi/AllanTools
+Developed here https://github.com/aewallin/allantools, but also available on PyPi at https://pypi.python.org/pypi/AllanTools
 
 Input data should be evenly spaced observations of either fractional frequency,
 or phase in seconds. Deviations are calculated for given tau values in seconds.
@@ -23,8 +23,8 @@ taus = [1,2,4,8,16] # tau-values in seconds
 (taus_used, adev, adeverror, adev_n) = allantools.adev_phase(phasedata, rate, taus)
 
 # notes:
-#  taus_used may differ from taus, if taus has a non-integer multiples of data_interval
-#  adeverror assumes 1/sqrt(adev_n) errors
+#  - taus_used may differ from taus, if taus has a non-integer multiples of data_interval
+#  - adeverror assumes 1/sqrt(adev_n) errors
 ```
 
 These statistics are currently included:
@@ -38,7 +38,12 @@ These statistics are currently included:
 * MTIE    Maximum time interval error
 * TIERMS  Time interval error RMS
 
-see /tests for tests that compare allantools output to other programs.
+To do:
+* Modified Total variance
+* Time Total (modified total variance scaled by (t^2/3) )
+* Hadamard Total
+
+see /tests for tests that compare allantools output to other (e.g. Stable32) programs.
 
 No profiling or optimization attempt was made. Patches that give speedups are welcome.
 Make sure your patch does not break any of the tests, and does not significantly reduce the readability of the code.

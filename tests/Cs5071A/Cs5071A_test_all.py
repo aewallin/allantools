@@ -1,10 +1,18 @@
-# phase in s for a 5071A Cs clock against a H-maser
-# 1PPS time-interval counter measurements
-# AW2014-02-07
-#
-# first datapoint          1391174210 2014-01-31 13:16:50 UTC 
-# last datapoint           1391731199 2014-02-06 23:59:59 UTC
-# 556990 datapoints in total
+"""
+  Test for allantools (https://github.com/aewallin/allantools)
+  Stable32 was used to calculate the deviations we compare against.
+
+  The 5071A_phase.txt is a dataset collected with a time-interval-counter
+  between 1 pulse-per-second outputs from a 5071A Cs clock against a H-maser
+ 
+  first datapoint          1391174210 2014-01-31 13:16:50 UTC 
+  last datapoint           1391731199 2014-02-06 23:59:59 UTC
+  556990 datapoints in total
+  
+  This test is quite slow, for a fater test see Cs5071A_test_decade.py
+  
+  AW2014-02-07
+"""
 
 import math
 import sys
@@ -80,7 +88,7 @@ def run():
 	
 	
 	end = time.clock()
-	print "Tests done in %2.3f s" % (end-start0) # 470s on i7 CPU (without mtie!)
+	print "Tests done in %2.3f s" % (end-start0) # total time 470s on i7 CPU (without mtie!)
 	
 if __name__ == "__main__":
 	run()

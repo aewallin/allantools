@@ -1,44 +1,21 @@
-#
-# Allan deviation tools
-# Anders Wallin (anders.e.e.wallin "at" gmail.com)
-# v1.0 2014 January
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+"""
+  NBS14 test for allantools (https://github.com/aewallin/allantools)
 
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  nbs14 datasets are from http://www.ieee-uffc.org/frequency-control/learning-riley.asp
+  
+  Stable32 was used to calculate the deviations we compare against.
 
+  The small dataset and deviations are from
+  http://www.ieee-uffc.org/frequency-control/learning-riley.asp
+  http://www.wriley.com/paper1ht.htm
+"""
 import math
 import time
 import sys
-#sys.path.append("../..") # hack to import from parent directory
-# remove if you have allantools installed in your python path
 
 import allantools as allan
 
-# This program tests allantools (https://github.com/aewallin/allantools)
-# with datasets that have known deviations.
-#
-# nbs14 datasets are from http://www.ieee-uffc.org/frequency-control/learning-riley.asp
-# PHASE.DAT dataset comes with Stable32, and Stable32 was used to calculate deviation
-# results in files such as phade_dat_adev.txt
-#
-# More datasets along with known deviations (or calculated with known-good programs) are welcome.
-#
-# results from allantools seem correct, they agree to within 4 to 6 digits of precision with other ADEV tools.
-#
 
-# small dataset and deviations from
-# http://www.ieee-uffc.org/frequency-control/learning-riley.asp
-# http://www.wriley.com/paper1ht.htm
 nbs14_phase = [ 0.00000, 103.11111, 123.22222, 157.33333, 166.44444, 48.55555,-96.33333,-2.22222, 111.88889, 0.00000 ]
 nbs14_f     = [892,809,823,798,671,644,883,903,677]
 nbs14_devs= [ (91.22945,115.8082),  # ADEV(tau=1,tau=2)
