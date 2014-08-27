@@ -94,6 +94,35 @@ def tdev_phase(phase, rate, taus):
     tde = [x / np.sqrt(n) for (x, n) in zip(td, ns)]
     return taus2, td, tde, ns
 
+def tdev_phase_np(phase, rate, taus):
+    """ Time deviation of phase data
+
+    Parameters
+    ----------
+    phase: np.array
+        Phase data
+    rate: float
+        The sampling rate, in Hz
+    taus: np.array
+        Array of tau values for which to compute allan variance
+
+    Returns
+    -------
+    (taus2, td, tde, ns): tuple
+        taus2: np.array
+            Tau values for which td computed
+        td: np.array
+            Computed time deviations for each tau value
+        tde: np.array
+            Time deviation errors
+        ns: np.array
+            Values of N used in mdev_phase()
+    """
+    (taus2, md, mde, ns) = mdev_phase_np(phase, rate, taus)
+
+    td = taus2 * md / np.sqrt(3.0)
+    tde = td / np.sqrt(ns)
+    return taus2, td, tde, ns
 
 def tdev(data, rate, taus):
     """ Time deviation of fractional frequency data
@@ -101,6 +130,11 @@ def tdev(data, rate, taus):
     phase = frequency2phase(data, rate)
     return tdev_phase(phase, rate, taus)
 
+def tdev_np(data, rate, taus):
+    """ Time deviation of fractional frequency data
+    http://en.wikipedia.org/wiki/Time_deviation """
+    phase = frequency2phase_np(data, rate)
+    return tdev_phase_np(phase, rate, taus)
 
 def mdev_phase(data, rate, taus):
     """# Modified Allan deviation of phase data
@@ -142,6 +176,58 @@ def mdev_phase(data, rate, taus):
         ns.append(n)
     return remove_small_ns(taus_used, md, mderr, ns)
 
+def mdev_phase_np(data, rate, taus):
+    """# Modified Allan deviation of phase data
+
+     1             N-3m+1     j+m-1
+     Mod s2y(t) = ------------------  sum      { sum   [x(i+2m) - 2x(i+m) + x(i) ]  }**2
+                  2m**2 t**2 (N-3m+1) j=1        i=j
+
+     see http://www.leapsecond.com/tools/adev_lib.c """
+    data, taus = np.array(data), np.array(taus)
+    (ms, taus_used) = tau_m_np(data, rate, taus)
+    # taus = []
+    md    = np.zeros_like(ms)
+    mderr = np.zeros_like(ms)
+    ns    = np.zeros_like(ms)
+
+    idx = 0
+    for m in ms:
+        s = 0
+        v = 0
+        n = 0
+        tau = taus_used[idx]
+        i = 0
+
+        # First loop sum
+        d0 = data[0:m]
+        d1 = data[m:2*m]
+        d2 = data[2*m:3*m]
+        v = np.sum(d2 - 2* d1 + d0)
+        s = v * v
+
+        # Second part of sum
+        d3 = data[3*m:]
+        d2 = data[2*m:]
+        d1 = data[1*m:]
+        d0 = data[0:]
+
+        e = min(len(d0), len(d1), len(d2), len(d3))
+        n = e + 1
+
+        v_arr = v + np.cumsum(d3[:e] - 3 * d2[:e] + 3 * d1[:e] - d0[:e])
+
+        s = s + np.sum(v_arr * v_arr)
+        s /= 2.0 * m * m * tau * tau * n
+        s = np.sqrt(s)
+
+        md[idx] = s
+        mderr[idx] = (s / np.sqrt(n))
+        ns[idx] = n
+
+        idx += 1
+
+    return remove_small_ns_np(taus_used, md, mderr, ns)
 
 def mdev(freqdata, rate, taus):
     """ # modified Allan deviation, fractional frequency data """
@@ -149,7 +235,7 @@ def mdev(freqdata, rate, taus):
     return mdev_phase(phase, rate, taus)
 
 
-def tau_m(data, rate, taus):
+def tau_m(data, rate, taus, v=False):
     """ pre-processing of the tau-list given by the user """
     if rate == 0:
         print "Warning! rate==0"
@@ -163,13 +249,38 @@ def tau_m(data, rate, taus):
                 m.append(mvalue)  # m is tau in units of datapoints
     m = list(set(m))  # this removes duplicates
     m.sort()  # sort from small tau to large tau
-    print "tau_m: ", m
+    if v:
+        print "tau_m: ", m
     if len(m) == 0:
         print "Warning: sanity-check on tau failed!"
         print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
     taus2 = [x / float(rate) for x in m]
     return m, taus2
 
+def tau_m_np(data, rate, taus, v=False):
+    """ pre-processing of the tau-list given by the user """
+    data, taus = np.array(data), np.array(taus)
+
+    if rate == 0:
+        raise RuntimeError("Warning! rate==0")
+    rate = float(rate)
+    # n = len(data) # not used
+    m = []
+    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
+    taus_valid2 = taus > 0
+    taus_valid  = taus_valid1 & taus_valid2
+    m = np.floor(taus[taus_valid] * rate)
+    m = m[m != 0]       # m is tau in units of datapoints
+    m = np.unique(m)    # remove duplicates and sort
+
+    if v:
+        print "tau_m: ", m
+    if len(m) == 0:
+        print "Warning: sanity-check on tau failed!"
+        print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
+
+    taus2 = m / float(rate)
+    return m, taus2
 
 def adev(data, rate, taus):
     """Allan deviation
@@ -226,6 +337,17 @@ def remove_small_ns(taus, devs, deverrs, ns):
             o_n.append(n)
     return o_taus, o_dev, o_err, o_n
 
+def remove_small_ns_np(taus, devs, deverrs, ns):
+    """ if n is small (==1), reject the result """
+
+    ns_big_enough = ns > 1
+
+    o_taus = taus[ns_big_enough]
+    o_dev  = devs[ns_big_enough]
+    o_err  = deverrs[ns_big_enough]
+    o_n    = ns[ns_big_enough]
+
+    return o_taus, o_dev, o_err, o_n
 
 def oadev_phase(data, rate, taus):
     """ overlapping Allan deviation of phase data """
@@ -263,6 +385,13 @@ def frequency2phase(freqdata, rate):
         else:
             phase[i] = phase[i - 1] + freqdata[i - 1] * dt
     return phase
+
+def frequency2phase_np(freqdata, rate):
+    """ integrate fractional frequency data and output phase data """
+    dt = 1.0 / float(rate)
+    phasedata = np.cumsum(freqdata) * dt
+    phasedata = np.insert(phasedata, 0, 0)
+    return phasedata
 
 
 def ohdev(freqdata, rate, taus):
