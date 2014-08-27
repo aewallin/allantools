@@ -63,15 +63,35 @@ Output (tau_out, adev, adeverr, n)
     n       = list of number of pairs in allan computation. standard error is adeverr = adev/sqrt(n)
 """
 
-import math
-import numpy
-
+import numpy as np
 
 def tdev_phase(phase, rate, taus):
-    """ Time deviation of phase data """
+    """ Time deviation of phase data
+
+    Parameters
+    ----------
+    phase: list
+        Phase data
+    rate: float
+        The sampling rate, in Hz
+    taus: list
+        Array of tau values for which to compute allan variance
+
+    Returns
+    -------
+    (taus2, td, tde, ns): tuple
+        taus2: list
+            Tau values for which td computed
+        td: list
+            Computed time deviations for each tau value
+        tde: list
+            Time deviation errors
+        ns: list
+            Values of N used in mdev_phase()
+    """
     (taus2, md, mde, ns) = mdev_phase(phase, rate, taus)
-    td = [t * m / math.sqrt(3.0) for (t, m) in zip(taus2, md)]
-    tde = [x / math.sqrt(n) for (x, n) in zip(td, ns)]
+    td = [t * m / np.sqrt(3.0) for (t, m) in zip(taus2, md)]
+    tde = [x / np.sqrt(n) for (x, n) in zip(td, ns)]
     return taus2, td, tde, ns
 
 
@@ -116,9 +136,9 @@ def mdev_phase(data, rate, taus):
             i += 1
         s /= float(2.0 * m * m * tau * tau * n)
         # assert( n == len(data)-3*m+1 ) # n is the normalization (N-3m+1) before the sums
-        s = math.sqrt(s)
+        s = np.sqrt(s)
         md.append(s)
-        mderr.append(s / math.sqrt(n))
+        mderr.append(s / np.sqrt(n))
         ns.append(n)
     return remove_small_ns(taus_used, md, mderr, ns)
 
@@ -138,7 +158,7 @@ def tau_m(data, rate, taus):
     m = []
     for tau in taus:
         if 0 < tau < (1 / float(rate)) * float(len(data)):  # tau should be in [0, len(data)/rate]
-            mvalue = int(math.floor(float(tau * rate)))
+            mvalue = int(np.floor(float(tau * rate)))
             if mvalue != 0:
                 m.append(mvalue)  # m is tau in units of datapoints
     m = list(set(m))  # this removes duplicates
@@ -187,8 +207,8 @@ def calc_adev_phase(data, rate, mj, stride):
     dev = 0
     deverr = 0
     if not n == 0:
-        dev = math.sqrt(s / float(n)) / float(mj * (1 / float(rate)))
-        deverr = dev / math.sqrt(n)
+        dev = np.sqrt(s / float(n)) / float(mj * (1 / float(rate)))
+        deverr = dev / np.sqrt(n)
     return dev, deverr, n
 
 
@@ -303,8 +323,8 @@ def hdev_phase_calc(data, rate, mj, stride):
 
     if n == 0:
         n = 1
-    h = math.sqrt(s / float(n)) / float(tau0 * mj)
-    e = h / math.sqrt(n)
+    h = np.sqrt(s / float(n)) / float(tau0 * mj)
+    e = h / np.sqrt(n)
     return h, e, n
 
 
@@ -364,9 +384,9 @@ def totdev_phase(data, rate, taus):
             dev += pow(x[i - mj] - 2 * x[i] + x[i + mj], 2)
             ncount += 1
         dev /= float(2 * pow(mj / rate, 2) * (n - 2))
-        dev = math.sqrt(dev)
+        dev = np.sqrt(dev)
         devs.append(dev)
-        deverrs.append(dev / math.sqrt(ncount))
+        deverrs.append(dev / np.sqrt(ncount))
         ns.append(ncount)
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
@@ -429,7 +449,7 @@ def mtie_phase(phase, rate, taus):
             ncount += 1
 
         devs.append(dev)
-        deverrs.append(dev / math.sqrt(ncount))
+        deverrs.append(dev / np.sqrt(ncount))
         ns.append(ncount)
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
@@ -458,10 +478,10 @@ def tierms_phase(phase, rate, taus):
             ncount += 1
         # RMS of tie vector
         tie = [pow(x, 2) for x in tie]  # square
-        tie = numpy.mean(tie)  # mean
-        tie = math.sqrt(tie)  # root
+        tie = np.mean(tie)  # mean
+        tie = np.sqrt(tie)  # root
         devs.append(tie)
-        deverrs.append(dev / math.sqrt(ncount))
+        deverrs.append(dev / np.sqrt(ncount))
         ns.append(ncount)
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
@@ -488,7 +508,7 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
     dev_a = []
     for va in var_a:
         try:
-            dev_a.append(math.sqrt(va))
+            dev_a.append(np.sqrt(va))
         except:
             dev_a.append(0)
     return tau_ab, dev_a
