@@ -712,6 +712,74 @@ def totdev_phase_np(data, rate, taus):
 
     return remove_small_ns_np(taus_used, devs, deverrs, ns)
 
+
+def tierms(freqdata, rate, taus):
+    phasedata = frequency2phase(freqdata, rate)
+    return tierms_phase(phasedata, rate, taus)
+
+def tierms_np(freqdata, rate, taus):
+    phasedata = frequency2phase_np(freqdata, rate)
+    return tierms_phase_np(phasedata, rate, taus)
+
+def tierms_phase(phase, rate, taus):
+    """ TIE rms """
+    rate = float(rate)
+    (m, taus_used) = tau_m(phase, rate, taus)
+    count = len(phase)
+    devs = []
+    deverrs = []
+    ns = []
+    for mj in m:
+        dev = 0
+        ncount = 0
+        tie = []
+        for i in range(count - mj):
+            phases = [phase[i], phase[i + mj]]  # pair of phases at distance mj from eachother
+            tie.append(max(phases) - min(phases))  # phase error
+            ncount += 1
+        # RMS of tie vector
+        tie = [pow(x, 2) for x in tie]  # square
+        tie = np.mean(tie)  # mean
+        tie = np.sqrt(tie)  # root
+        devs.append(tie)
+        deverrs.append(dev / np.sqrt(ncount))
+        ns.append(ncount)
+
+    return remove_small_ns(taus_used, devs, deverrs, ns)
+
+def tierms_phase_np(phase, rate, taus):
+    """ TIE rms """
+    rate = float(rate)
+    (m, taus_used) = tau_m_np(phase, rate, taus)
+
+    count = len(phase)
+
+    devs = np.zeros_like(taus_used)
+    deverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+
+    idx = 0
+    for mj in m:
+        mj = int(mj)
+
+        # This seems like an unusual way to
+        phases = np.column_stack((phase[:-mj], phase[mj:]))
+        p_max = np.max(phases, axis=1)
+        p_min = np.min(phases, axis=1)
+        phases = p_max - p_min
+        tie = np.sqrt(np.mean(phases * phases))
+
+        ncount = count - mj
+
+        devs[idx] = tie
+        deverrs[idx] = 0 / np.sqrt(ncount) # TODO! I THINK THIS IS WRONG!
+        ns[idx] = ncount
+
+        idx += 1
+
+    return remove_small_ns_np(taus_used, devs, deverrs, ns)
+
+
 def mtie(freqdata, rate, taus):
     phasedata = frequency2phase(freqdata, rate)
     return mtie_phase(phasedata, rate, taus)
@@ -774,39 +842,6 @@ def mtie_phase(phase, rate, taus):
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
-
-def tierms(freqdata, rate, taus):
-    phasedata = frequency2phase(freqdata, rate)
-    return tierms_phase(phasedata, rate, taus)
-
-
-def tierms_phase(phase, rate, taus):
-    """ TIE rms """
-    rate = float(rate)
-    (m, taus_used) = tau_m(phase, rate, taus)
-    count = len(phase)
-    devs = []
-    deverrs = []
-    ns = []
-    for mj in m:
-        dev = 0
-        ncount = 0
-        tie = []
-        for i in range(count - mj):
-            phases = [phase[i], phase[i + mj]]  # pair of phases at distance mj from eachother
-            tie.append(max(phases) - min(phases))  # phase error
-            ncount += 1
-        # RMS of tie vector
-        tie = [pow(x, 2) for x in tie]  # square
-        tie = np.mean(tie)  # mean
-        tie = np.sqrt(tie)  # root
-        devs.append(tie)
-        deverrs.append(dev / np.sqrt(ncount))
-        ns.append(ncount)
-
-    return remove_small_ns(taus_used, devs, deverrs, ns)
-
-
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, taus, function):
     """ Three Cornered Hat Method
 
@@ -832,7 +867,6 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
         except:
             dev_a.append(0)
     return tau_ab, dev_a
-
 
 if __name__ == "__main__":
     print "Nothing to see here."
