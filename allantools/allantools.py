@@ -460,6 +460,10 @@ def ohdev(freqdata, rate, taus):
     phase = frequency2phase(freqdata, rate)
     return ohdev_phase(phase, rate, taus)
 
+def ohdev_np(freqdata, rate, taus):
+    """ Overlapping Hadamard deviation """
+    phase = frequency2phase_np(freqdata, rate)
+    return ohdev_phase_np(phase, rate, taus)
 
 def ohdev_phase(data, rate, taus):
     """ Overlapping Hadamard deviation of phase data """
@@ -475,6 +479,22 @@ def ohdev_phase(data, rate, taus):
         ns.append(n)
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
+def ohdev_phase_np(data, rate, taus):
+    """ Overlapping Hadamard deviation of phase data """
+    rate = float(rate)
+    (m, taus_used) = tau_m_np(data, rate, taus)
+    hdevs = np.zeros_like(taus_used)
+    hdeverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+    idx = 0
+
+    for mj in m:
+        (h, e, n) = hdev_phase_calc_np(data, rate, mj, 1)  # stride = 1
+        hdevs[idx] = h
+        hdeverrs[idx] = e
+        ns[idx] = n
+        idx += 1
+    return remove_small_ns_np(taus_used, hdevs, hdeverrs, ns)
 
 def hdev(freqdata, rate, taus):
     """ Hadamard deviation """

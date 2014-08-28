@@ -23,6 +23,80 @@ import time
 if __name__ == "__main__":
 
     #######################
+    # OHDEV()
+    #######################
+    print "\ntesting ohdev()"
+    data = np.random.random(10000)
+    taus = [1, 3, 5, 16, 128]
+    rates = [1, 20, 10.7]
+    strides = [1, 10, 7]
+
+    for rate in rates:
+        for stride in strides:
+            #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
+            o_taus, o_dev, o_err, o_n = alt.ohdev(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alt.ohdev_np(data, rate, taus)
+
+            assert np.allclose(o_taus, o_taus_)
+            assert np.allclose(o_dev, o_dev_)
+            assert np.allclose(o_err, o_err_)
+
+    stride = 1
+    tau = 16
+    rate = 2.1
+    data = np.random.random(100000)
+    t1 = time.time()
+    o_taus, o_dev, o_err, o_n = alt.ohdev(data, rate, taus)
+    t2 = time.time()
+    t3 = time.time()
+    o_taus_, o_dev_, o_err_, o_n_ = alt.ohdev_np(data, rate, taus)
+    t4 = time.time()
+
+    assert np.allclose(o_taus, o_taus_)
+    assert np.allclose(o_dev, o_dev_)
+    assert np.allclose(o_err, o_err_)
+    print "Original: %2.3fs" % (t2 - t1)
+    print "New:      %2.3fs" % (t4 - t3)
+    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+
+    #######################
+    # OHDEV_PHASE()
+    #######################
+    print "\ntesting ohdev_phase()"
+    data = np.random.random(10000)
+    taus = [1, 3, 5, 16, 128]
+    rates = [1, 20, 10.7]
+    strides = [1, 10, 7]
+
+    for rate in rates:
+        for stride in strides:
+            #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
+            o_taus, o_dev, o_err, o_n = alt.ohdev_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alt.ohdev_phase_np(data, rate, taus)
+
+            assert np.allclose(o_taus, o_taus_)
+            assert np.allclose(o_dev, o_dev_)
+            assert np.allclose(o_err, o_err_)
+
+    stride = 1
+    tau = 16
+    rate = 2.1
+    data = np.random.random(100000)
+    t1 = time.time()
+    o_taus, o_dev, o_err, o_n = alt.ohdev_phase(data, rate, taus)
+    t2 = time.time()
+    t3 = time.time()
+    o_taus_, o_dev_, o_err_, o_n_ = alt.ohdev_phase_np(data, rate, taus)
+    t4 = time.time()
+
+    assert np.allclose(o_taus, o_taus_)
+    assert np.allclose(o_dev, o_dev_)
+    assert np.allclose(o_err, o_err_)
+    print "Original: %2.3fs" % (t2 - t1)
+    print "New:      %2.3fs" % (t4 - t3)
+    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+
+    #######################
     # HDEV_PHASE_CALC()
     #######################
     print "\ntesting hdev_phase_calc()"
@@ -60,6 +134,43 @@ if __name__ == "__main__":
     print "New:      %2.3fs" % (t4 - t3)
     print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
 
+
+    #######################
+    # OADEV_PHASE()
+    #######################
+    print "\ntesting oadev_phase()"
+    data = np.random.random(10000)
+    taus = [1, 3, 5, 16, 128]
+    rates = [1, 20, 10.7]
+    strides = [1, 10, 7]
+
+    for rate in rates:
+        for stride in strides:
+            #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
+            o_taus, o_dev, o_err, o_n = alt.oadev_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alt.oadev_phase_np(data, rate, taus)
+
+            assert np.allclose(o_taus, o_taus_)
+            assert np.allclose(o_dev, o_dev_)
+            assert np.allclose(o_err, o_err_)
+
+    stride = 1
+    tau = 16
+    rate = 2.1
+    data = np.random.random(100000)
+    t1 = time.time()
+    o_taus, o_dev, o_err, o_n = alt.oadev_phase(data, rate, taus)
+    t2 = time.time()
+    t3 = time.time()
+    o_taus_, o_dev_, o_err_, o_n_ = alt.oadev_phase_np(data, rate, taus)
+    t4 = time.time()
+
+    assert np.allclose(o_taus, o_taus_)
+    assert np.allclose(o_dev, o_dev_)
+    assert np.allclose(o_err, o_err_)
+    print "Original: %2.3fs" % (t2 - t1)
+    print "New:      %2.3fs" % (t4 - t3)
+    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
 
     #######################
     # HDEV_PHASE()
