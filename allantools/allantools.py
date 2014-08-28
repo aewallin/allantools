@@ -481,6 +481,10 @@ def hdev(freqdata, rate, taus):
     phase = frequency2phase(freqdata, rate)
     return hdev_phase(phase, rate, taus)
 
+def hdev_np(freqdata, rate, taus):
+    """ Hadamard deviation """
+    phase = frequency2phase_np(freqdata, rate)
+    return hdev_phase_np(phase, rate, taus)
 
 def hdev_phase(data, rate, taus):
     """ Hadamard deviation of phase data """
@@ -497,6 +501,23 @@ def hdev_phase(data, rate, taus):
 
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
+def hdev_phase_np(data, rate, taus):
+    """ Hadamard deviation of phase data """
+    rate = float(rate)
+    (m, taus_used) = tau_m_np(data, rate, taus)
+    hdevs = np.zeros_like(taus_used)
+    hdeverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+
+    idx = 0
+    for mj in m:
+        h, e, n = hdev_phase_calc_np(data, rate, mj, mj)  # stride = mj
+        hdevs[idx] = h
+        hdeverrs[idx] = e
+        ns[idx] = n
+        idx += 1
+
+    return remove_small_ns_np(taus_used, hdevs, hdeverrs, ns)
 
 def hdev_phase_calc(data, rate, mj, stride):
     """ http://www.leapsecond.com/tools/adev_lib.c """
@@ -504,16 +525,41 @@ def hdev_phase_calc(data, rate, mj, stride):
     n = 0
     i = 0
     tau0 = 1 / float(rate)
+
     while (i + 3 * mj) < len(data):
         v = data[i + 3 * mj] - 3 * data[i + 2 * mj] + 3 * data[i + mj] - data[i]
         s += v * v
         n += 1
         i = i + stride
+
     s /= 6.0
 
     if n == 0:
         n = 1
     h = np.sqrt(s / float(n)) / float(tau0 * mj)
+    e = h / np.sqrt(n)
+    return h, e, n
+
+def hdev_phase_calc_np(data, rate, mj, stride):
+    """ http://www.leapsecond.com/tools/adev_lib.c """
+
+    tau0 = 1.0 / float(rate)
+
+    d3 = data[3 * mj::stride]
+    d2 = data[2 * mj::stride]
+    d1 = data[1 * mj::stride]
+    d0 = data[::stride]
+
+    n = min(len(d0), len(d1), len(d2), len(d3))
+
+    v_arr = d3[:n] - 3 * d2[:n] + 3 * d1[:n] - d0[:n]
+
+    s = np.sum(v_arr * v_arr)
+
+    if n == 0:
+        n = 1
+
+    h = np.sqrt(s / 6.0 / float(n)) / float(tau0 * mj)
     e = h / np.sqrt(n)
     return h, e, n
 
