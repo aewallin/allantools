@@ -193,11 +193,7 @@ def mdev_phase_np(data, rate, taus):
 
     idx = 0
     for m in ms:
-        s = 0
-        v = 0
-        n = 0
         tau = taus_used[idx]
-        i = 0
 
         # First loop sum
         d0 = data[0:m]
@@ -234,6 +230,10 @@ def mdev(freqdata, rate, taus):
     phase = frequency2phase(freqdata, rate)
     return mdev_phase(phase, rate, taus)
 
+def mdev_np(freqdata, rate, taus):
+    """ # modified Allan deviation, fractional frequency data """
+    phase = frequency2phase_np(freqdata, rate)
+    return mdev_phase_np(phase, rate, taus)
 
 def tau_m(data, rate, taus, v=False):
     """ pre-processing of the tau-list given by the user """
@@ -290,6 +290,14 @@ def adev(data, rate, taus):
     phase = frequency2phase(data, rate)
     return adev_phase(phase, rate, taus)
 
+def adev_np(data, rate, taus):
+    """Allan deviation
+    data is a time-series of fractional frequency
+    rate is the samples/s in the time-series
+    taus is a list of tau-values for which we compute ADEV """
+    phase = frequency2phase_np(data, rate)
+    return adev_phase_np(phase, rate, taus)
+
 
 def adev_phase(data, rate, taus):
     (m, taus_used) = tau_m(data, rate, taus)
@@ -303,6 +311,22 @@ def adev_phase(data, rate, taus):
         adn.append(n)
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
+def adev_phase_np(data, rate, taus):
+    (m, taus_used) = tau_m_np(data, rate, taus)
+
+    ad  = np.zeros_like(taus_used)
+    ade = np.zeros_like(taus_used)
+    adn = np.zeros_like(taus_used)
+    idx = 0
+
+    for mj in m:  # loop through each tau value m(j)
+        (dev, deverr, n) = calc_adev_phase_np(data, rate, mj, mj)
+        ad[idx] = dev
+        ade[idx] = deverr
+        adn[idx] = n
+        idx += 1
+
+    return remove_small_ns_np(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
 def calc_adev_phase(data, rate, mj, stride):
     s = 0
@@ -322,6 +346,23 @@ def calc_adev_phase(data, rate, mj, stride):
         deverr = dev / np.sqrt(n)
     return dev, deverr, n
 
+def calc_adev_phase_np(data, rate, mj, stride):
+
+    d2 = data[2 * mj::stride]
+    d1 = data[1 * mj::stride]
+    d0 = data[::stride]
+
+    n = min(len(d0), len(d1), len(d2))
+
+    if n == 0:
+        raise RuntimeError("Data array length is too small: %i" % len(data))
+
+    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
+    s = np.sum(v_arr * v_arr)
+
+    dev = np.sqrt(s / (2.0 * n)) / mj  * rate
+    deverr = dev / np.sqrt(n)
+    return dev, deverr, n
 
 def remove_small_ns(taus, devs, deverrs, ns):
     """ if n is small (==1), reject the result """
@@ -362,12 +403,32 @@ def oadev_phase(data, rate, taus):
         adn.append(n)
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
+def oadev_phase_np(data, rate, taus):
+    """ overlapping Allan deviation of phase data """
+    (m, taus_used) = tau_m_np(data, rate, taus)
+    ad  = np.zeros_like(taus_used)
+    ade = np.zeros_like(taus_used)
+    adn = np.zeros_like(taus_used)
+    idx = 0
+
+    for mj in m:
+        (dev, deverr, n) = calc_adev_phase_np(data, rate, mj, 1)  # stride=1 for overlapping ADEV
+        ad[idx]  = dev
+        ade[idx] = deverr
+        adn[idx] = n
+        idx += 1
+
+    return remove_small_ns_np(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
 def oadev(freqdata, rate, taus):
     """ overlapping Allan deviation """
     phase = frequency2phase(freqdata, rate)
     return oadev_phase(phase, rate, taus)
 
+def oadev_np(freqdata, rate, taus):
+    """ overlapping Allan deviation """
+    phase = frequency2phase_np(freqdata, rate)
+    return oadev_phase_np(phase, rate, taus)
 
 # this function is never used!?
 # def phase2frequency( phasedata, rate):
