@@ -473,7 +473,7 @@ def ohdev_phase(data, rate, taus):
     hdeverrs = []
     ns = []
     for mj in m:
-        (h, e, n) = hdev_phase_calc(data, rate, mj, 1)  # stride = 1
+        (h, e, n) = calc_hdev_phase(data, rate, mj, 1)  # stride = 1
         hdevs.append(h)
         hdeverrs.append(e)
         ns.append(n)
@@ -489,7 +489,7 @@ def ohdev_phase_np(data, rate, taus):
     idx = 0
 
     for mj in m:
-        (h, e, n) = hdev_phase_calc_np(data, rate, mj, 1)  # stride = 1
+        (h, e, n) = calc_hdev_phase_np(data, rate, mj, 1)  # stride = 1
         hdevs[idx] = h
         hdeverrs[idx] = e
         ns[idx] = n
@@ -514,7 +514,7 @@ def hdev_phase(data, rate, taus):
     hdeverrs = []
     ns = []
     for mj in m:
-        h, e, n = hdev_phase_calc(data, rate, mj, mj)  # stride = mj
+        h, e, n = calc_hdev_phase(data, rate, mj, mj)  # stride = mj
         hdevs.append(h)
         hdeverrs.append(e)
         ns.append(n)
@@ -531,7 +531,7 @@ def hdev_phase_np(data, rate, taus):
 
     idx = 0
     for mj in m:
-        h, e, n = hdev_phase_calc_np(data, rate, mj, mj)  # stride = mj
+        h, e, n = calc_hdev_phase_np(data, rate, mj, mj)  # stride = mj
         hdevs[idx] = h
         hdeverrs[idx] = e
         ns[idx] = n
@@ -539,7 +539,7 @@ def hdev_phase_np(data, rate, taus):
 
     return remove_small_ns_np(taus_used, hdevs, hdeverrs, ns)
 
-def hdev_phase_calc(data, rate, mj, stride):
+def calc_hdev_phase(data, rate, mj, stride):
     """ http://www.leapsecond.com/tools/adev_lib.c """
     s = 0
     n = 0
@@ -560,7 +560,7 @@ def hdev_phase_calc(data, rate, mj, stride):
     e = h / np.sqrt(n)
     return h, e, n
 
-def hdev_phase_calc_np(data, rate, mj, stride):
+def calc_hdev_phase_np(data, rate, mj, stride):
     """ http://www.leapsecond.com/tools/adev_lib.c """
 
     tau0 = 1.0 / float(rate)
@@ -587,6 +587,11 @@ def hdev_phase_calc_np(data, rate, mj, stride):
 def totdev(freqdata, rate, taus):
     phasedata = frequency2phase(freqdata, rate)
     return totdev_phase(phasedata, rate, taus)
+
+
+def totdev_np(freqdata, rate, taus):
+    phasedata = frequency2phase_np(freqdata, rate)
+    return totdev_phase_np(phasedata, rate, taus)
 
 
 def totdev_phase(data, rate, taus):
@@ -647,6 +652,65 @@ def totdev_phase(data, rate, taus):
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
+def totdev_phase_np(data, rate, taus):
+    """
+    See:
+    David A. Howe,
+    The total deviation approach to long-term characterization
+    of frequency stability,
+    IEEE tr. UFFC vol 47 no 5 (2000)
+
+                     1         N-1
+    totvar(t) = ------------  sum   [ x*(i-m) - 2x*(i)+x*(i+m) ]**2
+                2 t**2 (N-2)  i=2
+    where x* is a new dataset with 'reflected' data at start/end """
+
+    rate = float(rate)
+    (m, taus_used) = tau_m_np(data, rate, taus)
+    n = len(data)
+
+    # totdev requires a new dataset
+    # Begin bu adding reflected data before dataset
+    x1 = 2.0 * data[0] * np.ones((n - 2,))
+    x1 = x1 - data[1:-1]
+    x1 = x1[::-1]
+
+    # Reflected data at end of dataset
+    x2 = 2.0 * data[-1] * np.ones((n - 2,))
+    x2 = x2 - data[1:-1][::-1]
+
+    # Combine into a single array
+    x = np.zeros((3*n - 4))
+    x[0:n-2] = x1
+    x[n-2:2*(n-2)+2] = data
+    x[2*(n-2)+2:] = x2
+
+    devs = np.zeros_like(taus_used)
+    deverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+
+    mid = len(x1)
+
+    idx = 0
+    for mj in m:
+
+        d0 = x[mid + 1:]
+        d1 = x[mid  + mj + 1:]
+        d1n = x[mid - mj + 1:]
+        e = min(len(d0), len(d1), len(d1n))
+
+        v_arr = d1n[:e] - 2.0 * d0[:e] + d1[:e]
+        dev = np.sum(v_arr[:mid] * v_arr[:mid])
+
+        dev /= float(2 * pow(mj / rate, 2) * (n - 2))
+        dev = np.sqrt(dev)
+        devs[idx] = dev
+        deverrs[idx] = dev / np.sqrt(mid)
+        ns[idx] = mid
+
+        idx += 1
+
+    return remove_small_ns_np(taus_used, devs, deverrs, ns)
 
 def mtie(freqdata, rate, taus):
     phasedata = frequency2phase(freqdata, rate)

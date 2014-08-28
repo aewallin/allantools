@@ -23,6 +23,80 @@ import time
 if __name__ == "__main__":
 
     #######################
+    # TOTDEV_PHASE()
+    #######################
+    print "\ntesting totdev_phase()"
+    data = np.random.random(1000)
+    taus = [1, 3, 5, 16, 128]
+    rates = [1, 20, 10.7]
+    strides = [1, 10, 7]
+
+    for rate in rates:
+        for stride in strides:
+            #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
+            o_taus, o_dev, o_err, o_n = alt.totdev_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alt.totdev_phase_np(data, rate, taus)
+
+            assert np.allclose(o_taus, o_taus_)
+            assert np.allclose(o_dev, o_dev_)
+            assert np.allclose(o_err, o_err_)
+
+    stride = 1
+    tau = 16
+    rate = 2.1
+    data = np.random.random(100000)
+    t1 = time.time()
+    o_taus, o_dev, o_err, o_n = alt.totdev_phase(data, rate, taus)
+    t2 = time.time()
+    t3 = time.time()
+    o_taus_, o_dev_, o_err_, o_n_ = alt.totdev_phase_np(data, rate, taus)
+    t4 = time.time()
+
+    assert np.allclose(o_taus, o_taus_)
+    assert np.allclose(o_dev, o_dev_)
+    assert np.allclose(o_err, o_err_)
+    print "Original: %2.3fs" % (t2 - t1)
+    print "New:      %2.3fs" % (t4 - t3)
+    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+
+    #######################
+    # TOTDEV()
+    #######################
+    print "\ntesting totdev()"
+    data = np.random.random(1000)
+    taus = [1, 3, 5, 16, 128]
+    rates = [1, 20, 10.7]
+    strides = [1, 10, 7]
+
+    for rate in rates:
+        for stride in strides:
+            #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
+            o_taus, o_dev, o_err, o_n = alt.totdev(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alt.totdev_np(data, rate, taus)
+
+            assert np.allclose(o_taus, o_taus_)
+            assert np.allclose(o_dev, o_dev_)
+            assert np.allclose(o_err, o_err_)
+
+    stride = 1
+    tau = 16
+    rate = 2.1
+    data = np.random.random(100000)
+    t1 = time.time()
+    o_taus, o_dev, o_err, o_n = alt.totdev(data, rate, taus)
+    t2 = time.time()
+    t3 = time.time()
+    o_taus_, o_dev_, o_err_, o_n_ = alt.totdev_np(data, rate, taus)
+    t4 = time.time()
+
+    assert np.allclose(o_taus, o_taus_)
+    assert np.allclose(o_dev, o_dev_)
+    assert np.allclose(o_err, o_err_)
+    print "Original: %2.3fs" % (t2 - t1)
+    print "New:      %2.3fs" % (t4 - t3)
+    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+
+    #######################
     # OHDEV()
     #######################
     print "\ntesting ohdev()"
@@ -110,8 +184,8 @@ if __name__ == "__main__":
             for stride in strides:
                 #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
                 mj = tau
-                dev, deverr, n = alt.hdev_phase_calc(data, rate, mj, stride)
-                dev_, deverr_, n_ = alt.hdev_phase_calc_np(data, rate, mj, stride)
+                dev, deverr, n = alt.calc_hdev_phase(data, rate, mj, stride)
+                dev_, deverr_, n_ = alt.calc_hdev_phase_np(data, rate, mj, stride)
 
                 assert np.isclose(dev, dev_)
                 assert np.isclose(n, n_)
@@ -121,10 +195,10 @@ if __name__ == "__main__":
     tau = 16
     rate = 2.0
     t1 = time.time()
-    dev, deverr, n = alt.hdev_phase_calc(data, rate, mj, stride)
+    dev, deverr, n = alt.calc_hdev_phase(data, rate, mj, stride)
     t2 = time.time()
     t3 = time.time()
-    dev_, deverr_, n_ = alt.hdev_phase_calc_np(data, rate, mj, stride)
+    dev_, deverr_, n_ = alt.calc_hdev_phase_np(data, rate, mj, stride)
     t4 = time.time()
 
     assert np.isclose(dev, dev_)
