@@ -868,6 +868,30 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
             dev_a.append(0)
     return tau_ab, dev_a
 
+def three_cornered_hat_phase_np(phasedata_ab, phasedata_bc, phasedata_ca, rate, taus, function):
+    """ Three Cornered Hat Method
+
+    Three clocks with unknown variances sa^2, sb^2, sc^3
+    Three pairwise measurements give variances:
+    sab^2, sbc^2, sca^2
+    Assuming covariances are zero, we get:
+    sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
+    (and cyclic permutations for sb and sc) """
+
+    (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab, rate, taus)
+    (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc, rate, taus)
+    (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca, rate, taus)
+    var_ab = dev_ab * dev_ab
+    var_bc = dev_bc * dev_bc
+    var_ca = dev_ca * dev_ca
+    assert len(var_ab) == len(var_bc) == len(var_ca)
+    var_a = 0.5 * (var_ab + var_ca - var_bc)
+
+    dev_a = np.sqrt(var_a)
+    dev_a[var_a < 0] = 0
+
+    return tau_ab, dev_a
+
 if __name__ == "__main__":
     print "Nothing to see here."
 

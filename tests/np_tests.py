@@ -22,6 +22,35 @@ import time
 
 if __name__ == "__main__":
 
+
+    #######################
+    # THREE_CORNERED_HAT_PHASE()
+    #######################
+    print "\ntesting three_cornered_hat_phase()"
+
+    stride = 1
+    taus = [2, 4, 8, 16]
+    rate = 2.1
+    pdata_ab = np.random.random(100000)
+    pdata_bc = np.random.random(100000)
+    pdata_ca = np.random.random(100000)
+
+    t1 = time.time()
+    function = alt.adev
+    tau, dev_a = alt.three_cornered_hat_phase(pdata_ab, pdata_bc, pdata_ca, rate, taus, function)
+    t2 = time.time()
+    t3 = time.time()
+    function = alt.adev_np
+    tau_, dev_a_ = alt.three_cornered_hat_phase_np(pdata_ab, pdata_bc, pdata_ca, rate, taus, function)
+    t4 = time.time()
+
+    assert np.allclose(tau, tau_)
+    assert np.allclose(dev_a, dev_a_)
+    print "Original: %2.3fs" % (t2 - t1)
+    print "New:      %2.3fs" % (t4 - t3)
+    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    exit()
+
     #######################
     # TIERMS_PHASE()
     #######################
