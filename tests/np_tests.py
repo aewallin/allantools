@@ -16,13 +16,52 @@ Migration from lists to numpy arrays - test routines
 
 import numpy as np
 import pylab as plt
-import allantools.allantools as alt
-import allantools.np_allantools as alp
+import allantools.allantools_pure_python as alt
+import allantools.allantools as alp
 import time
 
 
 if __name__ == "__main__":
 
+
+    #######################
+    # MTIE_PHASE()
+    #######################
+    print "\ntesting mtie_phase()"
+    data = np.random.random(1000)
+    taus = [1, 3, 5, 16, 128]
+    rates = [1, 20, 10.7]
+    strides = [1, 10, 7]
+
+    for rate in rates:
+        for stride in strides:
+            #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
+            o_taus, o_dev, o_err, o_n = alt.mtie_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.mtie_phase(data, rate, taus)
+
+            assert np.allclose(o_taus, o_taus_)
+            assert np.allclose(o_dev, o_dev_)
+            assert np.allclose(o_err, o_err_)
+
+    stride = 1
+    tau = 128000
+    rate = 2.1
+    data = np.random.random(1000000)
+    t1 = time.time()
+    o_taus, o_dev, o_err, o_n = alt.mtie_phase(data, rate, taus)
+    t2 = time.time()
+    t3 = time.time()
+    o_taus_, o_dev_, o_err_, o_n_ = alp.mtie_phase(data, rate, taus)
+    t4 = time.time()
+
+    assert np.allclose(o_taus, o_taus_)
+    assert np.allclose(o_dev, o_dev_)
+    assert np.allclose(o_err, o_err_)
+    print "Original: %2.3fs" % (t2 - t1)
+    print "New:      %2.3fs" % (t4 - t3)
+    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+
+    exit()
 
     #######################
     # THREE_CORNERED_HAT_PHASE()
@@ -42,7 +81,7 @@ if __name__ == "__main__":
     t2 = time.time()
     t3 = time.time()
     function = alp.adev
-    tau_, dev_a_ = alt.three_cornered_hat_phase(pdata_ab, pdata_bc, pdata_ca, rate, taus, function)
+    tau_, dev_a_ = alp.three_cornered_hat_phase(pdata_ab, pdata_bc, pdata_ca, rate, taus, function)
     t4 = time.time()
 
     assert np.allclose(tau, tau_)
@@ -623,7 +662,7 @@ if __name__ == "__main__":
 
     for rate in rates:
         m, taus2 = alt.tau_m(data, rate, taus)
-        m_, taus2_ = alp.tau_m(data, rate, taus)
+        data_, m_, taus2_ = alp.tau_m(data, rate, taus)
         assert np.allclose(m, m_)
         assert np.allclose(taus2, taus2_)
 
@@ -633,7 +672,7 @@ if __name__ == "__main__":
     m, taus2 = alt.tau_m(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    m_, taus2_ = alp.tau_m(data, rate, taus)
+    data_, m_, taus2_ = alp.tau_m(data, rate, taus)
     t4 = time.time()
     assert np.allclose(m, m_)
     assert np.allclose(taus2, taus2_)
