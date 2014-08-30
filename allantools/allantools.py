@@ -179,6 +179,15 @@ def adev_phase(data, rate, taus):
 
 
 def calc_adev_phase(data, rate, mj, stride):
+    """ see http://www.leapsecond.com/tools/adev_lib.c
+        stride = mj for nonoverlapping allan deviation
+        stride = 1 for overlapping allan deviation
+        
+        see http://en.wikipedia.org/wiki/Allan_variance
+             1       1      
+         s2y(t) = --------- sum [x(i+2) - 2x(i+1) + x(i) ]^2
+                  2*tau^2    
+    """
     s = 0
     n = 0
     count = len(data)

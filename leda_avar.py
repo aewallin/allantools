@@ -47,7 +47,7 @@ def avar(data, n=16, m=4):
 
     Notes
     -----
-    This is an estimate method from Thompson Moran Swenson (TMS 9.105)
+    This is an estimate method from Thompson Moran Swenson (TMS equation 9.105, page 335)
     Interferometry and Synthesis in Radio Astronomy
 
     AVAR = 1 / 2(m-1) * Sum{k, m-1}(yk+1 - yk)^2
@@ -72,7 +72,6 @@ def avar(data, n=16, m=4):
     data  = data[0:n*m]
     data  = data.reshape((m,n))
     avgs  = np.average(data, axis=1)
-    #print data.shape, avgs.shape
     diffs = np.diff(avgs)
     avar  = 0.5 * np.average(diffs*diffs)
 
