@@ -64,6 +64,7 @@ Output (tau_out, adev, adeverr, n)
 """
 
 import numpy as np
+import cymtie
 
 def rolling_window(a, window):
     """
@@ -486,11 +487,16 @@ def mtie(freqdata, rate, taus):
     phasedata = frequency2phase(freqdata, rate)
     return mtie_phase(phasedata, rate, taus)
 
-def mtie_phase(phase, rate, taus):
+def mtie_phase_np(phase, rate, taus):
     """ maximum time interval error
     this seems to correspond to Stable32 setting "Fast(u)"
     Stable32 also has "Decade" and "Octave" modes where the dataset is extended somehow?
-    rate = float(rate) """
+    rate = float(rate)
+
+    NOTE: This method does not run as fast as the pure python method!
+    The rolling window does not fare well for large arrays / taus.
+    TODO: Make a version of this that actually achieves large speed increases
+    """
 
     (phase, m, taus_used) = tau_m(phase, rate, taus)
 
@@ -516,6 +522,33 @@ def mtie_phase(phase, rate, taus):
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
+def mtie_phase(phase, rate, taus):
+    """ maximum time interval error
+    this seems to correspond to Stable32 setting "Fast(u)"
+    Stable32 also has "Decade" and "Octave" modes where the dataset is extended somehow?
+    rate = float(rate)
+
+    NOTE: This is currently using a Cython call -- the only method in the library
+    that does so. Until we figure out a faster numpy trick for mtie_phase, this will
+    remain a little slow.
+    """
+
+    (phase, m, taus_used) = tau_m(phase, rate, taus)
+
+    devs = np.zeros_like(taus_used)
+    deverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+
+    idx = 0
+    for mj in m:
+        dev, deverr, ncount = cymtie.calc_mtie_phase(list(phase), int(mj))
+
+        devs[idx] = dev
+        deverrs[idx] = dev / np.sqrt(ncount)
+        ns[idx] = ncount
+        idx += 1
+
+    return remove_small_ns(taus_used, devs, deverrs, ns)
 
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, taus, function):
     """ Three Cornered Hat Method
@@ -526,21 +559,10 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
     Assuming covariances are zero, we get:
     sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
     (and cyclic permutations for sb and sc) """
-    # Until MTIE stuff is ported, need this fix:
-    npa = np.array
-    phasedata_ab, phasedata_bc, phasedata_ca = npa(phasedata_ab), npa(phasedata_bc), npa(phasedata_ca)
-    taus = npa(taus)
-
 
     (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab, rate, taus)
     (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc, rate, taus)
     (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca, rate, taus)
-
-
-    (tau_ab, dev_ab, err_ab, ns_ab) = npa(tau_ab), npa(dev_ab), npa(err_ab), npa(ns_ab)
-    (tau_bc, dev_bc, err_bc, ns_bc) = npa(tau_bc), npa(dev_bc), npa(err_bc), npa(ns_bc)
-    (tau_ca, dev_ca, err_ca, ns_ca) = npa(tau_ca), npa(dev_ca), npa(err_ca), npa(ns_ca)
-
 
     var_ab = dev_ab * dev_ab
     var_bc = dev_bc * dev_bc

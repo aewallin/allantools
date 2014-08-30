@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+from Cython.Build import cythonize
+import numpy
 
 setup(name='AllanTools',
       version='0.23',
@@ -11,8 +13,11 @@ setup(name='AllanTools',
       license='GPLv3+',
       packages=['allantools',],
       requires=['numpy'],
+      include_dirs=[numpy.get_include()],
+      ext_modules = cythonize('allantools/cymtie.pyx'),
       long_description="""Given phase or fractional frequency data this package calculates:
                         Allan deviation, overlapping Allan deviation, modified Allan deviation
                         Hadamard deviation, overlapping Hadamard deviation, time deviation,
                         total deviation, MTIE, TIE-rms"""
      )
+
