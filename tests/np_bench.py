@@ -1,18 +1,4 @@
 #!/usr/bin/env python
-"""
-np_tests.py
------------
-
-Migration from lists to numpy arrays - test routines
-
-
-1) all functions recreated with _np suffix, e.g.
-    tdev_phase -> tdev_phase_np
-2) Test all functions against their originals
-3) Speed tests
-4) Remove originals and rename without _np suffix
-
-"""
 
 import numpy as np
 import pylab as plt
@@ -21,19 +7,15 @@ import allantools.allantools as alp
 import time
 
 
-
-def bench_function(p_func, np_func, N = 10000):
+def bench_function(p_func, np_func, N = 10000, noise_func = np.random.random ):
     """ benchmark p_func against np_func
         we do this by timing the functions on an N-sized random dataset
         we then check that both funtions return the same results
         and we return the cpu-seconds for each function.
     """
-    data = np.random.random(N)
     taus = [1, 3, 5, 16, 128]    
-    stride = 1
-    tau = 16
     rate = 2.1
-    data = np.random.random(N)
+    data = noise_func(N)
     t1 = time.time()
     o_taus, o_dev, o_err, o_n = p_func(data, rate, taus)
     t2 = time.time()
@@ -48,7 +30,7 @@ def bench_function(p_func, np_func, N = 10000):
     t_numpy = (t4 - t3)
     return (N, t_python, t_numpy)
 
-def benchmark_plot(func1, func2, name, max_data_log = 7):
+def benchmark_plot(func1, func2, name, max_data_log = 7, noise_func = np.random.random):
     """ benchmark func1 against func2 with synthetic data of increasing
         size N up to log(N)=max_data_log
         plot a log-log graph
@@ -64,7 +46,7 @@ def benchmark_plot(func1, func2, name, max_data_log = 7):
     n=0
     n_max=30
     for N in np.logspace(2,max_data_log,n_max):
-        (N, t_p, t_np) = bench_function(func1, func2, N)
+        (N, t_p, t_np) = bench_function(func1, func2, N, noise_func)
         print "%02d/%02d: %d \t %2.3fs \t %2.3fs \t %2.2fx " % (n+1,n_max, N, t_p, t_np, (t_p / t_np) )
         n=n+1
         t_p_times.append(t_p)
@@ -86,9 +68,13 @@ def benchmark_plot(func1, func2, name, max_data_log = 7):
     plt.legend(loc='upper left')
     plt.title('allantools numpy benchmark, AW 2014-08-30')
     plt.show()
-
-
     
+def brownian_noise(N):
+    """ Brownian or random walk (diffusion) noise with 1/f^2 PSD
+        not really a color... rather Brownian or random-walk
+    """
+    return np.cumsum(np.random.randn(N))
+
 if __name__ == "__main__":
     #benchmark_plot( alt.adev, alp.adev, "ADEV",6)
     #benchmark_plot( alt.oadev, alp.oadev, "OADEV",6)
@@ -97,8 +83,8 @@ if __name__ == "__main__":
     #benchmark_plot( alt.hdev, alp.hdev, "HDEV",5)
     #benchmark_plot( alt.ohdev, alp.ohdev, "OHDEV",5)
     #benchmark_plot( alt.totdev, alp.totdev, "TOTDEV",5)
-    #benchmark_plot( alt.mtie, alp.mtie, "MTIE",7)
-    benchmark_plot( alt.tierms, alp.tierms, "TIERMS",6)
+    benchmark_plot( alt.mtie, alp.mtie, "MTIE",7, brownian_noise)
+    #benchmark_plot( alt.tierms, alp.tierms, "TIERMS",7, brownian_noise)
     pass
     
 
