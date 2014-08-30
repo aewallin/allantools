@@ -67,15 +67,63 @@ Output (tau_out, adev, adeverr, n)
     n       = list of number of pairs in allan computation. standard error is adeverr = adev/sqrt(n)
 """
 
-import math
-import numpy
+import numpy as np
+
+def rolling_window(a, window):
+    """
+    Make an ndarray with a rolling window of the last dimension
+    from http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html
+
+    Parameters
+    ----------
+    a : array_like
+        Array to add rolling window to
+    window : int
+        Size of rolling window
+
+    Returns
+    -------
+    Array that is a view of the original array with a added dimension
+    of size w.
+
+    """
+    if window < 1:
+        raise ValueError, "`window` must be at least 1."
+    if window > a.shape[-1]:
+        raise ValueError, "`window` is too long."
+    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
+    strides = a.strides + (a.strides[-1],)
+    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
 
 
 def tdev_phase(phase, rate, taus):
-    """ Time deviation of phase data """
+    """ Time deviation of phase data
+
+    Parameters
+    ----------
+    phase: np.array
+        Phase data
+    rate: float
+        The sampling rate, in Hz
+    taus: np.array
+        Array of tau values for which to compute allan variance
+
+    Returns
+    -------
+    (taus2, td, tde, ns): tuple
+        taus2: np.array
+            Tau values for which td computed
+        td: np.array
+            Computed time deviations for each tau value
+        tde: np.array
+            Time deviation errors
+        ns: np.array
+            Values of N used in mdev_phase()
+    """
     (taus2, md, mde, ns) = mdev_phase(phase, rate, taus)
-    td = [t * m / math.sqrt(3.0) for (t, m) in zip(taus2, md)]
-    tde = [x / math.sqrt(n) for (x, n) in zip(td, ns)]
+
+    td = taus2 * md / np.sqrt(3.0)
+    tde = td / np.sqrt(ns)
     return taus2, td, tde, ns
 
 
@@ -94,36 +142,46 @@ def mdev_phase(data, rate, taus):
                   2m**2 t**2 (N-3m+1) j=1        i=j
 
      see http://www.leapsecond.com/tools/adev_lib.c """
-
-    (ms, taus_used) = tau_m(data, rate, taus)
+    data, taus = np.array(data), np.array(taus)
+    (data, ms, taus_used) = tau_m(data, rate, taus)
     # taus = []
-    md = []
-    mderr = []
-    ns = []
-    for m in ms:
-        s = 0
-        v = 0
-        n = 0
-        tau = m / float(rate)
-        i = 0
-        while (i + 2 * m) < len(data) and i < m:
-            v = v + data[i + 2 * m] - 2 * data[i + m] + data[i]
-            i += 1
-        s += v * v
-        n += 1
+    md    = np.zeros_like(ms)
+    mderr = np.zeros_like(ms)
+    ns    = np.zeros_like(ms)
 
-        i = 0
-        while (i + 3 * m) < len(data):
-            v = v + data[i + 3 * m] - 3 * data[i + 2 * m] + 3 * data[i + m] - data[i]
-            s += v * v
-            n += 1
-            i += 1
-        s /= float(2.0 * m * m * tau * tau * n)
-        # assert( n == len(data)-3*m+1 ) # n is the normalization (N-3m+1) before the sums
-        s = math.sqrt(s)
-        md.append(s)
-        mderr.append(s / math.sqrt(n))
-        ns.append(n)
+    idx = 0
+    for m in ms:
+        tau = taus_used[idx]
+
+        # First loop sum
+        d0 = data[0:m]
+        d1 = data[m:2*m]
+        d2 = data[2*m:3*m]
+        e = min(len(d0), len(d1), len(d2))
+        v = np.sum(d2[:e] - 2* d1[:e] + d0[:e])
+        s = v * v
+
+        # Second part of sum
+        d3 = data[3*m:]
+        d2 = data[2*m:]
+        d1 = data[1*m:]
+        d0 = data[0:]
+
+        e = min(len(d0), len(d1), len(d2), len(d3))
+        n = e + 1
+
+        v_arr = v + np.cumsum(d3[:e] - 3 * d2[:e] + 3 * d1[:e] - d0[:e])
+
+        s = s + np.sum(v_arr * v_arr)
+        s /= 2.0 * m * m * tau * tau * n
+        s = np.sqrt(s)
+
+        md[idx] = s
+        mderr[idx] = (s / np.sqrt(n))
+        ns[idx] = n
+
+        idx += 1
+
     return remove_small_ns(taus_used, md, mderr, ns)
 
 
@@ -133,26 +191,32 @@ def mdev(freqdata, rate, taus):
     return mdev_phase(phase, rate, taus)
 
 
-def tau_m(data, rate, taus):
+def tau_m(data, rate, taus, v=False):
     """ pre-processing of the tau-list given by the user """
+    data, taus = np.array(data), np.array(taus)
+
     if rate == 0:
-        print "Warning! rate==0"
+        raise RuntimeError("Warning! rate==0")
     rate = float(rate)
     # n = len(data) # not used
     m = []
-    for tau in taus:
-        if 0 < tau < (1 / float(rate)) * float(len(data)):  # tau should be in [0, len(data)/rate]
-            mvalue = int(math.floor(float(tau * rate)))
-            if mvalue != 0:
-                m.append(mvalue)  # m is tau in units of datapoints
-    m = list(set(m))  # this removes duplicates
-    m.sort()  # sort from small tau to large tau
-    #print "tau_m: ", m
+
+    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
+    taus_valid2 = taus > 0
+    taus_valid  = taus_valid1 & taus_valid2
+    m = np.floor(taus[taus_valid] * rate)
+    m = m[m != 0]       # m is tau in units of datapoints
+    m = np.unique(m)    # remove duplicates and sort
+
+    if v:
+        print "tau_m: ", m
+
     if len(m) == 0:
         print "Warning: sanity-check on tau failed!"
         print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
-    taus2 = [x / float(rate) for x in m]
-    return m, taus2
+
+    taus2 = m / float(rate)
+    return data, m, taus2
 
 
 def adev(data, rate, taus):
@@ -165,16 +229,21 @@ def adev(data, rate, taus):
 
 
 def adev_phase(data, rate, taus):
-    """ Allan deviation for phase data """
-    (m, taus_used) = tau_m(data, rate, taus)
-    ad = []
-    ade = []
-    adn = []
+
+    (data, m, taus_used) = tau_m(data, rate, taus)
+
+    ad  = np.zeros_like(taus_used)
+    ade = np.zeros_like(taus_used)
+    adn = np.zeros_like(taus_used)
+    idx = 0
+
     for mj in m:  # loop through each tau value m(j)
         (dev, deverr, n) = calc_adev_phase(data, rate, mj, mj)
-        ad.append(dev)
-        ade.append(deverr)
-        adn.append(n)
+        ad[idx] = dev
+        ade[idx] = deverr
+        adn[idx] = n
+        idx += 1
+
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
 
@@ -188,50 +257,54 @@ def calc_adev_phase(data, rate, mj, stride):
          s2y(t) = --------- sum [x(i+2) - 2x(i+1) + x(i) ]^2
                   2*tau^2    
     """
-    s = 0
-    n = 0
-    count = len(data)
-    i = 0
-    while (i + 2 * mj) < count:
-        v = data[i + 2 * mj] - 2 * data[i + mj] + data[i]
-        s += v * v
-        i = i + stride
-        n += 1
-    s /= float(2.0)
-    dev = 0
-    deverr = 0
-    if not n == 0:
-        dev = math.sqrt(s / float(n)) / float(mj * (1 / float(rate)))
-        deverr = dev / math.sqrt(n)
+
+    d2 = data[2 * mj::stride]
+    d1 = data[1 * mj::stride]
+    d0 = data[::stride]
+
+    n = min(len(d0), len(d1), len(d2))
+
+    if n == 0:
+        RuntimeWarning("Data array length is too small: %i" % len(data))
+        n = 1
+
+    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
+    s = np.sum(v_arr * v_arr)
+
+    dev = np.sqrt(s / (2.0 * n)) / mj  * rate
+    deverr = dev / np.sqrt(n)
+
     return dev, deverr, n
 
 
 def remove_small_ns(taus, devs, deverrs, ns):
     """ if n is small (==1), reject the result """
-    o_taus = []
-    o_dev = []
-    o_err = []
-    o_n = []
-    for (t, d, e, n) in zip(taus, devs, deverrs, ns):
-        if n > 1:
-            o_taus.append(t)
-            o_dev.append(d)
-            o_err.append(e)
-            o_n.append(n)
+
+    ns_big_enough = ns > 1
+
+    o_taus = taus[ns_big_enough]
+    o_dev  = devs[ns_big_enough]
+    o_err  = deverrs[ns_big_enough]
+    o_n    = ns[ns_big_enough]
+
     return o_taus, o_dev, o_err, o_n
 
 
 def oadev_phase(data, rate, taus):
     """ overlapping Allan deviation of phase data """
-    (m, taus_used) = tau_m(data, rate, taus)
-    ad = []
-    ade = []
-    adn = []
+    (data, m, taus_used) = tau_m(data, rate, taus)
+    ad  = np.zeros_like(taus_used)
+    ade = np.zeros_like(taus_used)
+    adn = np.zeros_like(taus_used)
+    idx = 0
+
     for mj in m:
         (dev, deverr, n) = calc_adev_phase(data, rate, mj, 1)  # stride=1 for overlapping ADEV
-        ad.append(dev)
-        ade.append(deverr)
-        adn.append(n)
+        ad[idx]  = dev
+        ade[idx] = deverr
+        adn[idx] = n
+        idx += 1
+
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
 
@@ -241,22 +314,12 @@ def oadev(freqdata, rate, taus):
     return oadev_phase(phase, rate, taus)
 
 
-# this function is never used!?
-# def phase2frequency( phasedata, rate):
-# freqdata = [ x*float(rate) for x in numpy.diff( phasedata ) ]
-#   return freqdata
-
-
 def frequency2phase(freqdata, rate):
     """ integrate fractional frequency data and output phase data """
-    phase = [0] * (len(freqdata) + 1)  # initialize to zero
-    dt = 1 / float(rate)
-    for i in range(len(freqdata) + 1):
-        if i == 0:
-            phase[i] = 0
-        else:
-            phase[i] = phase[i - 1] + freqdata[i - 1] * dt
-    return phase
+    dt = 1.0 / float(rate)
+    phasedata = np.cumsum(freqdata) * dt
+    phasedata = np.insert(phasedata, 0, 0)
+    return phasedata
 
 
 def ohdev(freqdata, rate, taus):
@@ -268,15 +331,18 @@ def ohdev(freqdata, rate, taus):
 def ohdev_phase(data, rate, taus):
     """ Overlapping Hadamard deviation of phase data """
     rate = float(rate)
-    (m, taus_used) = tau_m(data, rate, taus)
-    hdevs = []
-    hdeverrs = []
-    ns = []
+    (data, m, taus_used) = tau_m(data, rate, taus)
+    hdevs = np.zeros_like(taus_used)
+    hdeverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+    idx = 0
+
     for mj in m:
-        (h, e, n) = hdev_phase_calc(data, rate, mj, 1)  # stride = 1
-        hdevs.append(h)
-        hdeverrs.append(e)
-        ns.append(n)
+        (h, e, n) = calc_hdev_phase(data, rate, mj, 1)  # stride = 1
+        hdevs[idx] = h
+        hdeverrs[idx] = e
+        ns[idx] = n
+        idx += 1
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
 
@@ -289,36 +355,43 @@ def hdev(freqdata, rate, taus):
 def hdev_phase(data, rate, taus):
     """ Hadamard deviation, phase data """
     rate = float(rate)
-    (m, taus_used) = tau_m(data, rate, taus)
-    hdevs = []
-    hdeverrs = []
-    ns = []
+    (data, m, taus_used) = tau_m(data, rate, taus)
+    hdevs = np.zeros_like(taus_used)
+    hdeverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+
+    idx = 0
     for mj in m:
-        h, e, n = hdev_phase_calc(data, rate, mj, mj)  # stride = mj
-        hdevs.append(h)
-        hdeverrs.append(e)
-        ns.append(n)
+        h, e, n = calc_hdev_phase(data, rate, mj, mj)  # stride = mj
+        hdevs[idx] = h
+        hdeverrs[idx] = e
+        ns[idx] = n
+        idx += 1
 
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
 
-def hdev_phase_calc(data, rate, mj, stride):
+def calc_hdev_phase(data, rate, mj, stride):
     """ http://www.leapsecond.com/tools/adev_lib.c """
-    s = 0
-    n = 0
-    i = 0
-    tau0 = 1 / float(rate)
-    while (i + 3 * mj) < len(data):
-        v = data[i + 3 * mj] - 3 * data[i + 2 * mj] + 3 * data[i + mj] - data[i]
-        s += v * v
-        n += 1
-        i = i + stride
-    s /= 6.0
+
+    tau0 = 1.0 / float(rate)
+
+    d3 = data[3 * mj::stride]
+    d2 = data[2 * mj::stride]
+    d1 = data[1 * mj::stride]
+    d0 = data[::stride]
+
+    n = min(len(d0), len(d1), len(d2), len(d3))
+
+    v_arr = d3[:n] - 3 * d2[:n] + 3 * d1[:n] - d0[:n]
+
+    s = np.sum(v_arr * v_arr)
 
     if n == 0:
         n = 1
-    h = math.sqrt(s / float(n)) / float(tau0 * mj)
-    e = h / math.sqrt(n)
+
+    h = np.sqrt(s / 6.0 / float(n)) / float(tau0 * mj)
+    e = h / np.sqrt(n)
     return h, e, n
 
 
@@ -344,47 +417,87 @@ def totdev_phase(data, rate, taus):
     where x* is a new dataset with 'reflected' data at start/end """
 
     rate = float(rate)
-    (m, taus_used) = tau_m(data, rate, taus)
+    (data, m, taus_used) = tau_m(data, rate, taus)
     n = len(data)
 
     # totdev requires a new dataset
-    x1 = []
-    for j in range(n - 2):
-        x1.append(float(2.0) * data[0] - data[j + 1])
-    x1.reverse()
+    # Begin bu adding reflected data before dataset
+    x1 = 2.0 * data[0] * np.ones((n - 2,))
+    x1 = x1 - data[1:-1]
+    x1 = x1[::-1]
 
-    x2 = []
-    for j in range(n - 2):
-        x2.append(float(2.0) * data[len(data) - 1] - data[len(data) - 1 - (j + 1)])
+    # Reflected data at end of dataset
+    x2 = 2.0 * data[-1] * np.ones((n - 2,))
+    x2 = x2 - data[1:-1][::-1]
 
-    x = []
-    for d in x1:  # reflected data at start
-        x.append(d)
-    for d in data:  # original data
-        x.append(d)
-    for d in x2:  # reflected data at end
-        x.append(d)
+    # Combine into a single array
+    x = np.zeros((3*n - 4))
+    x[0:n-2] = x1
+    x[n-2:2*(n-2)+2] = data
+    x[2*(n-2)+2:] = x2
 
-    # original dataset is now in the middle of the new dataset
-    try:
-        assert data[0] == x[len(x1)]
-    except AssertionError:
-        raise RuntimeError("dataset reflection error: Data[0] != x[len(x1)]")
-    devs = []
-    deverrs = []
-    ns = []
+    devs = np.zeros_like(taus_used)
+    deverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+
+    mid = len(x1)
+
+    idx = 0
     for mj in m:
-        dev = 0
-        ncount = 0
-        for i in range(1, len(data) - 1):
-            i += len(x1)  # i=0 corresponds to start of original data
-            dev += pow(x[i - mj] - 2 * x[i] + x[i + mj], 2)
-            ncount += 1
+
+        d0 = x[mid + 1:]
+        d1 = x[mid  + mj + 1:]
+        d1n = x[mid - mj + 1:]
+        e = min(len(d0), len(d1), len(d1n))
+
+        v_arr = d1n[:e] - 2.0 * d0[:e] + d1[:e]
+        dev = np.sum(v_arr[:mid] * v_arr[:mid])
+
         dev /= float(2 * pow(mj / rate, 2) * (n - 2))
-        dev = math.sqrt(dev)
-        devs.append(dev)
-        deverrs.append(dev / math.sqrt(ncount))
-        ns.append(ncount)
+        dev = np.sqrt(dev)
+        devs[idx] = dev
+        deverrs[idx] = dev / np.sqrt(mid)
+        ns[idx] = mid
+
+        idx += 1
+
+    return remove_small_ns(taus_used, devs, deverrs, ns)
+
+
+def tierms(freqdata, rate, taus):
+    phasedata = frequency2phase(freqdata, rate)
+    return tierms_phase(phasedata, rate, taus)
+
+
+def tierms_phase(phase, rate, taus):
+    """ TIE rms """
+    rate = float(rate)
+    (data, m, taus_used) = tau_m(phase, rate, taus)
+
+    count = len(phase)
+
+    devs = np.zeros_like(taus_used)
+    deverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+
+    idx = 0
+    for mj in m:
+        mj = int(mj)
+
+        # This seems like an unusual way to
+        phases = np.column_stack((phase[:-mj], phase[mj:]))
+        p_max = np.max(phases, axis=1)
+        p_min = np.min(phases, axis=1)
+        phases = p_max - p_min
+        tie = np.sqrt(np.mean(phases * phases))
+
+        ncount = count - mj
+
+        devs[idx] = tie
+        deverrs[idx] = 0 / np.sqrt(ncount) # TODO! I THINK THIS IS WRONG!
+        ns[idx] = ncount
+
+        idx += 1
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
@@ -394,124 +507,67 @@ def mtie(freqdata, rate, taus):
     phasedata = frequency2phase(freqdata, rate)
     return mtie_phase(phasedata, rate, taus)
 
-
 def mtie_phase(phase, rate, taus):
     """ Maximum Time Interval Error, phase data
     
     this seems to correspond to Stable32 setting "Fast(u)"
     Stable32 also has "Decade" and "Octave" modes where the dataset is extended somehow?
-    """
-    
-    rate = float(rate)
-    (m, taus_used) = tau_m(phase, rate, taus)
-    # n = len(phase) # Not used
-    devs = []
-    deverrs = []
-    ns = []
+
+    rate = float(rate) """
+    (phase, m, taus_used) = tau_m(phase, rate, taus)
+    devs = np.zeros_like(taus_used)
+    deverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+
+    idx = 0
     for mj in m:
-        dev = 0
-        ncount = 0
-
-        win_max = 0
-        win_min = 0
-        # we start by finding the max/min in the first window
-        # when we slide the window forward by one step, one of these things happen:
-        # - neither the new sample that enters the window, nor the old sample that leaves the window
-        #    changes the max/min of the window
-        # - the new sample that enters the window is the new max/min of the window
-        # - the old sample that leaves the window was the max/min of the window
-        #    this is the most computationally expensive case, as we now have to search
-        #    the entire window for a new max/min
-        for i in range(0, len(phase) - mj):  # slide the start of the window over the dataset
-            if i == 0:  # initialize window max/min
-                win_max = max(phase[0:0 + mj + 1])  # max and min in the first window
-                win_min = min(phase[0:0 + mj + 1])
-            else:
-                newsample = phase[i + mj]  # the new sample that enters the window
-                if newsample > win_max:
-                    win_max = newsample
-                elif newsample < win_min:
-                    win_min = newsample
-                oldindex = i - 1
-                if oldindex < 0:
-                    oldindex = 0
-                oldsample = phase[i - 1]  # the old sample we throw away
-                if win_max == oldsample:
-                    win_max = max(phase[i:i + mj + 1])  # must search for a new maximum
-                if win_min == oldsample:
-                    win_min = min(phase[i:i + mj + 1])  # must search for new minimum sample
-
-                    #phases = phase[i:i+mj+1] # data window of length mj
-
-            tie = win_max - win_min  # largest error in this window
-            if tie > dev:
-                dev = tie
-            ncount += 1
-
-        devs.append(dev)
-        deverrs.append(dev / math.sqrt(ncount))
-        ns.append(ncount)
-
-    return remove_small_ns(taus_used, devs, deverrs, ns)
-
-
-def tierms(freqdata, rate, taus):
-    """ Time Interval Error RMS, fractional frequency data """
-    phasedata = frequency2phase(freqdata, rate)
-    return tierms_phase(phasedata, rate, taus)
-
-
-def tierms_phase(phase, rate, taus):
-    """ Time Interval Error RMS, phase data """
-    rate = float(rate)
-    (m, taus_used) = tau_m(phase, rate, taus)
-    count = len(phase)
-    devs = []
-    deverrs = []
-    ns = []
-    for mj in m:
-        dev = 0
-        ncount = 0
-        tie = []
-        for i in range(count - mj):
-            phases = [phase[i], phase[i + mj]]  # pair of phases at distance mj from eachother
-            tie.append(max(phases) - min(phases))  # phase error
-            ncount += 1
-        # RMS of tie vector
-        tie = [pow(x, 2) for x in tie]  # square
-        tie = numpy.mean(tie)  # mean
-        tie = math.sqrt(tie)  # root
-        devs.append(tie)
-        deverrs.append(dev / math.sqrt(ncount))
-        ns.append(ncount)
+        rw = rolling_window(phase, mj + 1)
+        win_max = np.max(rw, axis=1)
+        win_min = np.min(rw, axis=1)
+        tie = win_max - win_min
+        dev = np.max(tie)
+        ncount = phase.shape[0] - mj
+        devs[idx] = dev
+        deverrs[idx] = dev / np.sqrt(ncount)
+        ns[idx] = ncount
+        idx += 1
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
 
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, taus, function):
-    """ Three Cornered Hat Method
-
-    Three clocks with unknown variances sa^2, sb^2, sc^3
+    """ Three Cornered Hat Method Three clocks with unknown variances sa^2, sb^2, sc^3
     Three pairwise measurements give variances:
     sab^2, sbc^2, sca^2
     Assuming covariances are zero (clocks are independent), we get:
     sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
     (and cyclic permutations for sb and sc) """
+    
+    # Until MTIE stuff is ported, need this fix:
+    npa = np.array
+    phasedata_ab, phasedata_bc, phasedata_ca = npa(phasedata_ab), npa(phasedata_bc), npa(phasedata_ca)
+    taus = npa(taus)
+
 
     (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab, rate, taus)
     (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc, rate, taus)
     (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca, rate, taus)
-    var_ab = [x * x for x in dev_ab]
-    var_bc = [x * x for x in dev_bc]
-    var_ca = [x * x for x in dev_ca]
+
+
+    (tau_ab, dev_ab, err_ab, ns_ab) = npa(tau_ab), npa(dev_ab), npa(err_ab), npa(ns_ab)
+    (tau_bc, dev_bc, err_bc, ns_bc) = npa(tau_bc), npa(dev_bc), npa(err_bc), npa(ns_bc)
+    (tau_ca, dev_ca, err_ca, ns_ca) = npa(tau_ca), npa(dev_ca), npa(err_ca), npa(ns_ca)
+
+
+    var_ab = dev_ab * dev_ab
+    var_bc = dev_bc * dev_bc
+    var_ca = dev_ca * dev_ca
     assert len(var_ab) == len(var_bc) == len(var_ca)
-    var_a = [0.5 * (ab + ca - bc) for (ab, bc, ca) in zip(var_ab, var_bc, var_ca)]
-    dev_a = []
-    for va in var_a:
-        try:
-            dev_a.append(math.sqrt(va))
-        except:
-            dev_a.append(0)
+    var_a = 0.5 * (var_ab + var_ca - var_bc)
+
+    dev_a = np.sqrt(var_a)
+    dev_a[var_a < 0] = 0
+
     return tau_ab, dev_a
 
 
