@@ -135,9 +135,9 @@ def tdev(data, rate, taus):
 
 
 def mdev_phase(data, rate, taus):
-    """# Modified Allan deviation of phase data
+    """  Modified Allan deviation of phase data
 
-     1             N-3m+1     j+m-1
+                   N-3m+1     j+m-1
      Mod s2y(t) = ------------------  sum      { sum   [x(i+2m) - 2x(i+m) + x(i) ]  }**2
                   2m**2 t**2 (N-3m+1) j=1        i=j
 
@@ -186,7 +186,7 @@ def mdev_phase(data, rate, taus):
 
 
 def mdev(freqdata, rate, taus):
-    """ # modified Allan deviation, fractional frequency data """
+    """ modified Allan deviation, fractional frequency data """
     phase = frequency2phase(freqdata, rate)
     return mdev_phase(phase, rate, taus)
 
@@ -220,8 +220,8 @@ def tau_m(data, rate, taus, v=False):
 
 
 def adev(data, rate, taus):
-    """Allan deviation
-    data is a time-series of fractional frequency
+    """ Allan deviation for fractional frequency data
+    data is a time-series of evenly spaced fractional frequency measurements
     rate is the samples/s in the time-series
     taus is a list of tau-values for which we compute ADEV """
     phase = frequency2phase(data, rate)
@@ -229,7 +229,7 @@ def adev(data, rate, taus):
 
 
 def adev_phase(data, rate, taus):
-
+    """ Allan deviation for phase data """
     (data, m, taus_used) = tau_m(data, rate, taus)
 
     ad  = np.zeros_like(taus_used)

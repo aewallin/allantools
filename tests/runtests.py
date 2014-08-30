@@ -4,9 +4,11 @@
 
   this files runs all the tests defined in the /tests/ subdirectories
   
-  More datasets along with known deviations (or calculated with known-good programs) are welcome.
+  More datasets along with known deviations (or calculated with 
+  known-good programs) are welcome.
   
-  results from allantools seem correct, they agree to within 4 to 6 digits of precision with other ADEV tools.
+  results from allantools seem correct, they agree to within 4 to 6 digits 
+  of precision with other ADEV tools.
 """
 
 import time
@@ -30,5 +32,8 @@ if __name__ == "__main__":
 	
 	end = time.clock()
 	print "-------------------------"
-	print "All tests done in %2.3f s" % (end-start) # takes ca 58 seconds on an i7 CPU
+	print "All tests done in %2.3f s" % (end-start) 
+	# before 2014-08-30 this took ca 58 seconds on an i7 CPU
+	# with the numpy:ified version the test takes ca 202 seconds on an i7 CPU
+	# the majority of time is spent in the MTIE calculation...
 	print "if we came this far without assertions or errors all is OK!"
