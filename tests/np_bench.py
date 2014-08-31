@@ -92,7 +92,7 @@ def brownian_noise(N):
 
 if __name__ == "__main__":
     N_log_max = 5
-    # runs on an i7-2600K 3.4 GHz CPU:
+    # runs on desktop computer with i7-2600K @ 3.4 GHz CPU:
     # N_log_max   seconds
     # 3           1.1
     # 4           6.8

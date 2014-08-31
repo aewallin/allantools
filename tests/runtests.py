@@ -21,19 +21,17 @@ from Cs5071A import Cs5071A_test_decade
 import test_ns
 
 if __name__ == "__main__":
-	
-	start = time.clock()
-	
-	nbs14_test.run()          # NBS14 test data with published deviations
-	phase_dat_test.run()      # phase.dat from Stable32
-	pink.run()                # synthetic pink frequency noise
-	Cs5071A_test_decade.run() # HP 5071A Cs-clock measured against H-maser
-	test_ns.run()             # sanity-checks for tau values
-	
-	end = time.clock()
-	print "-------------------------"
-	print "All tests done in %2.3f s" % (end-start) 
-	# before 2014-08-30 this took ca 58 seconds on an i7 CPU
-	# with the numpy:ified version the test takes ca 202 seconds on an i7 CPU
-	# the majority of time is spent in the MTIE calculation...
-	print "if we came this far without assertions or errors all is OK!"
+    start = time.clock()
+
+    nbs14_test.run()          # NBS14 test data with published deviations
+    phase_dat_test.run()      # phase.dat from Stable32
+    pink.run()                # synthetic pink frequency noise
+    Cs5071A_test_decade.run() # HP 5071A Cs-clock measured against H-maser
+    test_ns.run()             # sanity-checks for tau values
+
+    end = time.clock()
+    print "-------------------------"
+    print "All tests done in %2.3f s" % (end-start) 
+    # 2014-08-31 running time without MTIE on laptop with i7-3537U CPU @ 2.00GHz
+    # All tests done in 19.841 s
+    print "if we came this far without assertions or errors all is OK!"

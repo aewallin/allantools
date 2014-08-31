@@ -74,11 +74,13 @@ def run():
 	start = print_elapsed(start)
 	testutils.test_row_by_row( allan.totdev_phase, data_file, rate, totdev_result, verbose, tolerance ) # 13 s
 	start = print_elapsed(start)
-	testutils.test_row_by_row( allan.mtie_phase, data_file, rate, mtie_result, verbose, tolerance ) # 13 s
-	start = print_elapsed(start)
+	#testutils.test_row_by_row( allan.mtie_phase, data_file, rate, mtie_result, verbose, tolerance ) # 13 s
+	#start = print_elapsed(start)
 
-	print " Cs5071A_decade tests took %.2f s"% ( time.clock()-start0 ) # i7 CPU: ca 40s (without MTIE)
-	
+	print " Cs5071A_decade tests took %.2f s"% ( time.clock()-start0 ) 
+    # 2014-08-31 running time without MTIE
+    # Laptop: i7-3537U CPU @ 2.00GHz
+	# Cs5071A_decade tests took 20.34 s
 if __name__ == "__main__":
 	run()
 
