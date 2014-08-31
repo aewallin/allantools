@@ -3,25 +3,60 @@
 np_tests.py
 -----------
 
-Migration from lists to numpy arrays - test routines
+Compare output validity and speedup of numpy-accelerated codes to reference
+pure python codes.
 
-
-1) all functions recreated with _np suffix, e.g.
-    tdev_phase -> tdev_phase_np
-2) Test all functions against their originals
-3) Speed tests
-4) Remove originals and rename without _np suffix
+TODO: Tidy this up
 
 """
 
 import numpy as np
-import pylab as plt
 import allantools.allantools_pure_python as alt
 import allantools.allantools as alp
 import time
 
 
 if __name__ == "__main__":
+
+
+    #######################
+    # MTIE_PHASE()
+    #######################
+    print "\ntesting mtie_phase()"
+    data = np.random.random(1000)
+    taus = [1, 3, 5, 16, 128]
+    rates = [1, 20, 10.7]
+    strides = [1, 10, 7]
+
+    for rate in rates:
+        for stride in strides:
+            #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
+            o_taus, o_dev, o_err, o_n = alt.mtie_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.mtie_phase(data, rate, taus)
+
+            assert np.allclose(o_taus, o_taus_)
+            assert np.allclose(o_dev, o_dev_)
+            assert np.allclose(o_err, o_err_)
+
+    stride = 1
+    tau = 1280
+    rate = 2.1
+    data = np.random.random(100000)
+    t1 = time.time()
+    o_taus, o_dev, o_err, o_n = alt.mtie_phase(data, rate, taus)
+    t2 = time.time()
+    t3 = time.time()
+    o_taus_, o_dev_, o_err_, o_n_ = alp.mtie_phase(data, rate, taus)
+    t4 = time.time()
+
+    #print (o_dev, o_dev_)
+
+    assert np.allclose(o_taus, o_taus_)
+    assert np.allclose(o_dev, o_dev_)
+    assert np.allclose(o_err, o_err_)
+    print "Original: %2.3fs" % (t2 - t1)
+    print "New:      %2.3fs" % (t4 - t3)
+    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
 
 
     #######################
@@ -52,43 +87,6 @@ if __name__ == "__main__":
     t2 = time.time()
     t3 = time.time()
     o_taus_, o_dev_, o_err_, o_n_ = alp.mtie(data, rate, taus)
-    t4 = time.time()
-
-    assert np.allclose(o_taus, o_taus_)
-    assert np.allclose(o_dev, o_dev_)
-    assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
-
-    #######################
-    # MTIE_PHASE()
-    #######################
-    print "\ntesting mtie_phase()"
-    data = np.random.random(1000)
-    taus = [1, 3, 5, 16, 128]
-    rates = [1, 20, 10.7]
-    strides = [1, 10, 7]
-
-    for rate in rates:
-        for stride in strides:
-            #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
-            o_taus, o_dev, o_err, o_n = alt.mtie_phase(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.mtie_phase(data, rate, taus)
-
-            assert np.allclose(o_taus, o_taus_)
-            assert np.allclose(o_dev, o_dev_)
-            assert np.allclose(o_err, o_err_)
-
-    stride = 1
-    tau = 128000
-    rate = 2.1
-    data = np.random.random(100000)
-    t1 = time.time()
-    o_taus, o_dev, o_err, o_n = alt.mtie_phase(data, rate, taus)
-    t2 = time.time()
-    t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.mtie_phase(data, rate, taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
