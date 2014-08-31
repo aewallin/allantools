@@ -465,12 +465,13 @@ def totdev_phase(data, rate, taus):
 
 
 def tierms(freqdata, rate, taus):
+    """ Time Interval Error RMS, for fractional frequency data """
     phasedata = frequency2phase(freqdata, rate)
     return tierms_phase(phasedata, rate, taus)
 
 
 def tierms_phase(phase, rate, taus):
-    """ TIE rms """
+    """ Time Interval Error RMS, for phase data """
     rate = float(rate)
     (data, m, taus_used) = tau_m(phase, rate, taus)
 

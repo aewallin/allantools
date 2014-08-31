@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+""" 
+    Benchmarking for allantools (https://github.com/aewallin/allantools)
+    
+    First version: AW 2014-08-31
+"""
+
 import numpy as np
 import pylab as plt
 import allantools.allantools_pure_python as alt
@@ -30,12 +36,11 @@ def bench_function(p_func, np_func, N = 10000, noise_func = np.random.random ):
     t_numpy = (t4 - t3)
     return (N, t_python, t_numpy)
 
-def benchmark_plot(func1, func2, name, max_data_log = 7, noise_func = np.random.random):
+def benchmark_run(func1, func2, name, max_data_log = 7, noise_func = np.random.random):
     """ benchmark func1 against func2 with synthetic data of increasing
         size N up to log(N)=max_data_log
-        plot a log-log graph
     """
-    print "\ntesting %s" % name
+    print "\nBenchmarking: %s" % name
     print "N \t pure_python \t numpy   \t speedup "
     t_p_times = []
     t_np_times = []
@@ -52,21 +57,31 @@ def benchmark_plot(func1, func2, name, max_data_log = 7, noise_func = np.random.
         t_p_times.append(t_p)
         t_np_times.append(t_np)
         Ns.append(N)
-        if N>N_big:
+        if N>N_big: # numpy times are meaningless for short datasets,
+                    # since time.time() seems to have a 'noise floor' of about 2 ms (?)
             speedup_n=speedup_n+1
             mean_speedup = mean_speedup + t_p/t_np
     if speedup_n==0:
         speedup_n = 1
     mean_speedup = mean_speedup / speedup_n
+    return (Ns, t_p_times, t_np_times, mean_speedup, name)
+
+def benchmark_plot(data):
+    """ log-log graph of the benchmark results """
     plt.figure()
-    plt.loglog(Ns, t_p_times,'ro',label='pure Python %s' % name )
-    plt.loglog(Ns, t_np_times,'bs',label='numpy %s' % name )
+    idx = 0
+    symbols = ['o', 's', 'h', 'D','1','8','*','+','x']
+    for (N, tp, tnp, speedup, name) in data:
+        plt.loglog(N, tp,'r%s' % symbols[idx],label='pure Python %s' % name )
+        plt.loglog(N, tnp,'b%s' % symbols[idx],label='numpy %s' % name )
+        idx += 1
+        speedup_txt = "%s speedup: %3.1fx" % (name, speedup)
+        plt.text( 700, (0.9)/np.exp(0.3*idx), speedup_txt , fontsize=14)
     plt.xlabel('Input data size')
     plt.ylabel('CPU seconds')
-    speedup_txt = "mean speedup for N>%.2g : %3.1fx" % (N_big, mean_speedup)
-    plt.text( 1000, 1, speedup_txt )
+
     plt.legend(loc='upper left')
-    plt.title('allantools numpy benchmark, AW 2014-08-30')
+    plt.title('allantools numpy benchmark, AW 2014-08-31')
     plt.show()
     
 def brownian_noise(N):
@@ -76,15 +91,29 @@ def brownian_noise(N):
     return np.cumsum(np.random.randn(N))
 
 if __name__ == "__main__":
-    #benchmark_plot( alt.adev, alp.adev, "ADEV",6)
-    #benchmark_plot( alt.oadev, alp.oadev, "OADEV",6)
-    #benchmark_plot( alt.mdev, alp.mdev, "MDEV",6)
-    #benchmark_plot( alt.tdev, alp.tdev, "TDEV",6)
-    #benchmark_plot( alt.hdev, alp.hdev, "HDEV",5)
-    #benchmark_plot( alt.ohdev, alp.ohdev, "OHDEV",5)
-    #benchmark_plot( alt.totdev, alp.totdev, "TOTDEV",5)
-    benchmark_plot( alt.mtie, alp.mtie, "MTIE",7, brownian_noise)
-    #benchmark_plot( alt.tierms, alp.tierms, "TIERMS",7, brownian_noise)
+    N_log_max = 5
+    # runs on an i7-2600K 3.4 GHz CPU:
+    # N_log_max   seconds
+    # 3           1.1
+    # 4           6.8
+    # 5           45.7
+    # 6           359.9
+    data=[]
+    # run the benchmarks and store results into one list of tuples
+    t0 = time.time()
+    data.append( benchmark_run( alt.adev  , alp.adev  , "ADEV"  ,N_log_max) )
+    data.append( benchmark_run( alt.oadev , alp.oadev , "OADEV" ,N_log_max) )
+    data.append( benchmark_run( alt.mdev  , alp.mdev  , "MDEV"  ,N_log_max) )
+    data.append( benchmark_run( alt.tdev  , alp.tdev  , "TDEV"  ,N_log_max) )
+    data.append( benchmark_run( alt.hdev  , alp.hdev  , "HDEV"  ,N_log_max) )
+    data.append( benchmark_run( alt.ohdev , alp.ohdev , "OHDEV" ,N_log_max) )
+    data.append( benchmark_run( alt.totdev, alp.totdev, "TOTDEV",N_log_max) )
+    data.append( benchmark_run( alt.mtie  , alp.mtie  , "MTIE"  ,N_log_max) )
+    data.append( benchmark_run( alt.tierms, alp.tierms, "TIERMS",N_log_max) )
+    t1 = time.time()
+    print "Benchmarks done in %.1f seconds" % (t1-t0)
+    # log-log plot of all benchmark data
+    benchmark_plot( data )
     pass
     
 
