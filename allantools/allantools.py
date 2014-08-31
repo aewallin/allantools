@@ -1,8 +1,9 @@
 """
 Allan deviation tools
 Anders Wallin (anders.e.e.wallin "at" gmail.com)
-v1.0 2014 January
-v1.01 2014 August (PEP8 compliance improvements by telegraphic)
+v1.10 2014 August, using numpy which is 100x faster than pure python
+v1.01 2014 August, PEP8 compliance improvements by telegraphic
+v1.00 2014 January
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
