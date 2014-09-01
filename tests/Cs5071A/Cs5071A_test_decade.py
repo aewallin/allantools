@@ -1,10 +1,21 @@
-# phase in s for a 5071A Cs clock against a H-maser
-# 1PPS time-interval counter measurements
-# AW2014-02-07
-#
-# first datapoint          1391174210 2014-01-31 13:16:50 UTC 
-# last datapoint           1391731199 2014-02-06 23:59:59 UTC
-# 556990 datapoints in total
+"""
+  Test for allantools (https://github.com/aewallin/allantools)
+  Stable32 was used to calculate the deviations we compare against.
+
+  The 5071A_phase.txt is a dataset collected with a time-interval-counter
+  between 1 pulse-per-second outputs from a 5071A Cs clock against a H-maser
+ 
+  first datapoint          1391174210 2014-01-31 13:16:50 UTC 
+  last datapoint           1391731199 2014-02-06 23:59:59 UTC
+  556990 datapoints in total
+
+  This test uses log-spaced tau-values (i.e. 1, 2, 4, 10, etc.)
+  The CS5071A_test_all.py test much more tau-values (1,2,3,4, etc.) but is slower.
+
+  AW2014-02-07
+"""
+
+
 
 import math
 import sys
@@ -63,11 +74,13 @@ def run():
 	start = print_elapsed(start)
 	testutils.test_row_by_row( allan.totdev_phase, data_file, rate, totdev_result, verbose, tolerance ) # 13 s
 	start = print_elapsed(start)
-	testutils.test_row_by_row( allan.mtie_phase, data_file, rate, mtie_result, verbose, tolerance ) # 13 s
-	start = print_elapsed(start)
+	#testutils.test_row_by_row( allan.mtie_phase, data_file, rate, mtie_result, verbose, tolerance ) # 13 s
+	#start = print_elapsed(start)
 
-	print " Cs5071A_decade tests took %.2f s"% ( time.clock()-start0 ) # i7 CPU: ca 40s (without MTIE)
-	
+	print " Cs5071A_decade tests took %.2f s"% ( time.clock()-start0 ) 
+    # 2014-08-31 running time without MTIE
+    # Laptop: i7-3537U CPU @ 2.00GHz
+	# Cs5071A_decade tests took 20.34 s
 if __name__ == "__main__":
 	run()
 

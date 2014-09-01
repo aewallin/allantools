@@ -1,7 +1,9 @@
 """
 Allan deviation tools
 Anders Wallin (anders.e.e.wallin "at" gmail.com)
-v1.0 2014 January
+v1.10 2014 August, using numpy which is 100x faster than pure python
+v1.01 2014 August, PEP8 compliance improvements by telegraphic
+v1.00 2014 January
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -46,19 +48,22 @@ Hadamard Total
 References
 http://www.wriley.com/paper4ht.htm
 http://en.wikipedia.org/wiki/Allan_variance
-code see e.g.:
+for code see e.g.:
 http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
 http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified
 http://www.leapsecond.com/tools/adev_lib.c
 
-Allan deviation of phase data
-Inputs:
-    phase = list of phase measurements in seconds
+Inputs (phase data):
+    phase = list of phase measurements in seconds, e.g. from a time-interval-counter
     rate  = sample rate of data, i.e. interval between phase measurements is 1/rate
     taus  = list of tau-values for ADEV computation
+Inputs (frequency data):
+    data = list of fractional frequency measurements (nondimensional), e.g. from a frequency-counter
+    rate  = sample rate of data, i.e. gate time of a zero-dead-time counter is 1/rate
+    taus  = list of tau-values for ADEV computation
 Output (tau_out, adev, adeverr, n)
-    tau_out = list of tau-values for which ADEV was computed
-    adev    = list of Allan deviations
+    tau_out = list of tau-values for which deviations were computed
+    adev    = list of ADEV (or another statistic) deviations
     adeverr = list of estimated errors of allan deviations
     n       = list of number of pairs in allan computation. standard error is adeverr = adev/sqrt(n)
 """
@@ -105,9 +110,9 @@ def tdev(data, rate, taus):
 
 
 def mdev_phase(data, rate, taus):
-    """# Modified Allan deviation of phase data
+    """  Modified Allan deviation of phase data
 
-     1             N-3m+1     j+m-1
+                   N-3m+1     j+m-1
      Mod s2y(t) = ------------------  sum      { sum   [x(i+2m) - 2x(i+m) + x(i) ]  }**2
                   2m**2 t**2 (N-3m+1) j=1        i=j
 
@@ -156,7 +161,7 @@ def mdev_phase(data, rate, taus):
 
 
 def mdev(freqdata, rate, taus):
-    """ # modified Allan deviation, fractional frequency data """
+    """ modified Allan deviation, fractional frequency data """
     phase = frequency2phase(freqdata, rate)
     return mdev_phase(phase, rate, taus)
 
@@ -170,6 +175,7 @@ def tau_m(data, rate, taus, v=False):
     rate = float(rate)
     # n = len(data) # not used
     m = []
+
     taus_valid1 = taus < (1 / float(rate)) * float(len(data))
     taus_valid2 = taus > 0
     taus_valid  = taus_valid1 & taus_valid2
@@ -179,6 +185,7 @@ def tau_m(data, rate, taus, v=False):
 
     if v:
         print "tau_m: ", m
+
     if len(m) == 0:
         print "Warning: sanity-check on tau failed!"
         print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
@@ -188,8 +195,8 @@ def tau_m(data, rate, taus, v=False):
 
 
 def adev(data, rate, taus):
-    """Allan deviation
-    data is a time-series of fractional frequency
+    """ Allan deviation for fractional frequency data
+    data is a time-series of evenly spaced fractional frequency measurements
     rate is the samples/s in the time-series
     taus is a list of tau-values for which we compute ADEV """
     phase = frequency2phase(data, rate)
@@ -197,6 +204,7 @@ def adev(data, rate, taus):
 
 
 def adev_phase(data, rate, taus):
+    """ Allan deviation for phase data """
     (data, m, taus_used) = tau_m(data, rate, taus)
 
     ad  = np.zeros_like(taus_used)
@@ -215,6 +223,15 @@ def adev_phase(data, rate, taus):
 
 
 def calc_adev_phase(data, rate, mj, stride):
+    """ see http://www.leapsecond.com/tools/adev_lib.c
+        stride = mj for nonoverlapping allan deviation
+        stride = 1 for overlapping allan deviation
+        
+        see http://en.wikipedia.org/wiki/Allan_variance
+             1       1      
+         s2y(t) = --------- sum [x(i+2) - 2x(i+1) + x(i) ]^2
+                  2*tau^2    
+    """
 
     d2 = data[2 * mj::stride]
     d1 = data[1 * mj::stride]
@@ -231,6 +248,7 @@ def calc_adev_phase(data, rate, mj, stride):
 
     dev = np.sqrt(s / (2.0 * n)) / mj  * rate
     deverr = dev / np.sqrt(n)
+
     return dev, deverr, n
 
 
@@ -266,7 +284,7 @@ def oadev_phase(data, rate, taus):
 
 
 def oadev(freqdata, rate, taus):
-    """ overlapping Allan deviation """
+    """ overlapping Allan deviation for fractional frequency data """
     phase = frequency2phase(freqdata, rate)
     return oadev_phase(phase, rate, taus)
 
@@ -280,7 +298,7 @@ def frequency2phase(freqdata, rate):
 
 
 def ohdev(freqdata, rate, taus):
-    """ Overlapping Hadamard deviation """
+    """ Overlapping Hadamard deviation, fractional frequency data """
     phase = frequency2phase(freqdata, rate)
     return ohdev_phase(phase, rate, taus)
 
@@ -304,13 +322,13 @@ def ohdev_phase(data, rate, taus):
 
 
 def hdev(freqdata, rate, taus):
-    """ Hadamard deviation """
+    """ Hadamard deviation, fractional frequency data """
     phase = frequency2phase(freqdata, rate)
     return hdev_phase(phase, rate, taus)
 
 
 def hdev_phase(data, rate, taus):
-    """ Hadamard deviation of phase data """
+    """ Hadamard deviation, phase data """
     rate = float(rate)
     (data, m, taus_used) = tau_m(data, rate, taus)
     hdevs = np.zeros_like(taus_used)
@@ -353,12 +371,15 @@ def calc_hdev_phase(data, rate, mj, stride):
 
 
 def totdev(freqdata, rate, taus):
+    """ Total deviation, fractional frequency data """
     phasedata = frequency2phase(freqdata, rate)
     return totdev_phase(phasedata, rate, taus)
 
 
 def totdev_phase(data, rate, taus):
     """
+    Total deviation, phase data.
+    
     See:
     David A. Howe,
     The total deviation approach to long-term characterization
@@ -419,12 +440,13 @@ def totdev_phase(data, rate, taus):
 
 
 def tierms(freqdata, rate, taus):
+    """ Time Interval Error RMS, for fractional frequency data """
     phasedata = frequency2phase(freqdata, rate)
     return tierms_phase(phasedata, rate, taus)
 
 
 def tierms_phase(phase, rate, taus):
-    """ TIE rms """
+    """ Time Interval Error RMS, for phase data """
     rate = float(rate)
     (data, m, taus_used) = tau_m(phase, rate, taus)
 
@@ -457,6 +479,7 @@ def tierms_phase(phase, rate, taus):
 
 
 def mtie(freqdata, rate, taus):
+    """ Maximum Time Interval Error, fractional frequency data """
     phasedata = frequency2phase(freqdata, rate)
     return mtie_phase(phasedata, rate, taus)
 
@@ -493,6 +516,7 @@ def mtie_phase(phase, rate, taus):
         idx += 1
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
+
 
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, taus, function):
     """ Three Cornered Hat Method

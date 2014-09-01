@@ -1,3 +1,8 @@
+"""
+ Useful collection of functions for the allantools test-suite
+ 
+"""
+
 import sys
 
 # read a simple data-file with phase or frequency numbers on each line
@@ -136,4 +141,6 @@ def check_deviations((t1, a1, n1, t2, a2, n2), tolerance, verbose):
 
 
 if __name__ == "__main__":
+    print "nothing to see here."
     pass
+

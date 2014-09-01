@@ -5,7 +5,7 @@ from Cython.Build import cythonize
 import numpy
 
 setup(name='AllanTools',
-      version='0.23',
+      version='1.1',
       description='Allan deviation and related time/frequency statistics',
       author='Anders Wallin',
       author_email='anders.e.e.wallin@gmail.com',

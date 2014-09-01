@@ -1,3 +1,10 @@
+"""
+  Pink frequency noise test for allantools (https://github.com/aewallin/allantools)
+  Stable32 was used to calculate the deviations we compare against.
+
+  the pink_frequency.txt was generated with noise.py, for documentation see that file.
+
+"""
 import math
 import sys
 sys.path.append("..")

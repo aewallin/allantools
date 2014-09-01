@@ -37,9 +37,8 @@ def violet(N):
 
 
 def brown(N):
-    """ # Brownian or random walk noise.
-    # 1/f^2 PSD
-    # not really a color... rather Brownian or random-walk
+    """ Brownian or random walk (diffusion) noise with 1/f^2 PSD
+        not really a color... rather Brownian or random-walk
     """
     return numpy.cumsum(numpy.random.randn(N))
 

@@ -1,3 +1,11 @@
+"""
+  PHASE.DAT test for allantools (https://github.com/aewallin/allantools)
+  Stable32 was used to calculate the deviations we compare against.
+
+  PHASE.DAT comes with Stable32 (version 1.53 was used in this case)
+
+"""
+
 import math
 import sys
 sys.path.append("..")
@@ -6,10 +14,6 @@ sys.path.append("../..") # hack to import from parent directory
 
 import allantools as allan
 import testutils
-
-# PHASE.DAT dataset comes with Stable32, and Stable32 was used to calculate deviation
-# results in files such as phade_dat_adev.txt
-#
 
 import os
 
