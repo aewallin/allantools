@@ -77,6 +77,13 @@ def benchmark_plot(data):
         idx += 1
         speedup_txt = "%s speedup: %3.1fx" % (name, speedup)
         plt.text( 700, (0.9)/np.exp(0.3*idx), speedup_txt , fontsize=14)
+    n = np.logspace(2,5,20)
+    logline =  [(5e-6)*nn for nn in n]
+    plt.loglog(n,logline,'r-',label='5e-6 * N')
+    n = np.logspace(4,6,20)
+    logline =  [(2e-8)*nn for nn in n]
+    plt.loglog(n,logline,'b-',label='2e-8 * N')
+    
     plt.xlabel('Input data size')
     plt.ylabel('CPU seconds')
 
@@ -91,7 +98,7 @@ def brownian_noise(N):
     return np.cumsum(np.random.randn(N))
 
 if __name__ == "__main__":
-    N_log_max = 5
+    N_log_max = 6
     # runs on desktop computer with i7-2600K @ 3.4 GHz CPU:
     # N_log_max   seconds
     # 3           1.1
@@ -101,14 +108,14 @@ if __name__ == "__main__":
     data=[]
     # run the benchmarks and store results into one list of tuples
     t0 = time.time()
-    #data.append( benchmark_run( alt.adev  , alp.adev  , "ADEV"  ,N_log_max) )
-    #data.append( benchmark_run( alt.oadev , alp.oadev , "OADEV" ,N_log_max) )
+    data.append( benchmark_run( alt.adev  , alp.adev  , "ADEV"  ,N_log_max) )
+    data.append( benchmark_run( alt.oadev , alp.oadev , "OADEV" ,N_log_max) )
     #data.append( benchmark_run( alt.mdev  , alp.mdev  , "MDEV"  ,N_log_max) )
     #data.append( benchmark_run( alt.tdev  , alp.tdev  , "TDEV"  ,N_log_max) )
     #data.append( benchmark_run( alt.hdev  , alp.hdev  , "HDEV"  ,N_log_max) )
     #data.append( benchmark_run( alt.ohdev , alp.ohdev , "OHDEV" ,N_log_max) )
     #data.append( benchmark_run( alt.totdev, alp.totdev, "TOTDEV",N_log_max) )
-    data.append( benchmark_run( alt.mtie  , alp.mtie  , "MTIE"  ,N_log_max) )
+    #data.append( benchmark_run( alt.mtie  , alp.mtie  , "MTIE"  ,N_log_max) )
     #data.append( benchmark_run( alt.tierms, alp.tierms, "TIERMS",N_log_max) )
     t1 = time.time()
     print "Benchmarks done in %.1f seconds" % (t1-t0)
