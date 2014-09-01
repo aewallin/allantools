@@ -69,7 +69,12 @@ Output (tau_out, adev, adeverr, n)
 """
 
 import numpy as np
-import bottleneck as bn
+import allantools_pure_python as alpp
+try:
+    import bottleneck as bn
+    USE_BOTTLENECK = True
+except ImportError:
+    USE_BOTTLENECK = False
 
 def tdev_phase(phase, rate, taus):
     """ Time deviation of phase data
@@ -489,10 +494,17 @@ def mtie_phase(phase, rate, taus):
     Stable32 also has "Decade" and "Octave" modes where the dataset is extended somehow?
     rate = float(rate)
 
-    NOTE: This method does not run as fast as the pure python method!
-    The rolling window does not fare well for large arrays / taus.
-    TODO: Make a version of this that actually achieves large speed increases
+    NOTE: The fast version of MTIE_PHASE requires bottleneck to be installed. As this isn't
+    the most widespread code, fall back to the pure python version if not installed.
     """
+    if USE_BOTTLENECK:
+        return mtie_phase_fast(phase, rate, taus)
+    else:
+        return alpp.mtie_phase(phase, rate, taus)
+
+
+def mtie_phase_fast(phase, rate, taus):
+    """ Bottleneck accelerated version of mtie_phase """
 
     (phase, m, taus_used) = tau_m(phase, rate, taus)
 

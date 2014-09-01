@@ -92,7 +92,7 @@ def brownian_noise(N):
     return np.cumsum(np.random.randn(N))
 
 if __name__ == "__main__":
-    N_log_max = 5
+    N_log_max = 7
     # runs on desktop computer with i7-2600K @ 3.4 GHz CPU:
     # N_log_max   seconds
     # 3           1.1
