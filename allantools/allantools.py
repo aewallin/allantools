@@ -70,33 +70,6 @@ Output (tau_out, adev, adeverr, n)
 
 import numpy as np
 
-def rolling_window(a, window):
-    """
-    Make an ndarray with a rolling window of the last dimension
-    from http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html
-
-    Parameters
-    ----------
-    a : array_like
-        Array to add rolling window to
-    window : int
-        Size of rolling window
-
-    Returns
-    -------
-    Array that is a view of the original array with a added dimension
-    of size w.
-
-    """
-    if window < 1:
-        raise ValueError, "`window` must be at least 1."
-    if window > a.shape[-1]:
-        raise ValueError, "`window` is too long."
-    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
-    strides = a.strides + (a.strides[-1],)
-    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
-
-
 def tdev_phase(phase, rate, taus):
     """ Time deviation of phase data
 
@@ -509,13 +482,39 @@ def mtie(freqdata, rate, taus):
     phasedata = frequency2phase(freqdata, rate)
     return mtie_phase(phasedata, rate, taus)
 
+def rolling_window(a, window):
+    """
+    Make an ndarray with a rolling window of the last dimension
+    from http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html
+
+    Parameters
+    ----------
+    a : array_like
+        Array to add rolling window to
+    window : int
+        Size of rolling window
+
+    Returns
+    -------
+    Array that is a view of the original array with a added dimension
+    of size window.
+
+    """
+    if window < 1:
+        raise ValueError, "`window` must be at least 1."
+    if window > a.shape[-1]:
+        raise ValueError, "`window` is too long."
+    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
+    strides = a.strides + (a.strides[-1],)
+    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
+    
 def mtie_phase(phase, rate, taus):
     """ Maximum Time Interval Error, phase data
     
     this seems to correspond to Stable32 setting "Fast(u)"
     Stable32 also has "Decade" and "Octave" modes where the dataset is extended somehow?
-
-    rate = float(rate) """
+    """
+    rate = float(rate)
     (phase, m, taus_used) = tau_m(phase, rate, taus)
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)

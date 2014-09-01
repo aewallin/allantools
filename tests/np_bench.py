@@ -101,15 +101,15 @@ if __name__ == "__main__":
     data=[]
     # run the benchmarks and store results into one list of tuples
     t0 = time.time()
-    data.append( benchmark_run( alt.adev  , alp.adev  , "ADEV"  ,N_log_max) )
-    data.append( benchmark_run( alt.oadev , alp.oadev , "OADEV" ,N_log_max) )
-    data.append( benchmark_run( alt.mdev  , alp.mdev  , "MDEV"  ,N_log_max) )
-    data.append( benchmark_run( alt.tdev  , alp.tdev  , "TDEV"  ,N_log_max) )
-    data.append( benchmark_run( alt.hdev  , alp.hdev  , "HDEV"  ,N_log_max) )
-    data.append( benchmark_run( alt.ohdev , alp.ohdev , "OHDEV" ,N_log_max) )
-    data.append( benchmark_run( alt.totdev, alp.totdev, "TOTDEV",N_log_max) )
+    #data.append( benchmark_run( alt.adev  , alp.adev  , "ADEV"  ,N_log_max) )
+    #data.append( benchmark_run( alt.oadev , alp.oadev , "OADEV" ,N_log_max) )
+    #data.append( benchmark_run( alt.mdev  , alp.mdev  , "MDEV"  ,N_log_max) )
+    #data.append( benchmark_run( alt.tdev  , alp.tdev  , "TDEV"  ,N_log_max) )
+    #data.append( benchmark_run( alt.hdev  , alp.hdev  , "HDEV"  ,N_log_max) )
+    #data.append( benchmark_run( alt.ohdev , alp.ohdev , "OHDEV" ,N_log_max) )
+    #data.append( benchmark_run( alt.totdev, alp.totdev, "TOTDEV",N_log_max) )
     data.append( benchmark_run( alt.mtie  , alp.mtie  , "MTIE"  ,N_log_max) )
-    data.append( benchmark_run( alt.tierms, alp.tierms, "TIERMS",N_log_max) )
+    #data.append( benchmark_run( alt.tierms, alp.tierms, "TIERMS",N_log_max) )
     t1 = time.time()
     print "Benchmarks done in %.1f seconds" % (t1-t0)
     # log-log plot of all benchmark data

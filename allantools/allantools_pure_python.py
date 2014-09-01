@@ -401,24 +401,76 @@ def tierms_phase(phase, rate, taus):
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
 def mtie(freqdata, rate, taus):
+    """ maximum time interval error, for fractional frequency data """
     phasedata = frequency2phase(freqdata, rate)
-    return mtie_phase(phasedata, rate, taus)
+    return mtie_phase_purepy(phasedata, rate, taus)
 
-def mtie_phase(phase, rate, taus):
-    """ maximum time interval error
+def mtie_phase_numpy(phase, rate, taus):
+    """ maximum time interval error, for phase data
     this seems to correspond to Stable32 setting "Fast(u)"
     Stable32 also has "Decade" and "Octave" modes where the dataset is extended somehow?
-    rate = float(rate) """
-
+    """
+    rate = float(rate)
     (m, taus_used) = tau_m(phase, rate, taus)
-    # n = len(phase) # Not used
-    devs = []
-    deverrs = []
-    ns = []
+    devs = np.zeros_like(taus_used)
+    deverrs = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
+    data = np.array(phase)
+    idx = 0
     for mj in m:
         dev = 0
         ncount = 0
+        win_max = 0
+        win_min = 0
+        # we start by finding the max/min in the first window
+        # when we slide the window forward by one step, one of these things happen:
+        # - neither the new sample that enters the window, nor the old sample that leaves the window
+        #    changes the max/min of the window
+        # - the new sample that enters the window is the new max/min of the window
+        # - the old sample that leaves the window was the max/min of the window
+        #    this is the most computationally expensive case, as we now have to search
+        #    the entire window for a new max/min
+        for i in range(0, len(data) - mj):  # slide the start of the window over the dataset
+            if i == 0:  # initialize window max/min
+                win_max = np.max(data[0:mj + 1])  # max and min in the first window
+                win_min = np.min(data[0:mj + 1])
+            else:
+                newsample = data[i + mj]  # the new sample that enters the window
+                if newsample > win_max:
+                    win_max = newsample
+                elif newsample < win_min:
+                    win_min = newsample
+                oldsample = data[i - 1]  # the old sample we throw away
+                if win_max == oldsample:
+                    win_max = np.max(data[i:i + mj + 1])  # must search for a new maximum
+                if win_min == oldsample:
+                    win_min = np.min(data[i:i + mj + 1])  # must search for new minimum sample
+            tie = win_max - win_min  # largest error in this window
+            if tie > dev:
+                dev = tie # store max of all windows as the MTIE result
+            ncount += 1
 
+        devs[idx] = dev
+        deverrs[idx] = dev / np.sqrt(ncount)
+        ns[idx] = ncount
+        idx += 1
+
+    return remove_small_ns(taus_used, devs, deverrs, ns)
+
+def mtie_phase_purepy(phase, rate, taus):
+    """ maximum time interval error, for phase data
+    this seems to correspond to Stable32 setting "Fast(u)"
+    Stable32 also has "Decade" and "Octave" modes where the dataset is extended somehow?
+    """
+    rate = float(rate)
+    (m, taus_used) = tau_m(phase, rate, taus)
+    devs = []
+    deverrs = []
+    ns = []
+
+    for mj in m:
+        dev = 0
+        ncount = 0
         win_max = 0
         win_min = 0
         # we start by finding the max/min in the first window
@@ -431,33 +483,28 @@ def mtie_phase(phase, rate, taus):
         #    the entire window for a new max/min
         for i in range(0, len(phase) - mj):  # slide the start of the window over the dataset
             if i == 0:  # initialize window max/min
-                win_max = max(phase[0:0 + mj + 1])  # max and min in the first window
-                win_min = min(phase[0:0 + mj + 1])
+                win_max = max(phase[0:mj + 1])  # max and min in the first window
+                win_min = min(phase[0:mj + 1])
             else:
                 newsample = phase[i + mj]  # the new sample that enters the window
                 if newsample > win_max:
                     win_max = newsample
                 elif newsample < win_min:
                     win_min = newsample
-                oldindex = i - 1
-                if oldindex < 0:
-                    oldindex = 0
                 oldsample = phase[i - 1]  # the old sample we throw away
                 if win_max == oldsample:
                     win_max = max(phase[i:i + mj + 1])  # must search for a new maximum
                 if win_min == oldsample:
                     win_min = min(phase[i:i + mj + 1])  # must search for new minimum sample
-
-                    #phases = phase[i:i+mj+1] # data window of length mj
-
             tie = win_max - win_min  # largest error in this window
             if tie > dev:
-                dev = tie
+                dev = tie # store max of all windows as the MTIE result
             ncount += 1
 
         devs.append(dev)
-        deverrs.append(dev / np.sqrt(ncount))
+        deverrs.append(dev / np.sqrt(ncount) )
         ns.append(ncount)
+        
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
