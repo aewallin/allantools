@@ -84,6 +84,12 @@ def benchmark_plot(data):
     logline =  [(2e-8)*nn for nn in n]
     plt.loglog(n,logline,'b-',label='2e-8 * N')
     
+    logline =  [(2e-9)*nn*np.log(nn) for nn in n]
+    plt.loglog(n,logline,'b-.',label='2e-8 * N log(N)')
+        
+    logline =  [(2e-12)*nn*nn for nn in n]
+    plt.loglog(n,logline,'b--',label='2e-8 * N*N')
+        
     plt.xlabel('Input data size')
     plt.ylabel('CPU seconds')
 
@@ -110,7 +116,7 @@ if __name__ == "__main__":
     t0 = time.time()
     data.append( benchmark_run( alt.adev  , alp.adev  , "ADEV"  ,N_log_max) )
     data.append( benchmark_run( alt.oadev , alp.oadev , "OADEV" ,N_log_max) )
-    #data.append( benchmark_run( alt.mdev  , alp.mdev  , "MDEV"  ,N_log_max) )
+    data.append( benchmark_run( alt.mdev  , alp.mdev  , "MDEV"  ,N_log_max) )
     #data.append( benchmark_run( alt.tdev  , alp.tdev  , "TDEV"  ,N_log_max) )
     #data.append( benchmark_run( alt.hdev  , alp.hdev  , "HDEV"  ,N_log_max) )
     #data.append( benchmark_run( alt.ohdev , alp.ohdev , "OHDEV" ,N_log_max) )
