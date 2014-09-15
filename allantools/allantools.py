@@ -533,9 +533,63 @@ def mtie_phase(phase, rate, taus):
         ns[idx] = ncount
         idx += 1
 
-    return remove_small_ns(taus_used, devs, deverrs, ns)
-
-
+    #return remove_small_ns(taus_used, devs, deverrs, ns)
+    return (taus_used, devs, deverrs, ns)
+    
+def mtie_phase_fast(phase, rate, taus):
+    """ fast binary decomposition algorithm for MTIE
+    
+        See: STEFANO BREGNI "Fast Algorithms for TVAR and MTIE Computation in 
+        Characterization of Network Synchronization Performance"
+    """
+    rate = float(rate)
+    phase = np.asarray(phase)
+    k_max = int( np.floor( np.log2( len(phase) ) ) )
+    phase = phase[0:pow(2,k_max)] # truncate data to 2**k_max datapoints
+    assert( len(phase) == pow(2,k_max) )
+    k = 1
+    taus = []
+    while k<=k_max:
+        tau = pow(2,k)
+        taus.append(tau)
+        #print tau
+        k += 1
+    print "taus ", taus
+    devs = np.zeros(len(taus))
+    deverrs = np.zeros(len(taus))
+    ns = np.zeros(len(taus))
+    # matrices to store results
+    mtie_max = np.zeros( (len(phase)-1,k_max) )
+    mtie_min = np.zeros( (len(phase)-1,k_max) )
+    for kidx in range(k_max):
+        k=kidx+1
+        imax = len(phase)-pow(2,k)+1
+        #print k, imax
+        tie = np.zeros(imax)
+        #print np.max( tie )
+        for i in range(imax):
+            if k==1: 
+                mtie_max[i,kidx] = max( phase[i], phase[i+1] )
+                mtie_min[i,kidx] = min( phase[i], phase[i+1] )
+            else:
+                p = int( pow(2,k-1) )
+                mtie_max[i,kidx] = max( mtie_max[i,kidx-1], mtie_max[i+p,kidx-1] )
+                mtie_min[i,kidx] = min( mtie_min[i,kidx-1], mtie_min[i+p,kidx-1] )
+                
+        #for i in range(imax):
+            tie[i] = mtie_max[i,kidx] - mtie_min[i,kidx]
+            #print tie[i]
+        devs[kidx] = np.amax( tie )
+        #print "maximum %2.4f" % devs[kidx]
+        #print np.amax( tie )
+    #for tau in taus:
+    #for 
+    
+    print devs
+    #print k_max
+    #devs =
+    
+    
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, taus, function):
     """ Three Cornered Hat Method Three clocks with unknown variances sa^2, sb^2, sc^3
     Three pairwise measurements give variances:
@@ -574,4 +628,13 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
 
 if __name__ == "__main__":
     print "Nothing to see here."
-
+    Nmax = pow(2,8)
+    phase = 0.2345* np.random.randn(Nmax)
+    taus = []
+    rate = 1.0
+    mtie_phase_fast(phase, rate, taus)
+    # then try using old function
+    (o_taus, o_dev, o_err, o_n)=mtie_phase(phase, rate, [1,3,7,16,32,64,128,255])
+    print o_taus
+    print o_dev
+    
