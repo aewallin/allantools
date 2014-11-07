@@ -24,9 +24,9 @@ More test data, benchmarks, and comparisons to known-good algorithms are welcome
 
 Authors
 =======
-Anders E.E. Wallin   anders.e.e.wallin "at" gmail.com
-Danny Price          https://github.com/telegraphic
-Cantwell G. Carson   carsonc "at" gmail.com
+* Anders E.E. Wallin   anders.e.e.wallin "at" gmail.com
+* Danny Price          https://github.com/telegraphic
+* Cantwell G. Carson   carsonc "at" gmail.com
 
 Installation
 ============
