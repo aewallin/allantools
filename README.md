@@ -24,9 +24,9 @@ More test data, benchmarks, and comparisons to known-good algorithms are welcome
 
 Authors
 =======
-* Anders E.E. Wallin   anders.e.e.wallin "at" gmail.com
-* Danny Price          https://github.com/telegraphic
-* Cantwell G. Carson   carsonc "at" gmail.com
+* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com
+* Danny Price, https://github.com/telegraphic
+* Cantwell G. Carson, carsonc "at" gmail.com
 
 Installation
 ============
@@ -90,3 +90,7 @@ http://home.deib.polimi.it/bregni/papers/cscc2001_fastalgo.pdf
 David A. Howe, The total deviation approach to long-term characterization
 of frequency stability, IEEE tr. UFFC vol 47 no 5 (2000)
 http://dx.doi.org/10.1109/58.869040
+
+Ilaria Sesia and Patrizia Tavella, Estimating the Allan variance in the 
+presence of long periods of missing data and outliers.
+2008 Metrologia 45 S134 http://dx.doi.org/10.1088/0026-1394/45/6/S19
