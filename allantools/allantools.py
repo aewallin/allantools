@@ -652,7 +652,10 @@ def gradev_phase_calc(data, rate, mj, stride, ci, noisetype):
     return dev, deverr, n
 
 def gradev_phase(data, rate, taus, ci=0.9, noisetype='wp'):
-    """ gap resistant overlapping Allan deviation of phase data """
+    """ gap resistant overlapping Allan deviation of phase data 
+    
+        see Sesia et al. (Metrologia 45 (2008) S134–S142).
+    """
     (data, m, taus_used) = tau_m(data, rate, taus)
     ad  = np.zeros_like(taus_used)
     ade_l = np.zeros_like(taus_used)   
