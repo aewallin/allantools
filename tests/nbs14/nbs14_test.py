@@ -142,6 +142,8 @@ def nbs14_test():
 	tol = 1e-4
 	
 	# first tests that call the _phase functions
+	print "nbs14 tests for _phase() functions"
+	
 	(taus2,adevs2,aerrs2,ns2) = allan.adev_phase( nbs14_phase, 1.0, taus)
 	adevs = nbs14_devs[0]
 	assert( check_devs( adevs2[0], adevs[0] ) )
@@ -169,7 +171,9 @@ def nbs14_test():
 	print "nbs14 tdev"
 
 	# then the same tests for frequency data
-	f_fract = nbs14_f
+	print "nbs14 tests for frequency data"
+
+	f_fract = [ float(f) for f in nbs14_f]
 	(taus2,adevs2,aerrs2,ns2) = allan.adev( f_fract, 1.0, taus)
 	adevs = nbs14_devs[0]
 	assert( check_devs( adevs2[0], adevs[0] ) )

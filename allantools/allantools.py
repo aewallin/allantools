@@ -1,9 +1,24 @@
 """
 Allan deviation tools
 Anders Wallin (anders.e.e.wallin "at" gmail.com)
-v1.10 2014 August, using numpy which is 100x faster than pure python
-v1.01 2014 August, PEP8 compliance improvements by telegraphic
-v1.00 2014 January
+
+Version History:
+
+v1.2 2014 November, Cantwell G. Carson conrtibuted:
+- A gap-robust version of ADEV based on the paper by Sesia et al.
+   gradev_phase() and gradev()
+- Improved uncertainty estimates: uncertainty_estimate()
+  This introduces a new dependency: scipy.stats.chi2() 
+
+v1.1 2014 August, Danny Price converted the library to use numpy.
+many functions in allantools are now 100x faster than before.
+http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/
+
+v1.01 2014 August, PEP8 compliance improvements by Danny Price.
+
+v1.00 2014 January, first version of allantools.
+http://www.anderswallin.net/2014/01/allantools/
+
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -45,14 +60,6 @@ Time Total (modified total variance scaled by (t^2/3) )
 Hadamard Total
 
 
-References
-http://www.wriley.com/paper4ht.htm
-http://en.wikipedia.org/wiki/Allan_variance
-for code see e.g.:
-http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
-http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified
-http://www.leapsecond.com/tools/adev_lib.c
-
 Inputs (phase data):
     phase = list of phase measurements in seconds, e.g. from a time-interval-counter
     rate  = sample rate of data, i.e. interval between phase measurements is 1/rate
@@ -69,6 +76,7 @@ Output (tau_out, adev, adeverr, n)
 """
 
 import numpy as np
+import scipy.stats
 
 def tdev_phase(phase, rate, taus):
     """ Time deviation of phase data
@@ -164,9 +172,8 @@ def mdev(freqdata, rate, taus):
     phase = frequency2phase(freqdata, rate)
     return mdev_phase(phase, rate, taus)
 
-
+"""
 def tau_m(data, rate, taus, v=False):
-    """ pre-processing of the tau-list given by the user """
     data, taus = np.array(data), np.array(taus)
 
     if rate == 0:
@@ -191,7 +198,7 @@ def tau_m(data, rate, taus, v=False):
 
     taus2 = m / float(rate)
     return data, m, taus2
-
+"""
 
 def adev(data, rate, taus):
     """ Allan deviation for fractional frequency data
@@ -212,7 +219,7 @@ def adev_phase(data, rate, taus):
     idx = 0
 
     for mj in m:  # loop through each tau value m(j)
-        (dev, deverr, n) = calc_adev_phase(data, rate, mj, mj)
+        (dev, deverr, n) = adev_phase_calc(data, rate, mj, mj)
         ad[idx] = dev
         ade[idx] = deverr
         adn[idx] = n
@@ -221,7 +228,7 @@ def adev_phase(data, rate, taus):
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
 
-def calc_adev_phase(data, rate, mj, stride):
+def adev_phase_calc(data, rate, mj, stride):
     """ see http://www.leapsecond.com/tools/adev_lib.c
         stride = mj for nonoverlapping allan deviation
         stride = 1 for overlapping allan deviation
@@ -250,20 +257,6 @@ def calc_adev_phase(data, rate, mj, stride):
 
     return dev, deverr, n
 
-
-def remove_small_ns(taus, devs, deverrs, ns):
-    """ if n is small (==1), reject the result """
-
-    ns_big_enough = ns > 1
-
-    o_taus = taus[ns_big_enough]
-    o_dev  = devs[ns_big_enough]
-    o_err  = deverrs[ns_big_enough]
-    o_n    = ns[ns_big_enough]
-
-    return o_taus, o_dev, o_err, o_n
-
-
 def oadev_phase(data, rate, taus):
     """ overlapping Allan deviation of phase data """
     (data, m, taus_used) = tau_m(data, rate, taus)
@@ -273,7 +266,7 @@ def oadev_phase(data, rate, taus):
     idx = 0
 
     for mj in m:
-        (dev, deverr, n) = calc_adev_phase(data, rate, mj, 1)  # stride=1 for overlapping ADEV
+        (dev, deverr, n) = adev_phase_calc(data, rate, mj, 1)  # stride=1 for overlapping ADEV
         ad[idx]  = dev
         ade[idx] = deverr
         adn[idx] = n
@@ -287,20 +280,10 @@ def oadev(freqdata, rate, taus):
     phase = frequency2phase(freqdata, rate)
     return oadev_phase(phase, rate, taus)
 
-
-def frequency2phase(freqdata, rate):
-    """ integrate fractional frequency data and output phase data """
-    dt = 1.0 / float(rate)
-    phasedata = np.cumsum(freqdata) * dt
-    phasedata = np.insert(phasedata, 0, 0)
-    return phasedata
-
-
 def ohdev(freqdata, rate, taus):
     """ Overlapping Hadamard deviation, fractional frequency data """
     phase = frequency2phase(freqdata, rate)
     return ohdev_phase(phase, rate, taus)
-
 
 def ohdev_phase(data, rate, taus):
     """ Overlapping Hadamard deviation of phase data """
@@ -318,7 +301,6 @@ def ohdev_phase(data, rate, taus):
         ns[idx] = n
         idx += 1
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
-
 
 def hdev(freqdata, rate, taus):
     """ Hadamard deviation, fractional frequency data """
@@ -482,7 +464,7 @@ def mtie(freqdata, rate, taus):
     phasedata = frequency2phase(freqdata, rate)
     return mtie_phase(phasedata, rate, taus)
 
-def rolling_window(a, window):
+def mtie_rolling_window(a, window):
     """
     Make an ndarray with a rolling window of the last dimension
     from http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html
@@ -522,7 +504,7 @@ def mtie_phase(phase, rate, taus):
 
     idx = 0
     for mj in m:
-        rw = rolling_window(phase, mj + 1)
+        rw = mtie_rolling_window(phase, mj + 1)
         win_max = np.max(rw, axis=1)
         win_min = np.min(rw, axis=1)
         tie = win_max - win_min
@@ -533,9 +515,13 @@ def mtie_phase(phase, rate, taus):
         ns[idx] = ncount
         idx += 1
 
-    #return remove_small_ns(taus_used, devs, deverrs, ns)
-    return (taus_used, devs, deverrs, ns)
-    
+    return remove_small_ns(taus_used, devs, deverrs, ns)
+
+#
+# !!!!!!!
+# FIXME: mtie_phase_fast() is incomplete.
+# !!!!!!!
+#
 def mtie_phase_fast(phase, rate, taus):
     """ fast binary decomposition algorithm for MTIE
     
@@ -588,31 +574,324 @@ def mtie_phase_fast(phase, rate, taus):
     print devs
     #print k_max
     #devs =
+
+########################################################################
+#
+#  gap resistant Allan deviation
+# 
+
+def gradev_phase(data, rate, taus, ci=0.9, noisetype='wp'):
+    """ gap resistant overlapping Allan deviation of phase data 
+    """
+    (data, m, taus_used) = tau_m(data, rate, taus)
+    ad  = np.zeros_like(taus_used)
+    ade_l = np.zeros_like(taus_used)   
+    ade_h = np.zeros_like(taus_used)
+    adn = np.zeros_like(taus_used)
+
+    for idx, mj in enumerate(m):
+        (dev, deverr, n) = calc_gradev_phase(data, 
+                                             rate, 
+                                             mj, 
+                                             1,
+                                             ci,
+                                             noisetype)  # stride=1 for overlapping ADEV
+        ad[idx]  = dev
+        ade_l[idx] = deverr[0]
+        ade_h[idx] = deverr[1]    
+        adn[idx] = n
+
+    return remove_small_ns(taus_used, ad, ade_l, ade_h, adn)
+
+def gradev(freqdata, rate, taus, ci=0.9, noisetype='wp'):
+    """ gap-resistant overlapping Allan deviation for fractional frequency data 
+    """
+    freqdata = trim_data(freqdata)     
+    phase = frequency2phase(freqdata, rate)
+    return gradev_phase(phase, rate, taus, ci=ci, noisetype=noisetype)
+
+def gradev_phase_calc(data, rate, mj, stride, ci, noisetype):
+    """ see http://www.leapsecond.com/tools/adev_lib.c
+        stride = mj for nonoverlapping allan deviation
+        stride = 1 for overlapping allan deviation
+        
+        see http://en.wikipedia.org/wiki/Allan_variance
+             1       1      
+         s2y(t) = --------- sum [x(i+2) - 2x(i+1) + x(i) ]^2
+                  2*tau^2    
+    """
+
+    d2 = data[2 * mj::stride]
+    d1 = data[1 * mj::stride]
+    d0 = data[::stride]
+
+    n = min(len(d0), len(d1), len(d2))
+
+    if n == 0:
+        RuntimeWarning("Data array length is too small: %i" % len(data))
+        n = 1
+
+    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
     
+    n = len(np.where(np.isnan(v_arr)==False)[0]) # only average for non-nans
+    N = len(np.where(np.isnan(data)==False)[0])
+
+    s = np.nansum(v_arr * v_arr)   #  a summation robust to nans  
+
+    dev = np.sqrt(s / (2.0 * n)) / mj  * rate
+    #deverr = dev / np.sqrt(n) # old simple errorbars
+    if n > 1:
+        deverr = uncertainty_estimate(N, 
+                                      mj, 
+                                      dev, 
+                                      ci, 
+                                      noisetype)
+    else:
+        deverr = [0,0]
+
+    return dev, deverr, n
+
+def gradev_phase(data, rate, taus, ci=0.9, noisetype='wp'):
+    """ gap resistant overlapping Allan deviation of phase data """
+    (data, m, taus_used) = tau_m(data, rate, taus)
+    ad  = np.zeros_like(taus_used)
+    ade_l = np.zeros_like(taus_used)   
+    ade_h = np.zeros_like(taus_used)
+    adn = np.zeros_like(taus_used)
+
+    for idx, mj in enumerate(m):
+        (dev, deverr, n) = gradev_phase_calc(data, 
+                                             rate, 
+                                             mj, 
+                                             1,
+                                             ci,
+                                             noisetype)  # stride=1 for overlapping ADEV
+        ad[idx]  = dev
+        ade_l[idx] = deverr[0]
+        ade_h[idx] = deverr[1]    
+        adn[idx] = n
+
+    return remove_small_ns(taus_used, ad, ade_l, ade_h, adn)  # tau, adev, adeverror, naverages
+
+
+def gradev(freqdata, rate, taus, ci=0.9, noisetype='wp'):
+    """ overlapping Allan deviation for fractional frequency data """
+    freqdata = trim_data(freqdata)     
+    phase = frequency2phase(freqdata, rate)
+    return gradev_phase(phase, rate, taus, ci=ci, noisetype=noisetype)
+
+########################################################################
+#
+#  Various helper functions and utilities
+# 
+
+def tau_m(data, rate, taus, v=False):
+    """ pre-processing of the tau-list given by the user """
+    data, taus = np.array(data), np.array(taus)
+
+    if rate == 0:
+        raise RuntimeError("Warning! rate==0")
+    rate = float(rate)
+    # n = len(data) # not used
+    m = []
+
+    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
+    taus_valid2 = taus > 0
+    taus_valid  = taus_valid1 & taus_valid2
+    m = np.floor(taus[taus_valid] * rate)
+    m = m[m != 0]       # m is tau in units of datapoints
+    m = np.unique(m)    # remove duplicates and sort
+
+    if v:
+        print "tau_m: ", m
+
+    if len(m) == 0:
+        print "Warning: sanity-check on tau failed!"
+        print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
+
+    taus2 = m / float(rate)
+    return data, m, taus2
+
+"""
+def frequency2phase(freqdata, rate):
+     integrate fractional frequency data and output phase data 
+    dt = 1.0 / float(rate)
+    phasedata = np.cumsum(freqdata) * dt
+    phasedata = np.insert(phasedata, 0, 0)
+    return phasedata
+"""
+
+def frequency2phase(freqdata, rate):
+    """ integrate fractional frequency data and output phase data """
     
+    dt = 1.0 / float(rate)
+    mask = np.isnan(freqdata)
+    freqdata = np.nan_to_num(freqdata)
+    phasedata = np.cumsum(freqdata) * dt
+    phasedata[np.where(mask==True)] = np.nan
+    phasedata = np.insert(phasedata, 0, 0)
+    return phasedata
+    
+def remove_small_ns(taus, devs, deverrs, ns):
+    """ if n is small (==1), reject the result 
+    
+        n is the number of averages in the deviation estimate at a
+        certain tau value.
+    """
+
+    ns_big_enough = ns > 1
+
+    o_taus = taus[ns_big_enough]
+    o_dev  = devs[ns_big_enough]
+    o_err  = deverrs[ns_big_enough]
+    o_n    = ns[ns_big_enough]
+
+    return o_taus, o_dev, o_err, o_n
+
+# FIXME: 5-parameter version of the exact same function as above.
+# try to merge both into one function.
+def remove_small_ns(taus, devs, deverrs_l, deverrs_h, ns):
+    """ if n is small (==1), reject the result """
+    ns_big_enough = ns > 1
+    o_taus = taus[ns_big_enough]
+    o_dev  = devs[ns_big_enough]
+    o_err_l  = deverrs_l[ns_big_enough]
+    o_err_h  = deverrs_h[ns_big_enough]
+    o_n    = ns[ns_big_enough]
+    return o_taus, o_dev, o_err_l, o_err_h, o_n
+
+def trim_data(x):
+    """
+    Trim leading and trailing NaNs from dataset: 
+    This is done by creating a boolean mask that is False for all leading and 
+    trailing NaN values. The mask is True for all values from the first non-NaN
+    to the last non-NaN. The mask is then applied to the data set and returned.
+    """
+    # create boolean mask default True:
+    mask = np.ones(len(x), dtype=bool)
+    # Set indices of mask to False for leading NaNs 
+    for i in range(0,len(x)):
+        if np.isnan(x[i]) == True:
+            mask[i] = False
+        else:  
+            break
+    
+    # Set indices of mask to False for trailing NaNs   
+    for j in range(len(x)-1,0,-1):
+        if np.isnan(x[j]) == True:
+            mask[j] = False
+        else:
+            break
+
+    return x[mask]
+
+def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
+    """Determine the uncertainty of a given two-sample variance estimate for
+    a given number of samples (N), sampling distance (m), variance estimate 
+    (s), confindence interval (ci), and type of noise (noisetype).
+    
+    Parameters
+    ----------
+    N : int
+        the number of samples used in a two sample variance estimate
+    m : int
+        the length of the window, tau = m * tau0
+    s : float
+        the estimated two-sample variance
+    ci: float
+        the total confidence interval desired, i.e. if ci = 0.9, the bounds 
+        will be at 0.05 and 0.95.
+    noisetype: string
+        the type of noise desired:
+            'wp' returns white phase noise.
+            'wf' returns white frequency noise.
+            'fp' returns flicker phase noise.
+            'ff' returns flicker frequency noise.
+            'rf' returns random walk frequency noise.
+        If the input is not recognized, it defaults to idealized, uncorrelated
+        noise with (N-1) degrees of freedom. 
+    
+    Returns
+    -------
+    [err_l, err_h] : list, float
+        the upper and lower bounds of the confidence interval taken as
+        distances from the the estimated two sample variance. 
+
+    References
+    ----------
+       S. Stein, Frequency and Time - Their Measurement and 
+       Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
+       http://tf.boulder.nist.gov/general/pdf/666.pdf
+    """
+    
+    ci_l = min(np.abs(ci),np.abs((ci-1))) / 2
+    ci_h = 1 - ci_l
+    
+    if noisetype in set(['wp', 'fp', 'wf', 'ff', 'rf']):
+    
+        if noisetype =='wp':
+            df = (N + 1) * (N - 2*m) / (2 * (N - m))    
+            
+        if noisetype =='wf':
+            df = (((3 * (N - 1) / (2 * m)) - (2 * (N - 2) / N)) * 
+                  ((4*m**2) / ((4*m**2) + 5)))
+                
+        if noisetype =='fp':
+            a = (N - 1)/(2 * m)
+            b = (2 * m + 1) * (N - 1) / 4
+            df = np.exp(np.sqrt(np.log(a) * np.log(b)))
+    
+        if noisetype =='ff':
+            if m == 1:
+                df = 2 * (N - 2) /(2.3 * N - 4.9)
+            if m >= 2:
+                df = 5 * N**2 / (4 * m * (N + (3 * m)))
+                
+        if noisetype == 'rf':
+            a = (N - 2) / (m * (N - 3)**2)
+            b = (N - 1)**2 
+            c = 3 * m * (N - 1)
+            d = 4 * m **2
+            df = a * (b - c + d)
+            
+    else:
+        df = (N - 1)
+        print "Noise type not recognized. Defaulting to N - 1 degrees of freedom."
+
+    chi2_l = scipy.stats.chi2.ppf(ci_l,df)
+    chi2_h = scipy.stats.chi2.ppf(ci_h,df)
+    
+    err_h = np.abs(df * s / chi2_l - s)
+    err_l = np.abs(df * s / chi2_h - s)
+    
+#    print N, m, s, df, chi2_l, err_h
+    
+    return [err_l, err_h]
+
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, taus, function):
-    """ Three Cornered Hat Method Three clocks with unknown variances sa^2, sb^2, sc^3
+    """ 
+    Three Cornered Hat Method 
+    
+    We have three clocks with unknown variances sa^2, sb^2, sc^3
     Three pairwise measurements give variances:
     sab^2, sbc^2, sca^2
     Assuming covariances are zero (clocks are independent), we get:
     sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
-    (and cyclic permutations for sb and sc) """
+    (and cyclic permutations for sb and sc) 
+    """
     
     # Until MTIE stuff is ported, need this fix:
     npa = np.array
     phasedata_ab, phasedata_bc, phasedata_ca = npa(phasedata_ab), npa(phasedata_bc), npa(phasedata_ca)
     taus = npa(taus)
 
-
     (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab, rate, taus)
     (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc, rate, taus)
     (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca, rate, taus)
 
-
     (tau_ab, dev_ab, err_ab, ns_ab) = npa(tau_ab), npa(dev_ab), npa(err_ab), npa(ns_ab)
     (tau_bc, dev_bc, err_bc, ns_bc) = npa(tau_bc), npa(dev_bc), npa(err_bc), npa(ns_bc)
     (tau_ca, dev_ca, err_ca, ns_ca) = npa(tau_ca), npa(dev_ca), npa(err_ca), npa(ns_ca)
-
 
     var_ab = dev_ab * dev_ab
     var_bc = dev_bc * dev_bc
@@ -628,6 +907,8 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
 
 if __name__ == "__main__":
     print "Nothing to see here."
+    
+    # code to test mtie_phase_fast, incomplete!
     Nmax = pow(2,8)
     phase = 0.2345* np.random.randn(Nmax)
     taus = []

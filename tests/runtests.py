@@ -1,5 +1,5 @@
 """
-  top-level tests for Allan deviation tools
+  top-level test-script for allantools
   https://github.com/aewallin/allantools
 
   this files runs all the tests defined in the /tests/ subdirectories

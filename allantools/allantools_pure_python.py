@@ -1,7 +1,7 @@
 """
-Allan deviation tools
-Anders Wallin (anders.e.e.wallin "at" gmail.com)
-v1.0 2014 January
+This is the old pure python versio of allantools.
+Please see https://github.com/aewallin/allantools for the latest version.
+
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,51 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-Implemented functions:
-adev() and adev_phase()     Allan deviation
-oadev() and oadev_phase()   Overlapping Allan deviation
-mdev() and mdev_phase()     Modified Allan deviation
-tdev() and tdev_phase()     Time deviation ( modified variance scaled by (t^2/3) )
-hdev() and hdev_phase()     Hadamard deviation
-ohdev() and ohdev_phase()   Overlapping Hadamard deviation
-totdev() and totdev_phase() Total deviation
-mtie() and mtie_phase()     Maximum Time Interval Error
-tierms() and tierms_phase() Time Interval Error RMS
-
-to do:
-Modified Total
-The modified total variance, MTOT, is total version of the modified Allan variance.
-It is defined for phase data as:
-                         1           N-3m+1  1  N+3m-1
-Mod s^2 total(t) = ----------------- sum     -- sum      [0zi*(m)]^2
-                    2m^2t0^2(N-3m+1) n=1     6m i=n-3m
-where the 0zi*(m) terms are the phase averages from a triply-extended
-sequence created by uninverted even reflection at each end,
-and the prefix 0 denotes that the linear trend has been removed.
-
-Time Total (modified total variance scaled by (t^2/3) )
-Hadamard Total
-
-
-References
-http://www.wriley.com/paper4ht.htm
-http://en.wikipedia.org/wiki/Allan_variance
-code see e.g.:
-http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
-http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified
-http://www.leapsecond.com/tools/adev_lib.c
-
-Allan deviation of phase data
-Inputs:
-    phase = list of phase measurements in seconds
-    rate  = sample rate of data, i.e. interval between phase measurements is 1/rate
-    taus  = list of tau-values for ADEV computation
-Output (tau_out, adev, adeverr, n)
-    tau_out = list of tau-values for which ADEV was computed
-    adev    = list of Allan deviations
-    adeverr = list of estimated errors of allan deviations
-    n       = list of number of pairs in allan computation. standard error is adeverr = adev/sqrt(n)
 """
 
 import numpy as np

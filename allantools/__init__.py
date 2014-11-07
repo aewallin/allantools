@@ -30,3 +30,6 @@ from allantools import mtie_phase
 
 from allantools import tierms
 from allantools import tierms_phase
+
+from allantools import gradev
+from allantools import gradev_phase
