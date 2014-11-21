@@ -654,7 +654,6 @@ def gradev_phase_calc(data, rate, mj, stride, ci, noisetype):
 def gradev_phase(data, rate, taus, ci=0.9, noisetype='wp'):
     """ gap resistant overlapping Allan deviation of phase data 
     
-        see Sesia et al. (Metrologia 45 (2008) S134–S142).
     """
     (data, m, taus_used) = tau_m(data, rate, taus)
     ad  = np.zeros_like(taus_used)
@@ -734,8 +733,17 @@ def frequency2phase(freqdata, rate):
     phasedata[np.where(mask==True)] = np.nan
     phasedata = np.insert(phasedata, 0, 0)
     return phasedata
-    
-def remove_small_ns(taus, devs, deverrs, ns):
+
+def remove_small_ns(*args):
+    if len(args) == 4:
+        return remove_small_ns_4(*args)
+    elif len(args) == 5:
+        return remove_small_ns_5(*args)
+    else:
+        assert(0)
+        
+# 4-parameter version of this function
+def remove_small_ns_4(taus, devs, deverrs, ns):
     """ if n is small (==1), reject the result 
     
         n is the number of averages in the deviation estimate at a
@@ -753,7 +761,7 @@ def remove_small_ns(taus, devs, deverrs, ns):
 
 # FIXME: 5-parameter version of the exact same function as above.
 # try to merge both into one function.
-def remove_small_ns(taus, devs, deverrs_l, deverrs_h, ns):
+def remove_small_ns_5(taus, devs, deverrs_l, deverrs_h, ns):
     """ if n is small (==1), reject the result """
     ns_big_enough = ns > 1
     o_taus = taus[ns_big_enough]
