@@ -18,11 +18,14 @@ from nbs14 import nbs14_test
 from phasedat import phase_dat_test
 from pink_frequency import pink
 from Cs5071A import Cs5071A_test_decade
+from Keysight53230A_ti_noise_floor import TIC_test
+
 import test_ns
 
 if __name__ == "__main__":
     start = time.clock()
 
+    TIC_test.run()            # 53230A counter noise floor dataset
     nbs14_test.run()          # NBS14 test data with published deviations
     phase_dat_test.run()      # phase.dat from Stable32
     pink.run()                # synthetic pink frequency noise
