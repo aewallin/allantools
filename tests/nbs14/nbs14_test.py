@@ -27,7 +27,8 @@ nbs14_f     = [892,809,823,798,671,644,883,903,677]
 nbs14_devs= [ (91.22945,115.8082),  # ADEV(tau=1,tau=2)
               (91.22945, 85.95287), # OADEV 
               (91.22945,74.78849),  # MDEV
-              (91.22945,98.31100),  # TOTDEV
+              #(91.22945,98.31100),  # TOTDEV, http://www.ieee-uffc.org/frequency-control/learning-riley.asp
+              (91.22945, 93.90379), # TOTDEV, http://tf.nist.gov/general/pdf/2220.pdf page 107
               (70.80608,116.7980),  # HDEV
               (52.67135,86.35831),  # TDEV 
               (70.80607, 85.61487)] # OHDEV
@@ -44,10 +45,10 @@ nbs14_devs= [ (91.22945,115.8082),  # ADEV(tau=1,tau=2)
 nbs14_1000_devs = [ [2.922319e-01, 9.965736e-02, 3.897804e-02],  # ADEV 1, 10, 100 
                     [2.922319e-01, 9.159953e-02, 3.241343e-02],  # OADEV
                     [2.922319e-01, 6.172376e-02, 2.170921e-02],  # MDEV 
-                    [2.922319e-01, 9.172131e-02, 3.501795e-02],  # TOTDEV, http://www.ieee-uffc.org/frequency-control/learning-riley.asp
+                    #[2.922319e-01, 9.172131e-02, 3.501795e-02],  # TOTDEV, http://www.ieee-uffc.org/frequency-control/learning-riley.asp
                     # "Calculated using bias-corrected reflected method from endpoint-matched phase data"
                     
-                    # 2.922319e-01, 9.134743e-02, 3.406530e-02    # TOTDEV, http://tf.nist.gov/general/pdf/2220.pdf page 108
+                    [2.922319e-01, 9.134743e-02, 3.406530e-02],    # TOTDEV, http://tf.nist.gov/general/pdf/2220.pdf page 108
                     # "Calculated using doubly reflected TOTVAR method"
                     
                     [2.943883e-01, 1.052754e-01, 3.910860e-02],  # HDEV
@@ -79,29 +80,6 @@ def nbs14_tester( function, fdata, correct_devs ):
     for i in range(3):
         assert( check_devs( devs[i], correct_devs[i] ) )
 
-# TODO: this does not work!!
-def nbs14_totdev_test():
-    rate=1.0
-    taus =[1, 10, 100]
-    fdata = nbs14_1000()
-    correct_devs = nbs14_1000_devs[3] 
-    (taus2, devs, deverrs, ns) = allan.totdev( fdata, rate, taus)
-    (taus2, adevs, adeverrs, ans) = allan.adev( fdata, rate, taus)
-    for i in range(3):
-        totdev_corrected = devs[i]
-        if i != 0:
-            # bias removal is used in the published results
-            a = 0.481 # flicker frequency-noise
-            #a = 0.750 # flicker frequency-noise
-            ratio = pow(devs[i],2)/pow(adevs[i],2)
-            print ratio-1
-            print -a*taus2[i]/((len(fdata)+1)*(1/float(rate)))
-            ratio_corrected = ratio*( 1-a* taus2[i]/((len(fdata)+1)*(1/float(rate))) ) # WRONG!?!
-            totdev_corrected = ratio_corrected * pow(adevs[i],2)
-            totdev_corrected = math.sqrt( totdev_corrected )
-            print totdev_corrected, devs[i], correct_devs[i]
-        assert( check_devs( totdev_corrected, correct_devs[i] ) )
-
 def nbs14_1000_test():
     fdata = nbs14_1000()
     print "nbs14 1000-point frequency data tests:"
@@ -115,9 +93,9 @@ def nbs14_1000_test():
     nbs14_tester( allan.mdev, fdata, nbs14_1000_devs[2] )
     print "nbs14_1000 mdev OK"
 
-    #print "nbs13 totdev" # this test does not work, becaus we don't know how to do bias correction
-    #nbs14_totdev_test()
-
+    nbs14_tester( allan.totdev, fdata, nbs14_1000_devs[3] )
+    print "nbs14_1000 totdev OK"
+    
     nbs14_tester( allan.hdev, fdata, nbs14_1000_devs[4] )
     print "nbs14_1000 hdev OK"
 
@@ -141,9 +119,9 @@ def nbs14_1000_test():
     nbs14_tester( allan.mdev_phase, pdata, nbs14_1000_devs[2] )
     print "nbs14_1000 mdev_phase OK"
 
-    #print "nbs13 totdev" # this test does not work, becaus we don't know how to do bias correction
-    #nbs14_totdev_test()
-
+    nbs14_tester( allan.totdev_phase, pdata, nbs14_1000_devs[3] )
+    print "nbs14_1000 totdev_phase OK"
+    
     nbs14_tester( allan.hdev_phase, pdata, nbs14_1000_devs[4] )
     print "nbs14_1000 hdev_phase OK"
 
@@ -194,6 +172,12 @@ def nbs14_test():
     assert( check_devs( adevs2[1], mdevs[1] ) )
     print "nbs14 mdev OK"
     
+    (taus2,adevs2,aerrs2,ns2) = allan.totdev_phase( nbs14_phase, 1.0, taus)
+    totdevs = nbs14_devs[3]
+    assert( check_devs( adevs2[0], totdevs[0] ) )
+    assert( check_devs( adevs2[1], totdevs[1] ) )
+    print "nbs14 totdev OK"
+    
     (taus2,adevs2,aerrs2,ns2) = allan.hdev_phase( nbs14_phase, 1.0, taus)
     hdevs = nbs14_devs[4]
     assert( check_devs( adevs2[0], hdevs[0] ) )
@@ -235,6 +219,12 @@ def nbs14_test():
     assert( check_devs( adevs2[1], mdevs[1] ) )
     print "nbs14 freqdata mdev OK"
 
+    (taus2,adevs2,aerrs2,ns2) = allan.totdev( f_fract, 1.0, taus)
+    totdevs = nbs14_devs[3]
+    assert( check_devs( adevs2[0], totdevs[0] ) )
+    assert( check_devs( adevs2[1], totdevs[1] ) )
+    print "nbs14 freqdata totdev OK"
+    
     (taus2,adevs2,aerrs2,ns2) = allan.hdev( f_fract, 1.0, taus)
     hdevs = nbs14_devs[4]
     assert( check_devs( adevs2[0], hdevs[0] ) )
