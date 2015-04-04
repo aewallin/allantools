@@ -175,33 +175,6 @@ def mdev(freqdata, rate, taus):
     phase = frequency2phase(freqdata, rate)
     return mdev_phase(phase, rate, taus)
 
-"""
-def tau_m(data, rate, taus, v=False):
-    data, taus = np.array(data), np.array(taus)
-
-    if rate == 0:
-        raise RuntimeError("Warning! rate==0")
-    rate = float(rate)
-    # n = len(data) # not used
-    m = []
-
-    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
-    taus_valid2 = taus > 0
-    taus_valid  = taus_valid1 & taus_valid2
-    m = np.floor(taus[taus_valid] * rate)
-    m = m[m != 0]       # m is tau in units of datapoints
-    m = np.unique(m)    # remove duplicates and sort
-
-    if v:
-        print "tau_m: ", m
-
-    if len(m) == 0:
-        print "Warning: sanity-check on tau failed!"
-        print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
-
-    taus2 = m / float(rate)
-    return data, m, taus2
-"""
 
 def adev(data, rate, taus):
     """ Allan deviation for fractional frequency data
@@ -716,15 +689,6 @@ def tau_m(data, rate, taus, v=False):
 
     taus2 = m / float(rate)
     return data, m, taus2
-
-"""
-def frequency2phase(freqdata, rate):
-     integrate fractional frequency data and output phase data 
-    dt = 1.0 / float(rate)
-    phasedata = np.cumsum(freqdata) * dt
-    phasedata = np.insert(phasedata, 0, 0)
-    return phasedata
-"""
 
 def frequency2phase(freqdata, rate):
     """ integrate fractional frequency data and output phase data """
