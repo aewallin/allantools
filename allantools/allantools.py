@@ -58,10 +58,12 @@ Mod s^2 total(t) = ----------------- sum     -- sum      [0zi*(m)]^2
 where the 0zi*(m) terms are the phase averages from a triply-extended
 sequence created by uninverted even reflection at each end,
 and the prefix 0 denotes that the linear trend has been removed.
+NIST SP 1065 eqn (27), page 25
 
 Time Total (modified total variance scaled by (t^2/3) )
 Hadamard Total
-
+Theo1
+TheoH
 
 Inputs (phase data):
     phase = list of phase measurements in seconds, e.g. from a time-interval-counter
@@ -83,7 +85,11 @@ import scipy.stats
 
 def tdev_phase(phase, rate, taus):
     """ Time deviation of phase data
+    
+    TDEV = (tau / sqrt(3) ) * MDEV
 
+    NIST SP 1065 eqn (15)
+    
     Parameters
     ----------
     phase: np.array
@@ -122,11 +128,15 @@ def tdev(data, rate, taus):
 def mdev_phase(data, rate, taus):
     """  Modified Allan deviation of phase data
 
-                   N-3m+1     j+m-1
-     Mod s2y(t) = ------------------  sum      { sum   [x(i+2m) - 2x(i+m) + x(i) ]  }**2
+                   N-3m+1     j+m-1   M-3m+2     j+m-1
+     Mod s2y(t) = ------------------  sum      { sum      [x(i+2m) - 2x(i+m) + x(i) ]  }**2
                   2m**2 t**2 (N-3m+1) j=1        i=j
-
-     see http://www.leapsecond.com/tools/adev_lib.c """
+    
+    m is averaging factor, i.e. tau = m * tau0
+    M frequency measurements, i.e. N=M+1  time/phase measurements
+     see http://www.leapsecond.com/tools/adev_lib.c 
+     NIST SP 1065 eqn (14)
+    """
     data, taus = np.array(data), np.array(taus)
     (data, ms, taus_used) = tau_m(data, rate, taus)
     # taus = []
@@ -134,6 +144,8 @@ def mdev_phase(data, rate, taus):
     mderr = np.zeros_like(ms)
     ns    = np.zeros_like(ms)
 
+    # this is a 'loop-unrolled' algorithm following
+    # http://www.leapsecond.com/tools/adev_lib.c 
     idx = 0
     for m in ms:
         tau = taus_used[idx]
@@ -210,9 +222,11 @@ def adev_phase_calc(data, rate, mj, stride):
         stride = 1 for overlapping allan deviation
         
         see http://en.wikipedia.org/wiki/Allan_variance
-             1       1      
-         s2y(t) = --------- sum [x(i+2) - 2x(i+1) + x(i) ]^2
-                  2*tau^2    
+        NIST SP 1065, eqn (7) and (11)
+        
+             1       1          i=N-2
+         s2y(t) = ------------- sum [x(i+2) - 2x(i+1) + x(i) ]^2
+                  2*tau^2 (N-2) i=1
     """
 
     d2 = data[2 * mj::stride]
@@ -304,7 +318,16 @@ def hdev_phase(data, rate, taus):
 
 
 def calc_hdev_phase(data, rate, mj, stride):
-    """ http://www.leapsecond.com/tools/adev_lib.c """
+    """ http://www.leapsecond.com/tools/adev_lib.c 
+    
+                         1        N-3
+         s2y(t) = --------------- sum [x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2
+                  6*tau^2 (N-3m)  i=1
+        
+        N=M+1 phase measurements
+        m is averaging factor
+        NIST SP 1065 eqn (18) and (20)
+    """
 
     tau0 = 1.0 / float(rate)
 
@@ -326,7 +349,6 @@ def calc_hdev_phase(data, rate, mj, stride):
     e = h / np.sqrt(n)
     return h, e, n
 
-
 def totdev(freqdata, rate, taus):
     """ Total deviation, fractional frequency data """
     phasedata = frequency2phase(freqdata, rate)
@@ -343,17 +365,29 @@ def totdev_phase(data, rate, taus):
     of frequency stability,
     IEEE tr. UFFC vol 47 no 5 (2000)
 
-                     1         N-1
+                     1        N-1
     totvar(t) = ------------  sum   [ x*(i-m) - 2x*(i)+x*(i+m) ]**2
                 2 t**2 (N-2)  i=2
-    where x* is a new dataset with 'reflected' data at start/end """
+                
+    where x* is a new dataset with 'reflected' data at start/end.
+    
+    the original data x is in the center of x*:
+    x*(1-j) = 2x(1) - x(1+j)  for j=1..N-2
+    x*(i)   = x(i)            for i=1..N
+    x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
+    x* has length 3N-4
+    tau = m*tau0
+    
+    NIST SP 1065 eqn (25)
+    
+    """
 
     rate = float(rate)
     (data, m, taus_used) = tau_m(data, rate, taus)
     n = len(data)
 
     # totdev requires a new dataset
-    # Begin bu adding reflected data before dataset
+    # Begin by adding reflected data before dataset
     x1 = 2.0 * data[0] * np.ones((n - 2,))
     x1 = x1 - data[1:-1]
     x1 = x1[::-1]
