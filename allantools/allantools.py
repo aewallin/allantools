@@ -4,6 +4,9 @@ Anders Wallin (anders.e.e.wallin "at" gmail.com)
 
 Version History:
 
+v1.2.01 2015 March. Added Keysight 53230A time interval counter noise
+   floor data and test.
+
 v1.2 2014 November, Cantwell G. Carson conrtibuted:
 - A gap-robust version of ADEV based on the paper by Sesia et al.
    gradev_phase() and gradev()

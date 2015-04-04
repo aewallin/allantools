@@ -5,6 +5,7 @@
 # Measurement: cable-delay of ~1 m BNC-BNC cable. T-dapater to ch1, other end to ch2
 # Channel settings: DC, 1 MOhm, 1.0 V trigger level
 #
+# phase data, unit: s
 # data interval 1 s
 #
 0.00000001010400
