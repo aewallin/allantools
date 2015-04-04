@@ -29,9 +29,10 @@ nbs14_devs= [ (91.22945,115.8082),  # ADEV(tau=1,tau=2)
               (91.22945,74.78849),  # MDEV
               (91.22945,98.31100),  # TOTDEV
               (70.80608,116.7980),  # HDEV
-              (52.67135,86.35831) ] # TDEV 
+              (52.67135,86.35831),  # TDEV 
+              (70.80607, 85.61487)] # OHDEV
               # (100.9770, 102.6039)  # Standard Deviation (sample, not population)
-              # (70.80607, 85.61487 ) # OHDEV
+              
               # (70.80607, 91.16396 ) # HTOTDEV
               # (75.50203, 75.83606)  # MTOTDEV
               # (43.59112, 87.56794 ) # TTOTDEV
@@ -50,9 +51,9 @@ nbs14_1000_devs = [ [2.922319e-01, 9.965736e-02, 3.897804e-02],  # ADEV 1, 10, 1
                     # "Calculated using doubly reflected TOTVAR method"
                     
                     [2.943883e-01, 1.052754e-01, 3.910860e-02],  # HDEV
-                    [1.687202e-01, 3.563623e-01, 1.253382e-00] ] # TDEV
+                    [1.687202e-01, 3.563623e-01, 1.253382e-00],  # TDEV
+                    [2.943883e-01, 9.581083e-02, 3.237638e-02] ] # OHDEV
                     # 2.884664e-01, 9.296352e-02, 3.206656e-02   # standard deviation,  sample (not population)
-                    # 2.943883e-01, 9.581083e-02, 3.237638e-02   # OHDEV
                     # 2.943883e-01, 9.614787e-02, 3.058103e-02   # HTOTDEV
                     # 2.418528e-01, 6.499161e-02, 2.287774e-02   # MTOTDEV
                     # 1.396338e-01, 3.752293e-01, 1.320847e-00   # TTOTDEV
@@ -121,7 +122,10 @@ def nbs14_1000_test():
 
     nbs14_tester( allan.tdev, fdata, nbs14_1000_devs[5] )
     print "nbs14_1000 tdev"
-    
+
+    nbs14_tester( allan.ohdev, fdata, nbs14_1000_devs[6] )
+    print "nbs14_1000 ohdev"
+        
     #########################################################
     # now we test the same data, calling the _phase functions
     pdata = allan.frequency2phase(fdata, 1.0)
@@ -143,7 +147,10 @@ def nbs14_1000_test():
 
     nbs14_tester( allan.tdev_phase, pdata, nbs14_1000_devs[5] )
     print "nbs14_1000 tdev_phase"
-    
+
+    nbs14_tester( allan.ohdev_phase, pdata, nbs14_1000_devs[6] )
+    print "nbs14_1000 ohdev_phase"
+        
     print "nbs14_1000 all tests OK"
 
 def check_devs(dev2, dev1):
@@ -226,6 +233,13 @@ def nbs14_test():
     assert( check_devs( adevs2[0], tdevs[0] ) )
     assert( check_devs( adevs2[1], tdevs[1] ) )
     print "nbs14 freqdata tdev"
+
+    (taus2,adevs2,aerrs2,ns2) = allan.ohdev( f_fract, 1.0, taus)
+    tdevs = nbs14_devs[6]
+    assert( check_devs( adevs2[0], tdevs[0] ) )
+    assert( check_devs( adevs2[1], tdevs[1] ) )
+    print "nbs14 freqdata ohdev"
+
 
     print "nbs14 all test OK"
 
