@@ -76,7 +76,7 @@ def run():
     #testutils.test_row_by_row( allan.mtie_phase, data_file, rate, mtie_result, verbose, tolerance ) # 13 s
     #start = print_elapsed(start)
 
-    print " TIC tests took %.2f s"% ( time.clock()-start0 ) 
+    print " TIC tests took %.2f s" % ( time.clock()-start0 ) 
     # 2015-03-29 running time without MTIE
     # Laptop: i7-3537U CPU @ 2.00GHz
     # tests took 2.38 s

@@ -66,7 +66,7 @@ nbs14_1000_devs = [ [2.922319e-01, 9.965736e-02, 3.897804e-02],  # ADEV 1, 10, 1
 def nbs14_1000():
     n = [0]*1000
     n[0] = 1234567890
-    for i in range(999):
+    for i in xrange(999):
         n[i+1] = (16807*n[i]) % 2147483647
     # the first three numbers are given in the paper, so check them:
     assert( n[1] ==  395529916 and n[2] == 1209410747 and  n[3] == 633705974 )
@@ -77,7 +77,7 @@ def nbs14_tester( function, fdata, correct_devs ):
     rate=1.0
     taus =[1, 10, 100]
     (taus2, devs, deverrs, ns) = function( fdata, rate, taus)
-    for i in range(3):
+    for i in xrange(3):
         assert( check_devs( devs[i], correct_devs[i] ) )
 
 def nbs14_1000_test():
