@@ -146,8 +146,8 @@ def mdev_phase(data, rate, taus):
 
     # this is a 'loop-unrolled' algorithm following
     # http://www.leapsecond.com/tools/adev_lib.c 
-    idx = 0
-    for m in ms:
+
+    for idx, m in enumerate(ms):
         tau = taus_used[idx]
 
         # First loop sum
@@ -177,8 +177,6 @@ def mdev_phase(data, rate, taus):
         mderr[idx] = (s / np.sqrt(n))
         ns[idx] = n
 
-        idx += 1
-
     return remove_small_ns(taus_used, md, mderr, ns)
 
 
@@ -204,17 +202,11 @@ def adev_phase(data, rate, taus):
     ad  = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
     adn = np.zeros_like(taus_used)
-    idx = 0
 
-    for mj in m:  # loop through each tau value m(j)
-        (dev, deverr, n) = adev_phase_calc(data, rate, mj, mj)
-        ad[idx] = dev
-        ade[idx] = deverr
-        adn[idx] = n
-        idx += 1
+    for idx, mj in enumerate(m):  # loop through each tau value m(j)
+        (ad[idx], ade[idx], adn[idx]) = adev_phase_calc(data, rate, mj, mj)
 
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
-
 
 def adev_phase_calc(data, rate, mj, stride):
     """ see http://www.leapsecond.com/tools/adev_lib.c
@@ -253,14 +245,9 @@ def oadev_phase(data, rate, taus):
     ad  = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
     adn = np.zeros_like(taus_used)
-    idx = 0
 
-    for mj in m:
-        (dev, deverr, n) = adev_phase_calc(data, rate, mj, 1)  # stride=1 for overlapping ADEV
-        ad[idx]  = dev
-        ade[idx] = deverr
-        adn[idx] = n
-        idx += 1
+    for idx, mj in enumerate(m):
+        (ad[idx], ade[idx], adn[idx]) = adev_phase_calc(data, rate, mj, 1)  # stride=1 for overlapping ADEV
 
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
@@ -282,14 +269,10 @@ def ohdev_phase(data, rate, taus):
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
-    idx = 0
 
-    for mj in m:
-        (h, e, n) = calc_hdev_phase(data, rate, mj, 1)  # stride = 1
-        hdevs[idx] = h
-        hdeverrs[idx] = e
-        ns[idx] = n
-        idx += 1
+    for idx, mj in enumerate(m):
+        (hdevs[idx], hdeverrs[idx], ns[idx]) = calc_hdev_phase(data, rate, mj, 1)  # stride = 1
+
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
 def hdev(freqdata, rate, taus):
@@ -306,13 +289,8 @@ def hdev_phase(data, rate, taus):
     hdeverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
 
-    idx = 0
-    for mj in m:
-        h, e, n = calc_hdev_phase(data, rate, mj, mj)  # stride = mj
-        hdevs[idx] = h
-        hdeverrs[idx] = e
-        ns[idx] = n
-        idx += 1
+    for idx, mj in enumerate(m):
+        hdevs[idx], hdeverrs[idx], ns[idx] = calc_hdev_phase(data, rate, mj, mj)  # stride = mj
 
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
@@ -408,8 +386,7 @@ def totdev_phase(data, rate, taus):
 
     mid = len(x1)
 
-    idx = 0
-    for mj in m:
+    for idx, mj in enumerate(m):
 
         d0 = x[mid + 1:]
         d1 = x[mid  + mj + 1:]
@@ -424,8 +401,6 @@ def totdev_phase(data, rate, taus):
         devs[idx] = dev
         deverrs[idx] = dev / np.sqrt(mid)
         ns[idx] = mid
-
-        idx += 1
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
@@ -447,8 +422,7 @@ def tierms_phase(phase, rate, taus):
     deverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
 
-    idx = 0
-    for mj in m:
+    for idx, mj in enumerate(m):
         mj = int(mj)
 
         # This seems like an unusual way to
@@ -463,8 +437,6 @@ def tierms_phase(phase, rate, taus):
         devs[idx] = tie
         deverrs[idx] = 0 / np.sqrt(ncount) # TODO! I THINK THIS IS WRONG!
         ns[idx] = ncount
-
-        idx += 1
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
@@ -512,8 +484,7 @@ def mtie_phase(phase, rate, taus):
     deverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
 
-    idx = 0
-    for mj in m:
+    for idx, mj in enumerate(m):
         rw = mtie_rolling_window(phase, mj + 1)
         win_max = np.max(rw, axis=1)
         win_min = np.min(rw, axis=1)
@@ -523,7 +494,6 @@ def mtie_phase(phase, rate, taus):
         devs[idx] = dev
         deverrs[idx] = dev / np.sqrt(ncount)
         ns[idx] = ncount
-        idx += 1
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
@@ -704,7 +674,6 @@ def tau_m(data, rate, taus, v=False):
     if rate == 0:
         raise RuntimeError("Warning! rate==0")
     rate = float(rate)
-    # n = len(data) # not used
     m = []
 
     taus_valid1 = taus < (1 / float(rate)) * float(len(data))
