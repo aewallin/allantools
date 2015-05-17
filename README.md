@@ -56,6 +56,8 @@ To do:
 * Modified Total variance
 * Time Total (modified total variance scaled by (t^2/3) )
 * Hadamard Total
+* Tests for different noise types according to IEEE 1139 
+* Conversion between phase noise and Allan variance
 
 Make sure your patch does not break any of the tests, and does not significantly reduce the readability of the code.
 
@@ -63,8 +65,19 @@ References
 ==========
 http://en.wikipedia.org/wiki/Allan_variance
 
+1139-2008 - IEEE Standard Definitions of Physical Quantities for 
+Fundamental Frequency and Time Metrology - Random Instabilities
+http://dx.doi.org/10.1109/IEEESTD.2008.4797525
+
+S. Stein, Frequency and Time - Their Measurement and Characterization. 
+Precision Frequency Control Vol 2, 1985, pp 191-416.
+http://tf.boulder.nist.gov/general/pdf/666.pdf
+
 W.J.Riley, "THE CALCULATION OF TIME DOMAIN FREQUENCY STABILITY"
 http://www.wriley.com/paper1ht.htm
+
+Tom Van Baak
+http://www.leapsecond.com/tools/adev_lib.c
 
 Fabian Czerwinski, Matlab code
 http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
@@ -72,16 +85,9 @@ http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
 M. A. Hopcroft, Matlab code
 http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified
 
-Tom Van Baak
-http://www.leapsecond.com/tools/adev_lib.c
-
 SESIA I., GALLEANI L., TAVELLA P., Application of the Dynamic Allan Variance 
 for the Characterization of Space Clock Behavior, 
 http://dx.doi.org/10.1109/TAES.2011.5751232
-
-S. Stein, Frequency and Time - Their Measurement and Characterization. 
-Precision Frequency Control Vol 2, 1985, pp 191-416.
-http://tf.boulder.nist.gov/general/pdf/666.pdf
        
 S. BREGNI, Fast Algorithms for TVAR and MTIE Computation in Characterization of
 Network Synchronization Performance. 
