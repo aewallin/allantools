@@ -5,6 +5,8 @@
 
 import sys
 from itertools import izip
+import numpy
+
 
 # read a simple data-file with phase or frequency numbers on each line
 def read_datafile(filename):
@@ -86,16 +88,24 @@ def test(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4):
         errs = check_deviations((t1, a1, n1, t2, a2, n2), tolerance, verbose)
         n_errors = n_errors + errs
 
+
     assert ( n_errors == 0)  # no errors allowed!
     print "test of function ", function, " Done. Errors=", n_errors
 
 
+def to_fractional(data):
+    mu = numpy.mean(data)
+    return [(x-mu)/mu for x in data]
+
 # test one tau-value (i.e. one row in the result file) at a time
-def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4):
+def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4, normalize=False):
     # if Stable32 results were given with more digits we could decrease tolerance
 
     phase = read_datafile(datafile)
-    print "Read ", len(phase), " phase values from ", datafile
+    if normalize: # convert frequencies in Hz to fractional frequencies
+        phase = to_fractional(phase)
+        
+    print "Read ", len(phase), " values from ", datafile
 
     (taus, devs, ns) = read_stable32(resultfile, datarate)
 
