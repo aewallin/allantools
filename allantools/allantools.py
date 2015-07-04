@@ -857,7 +857,12 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
     sab^2, sbc^2, sca^2
     Assuming covariances are zero, we get:
     sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
-    (and cyclic permutations for sb and sc) """
+    (and cyclic permutations for sb and sc) 
+    
+    References
+    ----------
+    http://www.wriley.com/3-CornHat.htm
+    """
 
     (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab, rate, taus)
     (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc, rate, taus)
