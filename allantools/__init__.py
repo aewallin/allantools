@@ -1,4 +1,25 @@
-__all__ = ['allantools']
+__all__ = [
+    'adev',
+    'adev_phase',
+    'oadev',
+    'oadev_phase',
+    'mdev',
+    'mdev_phase',
+    'hdev',
+    'hdev_phase',
+    'ohdev',
+    'ohdev_phase',
+    'tdev',
+    'tdev_phase',
+    'totdev',
+    'totdev_phase',
+    'mtie',
+    'mtie_phase',
+    'tierms',
+    'tierms_phase',
+    'frequency2phase',
+    'three_cornered_hat_phase'
+    ]
 
 from allantools import frequency2phase
 
