@@ -810,9 +810,6 @@ def mtie_rolling_window(a, window):
     Make an ndarray with a rolling window of the last dimension
     from http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html
 
-def mtie_phase(phase, rate, taus):
-    """ maximum time interval error
-    
     Parameters
     ----------
     a : array_like
@@ -952,7 +949,7 @@ def gradev(freqdata, rate, taus, ci=0.9, noisetype='wp'):
     phase = frequency2phase(freqdata, rate)
     return gradev_phase(phase, rate, taus, ci=ci, noisetype=noisetype)
 
-def gradev_phase_calc(data, rate, mj, stride, ci, noisetype):
+def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
     """ see http://www.leapsecond.com/tools/adev_lib.c
         stride = mj for nonoverlapping allan deviation
         stride = 1 for overlapping allan deviation
@@ -1004,7 +1001,7 @@ def gradev_phase(data, rate, taus, ci=0.9, noisetype='wp'):
     adn = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(m):
-        (dev, deverr, n) = gradev_phase_calc(data, 
+        (dev, deverr, n) = calc_gradev_phase(data,
                                              rate, 
                                              mj, 
                                              1,

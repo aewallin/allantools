@@ -21,7 +21,7 @@ __all__ = [
     'three_cornered_hat_phase',
     'noise',
     'gradev',
-    'gradev_phase
+    'gradev_phase'
     ]
 
 from allantools import frequency2phase
