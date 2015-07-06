@@ -22,18 +22,16 @@ from the command line.
 Basic usage
 ------------
 
-To use ``allantools`` ... to ... ::
+::
 
-    from fits2hdf.io.fitsio import read_fits
-    from fits2hdf.io.hdfio import export_hdf
-    a = read_fits('my_file.fits')
-    export_hdf(a, 'my_file.hdf')
+    import allantools
+    import pylab as plt
+    t = numpy.logspace(0, 3, 50)                            # tau values from 1 to 1000
+    white_noise_data = allantools.noise.white(10000)        # Generate some data
+    (t2, ad, ade, adn) = allantools.oadev(y, rate, taus)    # Compute the overlapping ADEV
+    plt.loglog(t2, ad)                                      # Plot the results
+    plt.show()
 
-and to convert the other way::
 
-    from fits2hdf.io.fitsio import export_fits
-    from fits2hdf.io.hdfio import read_hdf
-    a = read_hdf('my_file.hdf')
-    export_hdf(a, 'my_file.fits')
-
-For more exciting API musings you can `read the API <api.html>`_.
+Further examples are given in the ``examples`` directory of the package. For more exciting API musings you
+can `read the API <api.html>`_.

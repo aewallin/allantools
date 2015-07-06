@@ -138,21 +138,17 @@
 </div>
 <div class="section" id="basic-usage">
 <h2>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
-<p>To use <code class="docutils literal"><span class="pre">allantools</span></code> ... to ...</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">fits2hdf.io.fitsio</span> <span class="kn">import</span> <span class="n">read_fits</span>
-<span class="kn">from</span> <span class="nn">fits2hdf.io.hdfio</span> <span class="kn">import</span> <span class="n">export_hdf</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">read_fits</span><span class="p">(</span><span class="s">&#39;my_file.fits&#39;</span><span class="p">)</span>
-<span class="n">export_hdf</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s">&#39;my_file.hdf&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">allantools</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>                            <span class="c"># tau values from 1 to 1000</span>
+<span class="n">white_noise_data</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>        <span class="c"># Generate some data</span>
+<span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">ade</span><span class="p">,</span> <span class="n">adn</span><span class="p">)</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="p">)</span>    <span class="c"># Compute the overlapping ADEV</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="n">ad</span><span class="p">)</span>                                      <span class="c"># Plot the results</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>and to convert the other way:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">fits2hdf.io.fitsio</span> <span class="kn">import</span> <span class="n">export_fits</span>
-<span class="kn">from</span> <span class="nn">fits2hdf.io.hdfio</span> <span class="kn">import</span> <span class="n">read_hdf</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">read_hdf</span><span class="p">(</span><span class="s">&#39;my_file.hdf&#39;</span><span class="p">)</span>
-<span class="n">export_hdf</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s">&#39;my_file.fits&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>For more exciting API musings you can <a class="reference external" href="api.html">read the API</a>.</p>
+<p>Further examples are given in the <code class="docutils literal"><span class="pre">examples</span></code> directory of the package. For more exciting API musings you
+can <a class="reference external" href="api.html">read the API</a>.</p>
 </div>
 </div>
 
@@ -174,7 +170,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Anders Wallin, Danny Price (others here).
+        &copy; Copyright 2015, Anders E. E. Wallin.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

@@ -58,8 +58,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'allantools'
-copyright = u'2015, Anders Wallin, Danny Price (others here)'
-author = u'Anders Wallin, Danny Price (others here)'
+copyright = u'2015, Anders E. E. Wallin'
+author = u'Anders E. E. Wallin, Danny C. Price, Cantwell G. Carson'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

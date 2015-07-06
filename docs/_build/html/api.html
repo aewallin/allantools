@@ -127,8 +127,8 @@
 <h2>Implemented functions<a class="headerlink" href="#implemented-functions" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <colgroup>
-<col width="41%" />
-<col width="59%" />
+<col width="36%" />
+<col width="64%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Function</th>
@@ -162,6 +162,15 @@
 </tr>
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">tierms()</span></code> and <code class="docutils literal"><span class="pre">tierms_phase()</span></code></td>
 <td>Time Interval Error RMS</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">gradev()</span></code> and <code class="docutils literal"><span class="pre">gradev_phase()</span></code></td>
+<td>Gap resistant overlapping Allan deviation</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">uncertainty_estimate()</span></code></td>
+<td>Determine the uncertainty of a given two-sample variance estimate</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">three_cornered_hat_phase()</span></code></td>
+<td>Apply Three Cornered Hat Method (see examples)</td>
 </tr>
 </tbody>
 </table>
@@ -522,6 +531,8 @@ s2y(t) = --------- sum [x(i+2) - 2x(i+1) + x(i) ]^2
 </table>
 <p class="rubric">Notes</p>
 <p>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
+<blockquote>
+<div>NIST SP 1065 eqn (14)</div></blockquote>
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre>               N-3m+1     j+m-1
@@ -753,6 +764,8 @@ Mod s2y(t) = ------------------  sum      { sum   [x(i+2m) - 2x(i+m) + x(i) ]  }
 <dt id="allantools.tdev_phase">
 <code class="descclassname">allantools.</code><code class="descname">tdev_phase</code><span class="sig-paren">(</span><em>phase</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.tdev_phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Time deviation of phase data</p>
+<p>TDEV = (tau / sqrt(3) ) * MDEV</p>
+<p>NIST SP 1065 eqn (15)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -827,6 +840,18 @@ Mod s2y(t) = ------------------  sum      { sum   [x(i+2m) - 2x(i+m) + x(i) ]  }
 </tr>
 </tbody>
 </table>
+<dl class="docutils">
+<dt>totvar(t) = &#8212;&#8212;&#8212;&#8212;  sum   [ x*(i-m) - 2x*(i)+x*(i+m) ]**2</dt>
+<dd>2 t**2 (N-2)  i=2</dd>
+</dl>
+<p>where x* is a new dataset with &#8216;reflected&#8217; data at start/end.</p>
+<p>the original data x is in the center of x*:
+x*(1-j) = 2x(1) - x(1+j)  for j=1..N-2
+x*(i)   = x(i)            for i=1..N
+x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
+x* has length 3N-4
+tau = m*tau0</p>
+<p>NIST SP 1065 eqn (25)</p>
 <p class="rubric">References</p>
 <p>David A. Howe,
 <em>The total deviation approach to long-term characterization
@@ -848,37 +873,9 @@ totvar(t) = ------------  sum   [ x*(i-m) - 2x*(i)+x*(i+m) ]**2
 <dl class="function">
 <dt id="allantools.mtie_phase">
 <code class="descclassname">allantools.</code><code class="descname">mtie_phase</code><span class="sig-paren">(</span><em>phase</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.mtie_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>maximum time interval error</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>phase: np.array</strong></p>
-<blockquote>
-<div><p>Data array of fractional frequency measurements (nondimensional)</p>
-</div></blockquote>
-<p><strong>rate: float</strong></p>
-<blockquote>
-<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
-</div></blockquote>
-<p><strong>taus: np.array</strong></p>
-<blockquote class="last">
-<div><p>Array of tau values for which to compute measurement</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li>The fast version of MTIE_PHASE requires bottleneck to be installed. As this isn&#8217;t</li>
-</ul>
-<p>the most widespread code, fall back to the pure python version if not installed.</p>
-<ul class="simple">
-<li>this seems to correspond to Stable32 setting &#8220;Fast(u)&#8221;</li>
-</ul>
-<p>Stable32 also has &#8220;Decade&#8221; and &#8220;Octave&#8221; modes where the dataset is extended somehow?
-rate = float(rate)</p>
+<dd><p>Maximum Time Interval Error, phase data</p>
+<p>this seems to correspond to Stable32 setting &#8220;Fast(u)&#8221;
+Stable32 also has &#8220;Decade&#8221; and &#8220;Octave&#8221; modes where the dataset is extended somehow?</p>
 </dd></dl>
 
 <dl class="function">
@@ -942,15 +939,71 @@ rate = float(rate)</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="allantools.uncertainty_estimate">
+<code class="descclassname">allantools.</code><code class="descname">uncertainty_estimate</code><span class="sig-paren">(</span><em>N</em>, <em>m</em>, <em>s</em>, <em>ci=0.9</em>, <em>noisetype='wp'</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.uncertainty_estimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the uncertainty of a given two-sample variance estimate for
+a given number of samples (N), sampling distance (m), variance estimate 
+(s), confindence interval (ci), and type of noise (noisetype).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>N</strong> : int</p>
+<blockquote>
+<div><p>the number of samples used in a two sample variance estimate</p>
+</div></blockquote>
+<p><strong>m</strong> : int</p>
+<blockquote>
+<div><p>the length of the window, tau = m * tau0</p>
+</div></blockquote>
+<p><strong>s</strong> : float</p>
+<blockquote>
+<div><p>the estimated two-sample variance</p>
+</div></blockquote>
+<p><strong>ci: float</strong></p>
+<blockquote>
+<div><p>the total confidence interval desired, i.e. if ci = 0.9, the bounds 
+will be at 0.05 and 0.95.</p>
+</div></blockquote>
+<p><strong>noisetype: string</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>the type of noise desired:</dt>
+<dd><p class="first last">&#8216;wp&#8217; returns white phase noise.
+&#8216;wf&#8217; returns white frequency noise.
+&#8216;fp&#8217; returns flicker phase noise.
+&#8216;ff&#8217; returns flicker frequency noise.
+&#8216;rf&#8217; returns random walk frequency noise.</p>
+</dd>
+</dl>
+<p>If the input is not recognized, it defaults to idealized, uncorrelated
+noise with (N-1) degrees of freedom.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>[err_l, err_h]</strong> : list, float</p>
+<blockquote class="last">
+<div><p>the upper and lower bounds of the confidence interval taken as
+distances from the the estimated two sample variance.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="allantools.three_cornered_hat_phase">
 <code class="descclassname">allantools.</code><code class="descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em>phasedata_ab</em>, <em>phasedata_bc</em>, <em>phasedata_ca</em>, <em>rate</em>, <em>taus</em>, <em>function</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Three Cornered Hat Method</p>
-<p>Three clocks with unknown variances sa^2, sb^2, sc^3
+<p>We have three clocks with unknown variances sa^2, sb^2, sc^3
 Three pairwise measurements give variances:
 sab^2, sbc^2, sca^2
-Assuming covariances are zero, we get:
+Assuming covariances are zero (clocks are independent), we get:
 sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
 (and cyclic permutations for sb and sc)</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="http://www.wriley.com/3-CornHat.htm">http://www.wriley.com/3-CornHat.htm</a></p>
 </dd></dl>
 
 </div>
@@ -971,7 +1024,7 @@ sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Anders Wallin, Danny Price (others here).
+        &copy; Copyright 2015, Anders E. E. Wallin.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

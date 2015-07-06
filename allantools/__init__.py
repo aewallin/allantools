@@ -21,7 +21,8 @@ __all__ = [
     'three_cornered_hat_phase',
     'noise',
     'gradev',
-    'gradev_phase'
+    'gradev_phase',
+    'uncertainty_estimate'
     ]
 
 from allantools import frequency2phase
@@ -57,4 +58,7 @@ from allantools import tierms_phase
 
 from allantools import gradev
 from allantools import gradev_phase
+
+from allantools import uncertainty_estimate
+
 import noise

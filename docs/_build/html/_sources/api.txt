@@ -19,6 +19,9 @@ Function                                Notes
 ``totdev()`` and ``totdev_phase()``     Total deviation
 ``mtie()`` and ``mtie_phase()``         Maximum Time Interval Error
 ``tierms()`` and ``tierms_phase()``     Time Interval Error RMS
+``gradev()`` and ``gradev_phase()``     Gap resistant overlapping Allan deviation
+``uncertainty_estimate()``              Determine the uncertainty of a given two-sample variance estimate
+``three_cornered_hat_phase()``          Apply Three Cornered Hat Method (see examples)
 =====================================   ====================================================
 
 To implement
@@ -117,4 +120,5 @@ Function listing
 .. autofunction:: tierms
 .. autofunction:: tierms_phase
 .. autofunction:: frequency2phase
+.. autofunction:: uncertainty_estimate
 .. autofunction:: three_cornered_hat_phase

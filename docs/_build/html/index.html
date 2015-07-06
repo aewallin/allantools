@@ -142,15 +142,60 @@
 </div>
 <div class="section" id="about-allantools">
 <h2>About allantools<a class="headerlink" href="#about-allantools" title="Permalink to this headline">¶</a></h2>
-<p>A small GPL v3+ Python library for calculating Allan deviation and related statistics.</p>
+<p>A python library for calculating Allan deviation and related time &amp; frequency statistics. GPL v3+ license.</p>
 <p>Developed here:</p>
 <blockquote>
 <div><a class="reference external" href="https://github.com/aewallin/allantools">https://github.com/aewallin/allantools</a>,</div></blockquote>
 <p>but also available on PyPi at:</p>
 <blockquote>
 <div><a class="reference external" href="https://pypi.python.org/pypi/AllanTools">https://pypi.python.org/pypi/AllanTools</a></div></blockquote>
-<p>Input data should be evenly spaced observations of either fractional frequency,
-or phase in seconds. Deviations are calculated for given tau values in seconds.</p>
+<p>nput data should be evenly spaced observations of either fractional frequency, or phase in seconds. Deviations are calculated for given tau values in seconds.</p>
+<p>These statistics are currently included:</p>
+<ul class="simple">
+<li>ADEV Allan deviation</li>
+<li>OADEV overlapping Allan deviation</li>
+<li>GRADEV Gap-resistant overlapping allan deviation</li>
+<li>MDEV modified Allan deviation</li>
+<li>TDEV Time deviation</li>
+<li>HDEV Hadamard deviation</li>
+<li>OHDEV overlapping Hadamard deviation</li>
+<li>TOTDEV Total deviation</li>
+<li>MTIE Maximum time interval error</li>
+<li>TIERMS Time interval error RMS</li>
+</ul>
+<p>see <code class="docutils literal"><span class="pre">/tests</span></code> for tests that compare allantools output to other (e.g. Stable32) programs.
+More test data, benchmarks, and comparisons to known-good algorithms are welcome.</p>
+</div>
+<div class="section" id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Anders E.E. Wallin, anders.e.e.wallin &#8220;at&#8221; gmail.com</li>
+<li>Danny Price, <a class="reference external" href="https://github.com/telegraphic">https://github.com/telegraphic</a></li>
+<li>Cantwell G. Carson, carsonc &#8220;at&#8221; gmail.com</li>
+</ul>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Allan_variance">http://en.wikipedia.org/wiki/Allan_variance</a></p>
+<p>1139-2008 - IEEE Standard Definitions of Physical Quantities for Fundamental Frequency and Time Metrology - Random Instabilities <a class="reference external" href="http://dx.doi.org/10.1109/IEEESTD.2008.4797525">http://dx.doi.org/10.1109/IEEESTD.2008.4797525</a></p>
+<ol class="upperalpha simple" start="19">
+<li>Stein, Frequency and Time - Their Measurement and Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416. <a class="reference external" href="http://tf.boulder.nist.gov/general/pdf/666.pdf">http://tf.boulder.nist.gov/general/pdf/666.pdf</a></li>
+</ol>
+<p>W.J.Riley, &#8220;THE CALCULATION OF TIME DOMAIN FREQUENCY STABILITY&#8221; <a class="reference external" href="http://www.wriley.com/paper1ht.htm">http://www.wriley.com/paper1ht.htm</a></p>
+<p>Tom Van Baak <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
+<p>Fabian Czerwinski, Matlab code <a class="reference external" href="http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0">http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0</a></p>
+<ol class="upperalpha simple" start="13">
+<li><ol class="first upperalpha">
+<li>Hopcroft, Matlab code <a class="reference external" href="http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified">http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified</a></li>
+</ol>
+</li>
+</ol>
+<p>SESIA I., GALLEANI L., TAVELLA P., Application of the Dynamic Allan Variance for the Characterization of Space Clock Behavior, <a class="reference external" href="http://dx.doi.org/10.1109/TAES.2011.5751232">http://dx.doi.org/10.1109/TAES.2011.5751232</a></p>
+<ol class="upperalpha simple" start="19">
+<li>BREGNI, Fast Algorithms for TVAR and MTIE Computation in Characterization of Network Synchronization Performance. <a class="reference external" href="http://home.deib.polimi.it/bregni/papers/cscc2001_fastalgo.pdf">http://home.deib.polimi.it/bregni/papers/cscc2001_fastalgo.pdf</a></li>
+</ol>
+<p>David A. Howe, The total deviation approach to long-term characterization of frequency stability, IEEE tr. UFFC vol 47 no 5 (2000) <a class="reference external" href="http://dx.doi.org/10.1109/58.869040">http://dx.doi.org/10.1109/58.869040</a></p>
+<p>Ilaria Sesia and Patrizia Tavella, Estimating the Allan variance in the presence of long periods of missing data and outliers. 2008 Metrologia 45 S134 <a class="reference external" href="http://dx.doi.org/10.1088/0026-1394/45/6/S19">http://dx.doi.org/10.1088/0026-1394/45/6/S19</a></p>
 </div>
 </div>
 
@@ -170,7 +215,7 @@ or phase in seconds. Deviations are calculated for given tau values in seconds.<
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Anders Wallin, Danny Price (others here).
+        &copy; Copyright 2015, Anders E. E. Wallin.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

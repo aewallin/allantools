@@ -219,56 +219,6 @@ def mdev(freqdata, rate, taus):
     return mdev_phase(phase, rate, taus)
 
 
-def tau_m(data, rate, taus, v=False):
-    """ pre-processing of the tau-list given by the user (Helper function)
-    
-    Does sanity checks, sorts data, removes duplicates and invalid values.
-    
-    Parameters
-    ----------
-    data: np.array
-        data array
-    rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
-    taus: np.array
-        Array of tau values for which to compute measurement
-    
-    Returns
-    -------
-    (data, m, taus): tuple
-        List of computed values
-    data: np.array
-        Data 
-    m: np.array
-        Tau in units of data points
-    taus: np.array
-        Cleaned up list of tau values
-    """
-    data, taus = np.array(data), np.array(taus)
-
-    if rate == 0:
-        raise RuntimeError("Warning! rate==0")
-    rate = float(rate)
-    # n = len(data) # not used
-    m = []
-
-    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
-    taus_valid2 = taus > 0
-    taus_valid  = taus_valid1 & taus_valid2
-    m = np.floor(taus[taus_valid] * rate)
-    m = m[m != 0]       # m is tau in units of datapoints
-    m = np.unique(m)    # remove duplicates and sort
-
-    if v:
-        print "tau_m: ", m
-
-    if len(m) == 0:
-        print "Warning: sanity-check on tau failed!"
-        print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
-
-    taus2 = m / float(rate)
-    return data, m, taus2
-
 
 def adev(data, rate, taus):
     """ Allan deviation for fractional frequency data
@@ -990,41 +940,62 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
 
     return dev, deverr, n
 
-def gradev_phase(data, rate, taus, ci=0.9, noisetype='wp'):
-    """ gap resistant overlapping Allan deviation of phase data 
-    
-    """
-    (data, m, taus_used) = tau_m(data, rate, taus)
-    ad  = np.zeros_like(taus_used)
-    ade_l = np.zeros_like(taus_used)   
-    ade_h = np.zeros_like(taus_used)
-    adn = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m):
-        (dev, deverr, n) = calc_gradev_phase(data,
-                                             rate, 
-                                             mj, 
-                                             1,
-                                             ci,
-                                             noisetype)  # stride=1 for overlapping ADEV
-        ad[idx]  = dev
-        ade_l[idx] = deverr[0]
-        ade_h[idx] = deverr[1]    
-        adn[idx] = n
-
-    return remove_small_ns(taus_used, ad, ade_l, ade_h, adn)  # tau, adev, adeverror, naverages
-
-
-def gradev(freqdata, rate, taus, ci=0.9, noisetype='wp'):
-    """ overlapping Allan deviation for fractional frequency data """
-    freqdata = trim_data(freqdata)     
-    phase = frequency2phase(freqdata, rate)
-    return gradev_phase(phase, rate, taus, ci=ci, noisetype=noisetype)
 
 ########################################################################
 #
 #  Various helper functions and utilities
 # 
+
+
+def tau_m(data, rate, taus, v=False):
+    """ pre-processing of the tau-list given by the user (Helper function)
+
+    Does sanity checks, sorts data, removes duplicates and invalid values.
+
+    Parameters
+    ----------
+    data: np.array
+        data array
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+
+    Returns
+    -------
+    (data, m, taus): tuple
+        List of computed values
+    data: np.array
+        Data
+    m: np.array
+        Tau in units of data points
+    taus: np.array
+        Cleaned up list of tau values
+    """
+    data, taus = np.array(data), np.array(taus)
+
+    if rate == 0:
+        raise RuntimeError("Warning! rate==0")
+    rate = float(rate)
+    # n = len(data) # not used
+    m = []
+
+    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
+    taus_valid2 = taus > 0
+    taus_valid  = taus_valid1 & taus_valid2
+    m = np.floor(taus[taus_valid] * rate)
+    m = m[m != 0]       # m is tau in units of datapoints
+    m = np.unique(m)    # remove duplicates and sort
+
+    if v:
+        print "tau_m: ", m
+
+    if len(m) == 0:
+        print "Warning: sanity-check on tau failed!"
+        print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
+
+    taus2 = m / float(rate)
+    return data, m, taus2
 
 def tau_m(data, rate, taus, v=False):
     """ pre-processing of the tau-list given by the user """
@@ -1052,16 +1023,6 @@ def tau_m(data, rate, taus, v=False):
     taus2 = m / float(rate)
     return data, m, taus2
 
-def frequency2phase(freqdata, rate):
-    """ integrate fractional frequency data and output phase data """
-    
-    dt = 1.0 / float(rate)
-    mask = np.isnan(freqdata)
-    freqdata = np.nan_to_num(freqdata)
-    phasedata = np.cumsum(freqdata) * dt
-    phasedata[np.where(mask==True)] = np.nan
-    phasedata = np.insert(phasedata, 0, 0)
-    return phasedata
 
 def remove_small_ns(*args):
     if len(args) == 4:
