@@ -3,13 +3,16 @@
 """ 
     Benchmarking for allantools (https://github.com/aewallin/allantools)
     
+    For results see:
+    http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/
+    
     First version: AW 2014-08-31
 """
 
 import numpy as np
-import pylab as plt
-import allantools.allantools_pure_python as alt
-import allantools.allantools as alp
+import pylab as plt # for plotting, not strictly required for benchmark
+import allantools.allantools_pure_python as alt # this is the old slow pure python version of allantools
+import allantools.allantools as alp # this is the new fast version that uses numpy
 import time
 
 
@@ -28,7 +31,8 @@ def bench_function(p_func, np_func, N = 10000, noise_func = np.random.random ):
     t3 = time.time()
     o_taus_, o_dev_, o_err_, o_n_ = np_func(data, rate, taus)
     t4 = time.time()
-
+    
+    # Returns True if two arrays are element-wise equal within a tolerance. 
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
@@ -78,6 +82,19 @@ def benchmark_plot(data):
         idx += 1
         speedup_txt = "%s speedup: %3.1fx" % (name, speedup)
         plt.text( 700, (0.9)/np.exp(0.3*idx), speedup_txt , fontsize=14)
+    n = np.logspace(2,5,20)
+    logline =  [(5e-6)*nn for nn in n]
+    plt.loglog(n,logline,'r-',label='5e-6 * N')
+    n = np.logspace(4,6,20)
+    logline =  [(2e-8)*nn for nn in n]
+    plt.loglog(n,logline,'b-',label='2e-8 * N')
+    
+    logline =  [(2e-9)*nn*np.log(nn) for nn in n]
+    plt.loglog(n,logline,'b-.',label='2e-8 * N log(N)')
+        
+    logline =  [(2e-12)*nn*nn for nn in n]
+    plt.loglog(n,logline,'b--',label='2e-8 * N*N')
+        
     plt.xlabel('Input data size')
     plt.ylabel('CPU seconds')
 
@@ -92,7 +109,7 @@ def brownian_noise(N):
     return np.cumsum(np.random.randn(N))
 
 if __name__ == "__main__":
-    N_log_max = 7
+    N_log_max = 6
     # runs on desktop computer with i7-2600K @ 3.4 GHz CPU:
     # N_log_max   seconds
     # 3           1.1
@@ -105,12 +122,14 @@ if __name__ == "__main__":
     data.append( benchmark_run( alt.adev  , alp.adev  , "ADEV"  ,N_log_max) )
     data.append( benchmark_run( alt.oadev , alp.oadev , "OADEV" ,N_log_max) )
     data.append( benchmark_run( alt.mdev  , alp.mdev  , "MDEV"  ,N_log_max) )
-    data.append( benchmark_run( alt.tdev  , alp.tdev  , "TDEV"  ,N_log_max) )
-    data.append( benchmark_run( alt.hdev  , alp.hdev  , "HDEV"  ,N_log_max) )
-    data.append( benchmark_run( alt.ohdev , alp.ohdev , "OHDEV" ,N_log_max) )
-    data.append( benchmark_run( alt.totdev, alp.totdev, "TOTDEV",N_log_max) )
-    data.append( benchmark_run( alt.mtie  , alp.mtie  , "MTIE"  ,N_log_max) )
-    data.append( benchmark_run( alt.tierms, alp.tierms, "TIERMS",N_log_max) )
+    # N_log_max=6, Benchmarks done in 175.0 seconds
+
+    #data.append( benchmark_run( alt.tdev  , alp.tdev  , "TDEV"  ,N_log_max) )
+    #data.append( benchmark_run( alt.hdev  , alp.hdev  , "HDEV"  ,N_log_max) )
+    #data.append( benchmark_run( alt.ohdev , alp.ohdev , "OHDEV" ,N_log_max) )
+    #data.append( benchmark_run( alt.totdev, alp.totdev, "TOTDEV",N_log_max) )
+    #data.append( benchmark_run( alt.mtie  , alp.mtie  , "MTIE"  ,N_log_max) )
+    #data.append( benchmark_run( alt.tierms, alp.tierms, "TIERMS",N_log_max) )
     t1 = time.time()
     print "Benchmarks done in %.1f seconds" % (t1-t0)
     # log-log plot of all benchmark data

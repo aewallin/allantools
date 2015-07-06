@@ -19,7 +19,9 @@ __all__ = [
     'tierms_phase',
     'frequency2phase',
     'three_cornered_hat_phase',
-    'noise'
+    'noise',
+    'gradev',
+    'gradev_phase
     ]
 
 from allantools import frequency2phase
@@ -53,4 +55,6 @@ from allantools import mtie_phase
 from allantools import tierms
 from allantools import tierms_phase
 
+from allantools import gradev
+from allantools import gradev_phase
 import noise

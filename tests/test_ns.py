@@ -13,6 +13,8 @@ def test( function, data, rate, taus):
 	assert( len(taus2) == len(errs2) )
 	assert( len(taus2) == len(ns2) )
 	for n in ns2:
+		if n<= 1:
+			print "test of ", function, " failed: ", n
 		assert( n > 1 ) # n should be 2 or more for each tau
 	print "test_ns of function ",function, " OK."
 	
@@ -25,7 +27,6 @@ def run():
 	rate = 1.0
 	phase_white = noise.white(N)
 	taus_try = numpy.logspace(0,4,4000) # try insane tau values
-	
 	test( allan.adev_phase, phase_white, rate, taus_try)
 	test( allan.oadev_phase, phase_white, rate, taus_try)
 	test( allan.mdev_phase, phase_white, rate, taus_try)

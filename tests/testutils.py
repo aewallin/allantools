@@ -4,15 +4,16 @@
 """
 
 import sys
+from itertools import izip
+import numpy
+
 
 # read a simple data-file with phase or frequency numbers on each line
 def read_datafile(filename):
     p = []
     with open(filename) as f:
         for line in f:
-            if line.startswith("#"):  # skip comments
-                pass
-            else:
+            if not line.startswith("#"):  # skip comments
                 p.append(float(line))
     return p
 
@@ -24,13 +25,11 @@ def read_resultfile(filename):
     row = []
     with open(filename) as f:
         for line in f:
-            if line.startswith("#"):
-                pass
-            else:
+            if not line.startswith("#"): # skip comments
                 row = []
                 l2 = line.split(" ")
                 l2 = filter(None, l2)
-                for n in range(len(l2)):
+                for n in xrange(len(l2)):
                     row.append(float(l2[n]))
                 rows.append(row)
     return rows
@@ -84,29 +83,36 @@ def test(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4):
     assert ( len(ns) == len(ns2) )
 
     n_errors = 0  # number of errors/problems detected
-    for (t1, a1, n1, t2, a2, n2) in zip(taus, devs, ns, taus2, devs2, ns2):
+    for (t1, a1, n1, t2, a2, n2) in izip(taus, devs, ns, taus2, devs2, ns2):
         # Check that allantools and Stable32 give exactly the same Tau and N results
         errs = check_deviations((t1, a1, n1, t2, a2, n2), tolerance, verbose)
         n_errors = n_errors + errs
+
 
     assert ( n_errors == 0)  # no errors allowed!
     print "test of function ", function, " Done. Errors=", n_errors
 
 
-# test a deviation function by:
+def to_fractional(data):
+    mu = numpy.mean(data)
+    return [(x-mu)/mu for x in data]
 
-def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4):
+# test one tau-value (i.e. one row in the result file) at a time
+def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4, normalize=False):
     # if Stable32 results were given with more digits we could decrease tolerance
 
     phase = read_datafile(datafile)
-    print "Read ", len(phase), " phase values from ", datafile
+    if normalize: # convert frequencies in Hz to fractional frequencies
+        phase = to_fractional(phase)
+        
+    print "Read ", len(phase), " values from ", datafile
 
     (taus, devs, ns) = read_stable32(resultfile, datarate)
 
     if verbose:
         print "Tau N  \t DEV(Stable32) \t DEV(allantools) \t relative error"
     # run allantools algorithm, row by row
-    for (tau, dev, n) in zip(taus, devs, ns):
+    for (tau, dev, n) in izip(taus, devs, ns):
         (taus2, devs2, errs2, ns2) = function(phase, datarate, [tau])
         check_deviations((tau, dev, n, taus2[0], devs2[0], ns2[0]), tolerance, verbose)
 
