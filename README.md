@@ -20,7 +20,29 @@ These statistics are currently included:
 * TIERMS  Time interval error RMS
 
 see /tests for tests that compare allantools output to other (e.g. Stable32) programs.
-More test data, benchmarks, and comparisons to known-good algorithms are welcome.
+More test data, benchmarks, ipython notebooks, and comparisons to known-good algorithms are welcome.
+
+Documentation
+=============
+See /docs for documentation in sphinx format. On Ubuntu this requires the 'python-sphinx' and 'python-numpydoc' packages.
+html documentation using sphinx can be built localy with
+
+> make html
+
+The sphinx documentation is also auto-generated online
+
+* http://allantools.readthedocs.org
+* http://allantools-aewallin.readthedocs.org
+
+IPython notebooks with examples
+===============================
+See /examples for some examples in IPython notebook format.
+
+github formats the guides into nice web-pages, for example
+* https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb
+
+
+todo: add here a very short guide on how to get started with ipython
 
 Authors
 =======
@@ -33,7 +55,9 @@ Installation
 
 > sudo python setup.py install
 
-Usage:
+Usage
+=====
+
 ```python
 import allantools # https://github.com/aewallin/allantools/
 rate = 1/float(data_interval) # data rate in Hz
