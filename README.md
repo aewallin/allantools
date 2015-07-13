@@ -25,9 +25,11 @@ More test data, benchmarks, ipython notebooks, and comparisons to known-good alg
 Documentation
 =============
 See /docs for documentation in sphinx format. On Ubuntu this requires the 'python-sphinx' and 'python-numpydoc' packages.
-html documentation using sphinx can be built localy with
+html documentation using sphinx can be built locally with
 
 > make html
+
+this generates html documentation in /docs/_build/html
 
 The sphinx documentation is also auto-generated online
 
@@ -38,7 +40,7 @@ IPython notebooks with examples
 ===============================
 See /examples for some examples in IPython notebook format.
 
-github formats the guides into nice web-pages, for example
+github formats the notebooks into nice web-pages, for example
 * https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb
 
 
@@ -52,6 +54,8 @@ Authors
 
 Installation
 ============
+
+clone from github, or download from pypi.
 
 > sudo python setup.py install
 
