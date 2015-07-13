@@ -15,7 +15,17 @@
 import sys
 import os
 import shlex
-import sphinx_rtd_theme
+
+# workaround to allow automatic builds on RTD
+# as well as local builds without sphinx_rtd_theme
+import imp
+rtd_theme = False
+try:
+    imp.find_module('sphinx_rtd_theme')
+    rtd_theme = True
+except ImportError:
+    rtd_theme = False
+
 import numpydoc
 import allantools
 
@@ -119,11 +129,13 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'alabaster'
+html_theme = 'default'
+html_theme_path = []
 
 ## READ THE DOCS THEME
-html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+if rtd_theme:
+    html_theme = "sphinx_rtd_theme"
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -131,7 +143,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 #html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
