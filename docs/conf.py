@@ -23,6 +23,7 @@ rtd_theme = False
 try:
     imp.find_module('sphinx_rtd_theme')
     rtd_theme = True
+    import sphinx_rtd_theme
 except ImportError:
     rtd_theme = False
 
