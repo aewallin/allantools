@@ -17,7 +17,6 @@ import os
 import shlex
 import sphinx_rtd_theme
 import numpydoc
-import allantools
 
 
 sys.path.insert(0, os.path.abspath(os.getcwd()))
