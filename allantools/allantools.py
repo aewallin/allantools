@@ -1,27 +1,28 @@
 """
 Allan deviation tools
-Anders Wallin (anders.e.e.wallin "at" gmail.com)
+=====================
 
-Version History:
+**Author:** Anders Wallin (anders.e.e.wallin "at" gmail.com)
 
-v1.2.01 2015 March. Added Keysight 53230A time interval counter noise
-   floor data and test.
-
-v1.2 2014 November, Cantwell G. Carson conrtibuted:
+Version history
+---------------
+**v1.2** 2014 November, Cantwell G. Carson conrtibuted:
 - A gap-robust version of ADEV based on the paper by Sesia et al.
    gradev_phase() and gradev()
 - Improved uncertainty estimates: uncertainty_estimate()
   This introduces a new dependency: scipy.stats.chi2() 
 
-v1.1 2014 August, Danny Price converted the library to use numpy.
+**v1.1** 2014 August, Danny Price converted the library to use numpy.
 many functions in allantools are now 100x faster than before.
 http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/
 
-v1.01 2014 August, PEP8 compliance improvements by Danny Price.
+**v1.01** 2014 August, PEP8 compliance improvements by Danny Price.
 
-v1.00 2014 January, first version of allantools.
+**v1.00** 2014 January, first version of allantools.
 http://www.anderswallin.net/2014/01/allantools/
 
+License
+-------
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -36,52 +37,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-Implemented functions:
-adev() and adev_phase()     Allan deviation
-oadev() and oadev_phase()   Overlapping Allan deviation
-mdev() and mdev_phase()     Modified Allan deviation
-tdev() and tdev_phase()     Time deviation ( modified variance scaled by (t^2/3) )
-hdev() and hdev_phase()     Hadamard deviation
-ohdev() and ohdev_phase()   Overlapping Hadamard deviation
-totdev() and totdev_phase() Total deviation
-mtie() and mtie_phase()     Maximum Time Interval Error
-tierms() and tierms_phase() Time Interval Error RMS
-
-to do:
-Modified Total
-The modified total variance, MTOT, is total version of the modified Allan variance.
-It is defined for phase data as:
-                         1           N-3m+1  1  N+3m-1
-Mod s^2 total(t) = ----------------- sum     -- sum      [0zi*(m)]^2
-                    2m^2t0^2(N-3m+1) n=1     6m i=n-3m
-where the 0zi*(m) terms are the phase averages from a triply-extended
-sequence created by uninverted even reflection at each end,
-and the prefix 0 denotes that the linear trend has been removed.
-NIST SP 1065 eqn (27), page 25
-
-Time Total (modified total variance scaled by (t^2/3) )
-Hadamard Total
-Theo1
-TheoH
-
-Inputs (phase data):
-    phase = list of phase measurements in seconds, e.g. from a time-interval-counter
-    rate  = sample rate of data, i.e. interval between phase measurements is 1/rate
-    taus  = list of tau-values for ADEV computation
-Inputs (frequency data):
-    data = list of fractional frequency measurements (nondimensional), e.g. from a frequency-counter
-    rate  = sample rate of data, i.e. gate time of a zero-dead-time counter is 1/rate
-    taus  = list of tau-values for ADEV computation
-Output (tau_out, adev, adeverr, n)
-    tau_out = list of tau-values for which deviations were computed
-    adev    = list of ADEV (or another statistic) deviations
-    adeverr = list of estimated errors of allan deviations
-    n       = list of number of pairs in allan computation. standard error is adeverr = adev/sqrt(n)
 """
 
 import numpy as np
 import scipy.stats
+try:
+    import bottleneck as bn
+    USE_BOTTLENECK = True
+except ImportError:
+    USE_BOTTLENECK = False
 
 def tdev_phase(phase, rate, taus):
     """ Time deviation of phase data
@@ -93,23 +57,24 @@ def tdev_phase(phase, rate, taus):
     Parameters
     ----------
     phase: np.array
-        Phase data
+        list of phase measurements in seconds
     rate: float
-        The sampling rate, in Hz
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
     taus: np.array
-        Array of tau values for which to compute allan variance
+        Array of tau values for which to compute measurement
 
     Returns
     -------
-    (taus2, td, tde, ns): tuple
-        taus2: np.array
-            Tau values for which td computed
-        td: np.array
-            Computed time deviations for each tau value
-        tde: np.array
-            Time deviation errors
-        ns: np.array
-            Values of N used in mdev_phase()
+    (taus2, td, tde, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    td: np.array
+        Computed time deviations for each tau value
+    tde: np.array
+        Time deviation errors
+    ns: np.array
+        Values of N used in mdev_phase()
     """
     (taus2, md, mde, ns) = mdev_phase(phase, rate, taus)
 
@@ -120,7 +85,33 @@ def tdev_phase(phase, rate, taus):
 
 def tdev(data, rate, taus):
     """ Time deviation of fractional frequency data
-    http://en.wikipedia.org/wiki/Time_deviation """
+    
+    Parameters
+    ----------
+    data: np.array
+        Data arra
+    rate: float
+        The sampling rate, in Hz
+    taus: np.array
+        Array of tau values for which to compute allan variance
+    
+    Returns
+    -------
+    (taus2, td, tde, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    td: np.array
+        Computed time deviations for each tau value
+    tde: np.array
+        Time deviation errors
+    ns: np.array
+        Values of N used in mdev_phase()
+    
+    Notes
+    -----
+    http://en.wikipedia.org/wiki/Time_deviation 
+    """
     phase = frequency2phase(data, rate)
     return tdev_phase(phase, rate, taus)
 
@@ -128,13 +119,32 @@ def tdev(data, rate, taus):
 def mdev_phase(data, rate, taus):
     """  Modified Allan deviation of phase data
 
-                   N-3m+1     j+m-1   M-3m+2     j+m-1
-     Mod s2y(t) = ------------------  sum      { sum      [x(i+2m) - 2x(i+m) + x(i) ]  }**2
-                  2m**2 t**2 (N-3m+1) j=1        i=j
+    Parameters
+    ----------
+    phase: np.array
+        list of phase measurements in seconds
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+
+    Returns
+    -------
+    (taus2, md, mde, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    md: np.array
+        Computed mdev for each tau value
+    mde: np.array
+        mdev errors
+    ns: np.array
+        Values of N used in each mdev calculation
     
-    m is averaging factor, i.e. tau = m * tau0
-    M frequency measurements, i.e. N=M+1  time/phase measurements
-     see http://www.leapsecond.com/tools/adev_lib.c 
+    Notes
+    -----
+    see http://www.leapsecond.com/tools/adev_lib.c 
+
      NIST SP 1065 eqn (14)
     """
     data, taus = np.array(data), np.array(taus)
@@ -146,7 +156,6 @@ def mdev_phase(data, rate, taus):
 
     # this is a 'loop-unrolled' algorithm following
     # http://www.leapsecond.com/tools/adev_lib.c 
-
     for idx, m in enumerate(ms):
         tau = taus_used[idx]
 
@@ -181,22 +190,93 @@ def mdev_phase(data, rate, taus):
 
 
 def mdev(freqdata, rate, taus):
-    """ modified Allan deviation, fractional frequency data """
+    """ modified Allan deviation, fractional frequency data 
+    
+    Parameters
+    ----------
+    freqdata: np.array
+        Data array of fractional frequency measurements (nondimensional)
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+
+    Returns
+    -------
+    (taus2, md, mde, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    md: np.array
+        Computed mdev for each tau value
+    mde: np.array
+        mdev errors
+    ns: np.array
+        Values of N used in each mdev calculation
+        
+    """
     phase = frequency2phase(freqdata, rate)
     return mdev_phase(phase, rate, taus)
 
 
+
 def adev(data, rate, taus):
     """ Allan deviation for fractional frequency data
-    data is a time-series of evenly spaced fractional frequency measurements
-    rate is the samples/s in the time-series
-    taus is a list of tau-values for which we compute ADEV """
+
+    Parameters
+    ----------
+    data: np.array
+        Data time-series of evenly spaced fractional frequency measurements
+    rate: float
+        The samples/s in the time-series
+    taus: np.array
+        Array of tau values for which to compute measurement
+    
+    Returns
+    -------
+    (taus2, ad, ade, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    ad: np.array
+        Computed adev for each tau value
+    ade: np.array
+        adev errors
+    ns: np.array
+        Values of N used in each adev calculation
+        
+    """
     phase = frequency2phase(data, rate)
     return adev_phase(phase, rate, taus)
 
 
 def adev_phase(data, rate, taus):
-    """ Allan deviation for phase data """
+    """ Allan deviation for phase data 
+    
+    Parameters
+    ----------
+    data: np.array
+        list of phase measurements in seconds
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+
+    
+    Returns
+    -------
+    (taus2, ad, ade, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    ad: np.array
+        Computed adev for each tau value
+    ade: np.array
+        adev errors
+    ns: np.array
+        Values of N used in each adev calculation
+                    
+    """
     (data, m, taus_used) = tau_m(data, rate, taus)
 
     ad  = np.zeros_like(taus_used)
@@ -208,17 +288,36 @@ def adev_phase(data, rate, taus):
 
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
+
 def adev_phase_calc(data, rate, mj, stride):
     """ see http://www.leapsecond.com/tools/adev_lib.c
         stride = mj for nonoverlapping allan deviation
-        stride = 1 for overlapping allan deviation
-        
-        see http://en.wikipedia.org/wiki/Allan_variance
-        NIST SP 1065, eqn (7) and (11)
-        
-             1       1          i=N-2
-         s2y(t) = ------------- sum [x(i+2) - 2x(i+1) + x(i) ]^2
-                  2*tau^2 (N-2) i=1
+    Parameters
+    ----------
+    data: np.array
+        list of phase measurements in seconds
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    mj: int
+        M index value for stride
+    stride: int
+        Size of stride
+
+    Returns
+    -------
+    (dev, deverr, n): tuple
+        Array of computed values.
+    
+    Notes
+    -----
+    stride = mj for nonoverlapping allan deviation
+    stride = 1 for overlapping allan deviation
+
+    References
+    ----------        
+    * http://en.wikipedia.org/wiki/Allan_variance
+    * http://www.leapsecond.com/tools/adev_lib.c
+    NIST SP 1065, eqn (7) and (11)
     """
 
     d2 = data[2 * mj::stride]
@@ -239,8 +338,47 @@ def adev_phase_calc(data, rate, mj, stride):
 
     return dev, deverr, n
 
+
+def remove_small_ns(taus, devs, deverrs, ns):
+    """ if n is small (==1), reject the result """
+
+    ns_big_enough = ns > 1
+
+    o_taus = taus[ns_big_enough]
+    o_dev  = devs[ns_big_enough]
+    o_err  = deverrs[ns_big_enough]
+    o_n    = ns[ns_big_enough]
+
+    return o_taus, o_dev, o_err, o_n
+
+
 def oadev_phase(data, rate, taus):
-    """ overlapping Allan deviation of phase data """
+    """ overlapping Allan deviation of phase data 
+    
+    Parameters
+    ----------
+    data: np.array
+        list of phase measurements in seconds
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+
+    
+    Returns
+    -------
+    (taus2, ad, ade, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    ad: np.array
+        Computed oadev for each tau value
+    ade: np.array
+        oadev errors
+    ns: np.array
+        Values of N used in each oadev calculation
+                
+    """
     (data, m, taus_used) = tau_m(data, rate, taus)
     ad  = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
@@ -253,17 +391,111 @@ def oadev_phase(data, rate, taus):
 
 
 def oadev(freqdata, rate, taus):
-    """ overlapping Allan deviation for fractional frequency data """
+    """ overlapping Allan deviation for fractional frequency data 
+    
+    Parameters
+    ----------
+    freqdata: np.array
+        Data array of fractional frequency measurements (nondimensional)
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+            
+    Returns
+    -------
+    (taus2, ad, ade, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    ad: np.array
+        Computed adev for each tau value
+    ade: np.array
+        adev errors
+    ns: np.array
+        Values of N used in each adev calculation
+        
+    """
     phase = frequency2phase(freqdata, rate)
     return oadev_phase(phase, rate, taus)
 
+
+def frequency2phase(freqdata, rate):
+    """ integrate fractional frequency data and output phase data 
+    
+    Parameters
+    ----------
+    freqdata: np.array
+        Data array of fractional frequency measurements (nondimensional)
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+            
+    Returns
+    -------
+    phasedata: np.array
+        Integrated fractional frequency data, i.e. phase data.
+    """
+    dt = 1.0 / float(rate)
+    phasedata = np.cumsum(freqdata) * dt
+    phasedata = np.insert(phasedata, 0, 0)
+    return phasedata
+
+
 def ohdev(freqdata, rate, taus):
-    """ Overlapping Hadamard deviation, fractional frequency data """
+    """ Overlapping Hadamard deviation, fractional frequency data 
+    
+    Parameters
+    ----------
+    freqdata: np.array
+        Data array of fractional frequency measurements (nondimensional)
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+        
+    Returns
+    -------
+    (taus2, hd, hde, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    hd: np.array
+        Computed hdev for each tau value
+    hde: np.array
+        hdev errors
+    ns: np.array
+        Values of N used in each hdev calculation
+        
+    """
     phase = frequency2phase(freqdata, rate)
     return ohdev_phase(phase, rate, taus)
 
 def ohdev_phase(data, rate, taus):
-    """ Overlapping Hadamard deviation of phase data """
+    """ Overlapping Hadamard deviation of phase data 
+    
+    Parameters
+    ----------
+    data: np.array
+        list of phase measurements in seconds
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+
+    Returns
+    -------
+    (taus2, hd, hde, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    hd: np.array
+        Computed hdev for each tau value
+    hde: np.array
+        hdev errors
+    ns: np.array
+        Values of N used in each hdev calculation
+                
+    """
     rate = float(rate)
     (data, m, taus_used) = tau_m(data, rate, taus)
     hdevs = np.zeros_like(taus_used)
@@ -276,13 +508,46 @@ def ohdev_phase(data, rate, taus):
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
 def hdev(freqdata, rate, taus):
-    """ Hadamard deviation, fractional frequency data """
+    """ Hadamard deviation, fractional frequency data 
+    
+    Parameters
+    ----------
+    freqdata: np.array
+        Data array of fractional frequency measurements (nondimensional)
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+        
+    Returns
+    -------
+    (taus2, hd, hde, ns): tuple  
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    hd: np.array
+        Computed hdev for each tau value
+    hde: np.array
+        hdev errors
+    ns: np.array
+        Values of N used in each hdev calculation
+    """
     phase = frequency2phase(freqdata, rate)
     return hdev_phase(phase, rate, taus)
 
 
 def hdev_phase(data, rate, taus):
-    """ Hadamard deviation, phase data """
+    """ Hadamard deviation, phase data 
+    
+    Parameters
+    ----------
+    data: np.array
+        list of phase measurements in seconds
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+    """
     rate = float(rate)
     (data, m, taus_used) = tau_m(data, rate, taus)
     hdevs = np.zeros_like(taus_used)
@@ -296,15 +561,35 @@ def hdev_phase(data, rate, taus):
 
 
 def calc_hdev_phase(data, rate, mj, stride):
-    """ http://www.leapsecond.com/tools/adev_lib.c 
-    
+    """ calc_hdev_phase helper function for hdev() ad hdev_phase()
+
+    Parameters
+    ----------
+    data: np.array
+        list of phase measurements in seconds
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    mj: int
+        M index value for stride
+    stride: int
+        Size of stride
+
+    Returns
+    -------
+    (dev, deverr, n): tuple
+        Array of computed values.
+        
+    Notes
+    -----     
+    http://www.leapsecond.com/tools/adev_lib.c 
                          1        N-3
          s2y(t) = --------------- sum [x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2
                   6*tau^2 (N-3m)  i=1
         
         N=M+1 phase measurements
         m is averaging factor
-        NIST SP 1065 eqn (18) and (20)
+
+    NIST SP 1065 eqn (18) and (20)
     """
 
     tau0 = 1.0 / float(rate)
@@ -327,6 +612,7 @@ def calc_hdev_phase(data, rate, mj, stride):
     e = h / np.sqrt(n)
     return h, e, n
 
+
 def totdev(freqdata, rate, taus):
     """ Total deviation, fractional frequency data """
     phasedata = frequency2phase(freqdata, rate)
@@ -334,15 +620,27 @@ def totdev(freqdata, rate, taus):
 
 
 def totdev_phase(data, rate, taus):
-    """
-    Total deviation, phase data.
+    """ Total deviation, phase data.
     
-    See:
+    Parameters
+    ----------
+    data: np.array
+        Data array of fractional frequency measurements (nondimensional)
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+        
+        
+    References
+    ----------
     David A. Howe,
-    The total deviation approach to long-term characterization
-    of frequency stability,
+    *The total deviation approach to long-term characterization
+    of frequency stability*,
     IEEE tr. UFFC vol 47 no 5 (2000)
 
+    Notes
+    -----
                      1        N-1
     totvar(t) = ------------  sum   [ x*(i-m) - 2x*(i)+x*(i+m) ]**2
                 2 t**2 (N-2)  i=2
@@ -412,7 +710,18 @@ def tierms(freqdata, rate, taus):
 
 
 def tierms_phase(phase, rate, taus):
-    """ Time Interval Error RMS, for phase data """
+    """ Time Interval Error RMS, for phase data 
+    
+    Parameters
+    ----------
+    data: np.array
+        Data array of fractional frequency measurements (nondimensional)
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+    
+    """
     rate = float(rate)
     (data, m, taus_used) = tau_m(phase, rate, taus)
 
@@ -590,7 +899,7 @@ def gradev(freqdata, rate, taus, ci=0.9, noisetype='wp'):
     phase = frequency2phase(freqdata, rate)
     return gradev_phase(phase, rate, taus, ci=ci, noisetype=noisetype)
 
-def gradev_phase_calc(data, rate, mj, stride, ci, noisetype):
+def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
     """ see http://www.leapsecond.com/tools/adev_lib.c
         stride = mj for nonoverlapping allan deviation
         stride = 1 for overlapping allan deviation
@@ -631,49 +940,44 @@ def gradev_phase_calc(data, rate, mj, stride, ci, noisetype):
 
     return dev, deverr, n
 
-def gradev_phase(data, rate, taus, ci=0.9, noisetype='wp'):
-    """ gap resistant overlapping Allan deviation of phase data 
-    
-    """
-    (data, m, taus_used) = tau_m(data, rate, taus)
-    ad  = np.zeros_like(taus_used)
-    ade_l = np.zeros_like(taus_used)   
-    ade_h = np.zeros_like(taus_used)
-    adn = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m):
-        (dev, deverr, n) = gradev_phase_calc(data, 
-                                             rate, 
-                                             mj, 
-                                             1,
-                                             ci,
-                                             noisetype)  # stride=1 for overlapping ADEV
-        ad[idx]  = dev
-        ade_l[idx] = deverr[0]
-        ade_h[idx] = deverr[1]    
-        adn[idx] = n
-
-    return remove_small_ns(taus_used, ad, ade_l, ade_h, adn)  # tau, adev, adeverror, naverages
-
-
-def gradev(freqdata, rate, taus, ci=0.9, noisetype='wp'):
-    """ overlapping Allan deviation for fractional frequency data """
-    freqdata = trim_data(freqdata)     
-    phase = frequency2phase(freqdata, rate)
-    return gradev_phase(phase, rate, taus, ci=ci, noisetype=noisetype)
 
 ########################################################################
 #
 #  Various helper functions and utilities
 # 
 
+
 def tau_m(data, rate, taus, v=False):
-    """ pre-processing of the tau-list given by the user """
+    """ pre-processing of the tau-list given by the user (Helper function)
+
+    Does sanity checks, sorts data, removes duplicates and invalid values.
+
+    Parameters
+    ----------
+    data: np.array
+        data array
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+    taus: np.array
+        Array of tau values for which to compute measurement
+
+    Returns
+    -------
+    (data, m, taus): tuple
+        List of computed values
+    data: np.array
+        Data
+    m: np.array
+        Tau in units of data points
+    taus: np.array
+        Cleaned up list of tau values
+    """
     data, taus = np.array(data), np.array(taus)
 
     if rate == 0:
         raise RuntimeError("Warning! rate==0")
     rate = float(rate)
+    # n = len(data) # not used
     m = []
 
     taus_valid1 = taus < (1 / float(rate)) * float(len(data))
@@ -693,16 +997,32 @@ def tau_m(data, rate, taus, v=False):
     taus2 = m / float(rate)
     return data, m, taus2
 
-def frequency2phase(freqdata, rate):
-    """ integrate fractional frequency data and output phase data """
-    
-    dt = 1.0 / float(rate)
-    mask = np.isnan(freqdata)
-    freqdata = np.nan_to_num(freqdata)
-    phasedata = np.cumsum(freqdata) * dt
-    phasedata[np.where(mask==True)] = np.nan
-    phasedata = np.insert(phasedata, 0, 0)
-    return phasedata
+def tau_m(data, rate, taus, v=False):
+    """ pre-processing of the tau-list given by the user """
+    data, taus = np.array(data), np.array(taus)
+
+    if rate == 0:
+        raise RuntimeError("Warning! rate==0")
+    rate = float(rate)
+    m = []
+
+    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
+    taus_valid2 = taus > 0
+    taus_valid  = taus_valid1 & taus_valid2
+    m = np.floor(taus[taus_valid] * rate)
+    m = m[m != 0]       # m is tau in units of datapoints
+    m = np.unique(m)    # remove duplicates and sort
+
+    if v:
+        print "tau_m: ", m
+    if len(m) == 0:
+
+        print "Warning: sanity-check on tau failed!"
+        print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
+
+    taus2 = m / float(rate)
+    return data, m, taus2
+
 
 def remove_small_ns(*args):
     if len(args) == 4:
@@ -859,8 +1179,11 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
     Assuming covariances are zero (clocks are independent), we get:
     sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
     (and cyclic permutations for sb and sc) 
-    """
     
+    References
+    ----------
+    http://www.wriley.com/3-CornHat.htm
+    """
     # Until MTIE stuff is ported, need this fix:
     npa = np.array
     phasedata_ab, phasedata_bc, phasedata_ca = npa(phasedata_ab), npa(phasedata_bc), npa(phasedata_ca)

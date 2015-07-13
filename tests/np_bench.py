@@ -51,7 +51,7 @@ def benchmark_run(func1, func2, name, max_data_log = 7, noise_func = np.random.r
     Ns = []
     mean_speedup=0
     speedup_n=0
-    N_big = 1e5
+    N_big = 5e3
     n=0
     n_max=30
     for N in np.logspace(2,max_data_log,n_max):
@@ -61,13 +61,14 @@ def benchmark_run(func1, func2, name, max_data_log = 7, noise_func = np.random.r
         t_p_times.append(t_p)
         t_np_times.append(t_np)
         Ns.append(N)
-        if N>N_big: # numpy times are meaningless for short datasets,
-                    # since time.time() seems to have a 'noise floor' of about 2 ms (?)
-            speedup_n=speedup_n+1
+        if N > N_big: # numpy times are meaningless for short datasets,
+            # since time.time() seems to have a 'noise floor' of about 2 ms (?)
+            speedup_n += 1
             mean_speedup = mean_speedup + t_p/t_np
-    if speedup_n==0:
+    if speedup_n == 0:
         speedup_n = 1
     mean_speedup = mean_speedup / speedup_n
+    print "Mean speedup: %3.2fx" % mean_speedup
     return (Ns, t_p_times, t_np_times, mean_speedup, name)
 
 def benchmark_plot(data):

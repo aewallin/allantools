@@ -1,0 +1,1075 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API &mdash; allantools 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="allantools 1.0 documentation" href="index.html"/>
+        <link rel="prev" title="Getting started" href="getting_started.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html" class="icon icon-home"> allantools
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#basic-usage">Basic usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#implemented-functions">Implemented functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#to-implement">To implement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#general-usage">General usage:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#function-listing">Function listing</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">allantools</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>API</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/api.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="implemented-functions">
+<h2>Implemented functions<a class="headerlink" href="#implemented-functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="36%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Function</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">adev()</span></code> and <code class="docutils literal"><span class="pre">adev_phase()</span></code></td>
+<td>Allan deviation</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">oadev()</span></code> and <code class="docutils literal"><span class="pre">oadev_phase()</span></code></td>
+<td>Overlapping Allan deviation</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">mdev()</span></code> and <code class="docutils literal"><span class="pre">mdev_phase()</span></code></td>
+<td>Modified Allan deviation</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">tdev()</span></code> and <code class="docutils literal"><span class="pre">tdev_phase()</span></code></td>
+<td>Time deviation ( modified variance scaled by (t^2/3))</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">hdev()</span></code> and <code class="docutils literal"><span class="pre">hdev_phase()</span></code></td>
+<td>Hadamard deviation</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">ohdev()</span></code> and <code class="docutils literal"><span class="pre">ohdev_phase()</span></code></td>
+<td>Overlapping Hadamard deviation</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">totdev()</span></code> and <code class="docutils literal"><span class="pre">totdev_phase()</span></code></td>
+<td>Total deviation</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">mtie()</span></code> and <code class="docutils literal"><span class="pre">mtie_phase()</span></code></td>
+<td>Maximum Time Interval Error</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">tierms()</span></code> and <code class="docutils literal"><span class="pre">tierms_phase()</span></code></td>
+<td>Time Interval Error RMS</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">gradev()</span></code> and <code class="docutils literal"><span class="pre">gradev_phase()</span></code></td>
+<td>Gap resistant overlapping Allan deviation</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">uncertainty_estimate()</span></code></td>
+<td>Determine the uncertainty of a given two-sample variance estimate</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">three_cornered_hat_phase()</span></code></td>
+<td>Apply Three Cornered Hat Method (see examples)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="to-implement">
+<h2>To implement<a class="headerlink" href="#to-implement" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Modified Total. The modified total variance, MTOT, is total version of the modified Allan variance.</li>
+</ul>
+<p>It is defined for phase data as:</p>
+<div class="highlight-python"><div class="highlight"><pre>                         1           N-3m+1  1  N+3m-1
+Mod s^2 total(t) = ----------------- sum     -- sum      [0zi*(m)]^2
+                    2m^2t0^2(N-3m+1) n=1     6m i=n-3m
+</pre></div>
+</div>
+<p>where the <code class="docutils literal"><span class="pre">0zi*(m)</span></code> terms are the phase averages from a triply-extended
+sequence created by uninverted even reflection at each end,
+and the prefix 0 denotes that the linear trend has been removed.</p>
+<ul class="simple">
+<li>Time Total (modified total variance scaled by (t^2/3) )</li>
+<li>Hadamard Total</li>
+</ul>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://www.wriley.com/paper4ht.htm">http://www.wriley.com/paper4ht.htm</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Allan_variance">http://en.wikipedia.org/wiki/Allan_variance</a></li>
+</ul>
+<p>for code see e.g.:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0">http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0</a></li>
+<li><a class="reference external" href="http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified">http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified</a></li>
+<li><a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></li>
+</ul>
+</div>
+<div class="section" id="general-usage">
+<h2>General usage:<a class="headerlink" href="#general-usage" title="Permalink to this headline">¶</a></h2>
+<p><em>Inputs (phase data):</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>phase</strong> = list of phase measurements in seconds, e.g. from a time-interval-counter</li>
+<li><strong>rate</strong>  = sample rate of data, i.e. interval between phase measurements is 1/rate</li>
+<li><strong>taus</strong>  = list of tau-values for ADEV computation</li>
+</ul>
+</div></blockquote>
+<p><em>Inputs (frequency data):</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>data</strong> = list of fractional frequency measurements (nondimensional), e.g. from a frequency-counter</li>
+<li><strong>rate</strong>  = sample rate of data, i.e. gate time of a zero-dead-time counter is 1/rate</li>
+<li><strong>taus</strong>  = list of tau-values for ADEV computation</li>
+</ul>
+</div></blockquote>
+<p><em>Output (tau_out, adev, adeverr, n)</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>tau_out</strong> = list of tau-values for which deviations were computed</li>
+<li><strong>adev</strong>    = list of ADEV (or another statistic) deviations</li>
+<li><strong>adeverr</strong> = list of estimated errors of allan deviations</li>
+<li><strong>n</strong>       = list of number of pairs in allan computation. standard error is adeverr = adev/sqrt(n)</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="function-listing">
+<h1>Function listing<a class="headerlink" href="#function-listing" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="allantools.adev">
+<code class="descclassname">allantools.</code><code class="descname">adev</code><span class="sig-paren">(</span><em>data</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.adev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allan deviation for fractional frequency data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data: np.array</strong></p>
+<blockquote>
+<div><p>Data time-series of evenly spaced fractional frequency measurements</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>The samples/s in the time-series</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, ad, ade, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>ad: np.array</p>
+<blockquote>
+<div><p>Computed adev for each tau value</p>
+</div></blockquote>
+<p>ade: np.array</p>
+<blockquote>
+<div><p>adev errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in each adev calculation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.adev_phase">
+<code class="descclassname">allantools.</code><code class="descname">adev_phase</code><span class="sig-paren">(</span><em>data</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.adev_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allan deviation for phase data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data: np.array</strong></p>
+<blockquote>
+<div><p>list of phase measurements in seconds</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, ad, ade, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>ad: np.array</p>
+<blockquote>
+<div><p>Computed adev for each tau value</p>
+</div></blockquote>
+<p>ade: np.array</p>
+<blockquote>
+<div><p>adev errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in each adev calculation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="highlight-python"><div class="highlight"><pre>             1
+s2y(t) = --------- sum [x(i+2) - 2x(i+1) + x(i) ]^2
+          2*tau^2
+</pre></div>
+</div>
+<dl class="function">
+<dt id="allantools.oadev">
+<code class="descclassname">allantools.</code><code class="descname">oadev</code><span class="sig-paren">(</span><em>freqdata</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.oadev" title="Permalink to this definition">¶</a></dt>
+<dd><p>overlapping Allan deviation for fractional frequency data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freqdata: np.array</strong></p>
+<blockquote>
+<div><p>Data array of fractional frequency measurements (nondimensional)</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, ad, ade, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>ad: np.array</p>
+<blockquote>
+<div><p>Computed adev for each tau value</p>
+</div></blockquote>
+<p>ade: np.array</p>
+<blockquote>
+<div><p>adev errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in each adev calculation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.oadev_phase">
+<code class="descclassname">allantools.</code><code class="descname">oadev_phase</code><span class="sig-paren">(</span><em>data</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.oadev_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>overlapping Allan deviation of phase data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data: np.array</strong></p>
+<blockquote>
+<div><p>list of phase measurements in seconds</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, ad, ade, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>ad: np.array</p>
+<blockquote>
+<div><p>Computed oadev for each tau value</p>
+</div></blockquote>
+<p>ade: np.array</p>
+<blockquote>
+<div><p>oadev errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in each oadev calculation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.mdev">
+<code class="descclassname">allantools.</code><code class="descname">mdev</code><span class="sig-paren">(</span><em>freqdata</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.mdev" title="Permalink to this definition">¶</a></dt>
+<dd><p>modified Allan deviation, fractional frequency data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freqdata: np.array</strong></p>
+<blockquote>
+<div><p>Data array of fractional frequency measurements (nondimensional)</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, md, mde, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>md: np.array</p>
+<blockquote>
+<div><p>Computed mdev for each tau value</p>
+</div></blockquote>
+<p>mde: np.array</p>
+<blockquote>
+<div><p>mdev errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in each mdev calculation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.mdev_phase">
+<code class="descclassname">allantools.</code><code class="descname">mdev_phase</code><span class="sig-paren">(</span><em>data</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.mdev_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modified Allan deviation of phase data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>phase: np.array</strong></p>
+<blockquote>
+<div><p>list of phase measurements in seconds</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, md, mde, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>md: np.array</p>
+<blockquote>
+<div><p>Computed mdev for each tau value</p>
+</div></blockquote>
+<p>mde: np.array</p>
+<blockquote>
+<div><p>mdev errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in each mdev calculation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
+<blockquote>
+<div>NIST SP 1065 eqn (14)</div></blockquote>
+</dd></dl>
+
+<div class="highlight-python"><div class="highlight"><pre>               N-3m+1     j+m-1
+Mod s2y(t) = ------------------  sum      { sum   [x(i+2m) - 2x(i+m) + x(i) ]  }**2
+             2m**2 t**2 (N-3m+1) j=1        i=j
+</pre></div>
+</div>
+<dl class="function">
+<dt id="allantools.hdev">
+<code class="descclassname">allantools.</code><code class="descname">hdev</code><span class="sig-paren">(</span><em>freqdata</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.hdev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hadamard deviation, fractional frequency data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freqdata: np.array</strong></p>
+<blockquote>
+<div><p>Data array of fractional frequency measurements (nondimensional)</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, hd, hde, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>hd: np.array</p>
+<blockquote>
+<div><p>Computed hdev for each tau value</p>
+</div></blockquote>
+<p>hde: np.array</p>
+<blockquote>
+<div><p>hdev errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in each hdev calculation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.hdev_phase">
+<code class="descclassname">allantools.</code><code class="descname">hdev_phase</code><span class="sig-paren">(</span><em>data</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.hdev_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hadamard deviation, phase data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data: np.array</strong></p>
+<blockquote>
+<div><p>list of phase measurements in seconds</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote class="last">
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.ohdev">
+<code class="descclassname">allantools.</code><code class="descname">ohdev</code><span class="sig-paren">(</span><em>freqdata</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.ohdev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overlapping Hadamard deviation, fractional frequency data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freqdata: np.array</strong></p>
+<blockquote>
+<div><p>Data array of fractional frequency measurements (nondimensional)</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, hd, hde, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>hd: np.array</p>
+<blockquote>
+<div><p>Computed hdev for each tau value</p>
+</div></blockquote>
+<p>hde: np.array</p>
+<blockquote>
+<div><p>hdev errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in each hdev calculation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.ohdev_phase">
+<code class="descclassname">allantools.</code><code class="descname">ohdev_phase</code><span class="sig-paren">(</span><em>data</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.ohdev_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overlapping Hadamard deviation of phase data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data: np.array</strong></p>
+<blockquote>
+<div><p>list of phase measurements in seconds</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, hd, hde, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>hd: np.array</p>
+<blockquote>
+<div><p>Computed hdev for each tau value</p>
+</div></blockquote>
+<p>hde: np.array</p>
+<blockquote>
+<div><p>hdev errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in each hdev calculation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.tdev">
+<code class="descclassname">allantools.</code><code class="descname">tdev</code><span class="sig-paren">(</span><em>data</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.tdev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time deviation of fractional frequency data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data: np.array</strong></p>
+<blockquote>
+<div><p>Data arra</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>The sampling rate, in Hz</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute allan variance</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, td, tde, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>td: np.array</p>
+<blockquote>
+<div><p>Computed time deviations for each tau value</p>
+</div></blockquote>
+<p>tde: np.array</p>
+<blockquote>
+<div><p>Time deviation errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in mdev_phase()</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Time_deviation">http://en.wikipedia.org/wiki/Time_deviation</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.tdev_phase">
+<code class="descclassname">allantools.</code><code class="descname">tdev_phase</code><span class="sig-paren">(</span><em>phase</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.tdev_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time deviation of phase data</p>
+<p>TDEV = (tau / sqrt(3) ) * MDEV</p>
+<p>NIST SP 1065 eqn (15)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>phase: np.array</strong></p>
+<blockquote>
+<div><p>list of phase measurements in seconds</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote>
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(taus2, td, tde, ns): tuple</p>
+<blockquote>
+<div><p>Tuple of values</p>
+</div></blockquote>
+<p>taus2: np.array</p>
+<blockquote>
+<div><p>Tau values for which td computed</p>
+</div></blockquote>
+<p>td: np.array</p>
+<blockquote>
+<div><p>Computed time deviations for each tau value</p>
+</div></blockquote>
+<p>tde: np.array</p>
+<blockquote>
+<div><p>Time deviation errors</p>
+</div></blockquote>
+<p>ns: np.array</p>
+<blockquote class="last">
+<div><p>Values of N used in mdev_phase()</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.totdev">
+<code class="descclassname">allantools.</code><code class="descname">totdev</code><span class="sig-paren">(</span><em>freqdata</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.totdev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total deviation, fractional frequency data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.totdev_phase">
+<code class="descclassname">allantools.</code><code class="descname">totdev_phase</code><span class="sig-paren">(</span><em>data</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.totdev_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total deviation, phase data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data: np.array</strong></p>
+<blockquote>
+<div><p>Data array of fractional frequency measurements (nondimensional)</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote class="last">
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>totvar(t) = &#8212;&#8212;&#8212;&#8212;  sum   [ x*(i-m) - 2x*(i)+x*(i+m) ]**2</dt>
+<dd>2 t**2 (N-2)  i=2</dd>
+</dl>
+<p>where x* is a new dataset with &#8216;reflected&#8217; data at start/end.</p>
+<p>the original data x is in the center of x*:
+x*(1-j) = 2x(1) - x(1+j)  for j=1..N-2
+x*(i)   = x(i)            for i=1..N
+x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
+x* has length 3N-4
+tau = m*tau0</p>
+<p>NIST SP 1065 eqn (25)</p>
+<p class="rubric">References</p>
+<p>David A. Howe,
+<em>The total deviation approach to long-term characterization
+of frequency stability</em>,
+IEEE tr. UFFC vol 47 no 5 (2000)</p>
+</dd></dl>
+
+<div class="highlight-python"><div class="highlight"><pre>                 1         N-1
+totvar(t) = ------------  sum   [ x*(i-m) - 2x*(i)+x*(i+m) ]**2
+            2 t**2 (N-2)  i=2
+</pre></div>
+</div>
+<dl class="function">
+<dt id="allantools.mtie">
+<code class="descclassname">allantools.</code><code class="descname">mtie</code><span class="sig-paren">(</span><em>freqdata</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.mtie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum Time Interval Error, fractional frequency data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.mtie_phase">
+<code class="descclassname">allantools.</code><code class="descname">mtie_phase</code><span class="sig-paren">(</span><em>phase</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.mtie_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum Time Interval Error, phase data</p>
+<p>this seems to correspond to Stable32 setting &#8220;Fast(u)&#8221;
+Stable32 also has &#8220;Decade&#8221; and &#8220;Octave&#8221; modes where the dataset is extended somehow?</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.tierms">
+<code class="descclassname">allantools.</code><code class="descname">tierms</code><span class="sig-paren">(</span><em>freqdata</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.tierms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time Interval Error RMS, for fractional frequency data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.tierms_phase">
+<code class="descclassname">allantools.</code><code class="descname">tierms_phase</code><span class="sig-paren">(</span><em>phase</em>, <em>rate</em>, <em>taus</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.tierms_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time Interval Error RMS, for phase data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data: np.array</strong></p>
+<blockquote>
+<div><p>Data array of fractional frequency measurements (nondimensional)</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+<p><strong>taus: np.array</strong></p>
+<blockquote class="last">
+<div><p>Array of tau values for which to compute measurement</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.frequency2phase">
+<code class="descclassname">allantools.</code><code class="descname">frequency2phase</code><span class="sig-paren">(</span><em>freqdata</em>, <em>rate</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.frequency2phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>integrate fractional frequency data and output phase data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freqdata: np.array</strong></p>
+<blockquote>
+<div><p>Data array of fractional frequency measurements (nondimensional)</p>
+</div></blockquote>
+<p><strong>rate: float</strong></p>
+<blockquote>
+<div><p>Sample rate of data, i.e. interval between measurements is 1/rate (Hz)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">phasedata: np.array</p>
+<blockquote class="last">
+<div><p>Integrated fractional frequency data, i.e. phase data.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.uncertainty_estimate">
+<code class="descclassname">allantools.</code><code class="descname">uncertainty_estimate</code><span class="sig-paren">(</span><em>N</em>, <em>m</em>, <em>s</em>, <em>ci=0.9</em>, <em>noisetype='wp'</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.uncertainty_estimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the uncertainty of a given two-sample variance estimate for
+a given number of samples (N), sampling distance (m), variance estimate 
+(s), confindence interval (ci), and type of noise (noisetype).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>N</strong> : int</p>
+<blockquote>
+<div><p>the number of samples used in a two sample variance estimate</p>
+</div></blockquote>
+<p><strong>m</strong> : int</p>
+<blockquote>
+<div><p>the length of the window, tau = m * tau0</p>
+</div></blockquote>
+<p><strong>s</strong> : float</p>
+<blockquote>
+<div><p>the estimated two-sample variance</p>
+</div></blockquote>
+<p><strong>ci: float</strong></p>
+<blockquote>
+<div><p>the total confidence interval desired, i.e. if ci = 0.9, the bounds 
+will be at 0.05 and 0.95.</p>
+</div></blockquote>
+<p><strong>noisetype: string</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>the type of noise desired:</dt>
+<dd><p class="first last">&#8216;wp&#8217; returns white phase noise.
+&#8216;wf&#8217; returns white frequency noise.
+&#8216;fp&#8217; returns flicker phase noise.
+&#8216;ff&#8217; returns flicker frequency noise.
+&#8216;rf&#8217; returns random walk frequency noise.</p>
+</dd>
+</dl>
+<p>If the input is not recognized, it defaults to idealized, uncorrelated
+noise with (N-1) degrees of freedom.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>[err_l, err_h]</strong> : list, float</p>
+<blockquote class="last">
+<div><p>the upper and lower bounds of the confidence interval taken as
+distances from the the estimated two sample variance.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="allantools.three_cornered_hat_phase">
+<code class="descclassname">allantools.</code><code class="descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em>phasedata_ab</em>, <em>phasedata_bc</em>, <em>phasedata_ca</em>, <em>rate</em>, <em>taus</em>, <em>function</em><span class="sig-paren">)</span><a class="headerlink" href="#allantools.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Three Cornered Hat Method</p>
+<p>We have three clocks with unknown variances sa^2, sb^2, sc^3
+Three pairwise measurements give variances:
+sab^2, sbc^2, sca^2
+Assuming covariances are zero (clocks are independent), we get:
+sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
+(and cyclic permutations for sb and sc)</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="http://www.wriley.com/3-CornHat.htm">http://www.wriley.com/3-CornHat.htm</a></p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="getting_started.html" class="btn btn-neutral" title="Getting started" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Anders E. E. Wallin.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
