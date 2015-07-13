@@ -145,7 +145,7 @@ def mdev_phase(data, rate, taus):
     -----
     see http://www.leapsecond.com/tools/adev_lib.c 
 
-     NIST SP 1065 eqn (14)
+    NIST SP 1065 eqn (14)
     """
     data, taus = np.array(data), np.array(taus)
     (data, ms, taus_used) = tau_m(data, rate, taus)
@@ -641,6 +641,7 @@ def totdev_phase(data, rate, taus):
 
     Notes
     -----
+    ..
                      1        N-1
     totvar(t) = ------------  sum   [ x*(i-m) - 2x*(i)+x*(i+m) ]**2
                 2 t**2 (N-2)  i=2

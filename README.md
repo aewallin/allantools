@@ -84,8 +84,9 @@ To do:
 * Modified Total variance
 * Time Total (modified total variance scaled by (t^2/3) )
 * Hadamard Total
-* Tests for different noise types according to IEEE 1139 
+* Tests for different noise types according to IEEE 1139, include power-spectral-density calculations
 * Conversion between phase noise and Allan variance
+* The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
 
 Make sure your patch does not break any of the tests, and does not significantly reduce the readability of the code.
 
