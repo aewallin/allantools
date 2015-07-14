@@ -20,7 +20,31 @@ These statistics are currently included:
 * TIERMS  Time interval error RMS
 
 see /tests for tests that compare allantools output to other (e.g. Stable32) programs.
-More test data, benchmarks, and comparisons to known-good algorithms are welcome.
+More test data, benchmarks, ipython notebooks, and comparisons to known-good algorithms are welcome.
+
+Documentation
+=============
+See /docs for documentation in sphinx format. On Ubuntu this requires the 'python-sphinx' and 'python-numpydoc' packages.
+html documentation using sphinx can be built locally with
+
+> make html
+
+this generates html documentation in /docs/_build/html
+
+The sphinx documentation is also auto-generated online
+
+* http://allantools.readthedocs.org
+* http://allantools-aewallin.readthedocs.org
+
+IPython notebooks with examples
+===============================
+See /examples for some examples in IPython notebook format.
+
+github formats the notebooks into nice web-pages, for example
+* https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb
+
+
+todo: add here a very short guide on how to get started with ipython
 
 Authors
 =======
@@ -31,9 +55,13 @@ Authors
 Installation
 ============
 
+clone from github, or download from pypi.
+
 > sudo python setup.py install
 
-Usage:
+Usage
+=====
+
 ```python
 import allantools # https://github.com/aewallin/allantools/
 rate = 1/float(data_interval) # data rate in Hz
@@ -56,8 +84,9 @@ To do:
 * Modified Total variance
 * Time Total (modified total variance scaled by (t^2/3) )
 * Hadamard Total
-* Tests for different noise types according to IEEE 1139 
+* Tests for different noise types according to IEEE 1139, include power-spectral-density calculations
 * Conversion between phase noise and Allan variance
+* The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
 
 Make sure your patch does not break any of the tests, and does not significantly reduce the readability of the code.
 

@@ -9,10 +9,9 @@ allantools documentation
 .. toctree::
    :maxdepth: 2
    
-   about
    getting_started
    api
-   ...
+..
    
 About allantools
 ----------------
@@ -27,7 +26,7 @@ but also available on PyPi at:
 
     https://pypi.python.org/pypi/AllanTools
 
-nput data should be evenly spaced observations of either fractional frequency, or phase in seconds. Deviations are calculated for given tau values in seconds.
+Input data should be evenly spaced observations of either fractional frequency, or phase in seconds. Deviations are calculated for given tau values in seconds.
 
 These statistics are currently included:
 

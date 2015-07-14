@@ -83,6 +83,7 @@ Function listing
 
 .. autofunction:: adev
 .. autofunction:: adev_phase
+
 ::
     
                   1      
