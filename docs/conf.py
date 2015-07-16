@@ -28,7 +28,6 @@ except ImportError:
     rtd_theme = False
 
 import numpydoc
-import allantools
 
 
 sys.path.insert(0, os.path.abspath(os.getcwd()))
