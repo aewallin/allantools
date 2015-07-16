@@ -118,6 +118,10 @@ if __name__ == "__main__":
     # 6           359.9
     data=[]
     # run the benchmarks and store results into one list of tuples
+    print "Benchmark pure-python allantools against numpy allantools"
+    print "N_log_max =", N_log_max
+    print "On an i7-2600K @ 3.4 GHz CPU N_log_max = 6 takes about 175 seconds to run."
+    print ""
     t0 = time.time()
     data.append( benchmark_run( alt.adev  , alp.adev  , "ADEV"  ,N_log_max) )
     data.append( benchmark_run( alt.oadev , alp.oadev , "OADEV" ,N_log_max) )

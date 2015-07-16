@@ -6,20 +6,27 @@ Allan deviation tools
 
 Version history
 ---------------
+
+**v1.2.1** 2015 July
+- IPython notebook examples
+- sphinx documentation, auto-built on readthedocs
+
 **v1.2** 2014 November, Cantwell G. Carson conrtibuted:
 - A gap-robust version of ADEV based on the paper by Sesia et al.
    gradev_phase() and gradev()
 - Improved uncertainty estimates: uncertainty_estimate()
   This introduces a new dependency: scipy.stats.chi2() 
 
-**v1.1** 2014 August, Danny Price converted the library to use numpy.
-many functions in allantools are now 100x faster than before.
-http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/
+**v1.1** 2014 August
+- Danny Price converted the library to use numpy.
+- many functions in allantools are now 100x faster than before.
+- http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/
 
-**v1.01** 2014 August, PEP8 compliance improvements by Danny Price.
+**v1.01** 2014 August
+- PEP8 compliance improvements by Danny Price.
 
 **v1.00** 2014 January, first version of allantools.
-http://www.anderswallin.net/2014/01/allantools/
+- http://www.anderswallin.net/2014/01/allantools/
 
 License
 -------
@@ -40,12 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import numpy as np
-import scipy.stats
-try:
-    import bottleneck as bn
-    USE_BOTTLENECK = True
-except ImportError:
-    USE_BOTTLENECK = False
+import scipy.stats # used in uncertainty_estimate()
 
 def tdev_phase(phase, rate, taus):
     """ Time deviation of phase data

@@ -18,7 +18,8 @@ import time
 
 if __name__ == "__main__":
 
-
+    print "Compare results and speed of pure-python allantools against numpy allantools"
+    
     #######################
     # MTIE_PHASE()
     #######################
@@ -31,7 +32,7 @@ if __name__ == "__main__":
     for rate in rates:
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
-            o_taus, o_dev, o_err, o_n = alt.mtie_phase(data, rate, taus)
+            o_taus, o_dev, o_err, o_n = alt.mtie_phase_purepy(data, rate, taus)
             o_taus_, o_dev_, o_err_, o_n_ = alp.mtie_phase(data, rate, taus)
 
             assert np.allclose(o_taus, o_taus_)
@@ -43,7 +44,7 @@ if __name__ == "__main__":
     rate = 2.1
     data = np.random.random(100000)
     t1 = time.time()
-    o_taus, o_dev, o_err, o_n = alt.mtie_phase(data, rate, taus)
+    o_taus, o_dev, o_err, o_n = alt.mtie_phase_purepy(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
     o_taus_, o_dev_, o_err_, o_n_ = alp.mtie_phase(data, rate, taus)
@@ -663,7 +664,7 @@ if __name__ == "__main__":
                 #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
                 mj = tau
                 dev, deverr, n = alt.calc_adev_phase(data, rate, mj, stride)
-                dev_, deverr_, n_ = alp.calc_adev_phase(data, rate, mj, stride)
+                dev_, deverr_, n_ = alp.adev_phase_calc(data, rate, mj, stride)
 
                 assert np.isclose(dev, dev_)
                 assert np.isclose(n, n_)
@@ -676,7 +677,7 @@ if __name__ == "__main__":
     dev, deverr, n = alt.calc_adev_phase(data, rate, mj, stride)
     t2 = time.time()
     t3 = time.time()
-    dev_, deverr_, n_ = alp.calc_adev_phase(data, rate, mj, stride)
+    dev_, deverr_, n_ = alp.adev_phase_calc(data, rate, mj, stride)
     t4 = time.time()
 
     assert np.isclose(dev, dev_)
@@ -854,3 +855,4 @@ if __name__ == "__main__":
     print "New:      %2.3fs" % (t4 - t3)
     print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
 
+    print "\nAll DONE!"
