@@ -66,7 +66,7 @@ nbs14_1000_devs = [ [2.922319e-01, 9.965736e-02, 3.897804e-02],  # ADEV 1, 10, 1
 def nbs14_1000():
     n = [0]*1000
     n[0] = 1234567890
-    for i in xrange(999):
+    for i in range(999):
         n[i+1] = (16807*n[i]) % 2147483647
     # the first three numbers are given in the paper, so check them:
     assert( n[1] ==  395529916 and n[2] == 1209410747 and  n[3] == 633705974 )
@@ -77,61 +77,61 @@ def nbs14_tester( function, fdata, correct_devs ):
     rate=1.0
     taus =[1, 10, 100]
     (taus2, devs, deverrs, ns) = function( fdata, rate, taus)
-    for i in xrange(3):
+    for i in range(3):
         assert( check_devs( devs[i], correct_devs[i] ) )
 
 def nbs14_1000_test():
     fdata = nbs14_1000()
-    print "nbs14 1000-point frequency data tests:"
+    print("nbs14 1000-point frequency data tests:")
     
     nbs14_tester( allan.adev, fdata, nbs14_1000_devs[0] )
-    print "nbs14_1000 adev OK"
+    print("nbs14_1000 adev OK")
 
     nbs14_tester( allan.oadev, fdata, nbs14_1000_devs[1] )
-    print "nbs14_1000 oadev OK"
+    print("nbs14_1000 oadev OK")
 
     nbs14_tester( allan.mdev, fdata, nbs14_1000_devs[2] )
-    print "nbs14_1000 mdev OK"
+    print("nbs14_1000 mdev OK")
 
     nbs14_tester( allan.totdev, fdata, nbs14_1000_devs[3] )
-    print "nbs14_1000 totdev OK"
+    print("nbs14_1000 totdev OK")
     
     nbs14_tester( allan.hdev, fdata, nbs14_1000_devs[4] )
-    print "nbs14_1000 hdev OK"
+    print("nbs14_1000 hdev OK")
 
     nbs14_tester( allan.tdev, fdata, nbs14_1000_devs[5] )
-    print "nbs14_1000 tdev OK"
+    print("nbs14_1000 tdev OK")
 
     nbs14_tester( allan.ohdev, fdata, nbs14_1000_devs[6] )
-    print "nbs14_1000 ohdev OK"
+    print("nbs14_1000 ohdev OK")
         
     #########################################################
     # now we test the same data, calling the _phase functions
     pdata = allan.frequency2phase(fdata, 1.0)
-    print "nbs14 1000-point phase data tests:"
+    print("nbs14 1000-point phase data tests:")
     
     nbs14_tester( allan.adev_phase, pdata, nbs14_1000_devs[0] )
-    print "nbs14_1000 adev_phase OK"
+    print("nbs14_1000 adev_phase OK")
 
     nbs14_tester( allan.oadev_phase, pdata, nbs14_1000_devs[1] )
-    print "nbs14_1000 oadev_phase OK"
+    print("nbs14_1000 oadev_phase OK")
 
     nbs14_tester( allan.mdev_phase, pdata, nbs14_1000_devs[2] )
-    print "nbs14_1000 mdev_phase OK"
+    print("nbs14_1000 mdev_phase OK")
 
     nbs14_tester( allan.totdev_phase, pdata, nbs14_1000_devs[3] )
-    print "nbs14_1000 totdev_phase OK"
+    print("nbs14_1000 totdev_phase OK")
     
     nbs14_tester( allan.hdev_phase, pdata, nbs14_1000_devs[4] )
-    print "nbs14_1000 hdev_phase OK"
+    print("nbs14_1000 hdev_phase OK")
 
     nbs14_tester( allan.tdev_phase, pdata, nbs14_1000_devs[5] )
-    print "nbs14_1000 tdev_phase OK"
+    print("nbs14_1000 tdev_phase OK")
 
     nbs14_tester( allan.ohdev_phase, pdata, nbs14_1000_devs[6] )
-    print "nbs14_1000 ohdev_phase OK"
+    print("nbs14_1000 ohdev_phase OK")
         
-    print "nbs14_1000 all tests OK"
+    print("nbs14_1000 all tests OK")
 
 def check_devs(dev2, dev1):
     rel_error = (dev2-dev1)/dev1
@@ -140,10 +140,10 @@ def check_devs(dev2, dev1):
 
     if ( abs(rel_error) < tol ):
         if verbose:
-            print "OK   %0.6f \t    %0.6f \t %0.6f" % (dev1,dev2, rel_error)
+            print("OK   %0.6f \t    %0.6f \t %0.6f" % (dev1,dev2, rel_error))
         return True
     else:
-        print "ERROR   %0.6f \t %0.6f \t %0.6f" % (dev1,dev2, rel_error)
+        print("ERROR   %0.6f \t %0.6f \t %0.6f" % (dev1,dev2, rel_error))
         return False
 
 def nbs14_test():
@@ -152,99 +152,99 @@ def nbs14_test():
     tol = 1e-4
     
     # first tests that call the _phase functions
-    print "nbs14 tests for phase data:"
+    print("nbs14 tests for phase data:")
     
     (taus2,adevs2,aerrs2,ns2) = allan.adev_phase( nbs14_phase, 1.0, taus)
     adevs = nbs14_devs[0]
     assert( check_devs( adevs2[0], adevs[0] ) )
     assert( check_devs( adevs2[1], adevs[1] ) )
-    print "nbs14 adev OK"
+    print("nbs14 adev OK")
     
     (taus2,adevs2,aerrs2,ns2) = allan.oadev_phase( nbs14_phase, 1.0, taus)
     oadevs = nbs14_devs[1]
     assert( check_devs( adevs2[0], oadevs[0] ) )
     assert( check_devs( adevs2[1], oadevs[1] ) )
-    print "nbs14 oadev OK"
+    print("nbs14 oadev OK")
     
     (taus2,adevs2,aerrs2,ns2) = allan.mdev_phase( nbs14_phase, 1.0, taus)
     mdevs = nbs14_devs[2]
     assert( check_devs( adevs2[0], mdevs[0] ) )
     assert( check_devs( adevs2[1], mdevs[1] ) )
-    print "nbs14 mdev OK"
+    print("nbs14 mdev OK")
     
     (taus2,adevs2,aerrs2,ns2) = allan.totdev_phase( nbs14_phase, 1.0, taus)
     totdevs = nbs14_devs[3]
     assert( check_devs( adevs2[0], totdevs[0] ) )
     assert( check_devs( adevs2[1], totdevs[1] ) )
-    print "nbs14 totdev OK"
+    print("nbs14 totdev OK")
     
     (taus2,adevs2,aerrs2,ns2) = allan.hdev_phase( nbs14_phase, 1.0, taus)
     hdevs = nbs14_devs[4]
     assert( check_devs( adevs2[0], hdevs[0] ) )
     assert( check_devs( adevs2[1], hdevs[1] ) )
-    print "nbs14 hdev OK"
+    print("nbs14 hdev OK")
     
     (taus2,adevs2,aerrs2,ns2) = allan.tdev_phase( nbs14_phase, 1.0, taus)
     tdevs = nbs14_devs[5]
     assert( check_devs( adevs2[0], tdevs[0] ) )
     assert( check_devs( adevs2[1], tdevs[1] ) )
-    print "nbs14 tdev OK"
+    print("nbs14 tdev OK")
 
     (taus2,adevs2,aerrs2,ns2) = allan.ohdev_phase( nbs14_phase, 1.0, taus)
     ohdevs = nbs14_devs[6]
     assert( check_devs( adevs2[0], ohdevs[0] ) )
     assert( check_devs( adevs2[1], ohdevs[1] ) )
-    print "nbs14 ohdev OK"
+    print("nbs14 ohdev OK")
 
 
     # then the same tests for frequency data
-    print "nbs14 tests for frequency data:"
+    print("nbs14 tests for frequency data:")
 
     f_fract = [ float(f) for f in nbs14_f]
     (taus2,adevs2,aerrs2,ns2) = allan.adev( f_fract, 1.0, taus)
     adevs = nbs14_devs[0]
     assert( check_devs( adevs2[0], adevs[0] ) )
     assert( check_devs( adevs2[1], adevs[1] ) )
-    print "nbs14 freqdata adev OK"
+    print("nbs14 freqdata adev OK")
 
     (taus2,adevs2,aerrs2,ns2) = allan.oadev( f_fract, 1.0, taus)
     oadevs = nbs14_devs[1]
     assert( check_devs( adevs2[0], oadevs[0] ) )
     assert( check_devs( adevs2[1], oadevs[1] ) )
-    print "nbs14 freqdata oadev OK"
+    print("nbs14 freqdata oadev OK")
 
     (taus2,adevs2,aerrs2,ns2) = allan.mdev( f_fract, 1.0, taus)
     mdevs = nbs14_devs[2]
     assert( check_devs( adevs2[0], mdevs[0] ) )
     assert( check_devs( adevs2[1], mdevs[1] ) )
-    print "nbs14 freqdata mdev OK"
+    print("nbs14 freqdata mdev OK")
 
     (taus2,adevs2,aerrs2,ns2) = allan.totdev( f_fract, 1.0, taus)
     totdevs = nbs14_devs[3]
     assert( check_devs( adevs2[0], totdevs[0] ) )
     assert( check_devs( adevs2[1], totdevs[1] ) )
-    print "nbs14 freqdata totdev OK"
+    print("nbs14 freqdata totdev OK")
     
     (taus2,adevs2,aerrs2,ns2) = allan.hdev( f_fract, 1.0, taus)
     hdevs = nbs14_devs[4]
     assert( check_devs( adevs2[0], hdevs[0] ) )
     assert( check_devs( adevs2[1], hdevs[1] ) )
-    print "nbs14 freqdata hdev OK"
+    print("nbs14 freqdata hdev OK")
 
     (taus2,adevs2,aerrs2,ns2) = allan.tdev( f_fract, 1.0, taus)
     tdevs = nbs14_devs[5]
     assert( check_devs( adevs2[0], tdevs[0] ) )
     assert( check_devs( adevs2[1], tdevs[1] ) )
-    print "nbs14 freqdata tdev OK"
+    print("nbs14 freqdata tdev OK")
 
     (taus2,adevs2,aerrs2,ns2) = allan.ohdev( f_fract, 1.0, taus)
     ohdevs = nbs14_devs[6]
     assert( check_devs( adevs2[0], ohdevs[0] ) )
     assert( check_devs( adevs2[1], ohdevs[1] ) )
-    print "nbs14 freqdata ohdev OK"
+    print("nbs14 freqdata ohdev OK")
 
 
-    print "nbs14 all test OK"
+    print("nbs14 all test OK")
 
 def run():
     nbs14_test()

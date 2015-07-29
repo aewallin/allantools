@@ -103,7 +103,7 @@ def mdev(freqdata, rate, taus):
 def tau_m(data, rate, taus, v=False):
     """ pre-processing of the tau-list given by the user """
     if rate == 0:
-        print "Warning! rate==0"
+        print("Warning! rate==0")
     rate = float(rate)
     # n = len(data) # not used
     m = []
@@ -115,10 +115,10 @@ def tau_m(data, rate, taus, v=False):
     m = list(set(m))  # this removes duplicates
     m.sort()  # sort from small tau to large tau
     if v:
-        print "tau_m: ", m
+        print("tau_m: ", m)
     if len(m) == 0:
-        print "Warning: sanity-check on tau failed!"
-        print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
+        print("Warning: sanity-check on tau failed!")
+        print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
     taus2 = [x / float(rate) for x in m]
     return m, taus2
 
@@ -490,5 +490,5 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
     return tau_ab, dev_a
 
 if __name__ == "__main__":
-    print "Nothing to see here."
+    print("Nothing to see here.")
 

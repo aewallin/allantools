@@ -44,8 +44,8 @@ def benchmark_run(func1, func2, name, max_data_log = 7, noise_func = np.random.r
     """ benchmark func1 against func2 with synthetic data of increasing
         size N up to log(N)=max_data_log
     """
-    print "\nBenchmarking: %s" % name
-    print "N \t pure_python \t numpy   \t speedup "
+    print("\nBenchmarking: %s" % name)
+    print("N \t pure_python \t numpy   \t speedup ")
     t_p_times = []
     t_np_times = []
     Ns = []
@@ -56,7 +56,7 @@ def benchmark_run(func1, func2, name, max_data_log = 7, noise_func = np.random.r
     n_max=30
     for N in np.logspace(2,max_data_log,n_max):
         (N, t_p, t_np) = bench_function(func1, func2, N, noise_func)
-        print "%02d/%02d: %d \t %2.3fs \t %2.3fs \t %2.2fx " % (n+1,n_max, N, t_p, t_np, (t_p / t_np) )
+        print("%02d/%02d: %d \t %2.3fs \t %2.3fs \t %2.2fx " % (n+1,n_max, N, t_p, t_np, (t_p / t_np) ))
         n=n+1
         t_p_times.append(t_p)
         t_np_times.append(t_np)
@@ -68,7 +68,7 @@ def benchmark_run(func1, func2, name, max_data_log = 7, noise_func = np.random.r
     if speedup_n == 0:
         speedup_n = 1
     mean_speedup = mean_speedup / speedup_n
-    print "Mean speedup: %3.2fx" % mean_speedup
+    print("Mean speedup: %3.2fx" % mean_speedup)
     return (Ns, t_p_times, t_np_times, mean_speedup, name)
 
 def benchmark_plot(data):
@@ -118,10 +118,10 @@ if __name__ == "__main__":
     # 6           359.9
     data=[]
     # run the benchmarks and store results into one list of tuples
-    print "Benchmark pure-python allantools against numpy allantools"
-    print "N_log_max =", N_log_max
-    print "On an i7-2600K @ 3.4 GHz CPU N_log_max = 6 takes about 175 seconds to run."
-    print ""
+    print("Benchmark pure-python allantools against numpy allantools")
+    print("N_log_max =", N_log_max)
+    print("On an i7-2600K @ 3.4 GHz CPU N_log_max = 6 takes about 175 seconds to run.")
+    print("")
     t0 = time.time()
     data.append( benchmark_run( alt.adev  , alp.adev  , "ADEV"  ,N_log_max) )
     data.append( benchmark_run( alt.oadev , alp.oadev , "OADEV" ,N_log_max) )
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     #data.append( benchmark_run( alt.mtie  , alp.mtie  , "MTIE"  ,N_log_max) )
     #data.append( benchmark_run( alt.tierms, alp.tierms, "TIERMS",N_log_max) )
     t1 = time.time()
-    print "Benchmarks done in %.1f seconds" % (t1-t0)
+    print("Benchmarks done in %.1f seconds" % (t1-t0))
     # log-log plot of all benchmark data
     benchmark_plot( data )
     pass

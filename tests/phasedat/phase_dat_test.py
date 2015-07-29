@@ -23,7 +23,7 @@ def run():
 	abspath = os.path.abspath(__file__)
 	dname = os.path.dirname(abspath)
 	os.chdir(dname)
-	print dname
+	print(dname)
 
 	data_file = 'PHASE.DAT'
 	adev_result = 'phase_dat_adev.txt'

@@ -35,9 +35,9 @@ if __name__ == "__main__":
     test_ns.run()             # sanity-checks for tau values
 
     end = time.clock()
-    print "-------------------------"
-    print "All tests done in %2.3f s" % (end-start) 
+    print("-------------------------")
+    print("All tests done in %2.3f s" % (end-start)) 
     # 2014-08-31 running time without MTIE on laptop with i7-3537U CPU @ 2.00GHz
     # All tests done in 19.841 s
     # 2015-05-05 17.373 s
-    print "if we came this far without assertions or errors all is OK!"
+    print("if we came this far without assertions or errors all is OK!")

@@ -777,9 +777,9 @@ def mtie_rolling_window(a, window):
 
     """
     if window < 1:
-        raise ValueError, "`window` must be at least 1."
+        raise ValueError("`window` must be at least 1.")
     if window > a.shape[-1]:
-        raise ValueError, "`window` is too long."
+        raise ValueError("`window` is too long.")
     shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
     strides = a.strides + (a.strides[-1],)
     return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
@@ -832,7 +832,7 @@ def mtie_phase_fast(phase, rate, taus):
         taus.append(tau)
         #print tau
         k += 1
-    print "taus ", taus
+    print("taus ", taus)
     devs = np.zeros(len(taus))
     deverrs = np.zeros(len(taus))
     ns = np.zeros(len(taus))
@@ -863,7 +863,7 @@ def mtie_phase_fast(phase, rate, taus):
     #for tau in taus:
     #for 
     
-    print devs
+    print(devs)
     #print k_max
     #devs =
 
@@ -991,11 +991,11 @@ def tau_m(data, rate, taus, v=False):
     m = np.unique(m)    # remove duplicates and sort
 
     if v:
-        print "tau_m: ", m
+        print("tau_m: ", m)
 
     if len(m) == 0:
-        print "Warning: sanity-check on tau failed!"
-        print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
+        print("Warning: sanity-check on tau failed!")
+        print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
 
     taus2 = m / float(rate)
     return data, m, taus2
@@ -1017,11 +1017,11 @@ def tau_m(data, rate, taus, v=False):
     m = np.unique(m)    # remove duplicates and sort
 
     if v:
-        print "tau_m: ", m
+        print("tau_m: ", m)
     if len(m) == 0:
 
-        print "Warning: sanity-check on tau failed!"
-        print "   len(data)=", len(data), " rate=", rate, "taus= ", taus
+        print("Warning: sanity-check on tau failed!")
+        print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
 
     taus2 = m / float(rate)
     return data, m, taus2
@@ -1160,7 +1160,7 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
             
     else:
         df = (N - 1)
-        print "Noise type not recognized. Defaulting to N - 1 degrees of freedom."
+        print("Noise type not recognized. Defaulting to N - 1 degrees of freedom.")
 
     chi2_l = scipy.stats.chi2.ppf(ci_l,df)
     chi2_h = scipy.stats.chi2.ppf(ci_h,df)
@@ -1213,7 +1213,7 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
 
 
 if __name__ == "__main__":
-    print "Nothing to see here."
+    print("Nothing to see here.")
     
     # code to test mtie_phase_fast, incomplete!
     Nmax = pow(2,8)
@@ -1223,6 +1223,6 @@ if __name__ == "__main__":
     mtie_phase_fast(phase, rate, taus)
     # then try using old function
     (o_taus, o_dev, o_err, o_n)=mtie_phase(phase, rate, [1,3,7,16,32,64,128,255])
-    print o_taus
-    print o_dev
+    print(o_taus)
+    print(o_dev)
     

@@ -19,7 +19,7 @@ import time
 
 def print_elapsed(start):
     end = time.clock()
-    print " %.2f s"% ( end-start )
+    print(" %.2f s"% ( end-start ))
     return time.clock()
     
 def run():
@@ -66,7 +66,7 @@ def run():
     testutils.test_row_by_row( allan.totdev, data_file, rate, totdev_result, verbose, tolerance, normalize=True  )
     start = print_elapsed(start)
     
-    print " OCXO tests took %.2f s" % ( time.clock()-start0 ) 
+    print(" OCXO tests took %.2f s" % ( time.clock()-start0 )) 
     
 if __name__ == "__main__":
     run()
