@@ -29,7 +29,7 @@ plt.plot(t,x)
 plt.xlabel('Time / s')
 plt.ylabel('Amplitude / V')
 print x
-f, psd = many_psds(k=10,fs=fs,b0=b0,N=N)
+f, psd = many_psds(k=50,fs=fs,b0=b0,N=N)
 
 fxx, Pxx_den = noise.scipy_psd(x, fs)
 
