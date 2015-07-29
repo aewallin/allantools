@@ -22,13 +22,38 @@ This program is free software: you can redistribute it and/or modify
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import math
 import numpy
-# import math
+import scipy.signal
 
+def numpy_psd(x,fs=1.0):
+    """ calculate power spectral density of input signal x
+        x = signal
+        fs = sampling frequency in Hz. i.e. 1/fs is the time-interval in seconds between datapoints
+        scale fft so that output corresponds to 1-sided PSD
+        output has units of [X^2/Hz] where X is the unit of x
+    """
+    psd = (2.0/ (float(len(x))*fs) ) * numpy.abs( numpy.fft.rfft(x)  )**2
+    f = numpy.linspace(0, fs/2.0, len(psd)) # frequency axis
+    return f, psd
 
-def white(N):
-    """ white noise has constant PSD (up to the nyquist frequency) """
-    return numpy.random.randn(N)
+def scipy_psd(x,fs=1.0):
+    """ PSD routine from scipy
+        we can compare our own numpy result against this one
+    """
+    fxx, Pxx_den = scipy.signal.welch(x, fs, nperseg=len(x)/4)
+    return fxx, Pxx_den
+    
+def white(N=1024,b0=1.0,fs=1.0):
+    """ generate time series with white noise that has constat PSD = b0,  up to the nyquist frequency 
+        N = number of samples
+        b0 = desired power-spectral density in [X^2/Hz] where X is the unit of x
+        fs = sampling frequency, i.e. 1/fs is the time-interval between datapoints
+        
+        the pre-factor corresponds to the area 'box' under the PSD-curve:
+        The PSD is at 'height' b0 and extends from 0 Hz up to the nyquist frequency fs/2
+    """
+    return math.sqrt(b0*fs/2.0)*numpy.random.randn(N)
 
 
 def violet(N):
