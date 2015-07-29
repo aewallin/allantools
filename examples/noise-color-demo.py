@@ -39,7 +39,7 @@ def plotline(plt, alpha, taus, style,label=""):
 
 
 if __name__ == "__main__":
-    print "allatools tests with various noise types"
+    print("allatools tests with various noise types")
     # we test ADEV etc. by calculations on synthetic data
     # with known slopes of ADEV
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # Colors: http://en.wikipedia.org/wiki/Colors_of_noise
 
     # Brownian a.k.a random walk  frequency => sqrt(tau) ADEV
-    print "Random Walk frequency noise - should have sqrt(tau) ADEV"
+    print("Random Walk frequency noise - should have sqrt(tau) ADEV")
     freq_rw = noise.brown(N)
     phase_rw_rw = numpy.cumsum(noise.brown(N))  # integrate to get  phase
     plotallan(plt, freq_rw, 1, t, 'm.')
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     plotline(plt, +0.5, t, 'm',label="f^(+1/2)")
     
     # pink frequency noise => constant ADEV
-    print "Pink frequency noise - should have constant ADEV"
+    print("Pink frequency noise - should have constant ADEV")
     freq_pink = noise.pink(N)
     phase_p = numpy.cumsum(noise.pink(N))  # integrate to get phase, color??
     plotallan_phase(plt, phase_p, 1, t, 'co',label="pink/flicker frequency noise")
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     plotline(plt, 0, t, 'c',label="f^0")
 
     # white frequency modulation => 1/sqrt(tau) ADEV
-    print "White frequency noise - should have 1/sqrt(tau) ADEV"
+    print("White frequency noise - should have 1/sqrt(tau) ADEV")
     freq_white = noise.white(N)
     phase_rw = noise.brown(N)  # integrate to get Brownian, or random walk phase
     plotallan(plt, freq_white, 1, t, 'b.')
@@ -74,13 +74,13 @@ if __name__ == "__main__":
     plotline(plt, -0.5, t, 'b',label="f^(-1/2)")
 
     # pink phase noise => 1/tau ADEV and MDEV
-    print "Pink phase noise - should tau^(-3/2) MDEV"
+    print("Pink phase noise - should tau^(-3/2) MDEV")
     phase_pink = noise.pink(N)
     plotallan_phase(plt, phase_pink, 1, t, 'ko',label="pink/flicker phase noise")
     plotline(plt, -1, t, 'k',label="f^(-1)")
 
     # white phase noise => 1/tau ADEV  and tau^(-3/2) MDEV
-    print "White phase noise - should have 1/tau ADEV"
+    print("White phase noise - should have 1/tau ADEV")
     phase_white = noise.white(N)
     plotallan_phase(plt, phase_white, 1, t, 'ro',label="white phase noise")
     freq_w = noise.violet(N)  # diff to get frequency, "Violet noise"
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     plt.title('allantools noise type demo')
     plt.xlabel('Tau')
     plt.ylabel('Modified Allan deviation')
-    print "Done."
+    print("Done.")
     plt.legend(loc="lower left", framealpha=0.7)
     plt.grid()
     plt.show()

@@ -37,7 +37,7 @@ def plotline(plt, alpha, taus,style):
 	plt.loglog(taus,y,style)
     
 if __name__ == "__main__":
-	print "allatools three-cornered-hat demo"
+	print("allatools three-cornered-hat demo")
 	# we test ADEV etc. by calculations on synthetic data
 	# with known slopes of ADEV
 
@@ -60,21 +60,21 @@ if __name__ == "__main__":
 	phaseCA = [c-a for (c,a) in zip(phaseC,phaseA)]
 
 	(taus,devA) = allantools.three_cornered_hat_phase(phaseAB,phaseBC,phaseCA,rate,t, allantools.mdev_phase)
-	print "TCH devA"
+	print("TCH devA")
 	
 	plotallan_phase(plt, phaseA, 1, t, 'ro')
-	print "phaseA"
+	print("phaseA")
 	plotallan_phase(plt, phaseB, 1, t, 'go')
-	print "phaseB"
+	print("phaseB")
 	plotallan_phase(plt, phaseC, 1, t, 'bo')
-	print "phaseC"
+	print("phaseC")
 	
 	plotallan_phase(plt, phaseAB, 1, t, 'r.')    
-	print "phaseAB"
+	print("phaseAB")
 	plotallan_phase(plt, phaseBC, 1, t, 'g.')
-	print "phaseBC"
+	print("phaseBC")
 	plotallan_phase(plt, phaseCA, 1, t, 'b.')    
-	print "phaseCA"
+	print("phaseCA")
 	
 	plt.loglog(taus, devA, 'rv')
 	

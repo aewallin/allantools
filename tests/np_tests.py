@@ -18,12 +18,12 @@ import time
 
 if __name__ == "__main__":
 
-    print "Compare results and speed of pure-python allantools against numpy allantools"
+    print("Compare results and speed of pure-python allantools against numpy allantools")
     
     #######################
     # MTIE_PHASE()
     #######################
-    print "\ntesting mtie_phase()"
+    print("\ntesting mtie_phase()")
     data = np.random.random(1000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -55,15 +55,15 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
 
     #######################
     # MTIE()
     #######################
-    print "\ntesting mtie()"
+    print("\ntesting mtie()")
     data = np.random.random(1000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -93,15 +93,15 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
 
     #######################
     # THREE_CORNERED_HAT_PHASE()
     #######################
-    print "\ntesting three_cornered_hat_phase()"
+    print("\ntesting three_cornered_hat_phase()")
 
     stride = 1
     taus = [2, 4, 8, 16]
@@ -121,14 +121,14 @@ if __name__ == "__main__":
 
     assert np.allclose(tau, tau_)
     assert np.allclose(dev_a, dev_a_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # TIERMS_PHASE()
     #######################
-    print "\ntesting tierms_phase()"
+    print("\ntesting tierms_phase()")
     data = np.random.random(1000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -159,14 +159,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # TIERMS()
     #######################
-    print "\ntesting tierms()"
+    print("\ntesting tierms()")
     data = np.random.random(1000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -197,14 +197,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # TOTDEV_PHASE()
     #######################
-    print "\ntesting totdev_phase()"
+    print("\ntesting totdev_phase()")
     data = np.random.random(1000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -234,14 +234,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # TOTDEV()
     #######################
-    print "\ntesting totdev()"
+    print("\ntesting totdev()")
     data = np.random.random(1000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -271,14 +271,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # OHDEV()
     #######################
-    print "\ntesting ohdev()"
+    print("\ntesting ohdev()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -308,14 +308,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # OHDEV_PHASE()
     #######################
-    print "\ntesting ohdev_phase()"
+    print("\ntesting ohdev_phase()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -345,14 +345,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # HDEV_PHASE_CALC()
     #######################
-    print "\ntesting hdev_phase_calc()"
+    print("\ntesting hdev_phase_calc()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -383,15 +383,15 @@ if __name__ == "__main__":
     assert np.isclose(dev, dev_)
     assert np.isclose(n, n_)
     assert np.isclose(deverr, deverr_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
 
     #######################
     # OADEV_PHASE()
     #######################
-    print "\ntesting oadev_phase()"
+    print("\ntesting oadev_phase()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -421,14 +421,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # HDEV_PHASE()
     #######################
-    print "\ntesting hdev_phase()"
+    print("\ntesting hdev_phase()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -458,14 +458,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # HDEV()
     #######################
-    print "\ntesting hdev()"
+    print("\ntesting hdev()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -495,15 +495,15 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
 
     #######################
     # OADEV_PHASE()
     #######################
-    print "\ntesting oadev_phase()"
+    print("\ntesting oadev_phase()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -533,14 +533,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # OADEV()
     #######################
-    print "\ntesting oadev()"
+    print("\ntesting oadev()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -570,14 +570,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # ADEV_PHASE()
     #######################
-    print "\ntesting adev_phase()"
+    print("\ntesting adev_phase()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -607,14 +607,14 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # ADEV()
     #######################
-    print "\ntesting adev()"
+    print("\ntesting adev()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -644,15 +644,15 @@ if __name__ == "__main__":
     assert np.allclose(o_taus, o_taus_)
     assert np.allclose(o_dev, o_dev_)
     assert np.allclose(o_err, o_err_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
 
     #######################
     # CALC_ADEV_PHASE()
     #######################
-    print "\ntesting calc_adev_phase()"
+    print("\ntesting calc_adev_phase()")
     data = np.random.random(10000)
     taus = [1, 3, 5, 16, 128]
     rates = [1, 20, 10.7]
@@ -683,14 +683,14 @@ if __name__ == "__main__":
     assert np.isclose(dev, dev_)
     assert np.isclose(n, n_)
     assert np.isclose(deverr, deverr_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # TAU_M()
     #######################
-    print "\ntesting tau_m()"
+    print("\ntesting tau_m()")
     taus = [1, 2, 4, 8, 16, -4, 10000, -3.1, 3.141]
     data = np.random.random(10000)
     rates = [1, 2, 7.1, 123.12]
@@ -711,15 +711,15 @@ if __name__ == "__main__":
     t4 = time.time()
     assert np.allclose(m, m_)
     assert np.allclose(taus2, taus2_)
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
 
     #######################
     # FREQUENCY2PHASE()
     #######################
-    print "\ntesting frequency2phase()"
+    print("\ntesting frequency2phase()")
     freqdata = np.random.random(10000)
 
     rates = [1, 2, 7.1, 123.12]
@@ -737,14 +737,14 @@ if __name__ == "__main__":
     t3 = time.time()
     phase_ = alp.frequency2phase(freqdata, rate)
     t4 = time.time()
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # TDEV_PHASE()
     #######################
-    print "\ntesting tdev_phase()"
+    print("\ntesting tdev_phase()")
     rate      = 1.0          # 1000 Hz sample rate
     obs_s     = 10000             # 1 hour
     n_samples = rate * obs_s
@@ -765,14 +765,14 @@ if __name__ == "__main__":
     assert np.allclose(tde, tde_)
     assert np.allclose(ns, ns_)
 
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # TDEV()
     #######################
-    print "\ntesting tdev()"
+    print("\ntesting tdev()")
     rate      = 2.0          # 1000 Hz sample rate
     obs_s     = 32768            # 1 hour
     n_samples = rate * obs_s
@@ -794,14 +794,14 @@ if __name__ == "__main__":
     assert np.allclose(tde, tde_)
     assert np.allclose(ns, ns_)
 
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # MDEV_PHASE()
     #######################
-    print "\ntesting mdev_phase()"
+    print("\ntesting mdev_phase()")
     rate      = 1.0          # 1000 Hz sample rate
     obs_s     = 10000             # 1 hour
     n_samples = rate * obs_s
@@ -822,14 +822,14 @@ if __name__ == "__main__":
     assert np.allclose(tde, tde_)
     assert np.allclose(ns, ns_)
 
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # MDEV()
     #######################
-    print "\ntesting mdev()"
+    print("\ntesting mdev()")
     rate      = 2.0          # 1000 Hz sample rate
     obs_s     = 32768            # 1 hour
     n_samples = rate * obs_s
@@ -851,8 +851,8 @@ if __name__ == "__main__":
     assert np.allclose(tde, tde_)
     assert np.allclose(ns, ns_)
 
-    print "Original: %2.3fs" % (t2 - t1)
-    print "New:      %2.3fs" % (t4 - t3)
-    print "Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3))
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
-    print "\nAll DONE!"
+    print("\nAll DONE!")

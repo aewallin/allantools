@@ -3,7 +3,7 @@ import sys
 sys.path.append("..")
 
 import allantools as allan
-import noise
+from allantools import noise
 import numpy
 
 def test( function, data, rate, taus):
@@ -14,9 +14,9 @@ def test( function, data, rate, taus):
 	assert( len(taus2) == len(ns2) )
 	for n in ns2:
 		if n<= 1:
-			print "test of ", function, " failed: ", n
+			print("test of ", function, " failed: ", n)
 		assert( n > 1 ) # n should be 2 or more for each tau
-	print "test_ns of function ",function, " OK."
+	print("test_ns of function ",function, " OK.")
 	
 def run():
 	

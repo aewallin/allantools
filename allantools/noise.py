@@ -49,7 +49,7 @@ def pink(N, depth=80):
     a = []
     s = iterpink(depth)
     for n in range(N):
-        a.append(s.next())
+        a.append(next(s))
     return a
 
 
@@ -112,4 +112,4 @@ def pinknoise_to_file(N=10000, filename="pinknoise_frequency.txt"):
 
 if __name__ == "__main__":
     #pinknoise_to_file()
-    print "Nothing to see here."
+    print("Nothing to see here.")

@@ -28,7 +28,7 @@ import os
 
 def print_elapsed(start, start0):
 	end = time.clock()
-	print " test done in %.2f s, elapsed= %.2f min"% ( end-start, (end-start0)/60 )
+	print(" test done in %.2f s, elapsed= %.2f min"% ( end-start, (end-start0)/60 ))
 	return time.clock()
 
 def run():
@@ -52,9 +52,9 @@ def run():
 	tolerance = 1e-4
 	rate = 1/float(1.0) # stable32 runs were done with this data-interval
 	
-	print "WARNING: this test takes a long time to run!!"
-	print " ~12 minutes as of 2014-02-07 on an i7 CPU"
-	print ""
+	print("WARNING: this test takes a long time to run!!")
+	print(" ~12 minutes as of 2014-02-07 on an i7 CPU")
+	print("")
 	verbose = 0
 	start0 = time.clock()
 	start = print_elapsed(time.clock(), start0)
@@ -88,7 +88,7 @@ def run():
 	
 	
 	end = time.clock()
-	print "Tests done in %2.3f s" % (end-start0) # total time 470s on i7 CPU (without mtie!)
+	print("Tests done in %2.3f s" % (end-start0)) # total time 470s on i7 CPU (without mtie!)
 	
 if __name__ == "__main__":
 	run()
