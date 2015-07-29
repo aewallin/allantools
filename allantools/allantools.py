@@ -8,6 +8,7 @@ Version history
 ---------------
 
 **v1.2.1** 2015 July
+- Python 3 compatibility using 2to3 tool, by kuzavas
 - IPython notebook examples
 - sphinx documentation, auto-built on readthedocs
 
