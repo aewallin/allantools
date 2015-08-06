@@ -45,7 +45,8 @@ def scipy_psd(x,fs=1.0):
     return fxx, Pxx_den
     
 def white(N=1024,b0=1.0,fs=1.0):
-    """ generate time series with white noise that has constat PSD = b0,  up to the nyquist frequency 
+    """ generate time series with white noise that has constant PSD = b0,  
+        up to the nyquist frequency fs/2
         N = number of samples
         b0 = desired power-spectral density in [X^2/Hz] where X is the unit of x
         fs = sampling frequency, i.e. 1/fs is the time-interval between datapoints
@@ -55,22 +56,28 @@ def white(N=1024,b0=1.0,fs=1.0):
     """
     return math.sqrt(b0*fs/2.0)*numpy.random.randn(N)
 
+def brown(N=1024,b2=1.0,fs=1.0):
+    """ Brownian or random walk (diffusion) noise with 1/f^2 PSD
+        (not really a color... rather Brownian or random-walk)
+        
+        N = number of samples
+        b2 = desired PSD is b2*f^-2
+        fs = sampling frequency
+        
+        we integrate white-noise to get Brownian noise.
+        
+    """
+    return (1.0/float(fs))*numpy.cumsum( white(N=N,b0=b2*(4.0*math.pi*math.pi),fs=fs) )
 
 def violet(N):
     """ violet noise with f^2 PSD """
     return numpy.diff(numpy.random.randn(N))
 
-
-def brown(N):
-    """ Brownian or random walk (diffusion) noise with 1/f^2 PSD
-        not really a color... rather Brownian or random-walk
-    """
-    return numpy.cumsum(numpy.random.randn(N))
-
-
 def pink(N, depth=80):
-    """ N-length vector with (approximate) pink noise
-    pink noise has 1/f PSD """
+    """ 
+    N-length vector with (approximate) pink noise
+    pink noise has 1/f PSD 
+    """
     a = []
     s = iterpink(depth)
     for n in range(N):
