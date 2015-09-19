@@ -19,6 +19,13 @@ These statistics are currently included:
 * MTIE    Maximum time interval error
 * TIERMS  Time interval error RMS
 
+Noise generators for creating synthetic datasets are also included:
+* violet noise with f^2 PSD
+* white noise with f^0 PSD
+* pink noise with f^-1 PSD
+* Brownian or random walk noise with f^-2 PSD 
+
+
 see /tests for tests that compare allantools output to other (e.g. Stable32) programs.
 More test data, benchmarks, ipython notebooks, and comparisons to known-good algorithms are welcome.
 
