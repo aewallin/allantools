@@ -24,7 +24,7 @@ This program is free software: you can redistribute it and/or modify
 
 import math
 import numpy
-import scipy.signal
+import scipy.signal # for welch PSD
 
 def numpy_psd(x,fs=1.0):
     """ calculate power spectral density of input signal x
@@ -37,11 +37,11 @@ def numpy_psd(x,fs=1.0):
     f = numpy.linspace(0, fs/2.0, len(psd)) # frequency axis
     return f, psd
 
-def scipy_psd(x,fs=1.0):
+def scipy_psd(x,fs=1.0, nr_segments=4):
     """ PSD routine from scipy
         we can compare our own numpy result against this one
     """
-    fxx, Pxx_den = scipy.signal.welch(x, fs, nperseg=len(x)/4)
+    fxx, Pxx_den = scipy.signal.welch(x, fs, nperseg=len(x)/nr_segments)
     return fxx, Pxx_den
     
 def white(N=1024,b0=1.0,fs=1.0):
@@ -143,5 +143,5 @@ def pinknoise_to_file(N=10000, filename="pinknoise_frequency.txt"):
 
 
 if __name__ == "__main__":
-    #pinknoise_to_file()
+    # pinknoise_to_file()
     print("Nothing to see here.")
