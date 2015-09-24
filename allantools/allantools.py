@@ -436,7 +436,9 @@ def frequency2phase(freqdata, rate):
     Returns
     -------
     phasedata: np.array
-        Integrated fractional frequency data, i.e. phase data.
+        Time integral of fractional frequency data, i.e. phase (time) data in units of seconds.
+        For phase in units of radians, multiply by 2*pi*v0, where v0 is the nominal
+        oscillator frequency
     """
     dt = 1.0 / float(rate)
     phasedata = np.cumsum(freqdata) * dt
