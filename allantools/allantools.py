@@ -408,30 +408,6 @@ def oadev(freqdata, rate, taus):
     phase = frequency2phase(freqdata, rate)
     return oadev_phase(phase, rate, taus)
 
-
-def frequency2phase(freqdata, rate):
-    """ integrate fractional frequency data and output phase data 
-    
-    Parameters
-    ----------
-    freqdata: np.array
-        Data array of fractional frequency measurements (nondimensional)
-    rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
-            
-    Returns
-    -------
-    phasedata: np.array
-        Time integral of fractional frequency data, i.e. phase (time) data in units of seconds.
-        For phase in units of radians, multiply by 2*pi*v0, where v0 is the nominal
-        oscillator frequency
-    """
-    dt = 1.0 / float(rate)
-    phasedata = np.cumsum(freqdata) * dt
-    phasedata = np.insert(phasedata, 0, 0)
-    return phasedata
-
-
 def ohdev(freqdata, rate, taus):
     """ Overlapping Hadamard deviation, fractional frequency data 
     
@@ -1016,6 +992,7 @@ def remove_small_ns_4(taus, devs, deverrs, ns):
 
 # FIXME: 5-parameter version of the exact same function as above.
 # try to merge both into one function.
+# This function handles low-side and high-side errors separately
 def remove_small_ns_5(taus, devs, deverrs_l, deverrs_h, ns):
     """ if n is small (==1), reject the result """
     ns_big_enough = ns > 1
@@ -1173,6 +1150,67 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
 
     return tau_ab, dev_a
 
+########################################################################
+#
+# simple conversions between frequency, phase(seconds), phase(radians)
+#
+
+def frequency2phase(freqdata, rate):
+    """ integrate fractional frequency data and output phase data 
+    
+    Parameters
+    ----------
+    freqdata: np.array
+        Data array of fractional frequency measurements (nondimensional)
+    rate: float
+        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+            
+    Returns
+    -------
+    phasedata: np.array
+        Time integral of fractional frequency data, i.e. phase (time) data in units of seconds.
+        For phase in units of radians, see phase2radians()
+    """
+    dt = 1.0 / float(rate)
+    phasedata = np.cumsum(freqdata) * dt
+    phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this? so that phase starts at zero and len(phase)=len(freq)+1 ??
+    return phasedata
+
+def phase2radians(phasedata,v0):
+    """ Convert phase in seconds to phase in radians
+    
+    Parameters
+    ----------
+    phasedata: np.array
+        Data array of phase in seconds
+    v0: float
+        Nominal oscillator frequency in Hz
+            
+    Returns
+    -------
+    fi: 
+        phase data in radians
+    """
+    fi = [2*math.pi*v0*xx for xx in phasedata] 
+    return fi
+
+def phase2frequency(phasedata, rate):
+    """ Convert phase in seconds fractional frequency
+    
+    Parameters
+    ----------
+    phasedata: np.array
+        Data array of phase in seconds
+    rate: float
+        Sample rate in Hz
+            
+    Returns
+    -------
+    y: 
+        Data array of fractional frequency
+    """
+    y = rate*np.diff(phasedata)
+    return y
 
 if __name__ == "__main__":
     print("Nothing to see here.")
