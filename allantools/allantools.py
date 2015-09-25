@@ -341,20 +341,6 @@ def adev_phase_calc(data, rate, mj, stride):
 
     return dev, deverr, n
 
-
-def remove_small_ns(taus, devs, deverrs, ns):
-    """ if n is small (==1), reject the result """
-
-    ns_big_enough = ns > 1
-
-    o_taus = taus[ns_big_enough]
-    o_dev  = devs[ns_big_enough]
-    o_err  = deverrs[ns_big_enough]
-    o_n    = ns[ns_big_enough]
-
-    return o_taus, o_dev, o_err, o_n
-
-
 def oadev_phase(data, rate, taus):
     """ overlapping Allan deviation of phase data 
     
@@ -1002,33 +988,6 @@ def tau_m(data, rate, taus, v=False):
 
     taus2 = m / float(rate)
     return data, m, taus2
-
-def tau_m(data, rate, taus, v=False):
-    """ pre-processing of the tau-list given by the user """
-    data, taus = np.array(data), np.array(taus)
-
-    if rate == 0:
-        raise RuntimeError("Warning! rate==0")
-    rate = float(rate)
-    m = []
-
-    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
-    taus_valid2 = taus > 0
-    taus_valid  = taus_valid1 & taus_valid2
-    m = np.floor(taus[taus_valid] * rate)
-    m = m[m != 0]       # m is tau in units of datapoints
-    m = np.unique(m)    # remove duplicates and sort
-
-    if v:
-        print("tau_m: ", m)
-    if len(m) == 0:
-
-        print("Warning: sanity-check on tau failed!")
-        print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
-
-    taus2 = m / float(rate)
-    return data, m, taus2
-
 
 def remove_small_ns(*args):
     if len(args) == 4:
