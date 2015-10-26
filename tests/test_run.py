@@ -10,6 +10,7 @@
   results from allantools seem correct, they agree to within 4 to 6 digits 
   of precision with other ADEV tools.
 """
+import pytest
 
 from nbs14 import nbs14_test
 from phasedat import phase_dat_test
@@ -46,3 +47,7 @@ def test_Cs5971A():
 def test_ns():
     # sanity-checks for tau values
     test_ns_run() 
+
+if __name__ == "__main__":
+    pytest.main()
+
