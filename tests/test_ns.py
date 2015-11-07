@@ -6,7 +6,7 @@ import allantools as allan
 from allantools import noise
 import numpy
 
-def test( function, data, rate, taus):
+def _test( function, data, rate, taus):
 
 	(taus2,devs2,errs2,ns2) = function(data, rate, taus)
 	assert( len(taus2) == len(devs2) )
@@ -27,15 +27,15 @@ def run():
 	rate = 1.0
 	phase_white = noise.white(N)
 	taus_try = numpy.logspace(0,4,4000) # try insane tau values
-	test( allan.adev_phase, phase_white, rate, taus_try)
-	test( allan.oadev_phase, phase_white, rate, taus_try)
-	test( allan.mdev_phase, phase_white, rate, taus_try)
-	test( allan.tdev_phase, phase_white, rate, taus_try)
-	test( allan.hdev_phase, phase_white, rate, taus_try)
-	test( allan.ohdev_phase, phase_white, rate, taus_try)
-	test( allan.totdev_phase, phase_white, rate, taus_try)
-	test( allan.mtie_phase, phase_white, rate, taus_try)
-	test( allan.tierms_phase, phase_white, rate, taus_try)
+	_test( allan.adev_phase, phase_white, rate, taus_try)
+	_test( allan.oadev_phase, phase_white, rate, taus_try)
+	_test( allan.mdev_phase, phase_white, rate, taus_try)
+	_test( allan.tdev_phase, phase_white, rate, taus_try)
+	_test( allan.hdev_phase, phase_white, rate, taus_try)
+	_test( allan.ohdev_phase, phase_white, rate, taus_try)
+	_test( allan.totdev_phase, phase_white, rate, taus_try)
+	_test( allan.mtie_phase, phase_white, rate, taus_try)
+	_test( allan.tierms_phase, phase_white, rate, taus_try)
 
 if __name__ == "__main__":
 	run()
