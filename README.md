@@ -58,6 +58,7 @@ Authors
 * Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com
 * Danny Price, https://github.com/telegraphic
 * Cantwell G. Carson, carsonc "at" gmail.com
+* Frédéric Meynadier, https://github.com/fmeynadier
 
 Installation
 ============
@@ -106,6 +107,7 @@ coverage report # Reports on standard output
 coverage html # Writes annotated source code as html in ./htmlcov/
 ```
 
+On Ubuntu this requires packages **python-pytest** and **python-coverage**. 
 
 References
 ==========
