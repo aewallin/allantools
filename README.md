@@ -47,11 +47,13 @@ IPython notebooks with examples
 =============================== 
 See /examples for some examples in IPython notebook format.
 
+
 github formats the notebooks into nice web-pages, for example * 
 https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb
 
 
 todo: add here a very short guide on how to get started with ipython
+
 
 Authors 
 ======= 
@@ -62,6 +64,7 @@ Authors
 
 Installation 
 ============
+
 
 clone from github, or download from pypi.
 
