@@ -73,15 +73,14 @@ clone from github, or download from pypi.
 Usage 
 =====
 
-```python import allantools # https://github.com/aewallin/allantools/ 
-rate = 1/float(data_interval) # data rate in Hz taus = [1,2,4,8,16] # 
-tau-values in seconds
+```python 
+import allantools # https://github.com/aewallin/allantools/ 
+rate = 1/float(data_interval) # data rate in Hz 
+taus = [1,2,4,8,16] #  tau-values in seconds
 # fractional frequency data
-(taus_used, adev, adeverror, adev_n) = allantools.adev(fract_freqdata, 
-rate, taus)
+(taus_used, adev, adeverror, adev_n) = allantools.adev(fract_freqdata, rate, taus)
 # phase data
-(taus_used, adev, adeverror, adev_n) = allantools.adev_phase(phasedata, 
-rate, taus)
+(taus_used, adev, adeverror, adev_n) = allantools.adev_phase(phasedata, rate, taus)
 
 # notes:
 #  - taus_used may differ from taus, if taus has a non-integer multiples 
