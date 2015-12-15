@@ -43,89 +43,94 @@ The sphinx documentation is also auto-generated online
 * http://allantools.readthedocs.org
 * http://allantools-aewallin.readthedocs.org
 
-IPython notebooks with examples
-===============================
+IPython notebooks with examples 
+=============================== 
 See /examples for some examples in IPython notebook format.
 
-github formats the notebooks into nice web-pages, for example
-* https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb
+github formats the notebooks into nice web-pages, for example * 
+https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb
 
 
 todo: add here a very short guide on how to get started with ipython
 
-Authors
-=======
-* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com
-* Danny Price, https://github.com/telegraphic
-* Cantwell G. Carson, carsonc "at" gmail.com
+Authors 
+======= 
+* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com 
+* Danny Price, https://github.com/telegraphic 
+* Cantwell G. Carson, carsonc "at" gmail.com 
 * Frédéric Meynadier, https://github.com/fmeynadier
 
-Installation
+Installation 
 ============
 
 clone from github, or download from pypi.
 
 > sudo python setup.py install
 
-Usage
+Usage 
 =====
 
-```python
-import allantools # https://github.com/aewallin/allantools/
-rate = 1/float(data_interval) # data rate in Hz
-taus = [1,2,4,8,16] # tau-values in seconds
+```python import allantools # https://github.com/aewallin/allantools/ 
+rate = 1/float(data_interval) # data rate in Hz taus = [1,2,4,8,16] # 
+tau-values in seconds
 # fractional frequency data
-(taus_used, adev, adeverror, adev_n) = allantools.adev(fract_freqdata, rate, taus)
+(taus_used, adev, adeverror, adev_n) = allantools.adev(fract_freqdata, 
+rate, taus)
 # phase data
-(taus_used, adev, adeverror, adev_n) = allantools.adev_phase(phasedata, rate, taus)
+(taus_used, adev, adeverror, adev_n) = allantools.adev_phase(phasedata, 
+rate, taus)
 
 # notes:
-#  - taus_used may differ from taus, if taus has a non-integer multiples of data_interval
-#  - adeverror assumes 1/sqrt(adev_n) errors
+#  - taus_used may differ from taus, if taus has a non-integer multiples 
+#  of data_interval - adeverror assumes 1/sqrt(adev_n) errors
 ```
 
-Development
+Development 
 ===========
 
-To do:
-* Stable32-style plots using matplotlib
-* Modified Total variance
-* Time Total (modified total variance scaled by (t^2/3) )
-* Hadamard Total
-* Tests for different noise types according to IEEE 1139, include power-spectral-density calculations
-* Conversion between phase noise and Allan variance
+To do: 
+* Stable32-style plots using matplotlib 
+* Modified Total variance 
+* Time Total (modified total variance scaled by (t^2/3) ) 
+* Hadamard Total 
+* Tests for different noise types according to IEEE 1139, include power-spectral-density calculations 
+* Conversion between phase noise and Allan variance 
 * The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
 
-Make sure your patch does not break any of the tests, and does not significantly reduce the readability of the code.
+Make sure your patch does not break any of the tests, and does not 
+significantly reduce the readability of the code.
 
-Tests may be run using [py.test](http://pytest.org) (automatically finds tests/test_run.py)
-Test coverage may be obtained with the [coverage](https://pypi.python.org/pypi/coverage) module :
+Tests may be run using [py.test](http://pytest.org) (automatically finds 
+tests/test_run.py) Test coverage may be obtained with the 
+[coverage](https://pypi.python.org/pypi/coverage) module :
 
-```
-coverage run --source allantools setup.py test
-coverage report # Reports on standard output
-coverage html # Writes annotated source code as html in ./htmlcov/
-```
+``` coverage run --source allantools setup.py test coverage report # 
+Reports on standard output coverage html # Writes annotated source code 
+as html in ./htmlcov/ ```
 
-On Ubuntu this requires packages **python-pytest** and **python-coverage**. 
+On Ubuntu this requires packages **python-pytest** and 
+**python-coverage**.
 
-References
-==========
+References 
+========== 
+
 http://en.wikipedia.org/wiki/Allan_variance
 
 1139-2008 - IEEE Standard Definitions of Physical Quantities for 
-Fundamental Frequency and Time Metrology - Random Instabilities
+Fundamental Frequency and Time Metrology - Random Instabilities 
 http://dx.doi.org/10.1109/IEEESTD.2008.4797525
 
+F. Vernotte, "Variance Measurements", 2011 IFCS & EFTF
+http://www.ieee-uffc.org/frequency-control/learning/pdf/Vernotte-Varience_Measurements.pdf
+
 S. Stein, Frequency and Time - Their Measurement and Characterization. 
-Precision Frequency Control Vol 2, 1985, pp 191-416.
+Precision Frequency Control Vol 2, 1985, pp 191-416. 
 http://tf.boulder.nist.gov/general/pdf/666.pdf
 
-W.J.Riley, "THE CALCULATION OF TIME DOMAIN FREQUENCY STABILITY"
+W.J.Riley, "THE CALCULATION OF TIME DOMAIN FREQUENCY STABILITY" 
 http://www.wriley.com/paper1ht.htm
 
-Tom Van Baak
-http://www.leapsecond.com/tools/adev_lib.c
+Tom Van Baak http://www.leapsecond.com/tools/adev_lib.c
 
 Fabian Czerwinski, Matlab code
 http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
