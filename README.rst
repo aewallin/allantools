@@ -9,6 +9,7 @@ Input data should be evenly spaced observations of either fractional frequency,
 or phase in seconds. Deviations are calculated for given tau values in seconds.
 
 These statistics are currently included:
+
 * ADEV    Allan deviation
 * OADEV   overlapping Allan deviation,
 * MDEV    modified Allan deviation,
@@ -20,6 +21,7 @@ These statistics are currently included:
 * TIERMS  Time interval error RMS
 
 Noise generators for creating synthetic datasets are also included:
+
 * violet noise with f^2 PSD
 * white noise with f^0 PSD
 * pink noise with f^-1 PSD
@@ -73,24 +75,27 @@ clone from github, or download from pypi.
 Usage 
 =====
 
-```python 
-import allantools # https://github.com/aewallin/allantools/ 
-rate = 1/float(data_interval) # data rate in Hz 
-taus = [1,2,4,8,16] #  tau-values in seconds
-# fractional frequency data
-(taus_used, adev, adeverror, adev_n) = allantools.adev(fract_freqdata, rate, taus)
-# phase data
-(taus_used, adev, adeverror, adev_n) = allantools.adev_phase(phasedata, rate, taus)
+::
 
-# notes:
-#  - taus_used may differ from taus, if taus has a non-integer multiples 
-#  of data_interval - adeverror assumes 1/sqrt(adev_n) errors
-```
+    python 
+    import allantools # https://github.com/aewallin/allantools/ 
+    rate = 1/float(data_interval) # data rate in Hz 
+    taus = [1,2,4,8,16] #  tau-values in seconds
+    # fractional frequency data
+    (taus_used, adev, adeverror, adev_n) = allantools.adev(fract_freqdata, rate, taus)
+    # phase data
+    (taus_used, adev, adeverror, adev_n) = allantools.adev_phase(phasedata, rate, taus)
+
+    # notes:
+    #  - taus_used may differ from taus, if taus has a non-integer multiples 
+    #  of data_interval - adeverror assumes 1/sqrt(adev_n) errors
+
 
 Development 
 ===========
 
-To do: 
+Here follows an un-rodered to do list:
+ 
 * Stable32-style plots using matplotlib 
 * Modified Total variance 
 * Time Total (modified total variance scaled by (t^2/3) ) 
@@ -102,16 +107,14 @@ To do:
 Make sure your patch does not break any of the tests, and does not 
 significantly reduce the readability of the code.
 
-Tests may be run using [py.test](http://pytest.org) (automatically finds 
+Tests may be run using py.test (http://pytest.org) (automatically finds 
 tests/test_run.py) Test coverage may be obtained with the 
-[coverage](https://pypi.python.org/pypi/coverage) module :
+[coverage](https://pypi.python.org/pypi/coverage) module::
 
-``` coverage run --source allantools setup.py test coverage report # 
-Reports on standard output coverage html # Writes annotated source code 
-as html in ./htmlcov/ ```
+    coverage run --source allantools setup.py test coverage report # Reports on standard output 
+    coverage html # Writes annotated source code as html in ./htmlcov/ ```
 
-On Ubuntu this requires packages **python-pytest** and 
-**python-coverage**.
+On Ubuntu this requires packages **python-pytest** and **python-coverage**.
 
 References 
 ========== 
