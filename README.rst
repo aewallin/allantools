@@ -1,9 +1,10 @@
-allantools
+AllanTools
 ==========
 
 A python library for calculating Allan deviation and related time & frequency statistics. GPL v3+ license.
 
-Developed here https://github.com/aewallin/allantools, but also available on PyPi at https://pypi.python.org/pypi/AllanTools
+Developed at https://github.com/aewallin/allantools and also available 
+on PyPi at https://pypi.python.org/pypi/AllanTools
 
 Input data should be evenly spaced observations of either fractional frequency,
 or phase in seconds. Deviations are calculated for given tau values in seconds.
@@ -29,14 +30,14 @@ Noise generators for creating synthetic datasets are also included:
 
 
 see /tests for tests that compare allantools output to other (e.g. Stable32) programs.
-More test data, benchmarks, ipython notebooks, and comparisons to known-good algorithms are welcome.
+More test data, benchmarks, ipython notebooks, and comparisons to known-good algorithms are welcome!
 
 Documentation
 =============
-See /docs for documentation in sphinx format. On Ubuntu this requires the 'python-sphinx' and 'python-numpydoc' packages.
-html documentation using sphinx can be built locally with
+See /docs for documentation in sphinx format. On Ubuntu this requires the **python-sphinx** and **python-numpydoc** packages.
+html documentation using sphinx can be built locally with::
 
-> make html
+    $ make html
 
 this generates html documentation in /docs/_build/html
 
@@ -50,12 +51,11 @@ IPython notebooks with examples
 See /examples for some examples in IPython notebook format.
 
 
-github formats the notebooks into nice web-pages, for example * 
-https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb
+github formats the notebooks into nice web-pages, for example 
 
+* https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb
 
 todo: add here a very short guide on how to get started with ipython
-
 
 Authors 
 ======= 
@@ -68,16 +68,15 @@ Installation
 ============
 
 
-clone from github, or download from pypi.
+clone from github, or download from pypi::
 
-> sudo python setup.py install
+    sudo python setup.py install
 
 Usage 
 =====
 
 ::
 
-    python 
     import allantools # https://github.com/aewallin/allantools/ 
     rate = 1/float(data_interval) # data rate in Hz 
     taus = [1,2,4,8,16] #  tau-values in seconds
@@ -95,7 +94,9 @@ Development
 ===========
 
 Here follows an un-rodered to do list:
- 
+
+* Improve documentation
+* Improve packaging for PyPi and/or other packaging systems (PPA for Ubuntu/Debian?)
 * Stable32-style plots using matplotlib 
 * Modified Total variance 
 * Time Total (modified total variance scaled by (t^2/3) ) 
@@ -103,6 +104,7 @@ Here follows an un-rodered to do list:
 * Tests for different noise types according to IEEE 1139, include power-spectral-density calculations 
 * Conversion between phase noise and Allan variance 
 * The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
+* Phase noise calculations and plots
 
 Make sure your patch does not break any of the tests, and does not 
 significantly reduce the readability of the code.
