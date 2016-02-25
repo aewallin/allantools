@@ -2,7 +2,7 @@
 
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
-import numpy
+# import numpy
 import sys
 
 class PyTest(TestCommand):
@@ -26,7 +26,7 @@ class PyTest(TestCommand):
 
 
 setup(name='AllanTools',
-      version='1.2.1',
+      version='2016.02',
       description='Allan deviation and related time/frequency statistics',
       author='Anders Wallin',
       author_email='anders.e.e.wallin@gmail.com',
@@ -34,7 +34,7 @@ setup(name='AllanTools',
       license='GPLv3+',
       packages=['allantools',],
       requires=['numpy'],
-      include_dirs=[numpy.get_include()],
+      #include_dirs=[numpy.get_include()],
       tests_require=['pytest'],
       cmdclass={'test': PyTest},
       long_description="""Given phase or fractional frequency data this package calculates:
