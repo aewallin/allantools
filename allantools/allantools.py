@@ -7,6 +7,11 @@ Allan deviation tools
 Version history
 ---------------
 
+**2016.2** 2016 February
+- update release on PyPi
+- pytest and coverage 
+- setuptools
+
 **v1.2.1** 2015 July
 - Python 3 compatibility using 2to3 tool, by kuzavas
 - IPython notebook examples
