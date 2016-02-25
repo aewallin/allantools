@@ -38,8 +38,8 @@ setup(name='AllanTools',
       tests_require=['pytest'],
       cmdclass={'test': PyTest},
       long_description="""Given phase or fractional frequency data this package calculates:
-                        Allan deviation, overlapping Allan deviation, modified Allan deviation
+                        Allan deviation, overlapping Allan deviation, modified Allan deviation,
                         Hadamard deviation, overlapping Hadamard deviation, time deviation,
-                        total deviation, MTIE, TIE-rms"""
+                        total deviation, MTIE, TIE-RMS. Synthetic noise data generators are also included."""
      )
 
