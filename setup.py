@@ -4,7 +4,7 @@ from setuptools import setup
 # import numpy
 
 setup(name='AllanTools',
-      version='2016.02',
+      version='2016.2',
       description='Allan deviation and related time/frequency statistics',
       author='Anders Wallin',
       author_email='anders.e.e.wallin@gmail.com',
