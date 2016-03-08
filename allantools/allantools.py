@@ -11,6 +11,7 @@ Version history
 - update release on PyPi
 - pytest and coverage 
 - setuptools
+- change version number to year.month
 
 **v1.2.1** 2015 July
 - Python 3 compatibility using 2to3 tool, by kuzavas
@@ -26,13 +27,13 @@ Version history
 **v1.1** 2014 August
 - Danny Price converted the library to use numpy.
 - many functions in allantools are now 100x faster than before.
-- http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/
+- see http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/
 
 **v1.01** 2014 August
 - PEP8 compliance improvements by Danny Price.
 
 **v1.00** 2014 January, first version of allantools.
-- http://www.anderswallin.net/2014/01/allantools/
+- see http://www.anderswallin.net/2014/01/allantools/
 
 License
 -------
