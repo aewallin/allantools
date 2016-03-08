@@ -35,11 +35,12 @@ More test data, benchmarks, ipython notebooks, and comparisons to known-good alg
 Documentation
 =============
 See /docs for documentation in sphinx format. On Ubuntu this requires the **python-sphinx** and **python-numpydoc** packages.
-html documentation using sphinx can be built locally with::
+html/pdf documentation using sphinx can be built locally with::
 
-    $ make html
+    /docs$ make html
+    /docs$ make latexpdf
 
-this generates html documentation in /docs/_build/html
+this generates html documentation in docs/_build/html and pdf documentation in docs/_build/latex.
 
 The sphinx documentation is also auto-generated online
 
@@ -112,7 +113,7 @@ significantly reduce the readability of the code.
 
 Tests may be run using py.test (http://pytest.org) (automatically finds 
 tests/test_run.py) Test coverage may be obtained with the 
-[coverage](https://pypi.python.org/pypi/coverage) module::
+(https://pypi.python.org/pypi/coverage) module::
 
     coverage run --source allantools setup.py test 
     coverage report # Reports on standard output 
