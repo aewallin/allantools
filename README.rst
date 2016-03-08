@@ -114,7 +114,8 @@ Tests may be run using py.test (http://pytest.org) (automatically finds
 tests/test_run.py) Test coverage may be obtained with the 
 [coverage](https://pypi.python.org/pypi/coverage) module::
 
-    coverage run --source allantools setup.py test coverage report # Reports on standard output 
+    coverage run --source allantools setup.py test 
+    coverage report # Reports on standard output 
     coverage html # Writes annotated source code as html in ./htmlcov/ ```
 
 On Ubuntu this requires packages **python-pytest** and **python-coverage**.
