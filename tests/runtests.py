@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
   top-level test-script for allantools
   https://github.com/aewallin/allantools
