@@ -1,0 +1,62 @@
+import allantools as allan
+import numpy
+import math
+import matplotlib.pyplot as plt
+import gzip
+import sys
+
+sys.path.append("..")
+sys.path.append("../..") # hack to import from parent directory
+# remove if you have allantools installed in your python path
+
+def read_datafile(filename,column=1):
+    p=[]
+    with gzip.open(filename) as f:
+        for line in f:
+            
+            if line.startswith("#"): # skip comments
+                pass
+            else:
+                line = line.split()
+                p.append( float(line[column]) )
+    return p
+
+def to_fractional(flist,f0):
+    out=[]
+    for f in flist:
+        out.append( f/float(f0) - 1.0 )
+    return out
+
+fname = "gps_1pps_phase_data.txt.gz"
+phase = read_datafile(fname,column=0)
+print len(phase), " values read: ", len(phase)/3600.0 , " hours"
+
+#f = to_fractional(f10MHz, 10e6 ) # convert to fractional frequency
+my_taus = numpy.logspace(1,6,60) # log-spaced tau values from 10s and upwards
+rate = 1/float(1.0)
+ 
+(oadev_taus,oadev_devs,oadev_errs,ns)  = allan.oadev_phase(phase, rate, my_taus)
+(mdev_taus,mdev_devs,mdev_errs,ns)  = allan.mdev_phase(phase, rate, my_taus)
+(hdev_taus,hdev_devs,hdev_errs,ns)  = allan.hdev_phase(phase, rate, my_taus)
+(ohdev_taus,ohdev_devs,ohdev_errs,ns)  = allan.ohdev_phase(phase, rate, my_taus)
+(tdev_taus,tdev_devs,tdev_errs,ns)  = allan.tdev_phase(phase, rate, my_taus)
+
+
+plt.subplot(111, xscale="log", yscale="log") 
+
+plt.errorbar(oadev_taus, oadev_devs, yerr=oadev_errs, label='OADEV') 
+plt.errorbar(mdev_taus, mdev_devs, yerr=mdev_errs, label='MDEV') 
+plt.errorbar(hdev_taus, hdev_devs, yerr=hdev_errs, label='HDEV') 
+plt.errorbar(ohdev_taus, ohdev_devs, yerr=ohdev_errs, label='OHDEV') 
+plt.errorbar(tdev_taus, tdev_devs, yerr=tdev_errs, label='TDEV') 
+
+labels = [(60,'1 m'), (60*60,'1 h'), (12*60*60,'12 h'), (24*60*60,'1 d')]
+for l in labels:
+    plt.text( l[0], 1e-13, l[1] )
+plt.xlabel('Taus (s)')
+plt.ylabel('ADEV')
+
+
+plt.legend(framealpha=0.5)
+plt.grid()
+plt.show()
