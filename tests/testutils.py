@@ -4,17 +4,23 @@
 """
 
 import sys
-
+import gzip
 import numpy
 
 
 # read a simple data-file with phase or frequency numbers on each line
 def read_datafile(filename):
     p = []
-    with open(filename) as f:
-        for line in f:
-            if not line.startswith("#"):  # skip comments
-                p.append(float(line))
+    if filename[-2:]=='gz':
+        with gzip.open(filename) as f:
+            for line in f:
+                if not line.startswith("#"):  # skip comments
+                    p.append(float(line))
+    else:
+        with open(filename) as f:
+            for line in f:
+                if not line.startswith("#"):  # skip comments
+                    p.append(float(line))
     return p
 
 

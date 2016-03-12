@@ -40,7 +40,8 @@ def run():
 	dname = os.path.dirname(abspath)
 	os.chdir(dname)
 
-	data_file = '5071A_phase.txt'
+	data_file = '5071A_phase.txt.gz' # input data file
+    
 	adev_result = 'adev_decade.txt'
 	oadev_result = 'oadev_decade.txt'
 	mdev_result = 'mdev_decade.txt'
@@ -51,8 +52,9 @@ def run():
 	mtie_result = 'mtie_fast.txt'
 	tierms_result = 'tierms_decade.txt'
 	
+	print("runtime ~15 seconds 2016-03-12 on an i7 CPU")
+    
 	verbose = 1
-	
 	tolerance = 1e-4
 	rate = 1/float(1.0) # stable32 runs were done with this data-interval
 	start0 = time.clock()
