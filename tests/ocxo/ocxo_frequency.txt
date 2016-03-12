@@ -1,6 +1,5 @@
 # AW2015-06-26
-# column0: time.time() timestamp
-# column1: 10 MHz OCXO output at the back of an HP Impedance Analyzer
+# column0: frequency of 10 MHz OCXO output at the back of an HP Impedance Analyzer
 # 53230A counter, 1.0s gate, RCON mode, H-maser 10MHz reference
 10000000.126856699585915
 10000000.127979800105095
