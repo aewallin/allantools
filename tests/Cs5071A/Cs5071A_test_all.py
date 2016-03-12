@@ -26,9 +26,9 @@ import testutils
 import time
 import os
 
-def print_elapsed(start, start0):
+def print_elapsed(label, start, start0):
 	end = time.clock()
-	print(" test done in %.2f s, elapsed= %.2f min"% ( end-start, (end-start0)/60 ))
+	print("%s test done in %.2f s, elapsed= %.2f min"% ( label, end-start, (end-start0)/60 ))
 	return time.clock()
 
 def run():
@@ -37,7 +37,8 @@ def run():
 	dname = os.path.dirname(abspath)
 	os.chdir(dname)
 
-	data_file = '5071A_phase.txt'
+	data_file = '5071A_phase.txt.gz' # input data
+    
 	adev_result =  'adev_all.txt'
 	oadev_result = 'oadev_all.txt'
 	mdev_result =  'mdev_all.txt'
@@ -57,34 +58,34 @@ def run():
 	print("")
 	verbose = 0
 	start0 = time.clock()
-	start = print_elapsed(time.clock(), start0)
+	start = print_elapsed('Starting..', time.clock(), start0)
 	
 	testutils.test_row_by_row( allan.adev_phase, data_file, rate, adev_result , verbose, tolerance)   # 1.34 s
-	start = print_elapsed(start, start0)
+	start = print_elapsed('ADEV', start, start0)
 	
 	testutils.test_row_by_row( allan.hdev_phase, data_file, rate, hdev_result, verbose, tolerance ) # 1.9 s
-	start = print_elapsed(start, start0)
+	start = print_elapsed('HDEV', start, start0)
 	
 	testutils.test_row_by_row( allan.mtie_phase, data_file, rate, mtie_result, verbose, tolerance ) # 13 s
-	start = print_elapsed(start, start0)
+	start = print_elapsed('MTIE', start, start0)
 	
 	testutils.test_row_by_row( allan.oadev_phase, data_file, rate, oadev_result, verbose, tolerance ) # 63 s
-	start = print_elapsed(start, start0)
+	start = print_elapsed('OADEV', start, start0)
 	
 	testutils.test_row_by_row( allan.ohdev_phase, data_file, rate, ohdev_result, verbose, tolerance ) # 88 s
-	start = print_elapsed(start, start0)
+	start = print_elapsed('OHDEV', start, start0)
 	
 	testutils.test_row_by_row( allan.mdev_phase, data_file, rate, mdev_result, verbose, tolerance ) # 98 s
-	start = print_elapsed(start, start0)
+	start = print_elapsed('MDEV', start, start0)
 	
 	testutils.test_row_by_row( allan.tdev_phase, data_file, rate, tdev_result, verbose, tolerance ) # 99 s
-	start = print_elapsed(start, start0)
+	start = print_elapsed('TDEV', start, start0)
 	
 	testutils.test_row_by_row( allan.tierms_phase, data_file, rate, tierms_result, verbose, tolerance ) # 117 s
-	start = print_elapsed(start, start0)
+	start = print_elapsed('TIERMS', start, start0)
 	
 	testutils.test_row_by_row( allan.totdev_phase, data_file, rate, totdev_result, verbose, tolerance ) # 245 s
-	start = print_elapsed(start, start0)
+	start = print_elapsed('TOTDEV', start, start0)
 	
 	
 	end = time.clock()
