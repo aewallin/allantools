@@ -107,9 +107,16 @@ Here follows an un-rodered to do list:
 * Conversion between phase noise and Allan variance 
 * The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
 * Phase noise calculations and plots
+* Comparison to other libraries such as GPSTk
 
 Make sure your patch does not break any of the tests, and does not 
 significantly reduce the readability of the code.
+
+Tests
+=====
+
+The tests compare the output of allantools to other programs such
+as Stable32.
 
 Tests may be run using py.test (http://pytest.org) (automatically finds 
 tests/test_run.py) Test coverage may be obtained with the 
@@ -120,6 +127,32 @@ tests/test_run.py) Test coverage may be obtained with the
     coverage html # Writes annotated source code as html in ./htmlcov/ ```
 
 On Ubuntu this requires packages **python-pytest** and **python-coverage**.
+
+Notes for Pypi
+==============
+
+Creating a source distribution
+
+    python setup.py sdist
+
+Testing the source distribution. The install takes a long time while compiling nympy and scipy.
+
+    $ virtualenv tmp
+    $ tmp/bin/pip install dist/AllanTools-2016.2.tar.gz 
+    $ tmp/bin/python
+    >>> import allantools
+
+Registering, uploading and testing  source distribution to PyPi test server
+(requries a ~/.pypirc with username and password)
+
+    $ python setup.py register -r test
+    $ python setup.py sdist upload -r test
+    $ pip install -i https://testpypi.python.org/pypi AllanTools
+
+Registering and uploading to PyPi
+
+    $ python setup.py register
+    $ python setup.py sdist upload
 
 References 
 ========== 
