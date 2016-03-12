@@ -29,7 +29,7 @@ if __name__ == "__main__":
     
     ocxo_test.run()           # high-stability OCXO timebase on HP instrument
     TIC_test.run()            # 53230A counter noise floor dataset
-    nbs14_test.run()          # NBS14 test data with published deviations
+    nbs14_test.run()          # NBS14 test data (10-point and 1000-point) with published deviations
     phase_dat_test.run()      # phase.dat from Stable32
     pink.run()                # synthetic pink frequency noise
     Cs5071A_test_decade.run() # HP 5071A Cs-clock measured against H-maser

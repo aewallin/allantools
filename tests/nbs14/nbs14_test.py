@@ -21,7 +21,7 @@ import sys
 
 import allantools as allan
 
-
+# 10-point dataset and deviations
 nbs14_phase = [ 0.00000, 103.11111, 123.22222, 157.33333, 166.44444, 48.55555,-96.33333,-2.22222, 111.88889, 0.00000 ]
 nbs14_f     = [892,809,823,798,671,644,883,903,677]
 nbs14_devs= [ (91.22945,115.8082),  # ADEV(tau=1,tau=2)
