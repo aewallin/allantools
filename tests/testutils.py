@@ -114,7 +114,7 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, toleran
     print("Read ", len(phase), " values from ", datafile)
 
     (taus, devs, ns) = read_stable32(resultfile, datarate)
-
+    print("test of function ", function )
     if verbose:
         print("Tau N  \t DEV(Stable32) \t DEV(allantools) \t relative error")
     # run allantools algorithm, row by row
