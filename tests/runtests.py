@@ -21,6 +21,7 @@ from pink_frequency import pink
 from Cs5071A import Cs5071A_test_decade
 from Keysight53230A_ti_noise_floor import TIC_test
 from ocxo import ocxo_test
+from gps import gps_test
 
 import test_ns
 
@@ -33,8 +34,9 @@ if __name__ == "__main__":
     phase_dat_test.run()      # phase.dat from Stable32
     pink.run()                # synthetic pink frequency noise
     Cs5071A_test_decade.run() # HP 5071A Cs-clock measured against H-maser
+    gps_test.run()
     test_ns.run()             # sanity-checks for tau values
-
+    
     end = time.clock()
     print("-------------------------")
     print("All tests done in %2.3f s" % (end-start)) 
