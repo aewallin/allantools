@@ -230,8 +230,13 @@ def mdev(freqdata, rate, taus):
 
 
 def adev(data, rate, taus):
-    """ Allan deviation for fractional frequency data
-
+    """ Allan deviation for fractional frequency data.
+    
+    .. math::
+    
+        \\sigma^{2}_y(\\tau) =  { 1 \\over 2 } \\langle ( \\bar{y}_{n+1} - \\bar{y}_n )^2 \\rangle
+    
+    
     Parameters
     ----------
     data: np.array
@@ -261,6 +266,10 @@ def adev(data, rate, taus):
 
 def adev_phase(data, rate, taus):
     """ Allan deviation for phase data 
+    
+    .. math::
+    
+        \\sigma^2_x(\\tau) = {1 \\over 2 \\tau^2 (N-2) } \\sum_{i=1}^{i=N-2}{ ( x_{i+2} - 2x_{i+1} + x_{i} )^2 }
     
     Parameters
     ----------
@@ -1073,6 +1082,7 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
        S. Stein, Frequency and Time - Their Measurement and 
        Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
        http://tf.boulder.nist.gov/general/pdf/666.pdf
+       
     """
     
     ci_l = min(np.abs(ci),np.abs((ci-1))) / 2

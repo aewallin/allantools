@@ -13,7 +13,7 @@ Function                                Notes
 ``adev()`` and ``adev_phase()``         Allan deviation
 ``oadev()`` and ``oadev_phase()``       Overlapping Allan deviation
 ``mdev()`` and ``mdev_phase()``         Modified Allan deviation
-``tdev()`` and ``tdev_phase()``         Time deviation ( modified variance scaled by (t^2/3))
+``tdev()`` and ``tdev_phase()``         Time deviation
 ``hdev()`` and ``hdev_phase()``         Hadamard deviation
 ``ohdev()`` and ``ohdev_phase()``       Overlapping Hadamard deviation
 ``totdev()`` and ``totdev_phase()``     Total deviation
