@@ -97,15 +97,20 @@ Development
 
 Here follows an un-rodered to do list:
 
+* Statistics
+
+    * Modified Total variance 
+    * Time Total (modified total variance scaled by (t^2/3) ) 
+    * Hadamard Total 
+    * The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
+    * Theo1
+    * TheoH
+    
 * Improve documentation
 * Improve packaging for PyPi and/or other packaging systems (PPA for Ubuntu/Debian?)
 * Stable32-style plots using matplotlib 
-* Modified Total variance 
-* Time Total (modified total variance scaled by (t^2/3) ) 
-* Hadamard Total 
 * Tests for different noise types according to IEEE 1139, include power-spectral-density calculations 
 * Conversion between phase noise and Allan variance 
-* The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
 * Phase noise calculations and plots
 * Comparison to other libraries such as GPSTk
 
