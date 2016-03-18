@@ -157,6 +157,7 @@ Registering, uploading and testing  source distribution to PyPi test server
 Registering and uploading to PyPi
 
 ::
+
     $ python setup.py register
     $ python setup.py sdist upload
 
