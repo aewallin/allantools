@@ -759,7 +759,8 @@ def mtie_phase(phase, rate, taus):
     """ Maximum Time Interval Error, phase data
     
     this seems to correspond to Stable32 setting "Fast(u)"
-    Stable32 also has "Decade" and "Octave" modes where the dataset is extended somehow?
+    Stable32 also has "Decade" and "Octave" modes where the 
+    dataset is extended somehow?
     """
     rate = float(rate)
     (phase, m, taus_used) = tau_m(phase, rate, taus)
@@ -858,7 +859,8 @@ def gradev_phase(data, rate, taus, ci=0.9, noisetype='wp'):
                                              mj, 
                                              1,
                                              ci,
-                                             noisetype)  # stride=1 for overlapping ADEV
+                                             noisetype)  
+        # stride=1 for overlapping ADEV
         ad[idx]  = dev
         ade_l[idx] = deverr[0]
         ade_h[idx] = deverr[1]    
@@ -1117,7 +1119,8 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
     
     return [err_l, err_h]
 
-def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, taus, function):
+def three_cornered_hat_phase(phasedata_ab, phasedata_bc, 
+                             phasedata_ca, rate, taus, function):
     """ 
     Three Cornered Hat Method 
     
@@ -1174,7 +1177,8 @@ def frequency2phase(freqdata, rate):
     Returns
     -------
     phasedata: np.array
-        Time integral of fractional frequency data, i.e. phase (time) data in units of seconds.
+        Time integral of fractional frequency data, i.e. phase (time) data 
+        in units of seconds.
         For phase in units of radians, see phase2radians()
     """
     dt = 1.0 / float(rate)
