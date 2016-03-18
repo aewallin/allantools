@@ -124,9 +124,10 @@ tests/test_run.py) Test coverage may be obtained with the
 
     coverage run --source allantools setup.py test 
     coverage report # Reports on standard output 
-    coverage html # Writes annotated source code as html in ./htmlcov/ ```
+    coverage html # Writes annotated source code as html in ./htmlcov/
 
-On Ubuntu this requires packages **python-pytest** and **python-coverage**.
+On Ubuntu this requires packages **python-pytest** and 
+**python-coverage**.
 
 Notes for Pypi
 ==============
@@ -137,6 +138,8 @@ Creating a source distribution
 
 Testing the source distribution. The install takes a long time while compiling nympy and scipy.
 
+::
+
     $ virtualenv tmp
     $ tmp/bin/pip install dist/AllanTools-2016.2.tar.gz 
     $ tmp/bin/python
@@ -145,12 +148,15 @@ Testing the source distribution. The install takes a long time while compiling n
 Registering, uploading and testing  source distribution to PyPi test server
 (requries a ~/.pypirc with username and password)
 
+::
+
     $ python setup.py register -r test
     $ python setup.py sdist upload -r test
     $ pip install -i https://testpypi.python.org/pypi AllanTools
 
 Registering and uploading to PyPi
 
+::
     $ python setup.py register
     $ python setup.py sdist upload
 
