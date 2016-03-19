@@ -28,7 +28,7 @@ Basic usage
     import pylab as plt
     t = numpy.logspace(0, 3, 50)                            # tau values from 1 to 1000
     white_noise_data = allantools.noise.white(10000)        # Generate some data
-    (t2, ad, ade, adn) = allantools.oadev(y, rate, taus)    # Compute the overlapping ADEV
+    (t2, ad, ade, adn) = allantools.oadev(freqyency=y, rate=rate, taus=taus)    # Compute the overlapping ADEV
     plt.loglog(t2, ad)                                      # Plot the results
     plt.show()
 

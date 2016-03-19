@@ -10,16 +10,16 @@ Implemented functions
 =====================================   ====================================================
 Function                                Notes
 =====================================   ====================================================
-``adev()`` and ``adev_phase()``         Allan deviation
-``oadev()`` and ``oadev_phase()``       Overlapping Allan deviation
-``mdev()`` and ``mdev_phase()``         Modified Allan deviation
-``tdev()`` and ``tdev_phase()``         Time deviation
-``hdev()`` and ``hdev_phase()``         Hadamard deviation
-``ohdev()`` and ``ohdev_phase()``       Overlapping Hadamard deviation
-``totdev()`` and ``totdev_phase()``     Total deviation
-``mtie()`` and ``mtie_phase()``         Maximum Time Interval Error
-``tierms()`` and ``tierms_phase()``     Time Interval Error RMS
-``gradev()`` and ``gradev_phase()``     Gap resistant overlapping Allan deviation
+``adev()``                              Allan deviation
+``oadev()``                             Overlapping Allan deviation
+``mdev()``                              Modified Allan deviation
+``tdev()``                              Time deviation
+``hdev()``                              Hadamard deviation
+``ohdev()``                             Overlapping Hadamard deviation
+``totdev()``                            Total deviation
+``mtie()``                              Maximum Time Interval Error
+``tierms()``                            Time Interval Error RMS
+``gradev()``                            Gap resistant overlapping Allan deviation
 ``uncertainty_estimate()``              Determine the uncertainty of a given two-sample variance estimate
 ``three_cornered_hat_phase()``          Apply Three Cornered Hat Method (see examples)
 =====================================   ====================================================
