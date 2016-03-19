@@ -73,7 +73,7 @@ def read_stable32(resultfile, datarate):
 # - running the function on the datafile
 # - reading the correct answers from the resultfile
 # - checking that tau, n, and dev are correct 
-def test(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4):
+def test(function, datafile, datarate, resultfile, frequency=False, verbose=0, tolerance=1e-4):
     # if Stable32 results were given with more digits we could decrease tolerance
 
     phase = read_datafile(datafile)
@@ -81,7 +81,11 @@ def test(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4):
     (taus, devs, ns) = read_stable32(resultfile, datarate)
 
     # run allantools algorithm
-    (taus2, devs2, errs2, ns2) = function(phase, datarate, taus)
+    if frequency:
+        (taus2, devs2, errs2, ns2) = function(frequency=phase, rate=datarate, taus=taus)
+    else:
+        (taus2, devs2, errs2, ns2) = function(phase=phase, rate=datarate, taus=taus)
+        
     # check that allantools and Stable32 agree on length of DEV, Tau, and N results
 
     assert ( len(taus) == len(taus2) )
@@ -104,10 +108,11 @@ def to_fractional(data):
     return [(x-mu)/mu for x in data]
 
 # test one tau-value (i.e. one row in the result file) at a time
-def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4, normalize=False):
+def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4, frequency=False, normalize=False):
     # if Stable32 results were given with more digits we could decrease tolerance
 
     phase = read_datafile(datafile)
+
     if normalize: # convert frequencies in Hz to fractional frequencies
         phase = to_fractional(phase)
         
@@ -119,7 +124,10 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, toleran
         print("Tau N  \t DEV(Stable32) \t DEV(allantools) \t relative error")
     # run allantools algorithm, row by row
     for (tau, dev, n) in zip(taus, devs, ns):
-        (taus2, devs2, errs2, ns2) = function(phase, datarate, [tau])
+        if frequency:
+            (taus2, devs2, errs2, ns2) = function(frequency=phase, rate=datarate, taus=[tau])
+        else:
+            (taus2, devs2, errs2, ns2) = function(phase=phase, rate=datarate, taus=[tau])
         check_deviations((tau, dev, n, taus2[0], devs2[0], ns2[0]), tolerance, verbose)
 
 

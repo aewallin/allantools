@@ -48,29 +48,28 @@ def run():
     start0 = time.clock()
     start = print_elapsed(time.clock())
     
-    testutils.test_row_by_row( allan.adev_phase, data_file, rate, adev_result , verbose, tolerance)
+    testutils.test_row_by_row( allan.adev, data_file, rate, adev_result , verbose, tolerance)
     start = print_elapsed(start)
     
-    testutils.test_row_by_row( allan.oadev_phase, data_file, rate, oadev_result, verbose, tolerance )
+    testutils.test_row_by_row( allan.oadev, data_file, rate, oadev_result, verbose, tolerance )
     start = print_elapsed(start)
     
-    testutils.test_row_by_row( allan.mdev_phase, data_file, rate, mdev_result, verbose, tolerance )
+    testutils.test_row_by_row( allan.mdev, data_file, rate, mdev_result, verbose, tolerance )
     start = print_elapsed(start)
     
-    testutils.test_row_by_row( allan.tdev_phase, data_file, rate, tdev_result, verbose, tolerance )
+    testutils.test_row_by_row( allan.tdev, data_file, rate, tdev_result, verbose, tolerance )
     start = print_elapsed(start)
     
-    
-    testutils.test_row_by_row( allan.hdev_phase, data_file, rate, hdev_result, verbose, tolerance ) # 0.85 s
+    testutils.test_row_by_row( allan.hdev, data_file, rate, hdev_result, verbose, tolerance ) # 0.85 s
     start = print_elapsed(start)
     
-    testutils.test_row_by_row( allan.ohdev_phase, data_file, rate, ohdev_result, verbose, tolerance ) # 5 s
+    testutils.test_row_by_row( allan.ohdev, data_file, rate, ohdev_result, verbose, tolerance ) # 5 s
     start = print_elapsed(start)
     
-    testutils.test_row_by_row( allan.tierms_phase, data_file, rate, tierms_result, verbose, tolerance ) # 5.9 s
+    testutils.test_row_by_row( allan.tierms, data_file, rate, tierms_result, verbose, tolerance ) # 5.9 s
     start = print_elapsed(start)
     
-    testutils.test_row_by_row( allan.totdev_phase, data_file, rate, totdev_result, verbose, tolerance ) # 13 s
+    testutils.test_row_by_row( allan.totdev, data_file, rate, totdev_result, verbose, tolerance ) # 13 s
     start = print_elapsed(start)
     
     #testutils.test_row_by_row( allan.mtie_phase, data_file, rate, mtie_result, verbose, tolerance ) # 13 s

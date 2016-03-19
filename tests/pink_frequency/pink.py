@@ -36,13 +36,13 @@ def run():
 	
 	tolerance = 1e-4
 	rate = 1/float(42.0) # stable32 runs were done with this data-interval
-	testutils.test( allan.adev, data_file, rate, adev_result , 0, tolerance)
-	testutils.test( allan.oadev, data_file, rate, oadev_result, 0, tolerance )
-	testutils.test( allan.mdev, data_file, rate, mdev_result, 0, tolerance )
-	testutils.test( allan.tdev, data_file, rate, tdev_result, 0, tolerance )
-	testutils.test( allan.hdev, data_file, rate, hdev_result, 0, tolerance )
-	testutils.test( allan.ohdev, data_file, rate, ohdev_result, 0, tolerance )
-	testutils.test( allan.totdev, data_file, rate, totdev_result, 0, tolerance )
+	testutils.test( allan.adev, data_file, rate, adev_result ,frequency=True, verbose=0, tolerance=tolerance)
+	testutils.test( allan.oadev, data_file, rate, oadev_result,frequency=True, verbose=0, tolerance=tolerance )
+	testutils.test( allan.mdev, data_file, rate, mdev_result,frequency=True, verbose=0, tolerance=tolerance )
+	testutils.test( allan.tdev, data_file, rate, tdev_result,frequency=True, verbose=0, tolerance=tolerance )
+	testutils.test( allan.hdev, data_file, rate, hdev_result,frequency=True, verbose=0, tolerance=tolerance )
+	testutils.test( allan.ohdev, data_file, rate, ohdev_result,frequency=True, verbose=0, tolerance=tolerance )
+	testutils.test( allan.totdev, data_file, rate, totdev_result,frequency=True, verbose=0, tolerance=tolerance )
 
 if __name__ == "__main__":
 	run()
