@@ -33,7 +33,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.mtie_phase_purepy(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.mtie_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.mtie(phase=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.mtie_phase_purepy(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.mtie_phase(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.mtie(phase=data, rate=rate, taus=taus)
     t4 = time.time()
 
     #print (o_dev, o_dev_)
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.mtie(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.mtie(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.mtie(frequency=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.mtie(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.mtie(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.mtie(frequency=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -98,32 +98,7 @@ if __name__ == "__main__":
     print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
 
-    #######################
-    # THREE_CORNERED_HAT_PHASE()
-    #######################
-    print("\ntesting three_cornered_hat_phase()")
 
-    stride = 1
-    taus = [2, 4, 8, 16]
-    rate = 2.1
-    pdata_ab = np.random.random(100000)
-    pdata_bc = np.random.random(100000)
-    pdata_ca = np.random.random(100000)
-
-    t1 = time.time()
-    function = alt.adev
-    tau, dev_a = alt.three_cornered_hat_phase(pdata_ab, pdata_bc, pdata_ca, rate, taus, function)
-    t2 = time.time()
-    t3 = time.time()
-    function = alp.adev
-    tau_, dev_a_ = alp.three_cornered_hat_phase(pdata_ab, pdata_bc, pdata_ca, rate, taus, function)
-    t4 = time.time()
-
-    assert np.allclose(tau, tau_)
-    assert np.allclose(dev_a, dev_a_)
-    print("Original: %2.3fs" % (t2 - t1))
-    print("New:      %2.3fs" % (t4 - t3))
-    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
     #######################
     # TIERMS_PHASE()
@@ -138,7 +113,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.tierms_phase(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.tierms_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.tierms(phase=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -153,7 +128,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.tierms_phase(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.tierms_phase(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.tierms(phase=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -176,7 +151,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.tierms(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.tierms(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.tierms(frequency=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -191,7 +166,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.tierms(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.tierms(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.tierms(frequency=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -214,7 +189,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.totdev_phase(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.totdev_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.totdev(phase=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -228,7 +203,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.totdev_phase(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.totdev_phase(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.totdev(phase=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -251,7 +226,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.totdev(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.totdev(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.totdev(frequency=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -265,7 +240,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.totdev(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.totdev(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.totdev(frequency=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -288,7 +263,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.ohdev(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.ohdev(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.ohdev(frequency=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -302,7 +277,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.ohdev(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.ohdev(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.ohdev(frequency=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -325,7 +300,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.ohdev_phase(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.ohdev_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.ohdev(phase=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -339,7 +314,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.ohdev_phase(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.ohdev_phase(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.ohdev(phase=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -401,7 +376,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.oadev_phase(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.oadev_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.oadev(phase=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -415,7 +390,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.oadev_phase(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.oadev_phase(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.oadev(phase=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -438,7 +413,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.hdev_phase(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.hdev_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.hdev(phase=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -452,7 +427,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.hdev_phase(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.hdev_phase(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.hdev(phase=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -475,7 +450,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.hdev(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.hdev(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.hdev(frequency=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -489,7 +464,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.hdev(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.hdev(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.hdev(frequency=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -513,7 +488,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.oadev_phase(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.oadev_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.oadev(phase=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -527,7 +502,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.oadev_phase(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.oadev_phase(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.oadev(phase=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -550,7 +525,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.oadev(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.oadev(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.oadev(frequency=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -564,7 +539,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.oadev(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.oadev(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.oadev(frequency=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -587,7 +562,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.adev_phase(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.adev_phase(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.adev(phase=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -601,7 +576,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.adev_phase(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.adev_phase(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.adev(phase=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -624,7 +599,7 @@ if __name__ == "__main__":
         for stride in strides:
             #print "TAU: %i, RATE: %2.2f, STRIDE: %i" % (tau, rate, stride)
             o_taus, o_dev, o_err, o_n = alt.adev(data, rate, taus)
-            o_taus_, o_dev_, o_err_, o_n_ = alp.adev(data, rate, taus)
+            o_taus_, o_dev_, o_err_, o_n_ = alp.adev(frequency=data, rate=rate, taus=taus)
 
             assert np.allclose(o_taus, o_taus_)
             assert np.allclose(o_dev, o_dev_)
@@ -638,7 +613,7 @@ if __name__ == "__main__":
     o_taus, o_dev, o_err, o_n = alt.adev(data, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    o_taus_, o_dev_, o_err_, o_n_ = alp.adev(data, rate, taus)
+    o_taus_, o_dev_, o_err_, o_n_ = alp.adev(frequency=data, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(o_taus, o_taus_)
@@ -757,7 +732,7 @@ if __name__ == "__main__":
     taus2, td, tde, ns = alt.tdev_phase(phase, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    taus2_, td_, tde_, ns_ = alp.tdev_phase(phase, rate, taus)
+    taus2_, td_, tde_, ns_ = alp.tdev(phase=phase, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(taus2, taus2_)
@@ -786,7 +761,7 @@ if __name__ == "__main__":
     t2 = time.time()
 
     t3 = time.time()
-    taus2_, td_, tde_, ns_ = alp.tdev(phase, rate, taus)
+    taus2_, td_, tde_, ns_ = alp.tdev(frequency=phase, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(taus2, taus2_)
@@ -814,7 +789,7 @@ if __name__ == "__main__":
     taus2, td, tde, ns = alt.mdev_phase(phase, rate, taus)
     t2 = time.time()
     t3 = time.time()
-    taus2_, td_, tde_, ns_ = alp.mdev_phase(phase, rate, taus)
+    taus2_, td_, tde_, ns_ = alp.mdev(phase=phase, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(taus2, taus2_)
@@ -843,7 +818,7 @@ if __name__ == "__main__":
     t2 = time.time()
 
     t3 = time.time()
-    taus2_, td_, tde_, ns_ = alp.mdev(phase, rate, taus)
+    taus2_, td_, tde_, ns_ = alp.mdev(frequency=phase, rate=rate, taus=taus)
     t4 = time.time()
 
     assert np.allclose(taus2, taus2_)
@@ -855,4 +830,32 @@ if __name__ == "__main__":
     print("New:      %2.3fs" % (t4 - t3))
     print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
 
+    #######################
+    # THREE_CORNERED_HAT_PHASE()
+    #######################
+    print("\ntesting three_cornered_hat_phase()")
+
+    stride = 1
+    taus = [2, 4, 8, 16]
+    rate = 2.1
+    pdata_ab = np.random.random(100000)
+    pdata_bc = np.random.random(100000)
+    pdata_ca = np.random.random(100000)
+
+    t1 = time.time()
+    function = alt.adev
+    tau, dev_a = alt.three_cornered_hat_phase(pdata_ab, pdata_bc, pdata_ca, rate, taus, function)
+    t2 = time.time()
+    t3 = time.time()
+    function = alp.adev
+    tau_, dev_a_ = alp.three_cornered_hat_phase(pdata_ab, pdata_bc, pdata_ca, rate, taus, function)
+    t4 = time.time()
+
+    assert np.allclose(tau, tau_)
+    assert np.allclose(dev_a, dev_a_)
+    print("Original: %2.3fs" % (t2 - t1))
+    print("New:      %2.3fs" % (t4 - t3))
+    print("Speedup:  %2.2fx" % ((t2 - t1) / (t4 - t3)))
+    
+    
     print("\nAll DONE!")

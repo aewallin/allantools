@@ -99,7 +99,7 @@ def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
     http://en.wikipedia.org/wiki/Time_deviation 
     """
     
-    if phase == None and frequency != None:
+    if phase == None:
         phase = frequency2phase(frequency, rate)
     
     (taus, md, mde, ns) = mdev(phase=phase, rate=rate, taus=taus)
@@ -142,7 +142,7 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
     NIST SP 1065 eqn (14)
     """
     
-    if phase == None and frequency != None:
+    if phase == None:
         phase = frequency2phase(frequency, rate)
         
     data, taus = np.array(phase), np.array(taus)
@@ -222,7 +222,7 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
         Values of N used in each adev calculation
                     
     """
-    if phase == None and frequency != None:
+    if phase == None:
         phase = frequency2phase(frequency, rate)
         
     (phase, m, taus_used) = tau_m(phase, rate, taus)
@@ -317,7 +317,7 @@ def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
         Values of N used in each oadev calculation
                 
     """
-    if phase == None and frequency != None:
+    if phase == None:
         phase = frequency2phase(frequency, rate)
         
     (phase, m, taus_used) = tau_m(phase, rate, taus)
@@ -357,7 +357,7 @@ def ohdev(phase=None, frequency=None, rate=1.0, taus=[]):
         Values of N used in each hdev calculation
                 
     """
-    if phase == None and frequency != None:
+    if phase == None:
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
@@ -384,7 +384,7 @@ def hdev(phase=None, frequency=None, rate=1.0, taus=[]):
     taus: np.array
         Array of tau values for which to compute measurement
     """
-    if phase == None and frequency != None:
+    if phase == None:
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
@@ -491,7 +491,7 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
     NIST SP 1065 eqn (25)
     
     """
-    if phase == None and frequency != None:
+    if phase == None:
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
@@ -551,7 +551,7 @@ def tierms(phase=None, frequency=None, rate=1.0, taus=[]):
         Array of tau values for which to compute measurement
     
     """
-    if phase == None and frequency != None:
+    if phase == None:
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
@@ -615,7 +615,7 @@ def mtie(phase=None, frequency=None, rate=1.0, taus=[]):
     dataset is extended somehow?
     """
     
-    if phase == None and frequency != None:
+    if phase == None:
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
@@ -704,7 +704,7 @@ def gradev(phase=None, frequency=None, rate=1.0, taus=[], ci=0.9, noisetype='wp'
     """ gap resistant overlapping Allan deviation
 
     """
-    if phase == None and frequency != None:
+    if phase == None:
         frequency= trim_data(frequency)     
         phase = frequency2phase(frequency, rate)
         
@@ -995,9 +995,9 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
     phasedata_ab, phasedata_bc, phasedata_ca = npa(phasedata_ab), npa(phasedata_bc), npa(phasedata_ca)
     taus = npa(taus)
 
-    (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab, rate, taus)
-    (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc, rate, taus)
-    (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca, rate, taus)
+    (tau_ab, dev_ab, err_ab, ns_ab) = function(phase=phasedata_ab, rate=rate, taus=taus)
+    (tau_bc, dev_bc, err_bc, ns_bc) = function(phase=phasedata_bc, rate=rate, taus=taus)
+    (tau_ca, dev_ca, err_ca, ns_ca) = function(phase=phasedata_ca, rate=rate, taus=taus)
 
     (tau_ab, dev_ab, err_ab, ns_ab) = npa(tau_ab), npa(dev_ab), npa(err_ab), npa(ns_ab)
     (tau_bc, dev_bc, err_bc, ns_bc) = npa(tau_bc), npa(dev_bc), npa(err_bc), npa(ns_bc)
