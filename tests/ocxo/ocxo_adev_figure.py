@@ -33,10 +33,10 @@ f = to_fractional(f10MHz, 10e6 ) # convert to fractional frequency
 my_taus = numpy.logspace(1,5,40) # log-spaced tau values from 10s and upwards
 rate = 1/float(10) # data collected with 10s gate time
 
-(oadev_taus,oadev_devs,oadev_errs,ns)  = allan.oadev(f, rate, my_taus)
-(mdev_taus,mdev_devs,mdev_errs,ns)  = allan.mdev(f, rate, my_taus)
-(hdev_taus,hdev_devs,hdev_errs,ns)  = allan.hdev(f, rate, my_taus)
-(ohdev_taus,ohdev_devs,ohdev_errs,ns)  = allan.ohdev(f, rate, my_taus)
+(oadev_taus,oadev_devs,oadev_errs,ns)  = allan.oadev(frequency=f, rate=rate, taus=my_taus)
+(mdev_taus,mdev_devs,mdev_errs,ns)  = allan.mdev(frequency=f, rate=rate, taus=my_taus)
+(hdev_taus,hdev_devs,hdev_errs,ns)  = allan.hdev(frequency=f, rate=rate, taus=my_taus)
+(ohdev_taus,ohdev_devs,ohdev_errs,ns)  = allan.ohdev(frequency=f, rate=rate, taus=my_taus)
 
 plt.subplot(111, xscale="log", yscale="log") 
 
