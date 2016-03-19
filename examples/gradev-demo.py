@@ -11,12 +11,12 @@ def example1():
 	f = 1
 	y = np.random.randn(1,N)[0,:]
 	x = np.linspace(1,len(y),len(y))
-	x_ax, y_ax, err_l,err_h, ns = allan.gradev(y,f,x)
+	x_ax, y_ax, err_l,err_h, ns = allan.gradev(frequency=y,rate=f,taus=x)
 	plt.errorbar(x_ax, y_ax,yerr=[err_l,err_h],label='GRADEV, no gaps')
 	
 	
 	y[np.floor(0.4*N):np.floor(0.6*N)] = np.NaN # Simulate missing data
-	x_ax, y_ax, err_l,err_h, ns = allan.gradev(y,f,x)
+	x_ax, y_ax, err_l,err_h, ns = allan.gradev(frequency=y,rate=f,taus=x)
 	plt.errorbar(x_ax, y_ax,yerr=[err_l,err_h], label='GRADEV, with gaps')
 	plt.xscale('log')
 	plt.yscale('log')
@@ -35,10 +35,10 @@ def example2():
 	s=1+5/N*np.arange(0,N)
 	y=s*np.random.randn(1,N)[0,:]
 	x = np.linspace(1,len(y),len(y))
-	x_ax, y_ax, err_l, err_h, ns = allan.gradev(y,f,x)
+	x_ax, y_ax, err_l, err_h, ns = allan.gradev(frequency=y,rate=f,taus=x)
 	plt.loglog(x_ax, y_ax,'b.',label="No gaps")
 	y[int(0.4*N):int(0.6*N,)] = np.NaN  # Simulate missing data
-	x_ax, y_ax, err_l, err, ns = allan.gradev(y,f,x)
+	x_ax, y_ax, err_l, err, ns = allan.gradev(frequency=y,rate=f,taus=x)
 	plt.loglog(x_ax, y_ax,'g.',label="With gaps")
 	plt.grid()
 	plt.legend()

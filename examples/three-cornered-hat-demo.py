@@ -28,7 +28,7 @@ import allantools
 from allantools import noise
 
 def plotallan_phase(plt,y,rate,taus, style):
-	(t2, ad, ade,adn) = allantools.mdev_phase(y,rate,taus)
+	(t2, ad, ade,adn) = allantools.mdev(phase=y,rate=rate,taus=taus)
 	plt.loglog(t2, ad, style)
 
 # plot a line with the slope alpha
@@ -59,7 +59,7 @@ if __name__ == "__main__":
 	phaseBC = [b-c for (b,c) in zip(phaseB,phaseC)]
 	phaseCA = [c-a for (c,a) in zip(phaseC,phaseA)]
 
-	(taus,devA) = allantools.three_cornered_hat_phase(phaseAB,phaseBC,phaseCA,rate,t, allantools.mdev_phase)
+	(taus,devA) = allantools.three_cornered_hat_phase(phaseAB,phaseBC,phaseCA,rate,t, allantools.mdev)
 	print("TCH devA")
 	
 	plotallan_phase(plt, phaseA, 1, t, 'ro')

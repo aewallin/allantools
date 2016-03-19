@@ -23,12 +23,12 @@ from allantools import noise
 
 
 def plotallan(plt, y, rate, taus, style, label=""):
-    (t2, ad, ade, adn) = allantools.mdev(y, rate, taus)
+    (t2, ad, ade, adn) = allantools.mdev(frequency=y, rate=rate, taus=taus)
     plt.loglog(t2, ad, style,label=label)
 
 
 def plotallan_phase(plt, y, rate, taus, style, label="",alpha=1.0):
-    (t2, ad, ade, adn) = allantools.mdev_phase(y, rate, taus)
+    (t2, ad, ade, adn) = allantools.mdev(phase=y, rate=rate, taus=taus)
     plt.loglog(t2, ad, style, label=label,alpha=alpha)
 
 

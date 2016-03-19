@@ -708,7 +708,7 @@ def gradev(phase=None, frequency=None, rate=1.0, taus=[], ci=0.9, noisetype='wp'
         frequency= trim_data(frequency)     
         phase = frequency2phase(frequency, rate)
         
-    (data, m, taus_used) = tau_m(data, rate, taus)
+    (data, m, taus_used) = tau_m(phase, rate, taus)
     ad  = np.zeros_like(taus_used)
     ade_l = np.zeros_like(taus_used)   
     ade_h = np.zeros_like(taus_used)
