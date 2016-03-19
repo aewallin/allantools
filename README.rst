@@ -83,9 +83,9 @@ Usage
     rate = 1/float(data_interval) # data rate in Hz 
     taus = [1,2,4,8,16] #  tau-values in seconds
     # fractional frequency data
-    (taus_used, adev, adeverror, adev_n) = allantools.adev(fract_freqdata, rate, taus)
+    (taus_used, adev, adeverror, adev_n) = allantools.adev(frequency=fract_freqdata, rate=rate, taus=taus)
     # phase data
-    (taus_used, adev, adeverror, adev_n) = allantools.adev_phase(phasedata, rate, taus)
+    (taus_used, adev, adeverror, adev_n) = allantools.adev(phase=phasedata, rate=rate, taus=taus)
 
     # notes:
     #  - taus_used may differ from taus, if taus has a non-integer multiples 
