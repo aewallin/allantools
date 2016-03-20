@@ -7,6 +7,10 @@ Allan deviation tools
 Version history
 ---------------
 
+- automatic tau-lists: all, octave, decade
+- merge adev() and adev_phase() into one, requiring phase= or frequency= argument
+- add GPS dataset as example and test
+
 **2016.2** 2016 February
 - update release on PyPi
 - pytest and coverage 
@@ -42,8 +46,8 @@ ToDo
 Modified Total   Better confidence at long averages for modified Allan
 Time Total       Better confidence at long averages for time
 Hadamard         Total Better confidence at long averages for Hadamard
-Thêo1            Provides information over nearly full record length
-ThêoH            Hybrid of Allan and ThêoBR (bias-removed Thêo1) variances
+Theo1            Provides information over nearly full record length
+TheoH            Hybrid of Allan and TheoBR (bias-removed Theo1) variances
 
 License
 -------
@@ -65,6 +69,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
 import scipy.stats # used in uncertainty_estimate()
+import enum  # requires "pip install enum34" on older python installs
+
+class autotau(enum.Enum):
+    alltau = 1
+    octave = 2
+    decade = 3
 
 def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Time deviation.
@@ -98,10 +108,21 @@ def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
     -----
     http://en.wikipedia.org/wiki/Time_deviation 
     """
-    
+
     if phase == None:
         phase = frequency2phase(frequency, rate)
     
+    if isinstance(taus, autotau): # experimental automatic tau-list
+        print(len(phase))
+        if taus == autotau.alltau:
+            taus = (1.0/rate)*np.linspace(1.0,len(phase),len(phase))
+        elif taus == autotau.octave:
+            maxn = np.floor( np.log2( len(phase) ) )
+            taus = (1.0/rate)*np.logspace(0,maxn,maxn+1,base=2.0)
+        elif taus == autotau.decade:
+            maxn = np.floor( np.log10( len(phase) ) )
+            taus = (1.0/rate)*np.logspace(0,maxn,maxn+1,base=10.0)
+                
     (taus, md, mde, ns) = mdev(phase=phase, rate=rate, taus=taus)
     td = taus * md / np.sqrt(3.0)
     tde = td / np.sqrt(ns)
@@ -190,12 +211,12 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
 def adev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Allan deviation.
-        Classic – use only if required – relatively poor confidence.
+        Classic - use only if required - relatively poor confidence.
     
     .. math::
     
-        \\sigma^2_x(\\tau) = {1 \\over 2 \\tau^2 (N-2) } \\sum_{i=1}^{i=N-2}{ ( x_{i+2} - 2x_{i+1} + x_{i} )^2 }
-    
+        \\sigma^2_x(\\tau) = 
+        
     .. math::
     
         \\sigma^{2}_y(\\tau) =  { 1 \\over 2 } \\langle ( \\bar{y}_{n+1} - \\bar{y}_n )^2 \\rangle
@@ -295,7 +316,7 @@ def adev_phase_calc(data, rate, mj, stride):
 
 def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ overlapping Allan deviation.
-        General purpose - most widely used – first choice
+        General purpose - most widely used - first choice
         
         
         
@@ -1088,6 +1109,13 @@ def phase2frequency(phase, rate):
 if __name__ == "__main__":
     print("Nothing to see here.")
     
+    Nmax = pow(2,8)+700
+    phase = 0.2345* np.random.randn(Nmax)
+    my_taus=[1,3,7,16,32,64,128,255]
+    (o_taus, o_dev, o_err, o_n)=tdev(phase=phase, rate=1, taus=autotau.alltau)
+    print o_taus, o_n, o_dev
+    
+    """
     # code to test mtie_phase_fast, incomplete!
     Nmax = pow(2,8)
     phase = 0.2345* np.random.randn(Nmax)
@@ -1095,7 +1123,7 @@ if __name__ == "__main__":
     rate = 1.0
     mtie_phase_fast(phase, rate, taus)
     # then try using old function
-    (o_taus, o_dev, o_err, o_n)=mtie_phase(phase, rate, [1,3,7,16,32,64,128,255])
+    (o_taus, o_dev, o_err, o_n)=mtie(phase=phase, rate=rate, taus=[1,3,7,16,32,64,128,255])
     print(o_taus)
     print(o_dev)
-    
+    """
