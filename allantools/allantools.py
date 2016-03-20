@@ -110,7 +110,9 @@ def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
 def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """  Modified Allan deviation.
          Used to distinguish W and F PM.
-
+ 
+    NIST SP 1065 eqn (14) and (15), page 17
+    
     Parameters
     ----------
     phase: np.array
@@ -197,7 +199,9 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
     .. math::
     
         \\sigma^{2}_y(\\tau) =  { 1 \\over 2 } \\langle ( \\bar{y}_{n+1} - \\bar{y}_n )^2 \\rangle
-        
+    
+    NIST SP 1065 eqn (6) and (7), pages 14 and 15
+    
     Parameters
     ----------
     data: np.array
@@ -268,7 +272,7 @@ def adev_phase_calc(data, rate, mj, stride):
     ----------        
     * http://en.wikipedia.org/wiki/Allan_variance
     * http://www.leapsecond.com/tools/adev_lib.c
-    NIST SP 1065, eqn (7) and (11)
+    NIST SP 1065, eqn (7) and (11) page 16
     """
 
     d2 = data[2 * mj::stride]
@@ -292,6 +296,8 @@ def adev_phase_calc(data, rate, mj, stride):
 def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ overlapping Allan deviation.
         General purpose - most widely used – first choice
+        
+        
         
     Parameters
     ----------
@@ -374,7 +380,9 @@ def ohdev(phase=None, frequency=None, rate=1.0, taus=[]):
 def hdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Hadamard deviation.
         Rejects frequency drift, and handles divergent noise.
-        
+    
+    NIST SP 1065 eqn (17) and (18), page 20
+    
     Parameters
     ----------
     data: np.array
@@ -428,7 +436,7 @@ def calc_hdev_phase(data, rate, mj, stride):
         N=M+1 phase measurements
         m is averaging factor
 
-    NIST SP 1065 eqn (18) and (20)
+    NIST SP 1065 eqn (18) and (20) pages 20 and 21
     """
 
     tau0 = 1.0 / float(rate)
@@ -488,7 +496,7 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
     x* has length 3N-4
     tau = m*tau0
     
-    NIST SP 1065 eqn (25)
+    NIST SP 1065 eqn (25) page 23
     
     """
     if phase == None:
@@ -511,7 +519,7 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
     # Combine into a single array
     x = np.zeros((3*n - 4))
     x[0:n-2] = x1
-    x[n-2:2*(n-2)+2] = phase
+    x[n-2:2*(n-2)+2] = phase # original data in the middle
     x[2*(n-2)+2:] = x2
 
     devs = np.zeros_like(taus_used)

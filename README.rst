@@ -80,7 +80,7 @@ Usage
 ::
 
     import allantools # https://github.com/aewallin/allantools/ 
-    rate = 1/float(data_interval) # data rate in Hz 
+    rate = 1/float(data_interval_in_s) # data rate in Hz 
     taus = [1,2,4,8,16] #  tau-values in seconds
     # fractional frequency data
     (taus_used, adev, adeverror, adev_n) = allantools.adev(frequency=fract_freqdata, rate=rate, taus=taus)
