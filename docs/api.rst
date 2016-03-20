@@ -29,9 +29,9 @@ To implement
 
 * Modified Total. The modified total variance, MTOT, is total version of the modified Allan variance.
 
-It is defined for phase data as::
+It is defined for phase data as (NIST SP 1065 eqn (27) page 25)::
             
-                                1           N-3m+1  1  N+3m-1
+                                1           N-3m+1  1  n+3m-1
        Mod s^2 total(t) = ----------------- sum     -- sum      [0zi*(m)]^2
                            2m^2t0^2(N-3m+1) n=1     6m i=n-3m
                        
@@ -40,8 +40,14 @@ sequence created by uninverted even reflection at each end,
 and the prefix 0 denotes that the linear trend has been removed.
 
 * Time Total (modified total variance scaled by (t^2/3) )
-* Hadamard Total
+* Hadamard Total,  (NIST SP 1065 eqn (29) page 27)::
+            
+                                1           N-3m+1    1  n+3m-1
+       Htotal^2 total(t) = ----------------- sum     -- sum      [Hi*(m)]^2
+                           6(N-3m+1)         n=1     6m i=n-3m
 
+where the Hi(m) terms are the zn(m) Hadamard second differences from the triply extended, drift-removed
+subsequences.
 
 References
 -----------
