@@ -26,8 +26,9 @@ def run():
 	print(dname)
 
 	data_file = 'PHASE.DAT'
-	mtotdev_result = 'phase_dat_mtotdev_octave.txt'
-	#mtotdev_result = 'phase_dat_mtotdev.txt'
+	mtotdev_result1 = 'phase_dat_mtotdev_decade.txt'
+	mtotdev_result2 = 'phase_dat_mtotdev_octave.txt'
+	#mtotdev_result3 = 'phase_dat_mtotdev.txt'
 	adev_result = 'phase_dat_adev.txt'
 	oadev_result = 'phase_dat_oadev.txt'
 	mdev_result = 'phase_dat_mdev.txt'
@@ -40,16 +41,17 @@ def run():
 	verbose = 1
 	
 	tolerance = 1e-4
-	testutils.test_row_by_row( allan.mtotdev, data_file, 1.0, mtotdev_result , verbose, tolerance)
-	testutils.test( allan.adev, data_file, 1.0, adev_result , verbose, tolerance)
-	testutils.test( allan.oadev, data_file, 1.0, oadev_result, verbose, tolerance )
-	testutils.test( allan.mdev, data_file, 1.0, mdev_result, verbose, tolerance )
-	testutils.test( allan.tdev, data_file, 1.0, tdev_result, verbose, tolerance )
-	testutils.test( allan.hdev, data_file, 1.0, hdev_result, verbose, tolerance )
-	testutils.test( allan.ohdev, data_file, 1.0, ohdev_result, verbose, tolerance )
-	testutils.test( allan.totdev, data_file, 1.0, totdev_result, verbose, tolerance )
-	testutils.test( allan.mtie, data_file, 1.0, mtie_result, verbose, tolerance )
-	testutils.test( allan.tierms, data_file, 1.0, tierms_result, verbose, tolerance )
+	testutils.test_row_by_row( allan.mtotdev, data_file, 1.0, mtotdev_result1 , verbose=verbose, tolerance=tolerance)
+	testutils.test_row_by_row( allan.mtotdev, data_file, 1.0, mtotdev_result2 , verbose=verbose, tolerance=tolerance)
+	testutils.test( allan.adev, data_file, 1.0, adev_result , verbose=verbose, tolerance=tolerance)
+	testutils.test( allan.oadev, data_file, 1.0, oadev_result, verbose=verbose, tolerance=tolerance )
+	testutils.test( allan.mdev, data_file, 1.0, mdev_result, verbose=verbose, tolerance=tolerance )
+	testutils.test( allan.tdev, data_file, 1.0, tdev_result, verbose=verbose, tolerance=tolerance )
+	testutils.test( allan.hdev, data_file, 1.0, hdev_result, verbose=verbose, tolerance=tolerance )
+	testutils.test( allan.ohdev, data_file, 1.0, ohdev_result, verbose=verbose, tolerance=tolerance )
+	testutils.test( allan.totdev, data_file, 1.0, totdev_result, verbose=verbose, tolerance=tolerance )
+	testutils.test( allan.mtie, data_file, 1.0, mtie_result, verbose=verbose, tolerance=tolerance )
+	testutils.test( allan.tierms, data_file, 1.0, tierms_result, verbose=verbose, tolerance=tolerance )
 	
 
 if __name__ == "__main__":

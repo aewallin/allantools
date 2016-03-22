@@ -634,15 +634,19 @@ def calc_mtotdev_phase(phase, rate, m):
         xs = phase[i:i+3*m] # subsequence of length 3m, from the original phase data
         assert( len(xs) == 3*m )
         # remove linear trend. by averaging first/last half, computing slope, and subtracting
-        if (3*m % 2 == 0 ): # 3m is even
-            half1_idx =  3*m/2.0 
-            half2_idx =  3*m/2.0 
-        else: # 3m is odd
-            half1_idx = int( np.floor( 3*m/2.0 ) +1 )
-            half2_idx = half1_idx
+        #if (3*m % 2 == 0 ): # 3m is even
+        #    half1_idx =  3*m/2.0 
+        #    half2_idx =  3*m/2.0 
+        #else: # 3m is odd
+        #    half1_idx = int( np.floor( 3*m/2.0 ) +1 )
+        #    half2_idx = half1_idx
         
-        half1_idx =  np.floor(3*m/2.0) 
-        half2_idx =  np.floor(3*m/2.0) 
+        if int(m) == 1:
+            half1_idx = 2
+            half2_idx = 1
+        else:
+            half1_idx =  np.floor(3*m/2.0) 
+            half2_idx =  np.ceil(3*m/2.0) 
             
         mean1 = np.mean( xs[:half1_idx] ) 
         mean2 = np.mean( xs[half2_idx:] )
