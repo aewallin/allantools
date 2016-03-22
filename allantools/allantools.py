@@ -1109,11 +1109,12 @@ def phase2frequency(phase, rate):
 if __name__ == "__main__":
     print("Nothing to see here.")
     
+    # test of autotau
     Nmax = pow(2,8)+700
     phase = 0.2345* np.random.randn(Nmax)
     my_taus=[1,3,7,16,32,64,128,255]
     (o_taus, o_dev, o_err, o_n)=tdev(phase=phase, rate=1, taus=autotau.alltau)
-    print o_taus, o_n, o_dev
+    print(o_taus, o_n, o_dev)
     
     """
     # code to test mtie_phase_fast, incomplete!
