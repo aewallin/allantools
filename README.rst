@@ -103,8 +103,8 @@ Here follows an un-rodered to do list:
 
 * Statistics
 
-    * Modified Total variance 
-    * Time Total (modified total variance scaled by (t^2/3) ) 
+    * Modified Total variance (started on this 2016 March)
+    * Time Total (modified total variance scaled by (t^2/3) ) (follows from above)
     * Hadamard Total 
     * The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
     * Theo1

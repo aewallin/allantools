@@ -6,6 +6,7 @@ __all__ = [
     'ohdev',
     'tdev',
     'totdev',
+    'mtotdev',
     'mtie',
     'tierms',
     'frequency2phase',
@@ -34,7 +35,7 @@ from .allantools import ohdev
 from .allantools import tdev
 
 from .allantools import totdev
-
+from .allantools import mtotdev
 from .allantools import mtie
 
 from .allantools import tierms

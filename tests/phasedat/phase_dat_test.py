@@ -26,6 +26,8 @@ def run():
 	print(dname)
 
 	data_file = 'PHASE.DAT'
+	mtotdev_result = 'phase_dat_mtotdev_octave.txt'
+	#mtotdev_result = 'phase_dat_mtotdev.txt'
 	adev_result = 'phase_dat_adev.txt'
 	oadev_result = 'phase_dat_oadev.txt'
 	mdev_result = 'phase_dat_mdev.txt'
@@ -35,9 +37,10 @@ def run():
 	totdev_result = 'phase_dat_totdev.txt'
 	mtie_result = 'phase_dat_mtie.txt'
 	tierms_result = 'phase_dat_tierms.txt'
-	verbose = 0
+	verbose = 1
 	
 	tolerance = 1e-4
+	testutils.test_row_by_row( allan.mtotdev, data_file, 1.0, mtotdev_result , verbose, tolerance)
 	testutils.test( allan.adev, data_file, 1.0, adev_result , verbose, tolerance)
 	testutils.test( allan.oadev, data_file, 1.0, oadev_result, verbose, tolerance )
 	testutils.test( allan.mdev, data_file, 1.0, mdev_result, verbose, tolerance )

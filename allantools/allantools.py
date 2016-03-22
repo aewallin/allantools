@@ -45,7 +45,7 @@ ToDo
 
 Modified Total   Better confidence at long averages for modified Allan
 Time Total       Better confidence at long averages for time
-Hadamard         Total Better confidence at long averages for Hadamard
+Hadamard Total   Better confidence at long averages for Hadamard
 Theo1            Provides information over nearly full record length
 TheoH            Hybrid of Allan and TheoBR (bias-removed Theo1) variances
 
@@ -517,7 +517,7 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
     -----
     ..
                      1        N-1
-    totvar(t) = ------------  sum   [ x*(i-m) - 2x*(i)+x*(i+m) ]**2
+    totvar(t) = ------------  sum   [ x*(i-m) - 2x*(i) + x*(i+m) ]**2
                 2 t**2 (N-2)  i=2
                 
     where x* is a new dataset with 'reflected' data at start/end.
@@ -579,6 +579,106 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
+def mtotdev(phase=None, frequency=None, rate=1.0, taus=[]):
+    """ INITIAL TRY - DO NOT USE - FIXME.
+        Modified Total deviation.
+        Better confidence at long averages for modified Allan
+        
+    Parameters
+    ----------
+    phase: np.array
+        Phase data in seconds. Provide either phase or frequency.
+    frequency: np.array
+        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    rate: float
+        The sampling rate for phase or frequency, in Hz
+    taus: np.array
+        Array of tau values for which to compute measurement
+        
+    NIST SP 1065 eqn (27) page 25
+    
+    """
+    if phase == None:
+        phase = frequency2phase(frequency, rate)
+        
+    rate = float(rate)
+    (phase, ms, taus_used) = tau_m(phase, rate, taus)
+
+    devs    = np.zeros_like(taus_used)
+    deverrs = np.zeros_like(taus_used)
+    ns      = np.zeros_like(taus_used)
+
+    for idx, mj in enumerate(ms):
+        devs[idx], deverrs[idx], ns[idx] = calc_mtotdev_phase(phase, rate, mj)
+
+    return remove_small_ns(taus_used, devs, deverrs, ns)
+
+def calc_mtotdev_phase(phase, rate, m):
+    """ INITIAL TRY - DO NOT USE - FIXME.
+        calculation of mtotdev for one averaging factor m
+        tau = m*tau0
+        
+        see: tests/phasedat/phase_dat_test.py
+        
+        seems to produce a number with a relative error of about -0.1456
+        
+    """
+    tau0 = 1.0/rate
+    N = int(len(phase)) # phase data, N points
+
+    n=0    # number of terms in the sum, for error estimation
+    dev=0.0 # the deviation we are computing
+    err=0.0 # the error in the deviation
+    print('calc_mtotdev N=%d m=%d' % (N,m) )
+    for i in range(0,N-3*int(m)+1):
+        xs = phase[i:i+3*m] # subsequence of length 3m, from the original phase data
+        assert( len(xs) == 3*m )
+        # remove linear trend. by averaging first/last half, computing slope, and subtracting
+        if (3*m % 2 == 0 ): # 3m is even
+            half1_idx =  3*m/2.0 
+            half2_idx =  3*m/2.0 
+        else: # 3m is odd
+            half1_idx = int( np.floor( 3*m/2.0 ) +1 )
+            half2_idx = half1_idx
+        
+        half1_idx =  np.floor(3*m/2.0) 
+        half2_idx =  np.floor(3*m/2.0) 
+            
+        mean1 = np.mean( xs[:half1_idx] ) 
+        mean2 = np.mean( xs[half2_idx:] )
+        
+        slope = (mean2-mean1) / (0.5*3*m*tau0)  
+        x0 = [x - slope*idx*tau0 for (idx,x) in enumerate(xs)]  # remove the linear trend
+        x0_flip = x0[::-1]
+        # extended sequence of length 9m, by uninverted even reflection
+        xstar = np.concatenate( (x0_flip,x0,x0_flip ))
+        #print(xstar)
+        assert( len(xstar)==9*m )
+        
+        # now compute totdev on these 9m points
+        # 6m unique groups of m-point averages, all possible overlapping second differences
+        # one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2
+        squaresum=0.0
+        for j in range(0,6*int(m)): # summation of the 6m terms.
+            xmean1 = np.mean( xstar[j : j+m] )
+            assert( len(xstar[j : j+m]) == m )
+            xmean2 = np.mean( xstar[j+m : j+2*m] )
+            assert( len(xstar[j+m : j+2*m]) == m )
+            xmean3 = np.mean( xstar[j+2*m : j+3*m] )
+            assert( len(xstar[j+2*m : j+3*m]) == m )
+            squaresum += pow(xmean1-2.0*xmean2+xmean3, 2)
+            
+        squaresum = (1.0/(6.0*m)) * squaresum
+        dev += squaresum
+        n=n+1
+    
+    # scaling in front of double-sum
+    assert( n == N-3*int(m)+1 ) # sanity check on the number of terms n
+    dev = dev* 1.0/ ( 2.0*pow(m*tau0,2)*(N-3*m+1) ) 
+    dev = np.sqrt(dev)
+    error = dev / np.sqrt(n)
+    return (dev,error,n)
+    
 def tierms(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Time Interval Error RMS.
     
@@ -1134,12 +1234,26 @@ def phase2frequency(phase, rate):
 if __name__ == "__main__":
     print("Nothing to see here.")
     
+    # test of mtotdev
+    Nmax = pow(2,10)
+    print Nmax
+    phase = 0.2345* np.cumsum(np.random.randn(Nmax))
+    #phase = 1* np.linspace(0,Nmax,Nmax)+0.02* np.random.randn(Nmax)
+    #phase = [1,-2,3,-4,5,-6]
+    my_taus=[1.0,2.0,3.0]
+    (m_taus, m_dev, m_err, m_n)=mdev(phase=phase, rate=1.0, taus=my_taus)
+    (mtot_taus, mtot_dev, mtot_err, mtot_n)=mtotdev(phase=phase, rate=1.0, taus=my_taus)
+    print(m_dev, m_n)
+    print(mtot_dev, mtot_n)
+    
     # test of autotau
+    """
     Nmax = pow(2,8)+700
     phase = 0.2345* np.random.randn(Nmax)
     my_taus=[1,3,7,16,32,64,128,255]
     (o_taus, o_dev, o_err, o_n)=tdev(phase=phase, rate=1, taus=autotau.alltau)
     print(o_taus, o_n, o_dev)
+    """
     
     """
     # code to test mtie_phase_fast, incomplete!
