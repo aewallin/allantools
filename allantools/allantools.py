@@ -89,16 +89,18 @@ def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
     rate: float
         The sampling rate for phase or frequency, in Hz
     taus: np.array
-        Array of tau values, in seconds, for which to compute statistic
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
     
     Returns
     -------
-    (taus, td, tde, ns): tuple  
+    (taus, tdev, tdev_error, ns): tuple  
           Tuple of values
     taus: np.array
         Tau values for which td computed
     tdev: np.array
-        Computed time deviations for each tau value
+        Computed time deviations (in seconds) for each tau value
     tdev_errors: np.array
         Time deviation errors
     ns: np.array
@@ -141,7 +143,7 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
     frequency: np.array
         Fractional frequency data (nondimensional). Provide either frequency or phase.
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        The sampling rate for phase or frequency, in Hz
     taus: np.array
         Array of tau values for which to compute measurement
 
@@ -225,10 +227,12 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
     
     Parameters
     ----------
-    data: np.array
-        list of phase measurements in seconds
+    phase: np.array
+        Phase data in seconds. Provide either phase or frequency.
+    frequency: np.array
+        Fractional frequency data (nondimensional). Provide either frequency or phase.
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        The sampling rate for phase or frequency, in Hz
     taus: np.array
         Array of tau values for which to compute measurement
 
@@ -262,7 +266,7 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
 
-def adev_phase_calc(data, rate, mj, stride):
+def adev_phase_calc(phase, rate, mj, stride):
     """  Main algorithm for ADEV and OADEV
         
         see http://www.leapsecond.com/tools/adev_lib.c
@@ -270,10 +274,10 @@ def adev_phase_calc(data, rate, mj, stride):
         
     Parameters
     ----------
-    data: np.array
-        list of phase measurements in seconds
+    phase: np.array
+        Phase data in seconds. 
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        The sampling rate for phase or frequency, in Hz
     mj: int
         M index value for stride
     stride: int
@@ -286,8 +290,8 @@ def adev_phase_calc(data, rate, mj, stride):
     
     Notes
     -----
-    stride = mj for nonoverlapping allan deviation
-    stride = 1 for overlapping allan deviation
+    stride = mj for nonoverlapping Allan deviation
+    stride = 1 for overlapping Allan deviation
 
     References
     ----------        
@@ -296,14 +300,14 @@ def adev_phase_calc(data, rate, mj, stride):
     NIST SP 1065, eqn (7) and (11) page 16
     """
 
-    d2 = data[2 * mj::stride]
-    d1 = data[1 * mj::stride]
-    d0 = data[::stride]
+    d2 = phase[2 * mj::stride]
+    d1 = phase[1 * mj::stride]
+    d0 = phase[::stride]
 
     n = min(len(d0), len(d1), len(d2))
 
     if n == 0:
-        RuntimeWarning("Data array length is too small: %i" % len(data))
+        RuntimeWarning("Data array length is too small: %i" % len(phase))
         n = 1
 
     v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
@@ -322,10 +326,12 @@ def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
         
     Parameters
     ----------
-    data: np.array
-        list of phase measurements in seconds
+    phase: np.array
+        Phase data in seconds. Provide either phase or frequency.
+    frequency: np.array
+        Fractional frequency data (nondimensional). Provide either frequency or phase.
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        The sampling rate for phase or frequency, in Hz
     taus: np.array
         Array of tau values for which to compute measurement
 
@@ -363,10 +369,12 @@ def ohdev(phase=None, frequency=None, rate=1.0, taus=[]):
     
     Parameters
     ----------
-    data: np.array
-        list of phase measurements in seconds
+    phase: np.array
+        Phase data in seconds. Provide either phase or frequency.
+    frequency: np.array
+        Fractional frequency data (nondimensional). Provide either frequency or phase.
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        The sampling rate for phase or frequency, in Hz
     taus: np.array
         Array of tau values for which to compute measurement
 
@@ -406,10 +414,12 @@ def hdev(phase=None, frequency=None, rate=1.0, taus=[]):
     
     Parameters
     ----------
-    data: np.array
-        list of phase measurements in seconds
+    phase: np.array
+        Phase data in seconds. Provide either phase or frequency.
+    frequency: np.array
+        Fractional frequency data (nondimensional). Provide either frequency or phase.
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        The sampling rate for phase or frequency, in Hz
     taus: np.array
         Array of tau values for which to compute measurement
     """
@@ -428,15 +438,15 @@ def hdev(phase=None, frequency=None, rate=1.0, taus=[]):
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
 
-def calc_hdev_phase(data, rate, mj, stride):
+def calc_hdev_phase(phase, rate, mj, stride):
     """ main calculation fungtion for HDEV and OHDEV
     
     Parameters
     ----------
-    data: np.array
-        list of phase measurements in seconds
+    phase: np.array
+        Phase data in seconds.
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        The sampling rate for phase or frequency, in Hz
     mj: int
         M index value for stride
     stride: int
@@ -462,10 +472,10 @@ def calc_hdev_phase(data, rate, mj, stride):
 
     tau0 = 1.0 / float(rate)
 
-    d3 = data[3 * mj::stride]
-    d2 = data[2 * mj::stride]
-    d1 = data[1 * mj::stride]
-    d0 = data[::stride]
+    d3 = phase[3 * mj::stride]
+    d2 = phase[2 * mj::stride]
+    d1 = phase[1 * mj::stride]
+    d0 = phase[::stride]
 
     n = min(len(d0), len(d1), len(d2), len(d3))
 
@@ -486,10 +496,12 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
         
     Parameters
     ----------
-    data: np.array
-        Data array of fractional frequency measurements (nondimensional)
+    phase: np.array
+        Phase data in seconds. Provide either phase or frequency.
+    frequency: np.array
+        Fractional frequency data (nondimensional). Provide either frequency or phase.
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        The sampling rate for phase or frequency, in Hz
     taus: np.array
         Array of tau values for which to compute measurement
         
@@ -572,10 +584,12 @@ def tierms(phase=None, frequency=None, rate=1.0, taus=[]):
     
     Parameters
     ----------
-    data: np.array
-        Data array of fractional frequency measurements (nondimensional)
+    phase: np.array
+        Phase data in seconds. Provide either phase or frequency.
+    frequency: np.array
+        Fractional frequency data (nondimensional). Provide either frequency or phase.
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        The sampling rate for phase or frequency, in Hz
     taus: np.array
         Array of tau values for which to compute measurement
     
@@ -639,6 +653,17 @@ def mtie_rolling_window(a, window):
 def mtie(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Maximum Time Interval Error.
     
+    Parameters
+    ----------
+    phase: np.array
+        Phase data in seconds. Provide either phase or frequency.
+    frequency: np.array
+        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    rate: float
+        The sampling rate for phase or frequency, in Hz
+        
+    Notes
+    -----
     this seems to correspond to Stable32 setting "Fast(u)"
     Stable32 also has "Decade" and "Octave" modes where the 
     dataset is extended somehow?
@@ -1056,7 +1081,7 @@ def frequency2phase(freqdata, rate):
     freqdata: np.array
         Data array of fractional frequency measurements (nondimensional)
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        The sampling rate for phase or frequency, in Hz
             
     Returns
     -------
@@ -1096,7 +1121,7 @@ def phase2frequency(phase, rate):
     phase: np.array
         Data array of phase in seconds
     rate: float
-        Sample rate in Hz
+        The sampling rate for phase, in Hz
             
     Returns
     -------
