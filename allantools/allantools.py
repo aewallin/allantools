@@ -261,13 +261,13 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
     adn = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(m):  # loop through each tau value m(j)
-        (ad[idx], ade[idx], adn[idx]) = adev_phase_calc(phase, rate, mj, mj)
+        (ad[idx], ade[idx], adn[idx]) = calc_adev_phase(phase, rate, mj, mj)
 
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
 
-def adev_phase_calc(phase, rate, mj, stride):
-    """  Main algorithm for ADEV and OADEV
+def calc_adev_phase(phase, rate, mj, stride):
+    """  Main algorithm for adev() (stride=mj) and oadev() (stride=1)
         
         see http://www.leapsecond.com/tools/adev_lib.c
         stride = mj for nonoverlapping allan deviation
@@ -359,7 +359,7 @@ def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
     adn = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(m):
-        (ad[idx], ade[idx], adn[idx]) = adev_phase_calc(phase, rate, mj, 1)  # stride=1 for overlapping ADEV
+        (ad[idx], ade[idx], adn[idx]) = calc_adev_phase(phase, rate, mj, 1)  # stride=1 for overlapping ADEV
 
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
