@@ -1,7 +1,8 @@
 AllanTools
 ==========
 
-A python library for calculating Allan deviation and related time & frequency statistics. GPL v3+ license.
+A python library for calculating Allan deviation and related 
+time & frequency statistics. GPL v3+ license.
 
 Developed at https://github.com/aewallin/allantools and also available 
 on PyPi at https://pypi.python.org/pypi/AllanTools
@@ -11,15 +12,15 @@ or phase in seconds. Deviations are calculated for given tau values in seconds.
 
 These statistics are currently included:
 
-* ADEV    Allan deviation
-* OADEV   overlapping Allan deviation,
-* MDEV    modified Allan deviation,
-* TDEV    Time deviation
-* HDEV    Hadamard deviation
-* OHDEV   overlapping Hadamard deviation
-* TOTDEV  Total deviation
-* MTIE    Maximum time interval error
-* TIERMS  Time interval error RMS
+* adev()    Allan deviation
+* oadev()   overlapping Allan deviation,
+* mdev()    modified Allan deviation,
+* tdev()    Time deviation
+* hdev()    Hadamard deviation
+* ohdev()   overlapping Hadamard deviation
+* totdev()  total Allan deviation
+* mtie()    Maximum time interval error
+* tierms()  Time interval error RMS
 
 Noise generators for creating synthetic datasets are also included:
 
@@ -29,18 +30,21 @@ Noise generators for creating synthetic datasets are also included:
 * Brownian or random walk noise with f^-2 PSD 
 
 
-see /tests for tests that compare allantools output to other (e.g. Stable32) programs.
-More test data, benchmarks, ipython notebooks, and comparisons to known-good algorithms are welcome!
+see /tests for tests that compare allantools output to other 
+(e.g. Stable32) programs. More test data, benchmarks, ipython notebooks, 
+and comparisons to known-good algorithms are welcome!
 
 Documentation
 =============
-See /docs for documentation in sphinx format. On Ubuntu this requires the **python-sphinx** and **python-numpydoc** packages.
+See /docs for documentation in sphinx format. On Ubuntu this requires 
+the **python-sphinx** and **python-numpydoc** packages.
 html/pdf documentation using sphinx can be built locally with::
 
     /docs$ make html
     /docs$ make latexpdf
 
-this generates html documentation in docs/_build/html and pdf documentation in docs/_build/latex.
+this generates html documentation in docs/_build/html and pdf 
+documentation in docs/_build/latex.
 
 The sphinx documentation is also auto-generated online
 
@@ -141,7 +145,8 @@ Creating a source distribution
 
     python setup.py sdist
 
-Testing the source distribution. The install takes a long time while compiling nympy and scipy.
+Testing the source distribution. The install takes a long time while 
+compiling nympy and scipy.
 
 ::
 
