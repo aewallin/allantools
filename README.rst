@@ -21,6 +21,8 @@ These statistics are currently included:
 * totdev()  total Allan deviation
 * mtie()    Maximum time interval error
 * tierms()  Time interval error RMS
+* mtotdev() Modified total deviation
+* ttotdev() Time total deviation
 
 Noise generators for creating synthetic datasets are also included:
 
@@ -103,8 +105,6 @@ Here follows an un-rodered to do list:
 
 * Statistics
 
-    * Modified Total variance (started on this 2016 March)
-    * Time Total (modified total variance scaled by (t^2/3) ) (follows from above)
     * Hadamard Total 
     * The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
     * Theo1

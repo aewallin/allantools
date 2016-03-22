@@ -7,7 +7,7 @@ Allan deviation tools
 Version history
 ---------------
 
-- added Modified Total Deviation mtotdev()
+- added Modified Total Deviation mtotdev(), and Time Total Deviation ttotdev()
 - automatic tau-lists: all, octave, decade
 - merge adev() and adev_phase() into one, requiring phase= or frequency= argument
 - add GPS dataset as example and test
@@ -579,6 +579,17 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
         ns[idx] = mid
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
+
+def ttotdev(phase=None, frequency=None, rate=1.0, taus=[]):
+    """ Time Total Deviation
+        modified total variance scaled by tau^3 / 3
+        NIST SP 1065 eqn (28) page 26  <--- formula should have tau squared !?!
+    """
+    
+    (taus, mtotdevs, mde, ns) = mtotdev(phase=phase, rate=rate, taus=taus)
+    td = taus*mtotdevs / np.sqrt(3.0)
+    tde = td / np.sqrt(ns)
+    return taus, td, tde, ns
 
 def mtotdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
