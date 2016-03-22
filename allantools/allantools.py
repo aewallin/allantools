@@ -7,6 +7,7 @@ Allan deviation tools
 Version history
 ---------------
 
+- added Modified Total Deviation mtotdev()
 - automatic tau-lists: all, octave, decade
 - merge adev() and adev_phase() into one, requiring phase= or frequency= argument
 - add GPS dataset as example and test
@@ -580,7 +581,7 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
 def mtotdev(phase=None, frequency=None, rate=1.0, taus=[]):
-    """ INITIAL TRY - DO NOT USE - FIXME.
+    """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Modified Total deviation.
         Better confidence at long averages for modified Allan
         
@@ -614,7 +615,7 @@ def mtotdev(phase=None, frequency=None, rate=1.0, taus=[]):
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
 def calc_mtotdev_phase(phase, rate, m):
-    """ INITIAL TRY - DO NOT USE - FIXME.
+    """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of mtotdev for one averaging factor m
         tau = m*tau0
         
@@ -629,40 +630,33 @@ def calc_mtotdev_phase(phase, rate, m):
     n=0    # number of terms in the sum, for error estimation
     dev=0.0 # the deviation we are computing
     err=0.0 # the error in the deviation
-    print('calc_mtotdev N=%d m=%d' % (N,m) )
+    #print('calc_mtotdev N=%d m=%d' % (N,m) )
     for i in range(0,N-3*int(m)+1):
         xs = phase[i:i+3*m] # subsequence of length 3m, from the original phase data
         assert( len(xs) == 3*m )
         # remove linear trend. by averaging first/last half, computing slope, and subtracting
-        #if (3*m % 2 == 0 ): # 3m is even
-        #    half1_idx =  3*m/2.0 
-        #    half2_idx =  3*m/2.0 
-        #else: # 3m is odd
-        #    half1_idx = int( np.floor( 3*m/2.0 ) +1 )
-        #    half2_idx = half1_idx
-        
-        if int(m) == 1:
-            half1_idx = 2
-            half2_idx = 1
-        else:
-            half1_idx =  np.floor(3*m/2.0) 
-            half2_idx =  np.ceil(3*m/2.0) 
+        half1_idx =  np.floor(3*m/2.0) 
+        half2_idx =  np.ceil(3*m/2.0) 
             
         mean1 = np.mean( xs[:half1_idx] ) 
         mean2 = np.mean( xs[half2_idx:] )
         
-        slope = (mean2-mean1) / (0.5*3*m*tau0)  
+        if int(m)==1: # m=1 is a special case, because the distance btw. means is not 3m/2 but 2m.
+            slope = (mean2-mean1) / (2*m*tau0)        
+        else:
+            slope = (mean2-mean1) / (0.5*3*m*tau0)
+              
         x0 = [x - slope*idx*tau0 for (idx,x) in enumerate(xs)]  # remove the linear trend
-        x0_flip = x0[::-1]
+        x0_flip = x0[::-1] # left-right flipped version of array
         # extended sequence of length 9m, by uninverted even reflection
         xstar = np.concatenate( (x0_flip,x0,x0_flip ))
-        #print(xstar)
         assert( len(xstar)==9*m )
         
         # now compute totdev on these 9m points
         # 6m unique groups of m-point averages, all possible overlapping second differences
         # one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2
         squaresum=0.0
+        #print('m=%d 9m=%d maxj+3*m=%d' %( m, len(xstar), 6*int(m)+3*int(m)) )
         for j in range(0,6*int(m)): # summation of the 6m terms.
             xmean1 = np.mean( xstar[j : j+m] )
             assert( len(xstar[j : j+m]) == m )
