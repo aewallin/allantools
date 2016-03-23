@@ -24,19 +24,22 @@ import allantools as allan
 # 10-point dataset and deviations
 nbs14_phase = [ 0.00000, 103.11111, 123.22222, 157.33333, 166.44444, 48.55555,-96.33333,-2.22222, 111.88889, 0.00000 ]
 nbs14_f     = [892,809,823,798,671,644,883,903,677]
-nbs14_devs= [ (91.22945,115.8082),  # ADEV(tau=1,tau=2)
-              (91.22945, 85.95287), # OADEV 
-              (91.22945,74.78849),  # MDEV
+nbs14_devs= [ (91.22945,115.8082),  # 0, ADEV(tau=1,tau=2)
+              (91.22945, 85.95287), # 1, OADEV 
+              (91.22945,74.78849),  # 2, MDEV
               #(91.22945,98.31100),  # TOTDEV, http://www.ieee-uffc.org/frequency-control/learning-riley.asp
-              (91.22945, 93.90379), # TOTDEV, http://tf.nist.gov/general/pdf/2220.pdf page 107
-              (70.80608,116.7980),  # HDEV
-              (52.67135,86.35831),  # TDEV 
-              (70.80607, 85.61487)] # OHDEV
+              (91.22945, 93.90379), # 3, TOTDEV, http://tf.nist.gov/general/pdf/2220.pdf page 107
+              (70.80608,116.7980),  # 4, HDEV
+              (52.67135,86.35831),  # 5, TDEV 
+              (70.80607, 85.61487), # 6, OHDEV
+              (75.50203, 75.83606),  # 7, MTOTDEV
+              (43.59112, 87.56794 ),] # 8, TTOTDEV
+              # (70.80607, 91.16396 ) # HTOTDEV
+              
               # (100.9770, 102.6039)  # Standard Deviation (sample, not population)
               
-              # (70.80607, 91.16396 ) # HTOTDEV
-              # (75.50203, 75.83606)  # MTOTDEV
-              # (43.59112, 87.56794 ) # TTOTDEV
+              
+
               
 # 1000 point deviations from:
 # http://www.ieee-uffc.org/frequency-control/learning-riley.asp    Table III
@@ -196,6 +199,24 @@ def nbs14_test():
     assert( check_devs( adevs2[1], ohdevs[1] ) )
     print("nbs14 ohdev OK")
 
+    (taus2,adevs2,aerrs2,ns2) = allan.ttotdev( phase =nbs14_phase, rate=1.0, taus=taus)
+    ttotdevs = nbs14_devs[8]
+    print(adevs2)
+    print(ttotdevs)
+    
+    (taus2,adevs2,aerrs2,ns2) = allan.mtotdev( phase =nbs14_phase, rate=1.0, taus=taus)
+    mtotdevs = nbs14_devs[7]
+    print(adevs2)
+    print(mtotdevs)
+    
+    assert( check_devs( adevs2[0], ttotdevs[0] ) )
+    assert( check_devs( adevs2[1], ttotdevs[1] ) )
+    print("nbs14 ttotdev OK")
+    
+
+    assert( check_devs( adevs2[0], mtotdevs[0] ) )
+    assert( check_devs( adevs2[1], mtotdevs[1] ) )
+    print("nbs14 mtotdev OK")
 
     # then the same tests for frequency data
     print("nbs14 tests for frequency data:")
