@@ -586,7 +586,7 @@ def ttotdev(phase=None, frequency=None, rate=1.0, taus=[]):
         NIST SP 1065 eqn (28) page 26  <--- formula should have tau squared !?!
     """
     
-    (taus, mtotdevs, mde, ns) = mtotdev(phase=phase, rate=rate, taus=taus)
+    (taus, mtotdevs, mde, ns) = mtotdev(phase=phase, frequency=frequency, rate=rate, taus=taus)
     td = taus*mtotdevs / np.sqrt(3.0)
     tde = td / np.sqrt(ns)
     return taus, td, tde, ns
