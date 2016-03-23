@@ -648,13 +648,17 @@ def calc_mtotdev_phase(phase, rate, m):
         # remove linear trend. by averaging first/last half, computing slope, and subtracting
         half1_idx =  np.floor(3*m/2.0) 
         half2_idx =  np.ceil(3*m/2.0) 
-            
+        # m
+        # 1    0:1   2:2
         mean1 = np.mean( xs[:half1_idx] ) 
         mean2 = np.mean( xs[half2_idx:] )
         
-        if int(m)==1: # m=1 is a special case, because the distance btw. means is not 3m/2 but 2m.
-            slope = (mean2-mean1) / (2*m*tau0)        
-        else:
+        if int(3*m)%2==1: # m is odd
+            # 3m = 2k+1 is odd, with the averages at both ends over k points
+            # the distance between the averages is then k+1 = (3m-1)/2 +1
+            slope = (mean2-mean1) / ( (0.5*(3*m-1)+1)*tau0)
+        else: # m is even
+            # 3m = 2k is even, so distance between averages is k=m/2
             slope = (mean2-mean1) / (0.5*3*m*tau0)
               
         x0 = [x - slope*idx*tau0 for (idx,x) in enumerate(xs)]  # remove the linear trend
