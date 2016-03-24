@@ -8,6 +8,7 @@ Version history
 ---------------
 
 - added Modified Total Deviation mtotdev(), and Time Total Deviation ttotdev()
+  see http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/
 - automatic tau-lists: all, octave, decade
 - merge adev() and adev_phase() into one, requiring phase= or frequency= argument
 - add GPS dataset as example and test
@@ -44,11 +45,12 @@ Version history
 ToDo
 ----
 
-Modified Total   Better confidence at long averages for modified Allan
-Time Total       Better confidence at long averages for time
 Hadamard Total   Better confidence at long averages for Hadamard
 Theo1            Provides information over nearly full record length
 TheoH            Hybrid of Allan and TheoBR (bias-removed Theo1) variances
+
+Bias corrections for mtotdev() and ttotdev()
+Confidence interval estimation.
 
 License
 -------
