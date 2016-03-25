@@ -497,6 +497,8 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Total deviation.
         Better confidence at long averages for Allan.
         
+        FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
+        
     Parameters
     ----------
     phase: np.array
@@ -598,6 +600,14 @@ def mtotdev(phase=None, frequency=None, rate=1.0, taus=[]):
         Modified Total deviation.
         Better confidence at long averages for modified Allan
         
+        FIXME: bias-correction http://www.wriley.com/CI2.pdf page 6
+        The variance is scaled up (divided by this number) based on the noise-type identified.
+        WPM 0.94
+        FPM 0.83
+        WFM 0.73
+        FFM 0.70
+        RWFM 0.69
+        
     Parameters
     ----------
     phase: np.array
@@ -631,10 +641,6 @@ def calc_mtotdev_phase(phase, rate, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of mtotdev for one averaging factor m
         tau = m*tau0
-        
-        see: tests/phasedat/phase_dat_test.py
-        
-        seems to produce a number with a relative error of about -0.1456
         
     """
     tau0 = 1.0/rate
