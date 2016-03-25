@@ -694,12 +694,12 @@ def htotdev(phase=None, frequency=None, rate=1.0, taus=[]):
         Hadamard Total deviation.
         Better confidence at long averages for Hadamard deviation
 
-        FIXME: bias corrections
-        W FM    0.995
-        F FM    0.851
-        RW FM   0.771
-        FW FM   0.717
-        RR FM   0.679
+        FIXME: bias corrections from http://www.wriley.com/CI2.pdf
+        W FM    0.995      alpha= 0
+        F FM    0.851      alpha=-1
+        RW FM   0.771      alpha=-2
+        FW FM   0.717      alpha=-3
+        RR FM   0.679      alpha=-4
         
     Parameters
     ----------
@@ -725,12 +725,18 @@ def htotdev(phase=None, frequency=None, rate=1.0, taus=[]):
     
     freq = phase2frequency(phase, rate)
     
+    # NOTE at mj==1 we use ohdev(), based on comment from here:
+    # http://www.wriley.com/paper4ht.htm
+    # "For best consistency, the overlapping Hadamard variance is used instead of the Hadamard total variance at m=1"
     for idx, mj in enumerate(ms):
-        devs[idx], deverrs[idx], ns[idx] = calc_htotdev_phase(freq, rate, mj)
+        if mj==1:
+            (devs[idx], deverrs[idx], ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)
+        else:
+            devs[idx], deverrs[idx], ns[idx] = calc_htotdev_freq(freq, rate, mj)
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
-def calc_htotdev_phase(freq, rate, m):
+def calc_htotdev_freq(freq, rate, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of htotdev for one averaging factor m
         tau = m*tau0
