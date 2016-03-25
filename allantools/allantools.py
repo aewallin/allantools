@@ -74,6 +74,8 @@ import numpy as np
 import scipy.stats # used in uncertainty_estimate()
 import enum  # requires "pip install enum34" on older python installs
 
+__version__ = "2016.2"
+
 class autotau(enum.Enum):
     alltau = 1
     octave = 2

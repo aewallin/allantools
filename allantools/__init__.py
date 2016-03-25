@@ -1,4 +1,5 @@
 __all__ = [
+    '__version__',
     'adev',
     'oadev',
     'mdev',
@@ -19,6 +20,7 @@ __all__ = [
     'uncertainty_estimate'
     ]
 
+from .allantools import __version__
 from .allantools import frequency2phase
 from .allantools import phase2frequency
 
