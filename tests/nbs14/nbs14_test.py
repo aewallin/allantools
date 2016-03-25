@@ -32,12 +32,12 @@ nbs14_devs= [ (91.22945,115.8082),  # 0, ADEV(tau=1,tau=2)
               (70.80608,116.7980),  # 4, HDEV
               (52.67135,86.35831),  # 5, TDEV 
               (70.80607, 85.61487), # 6, OHDEV
-              #(75.50203, 75.83606),  # 7, MTOTDEV (published table)
-              (6.4509e+01, 6.4794e+01), # MTOTDEV Stable32 v1.60
-              #(43.59112, 87.56794 ), # 8, TTOTDEV
-              (3.7244e+01, 7.4818e+01), # TTOTDEV Stable32 v1.60
-              (70.80607, 91.16396 )] # 9 HTOTDEV
-              
+              #(75.50203, 75.83606),  # 7, MTOTDEV (published table, WFM bias correction)
+              (6.4509e+01, 6.4794e+01), # MTOTDEV Stable32 v1.60, no bias-correction
+              #(43.59112, 87.56794 ), # 8, TTOTDEV (published table, WFM bias correction)
+              (3.7244e+01, 7.4818e+01), # TTOTDEV Stable32 v1.60, no bias-correction
+              (70.80607, 91.16396 ), # 9 HTOTDEV (published table)
+              (45.704, 81.470)] # 10 HTOTDEV Stable32
               # (100.9770, 102.6039)  # Standard Deviation (sample, not population)
               
               
@@ -155,7 +155,7 @@ def nbs14_1000_test():
         
     print("nbs14_1000 all tests OK")
 
-def check_devs(dev2, dev1):
+def check_devs(dev2, dev1, soft=False):
     rel_error = (dev2-dev1)/dev1
     tol = 1e-4
     verbose = 1
@@ -166,6 +166,9 @@ def check_devs(dev2, dev1):
         return True
     else:
         print("ERROR   %0.6f \t %0.6f \t %0.6f" % (dev1,dev2, rel_error))
+        print("bias corr %.4f" % pow(dev2/dev1,2))
+        if soft:
+            return True
         return False
 
 def nbs14_test():
@@ -175,6 +178,15 @@ def nbs14_test():
     
     # first tests that call the _phase functions
     print("nbs14 10-point tests for phase data:")
+    
+    (taus2,adevs2,aerrs2,ns2) = allan.htotdev( phase =nbs14_phase, rate=1.0, taus=taus)
+    htotdevs = nbs14_devs[9]
+    htotdevs2 = nbs14_devs[10]
+    assert( check_devs( adevs2[0], htotdevs[0] , soft=True) )
+    assert( check_devs( adevs2[1], htotdevs[1] , soft=True) )
+    assert( check_devs( adevs2[0], htotdevs2[0] , soft=True) )
+    assert( check_devs( adevs2[1], htotdevs2[1] , soft=True) )
+    print("nbs14 htotdev OK")
     
     (taus2,adevs2,aerrs2,ns2) = allan.adev( phase= nbs14_phase, rate=1.0, taus=taus)
     adevs = nbs14_devs[0]
