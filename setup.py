@@ -19,6 +19,7 @@ setup(name='AllanTools',
       long_description="""Given phase or fractional frequency data this package calculates:
                         Allan deviation, overlapping Allan deviation, modified Allan deviation,
                         Hadamard deviation, overlapping Hadamard deviation, time deviation,
-                        total deviation, MTIE, TIE-RMS. Synthetic noise data generators are also included."""
+                        total deviation, modified total deviation, time total deviation, 
+                        MTIE, and TIE-RMS. Synthetic noise data generators are also included."""
      )
 
