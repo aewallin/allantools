@@ -76,11 +76,6 @@ import enum  # requires "pip install enum34" on older python installs
 
 __version__ = "2016.2"
 
-class autotau(enum.Enum):
-    alltau = 1
-    octave = 2
-    decade = 3
-
 def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Time deviation.
         Based on modified Allan variance.
@@ -118,18 +113,7 @@ def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     if phase == None:
         phase = frequency2phase(frequency, rate)
-    
-    if isinstance(taus, autotau): # experimental automatic tau-list
-        print(len(phase))
-        if taus == autotau.alltau:
-            taus = (1.0/rate)*np.linspace(1.0,len(phase),len(phase))
-        elif taus == autotau.octave:
-            maxn = np.floor( np.log2( len(phase) ) )
-            taus = (1.0/rate)*np.logspace(0,maxn,maxn+1,base=2.0)
-        elif taus == autotau.decade:
-            maxn = np.floor( np.log10( len(phase) ) )
-            taus = (1.0/rate)*np.logspace(0,maxn,maxn+1,base=10.0)
-                
+
     (taus, md, mde, ns) = mdev(phase=phase, rate=rate, taus=taus)
     td = taus * md / np.sqrt(3.0)
     tde = td / np.sqrt(ns)
@@ -174,10 +158,10 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
     
     if phase == None:
         phase = frequency2phase(frequency, rate)
-        
+    
+    (phase, ms, taus_used) = tau_generator(phase, rate, taus=taus)    
     data, taus = np.array(phase), np.array(taus)
-    (phase, ms, taus_used) = tau_m(phase, rate, taus)
-
+    
     md    = np.zeros_like(ms)
     mderr = np.zeros_like(ms)
     ns    = np.zeros_like(ms)
@@ -259,7 +243,7 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
     if phase == None:
         phase = frequency2phase(frequency, rate)
         
-    (phase, m, taus_used) = tau_m(phase, rate, taus)
+    (phase, m, taus_used) = tau_generator(phase, rate, taus)
 
     ad  = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
@@ -358,7 +342,7 @@ def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
     if phase == None:
         phase = frequency2phase(frequency, rate)
         
-    (phase, m, taus_used) = tau_m(phase, rate, taus)
+    (phase, m, taus_used) = tau_generator(phase, rate, taus)
     ad  = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
     adn = np.zeros_like(taus_used)
@@ -401,7 +385,7 @@ def ohdev(phase=None, frequency=None, rate=1.0, taus=[]):
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
-    (phase, m, taus_used) = tau_m(phase, rate, taus)
+    (phase, m, taus_used) = tau_generator(phase, rate, taus)
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
@@ -432,7 +416,7 @@ def hdev(phase=None, frequency=None, rate=1.0, taus=[]):
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
-    (phase, m, taus_used) = tau_m(phase, rate, taus)
+    (phase, m, taus_used) = tau_generator(phase, rate, taus)
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
@@ -543,7 +527,7 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
-    (phase, m, taus_used) = tau_m(phase, rate, taus)
+    (phase, m, taus_used) = tau_generator(phase, rate, taus)
     n = len(phase)
 
     # totdev requires a new dataset
@@ -628,7 +612,7 @@ def mtotdev(phase=None, frequency=None, rate=1.0, taus=[]):
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
-    (phase, ms, taus_used) = tau_m(phase, rate, taus)
+    (phase, ms, taus_used) = tau_generator(phase, rate, taus)
 
     devs    = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
@@ -721,7 +705,7 @@ def tierms(phase=None, frequency=None, rate=1.0, taus=[]):
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
-    (data, m, taus_used) = tau_m(phase, rate, taus)
+    (data, m, taus_used) = tau_generator(phase, rate, taus)
 
     count = len(phase)
 
@@ -796,7 +780,7 @@ def mtie(phase=None, frequency=None, rate=1.0, taus=[]):
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
-    (phase, m, taus_used) = tau_m(phase, rate, taus)
+    (phase, m, taus_used) = tau_generator(phase, rate, taus)
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
@@ -885,7 +869,7 @@ def gradev(phase=None, frequency=None, rate=1.0, taus=[], ci=0.9, noisetype='wp'
         frequency= trim_data(frequency)     
         phase = frequency2phase(frequency, rate)
         
-    (data, m, taus_used) = tau_m(phase, rate, taus)
+    (data, m, taus_used) = tau_generator(phase, rate, taus)
     ad  = np.zeros_like(taus_used)
     ade_l = np.zeros_like(taus_used)   
     ade_h = np.zeros_like(taus_used)
@@ -954,19 +938,23 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
 # 
 
 
-def tau_m(data, rate, taus, v=False):
+def tau_generator(data, rate, taus=[], v=False):
     """ pre-processing of the tau-list given by the user (Helper function)
 
     Does sanity checks, sorts data, removes duplicates and invalid values.
+    Generates a tau-list based on keywords 'all', 'decade', 'octave'.
+    Uses 'octave' by default if no taus= argument is given.
 
     Parameters
     ----------
     data: np.array
         data array
     rate: float
-        Sample rate of data, i.e. interval between measurements is 1/rate (Hz)
+        Sample rate of data in Hz. Time interval between measurements is 1/rate seconds.
     taus: np.array
-        Array of tau values for which to compute measurement
+        Array of tau values for which to compute measurement.
+        Alternatively one of the keywords: "all", "octave", "decade".
+        Defaults to 'octave' if omitted.
 
     Returns
     -------
@@ -979,14 +967,27 @@ def tau_m(data, rate, taus, v=False):
     taus: np.array
         Cleaned up list of tau values
     """
-    data, taus = np.array(data), np.array(taus)
+    
 
     if rate == 0:
         raise RuntimeError("Warning! rate==0")
-    rate = float(rate)
-    # n = len(data) # not used
-    m = []
 
+    if not taus: # empty or no tau-list supplied
+        taus='octave' # default to octave
+    
+    if taus == "all":
+        taus = (1.0/rate)*np.linspace(1.0,len(data),len(data))
+    elif taus == "octave":
+        maxn = np.floor( np.log2( len(data) ) )
+        taus = (1.0/rate)*np.logspace(0,maxn,maxn+1,base=2.0)
+    elif taus == "decade":
+        maxn = np.floor( np.log10( len(data) ) )
+        taus = (1.0/rate)*np.logspace(0,maxn,maxn+1,base=10.0)
+    
+    data, taus = np.array(data), np.array(taus)
+    rate = float(rate)
+    m = [] # integer averaging factor. tau = m*tau0
+    
     taus_valid1 = taus < (1 / float(rate)) * float(len(data))
     taus_valid2 = taus > 0
     taus_valid  = taus_valid1 & taus_valid2
@@ -995,13 +996,14 @@ def tau_m(data, rate, taus, v=False):
     m = np.unique(m)    # remove duplicates and sort
 
     if v:
-        print("tau_m: ", m)
+        print("tau_generator: ", m)
 
     if len(m) == 0:
         print("Warning: sanity-check on tau failed!")
         print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
 
     taus2 = m / float(rate)
+
     return data, m, taus2
 
 def remove_small_ns(*args):
@@ -1258,6 +1260,7 @@ if __name__ == "__main__":
     print("Nothing to see here.")
     
     # test of mtotdev
+    """
     Nmax = pow(2,10)
     print Nmax
     phase = 0.2345* np.cumsum(np.random.randn(Nmax))
@@ -1268,15 +1271,17 @@ if __name__ == "__main__":
     (mtot_taus, mtot_dev, mtot_err, mtot_n)=mtotdev(phase=phase, rate=1.0, taus=my_taus)
     print(m_dev, m_n)
     print(mtot_dev, mtot_n)
+    """
     
     # test of autotau
-    """
+    
     Nmax = pow(2,8)+700
     phase = 0.2345* np.random.randn(Nmax)
     my_taus=[1,3,7,16,32,64,128,255]
-    (o_taus, o_dev, o_err, o_n)=tdev(phase=phase, rate=1, taus=autotau.alltau)
-    print(o_taus, o_n, o_dev)
-    """
+    (o_taus, o_dev, o_err, o_n)=ttotdev(phase=phase, rate=1,taus='decade')
+    print(len(phase))
+    print(o_taus,  o_dev)
+    
     
     """
     # code to test mtie_phase_fast, incomplete!
