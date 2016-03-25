@@ -1,6 +1,6 @@
 """
  Useful collection of functions for the allantools test-suite
- 
+
 """
 
 import sys
@@ -12,7 +12,7 @@ import numpy
 def read_datafile(filename):
     p = []
     if filename[-2:]=='gz':
-        with gzip.open(filename) as f:
+        with gzip.open(filename,mode='rt') as f:
             for line in f:
                 if not line.startswith("#"):  # skip comments
                     p.append(float(line))
@@ -72,7 +72,7 @@ def read_stable32(resultfile, datarate):
 # test a deviation function by:
 # - running the function on the datafile
 # - reading the correct answers from the resultfile
-# - checking that tau, n, and dev are correct 
+# - checking that tau, n, and dev are correct
 def test(function, datafile, datarate, resultfile, frequency=False, verbose=0, tolerance=1e-4):
     # if Stable32 results were given with more digits we could decrease tolerance
 
@@ -85,7 +85,7 @@ def test(function, datafile, datarate, resultfile, frequency=False, verbose=0, t
         (taus2, devs2, errs2, ns2) = function(frequency=phase, rate=datarate, taus=taus)
     else:
         (taus2, devs2, errs2, ns2) = function(phase=phase, rate=datarate, taus=taus)
-        
+
     # check that allantools and Stable32 agree on length of DEV, Tau, and N results
 
     assert ( len(taus) == len(taus2) )
@@ -115,7 +115,7 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, toleran
 
     if normalize: # convert frequencies in Hz to fractional frequencies
         phase = to_fractional(phase)
-        
+
     print("Read ", len(phase), " values from ", datafile)
 
     (taus, devs, ns) = read_stable32(resultfile, datarate)
