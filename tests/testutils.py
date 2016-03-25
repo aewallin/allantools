@@ -121,7 +121,7 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, toleran
     (taus, devs, ns) = read_stable32(resultfile, datarate)
     print("test of function ", function )
     if verbose:
-        print("Tau N  \t DEV(Stable32) \t DEV(allantools) \t relative error")
+        print("Tau N  \t DEV(Stable32) \t DEV(allantools) \t rel.error\t bias")
     # run allantools algorithm, row by row
     for (tau, dev, n) in zip(taus, devs, ns):
         if frequency:
@@ -148,14 +148,15 @@ def check_deviations(xxx_todo_changeme, tolerance, verbose):
 
     # check the DEV result, with a given relative error tolerance
     rel_error = (a2 - a1) / a1
+    bias = pow(a2/a1,2)
     # tolerance = 1e-4 # if Stable32 results were given with more digits we could decrease tol
     try:
         assert ( abs(rel_error) < tolerance )
         if verbose:
-            print("%d %d  \t %0.6g \t %0.6g \t %0.6f OK!" % (t1, n1, a1, a2, rel_error))
+            print("%d %d  \t %0.6g \t %0.6g \t %0.6f \t %0.4f OK!" % (t1, n1, a1, a2, rel_error,bias))
     except:
         n_errors = n_errors + 1
-        print("ERROR %d  %d %0.6g \t %0.6g \t %0.6f" % (t1, n1, a1, a2, rel_error))
+        print("ERROR %d  %d %0.6g \t %0.6g \t %0.6f \t %0.4f" % (t1, n1, a1, a2, rel_error, bias))
         n_errors = n_errors + 1
 
     return n_errors
