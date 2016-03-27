@@ -5,6 +5,7 @@ __all__ = [
     'mdev',
     'hdev',
     'ohdev',
+    'calc_hdev_phase',
     'tdev',
     'totdev',
     'mtotdev',
@@ -37,7 +38,7 @@ from .allantools import mdev
 from .allantools import hdev
 
 from .allantools import ohdev
-
+from .allantools import calc_hdev_phase
 from .allantools import tdev
 
 from .allantools import totdev

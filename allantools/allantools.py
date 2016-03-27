@@ -742,7 +742,7 @@ def calc_htotdev_freq(freq, rate, m):
     """
 
     N = int(len(freq)) # frequency data, N points
-
+    m = int(m)
     n=0    # number of terms in the sum, for error estimation
     dev=0.0 # the deviation we are computing
     err=0.0 # the error in the deviation    
@@ -750,8 +750,8 @@ def calc_htotdev_freq(freq, rate, m):
         xs = freq[i:i+3*m] # subsequence of length 3m, from the original phase data
         assert( len(xs) == 3*m )
         # remove linear trend. by averaging first/last half, computing slope, and subtracting
-        half1_idx = np.floor(3*m/2.0) 
-        half2_idx =  np.ceil(3*m/2.0) 
+        half1_idx = int( np.floor(3*m/2.0) )
+        half2_idx = int( np.ceil(3*m/2.0)  )
         # m
         # 1    0:1   2:2
         mean1 = np.mean( xs[:half1_idx] ) 
