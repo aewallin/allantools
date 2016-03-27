@@ -245,8 +245,6 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
         
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
 
-    (phase, m, taus_used) = tau_m(phase, rate, taus)
-
     ad  = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
     adn = np.zeros_like(taus_used)
