@@ -7,6 +7,8 @@ Allan deviation tools
 Version history
 ---------------
 
+**Current master - unreleased**
+- added Hadamard Total Deviatio htotdev()
 - added Modified Total Deviation mtotdev(), and Time Total Deviation ttotdev()
   see http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/
 - automatic tau-lists:  taus=[ "all" | "octave" | "decade" ]
