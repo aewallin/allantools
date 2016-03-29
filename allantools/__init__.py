@@ -13,6 +13,7 @@ __all__ = [
     'ttotdev',
     'htotdev',
     'calc_htotdev_freq',
+    'theo1',
     'mtie',
     'tierms',
     'frequency2phase',
@@ -47,6 +48,8 @@ from .allantools import mtotdev
 from .allantools import calc_mtotdev_phase
 from .allantools import htotdev
 from .allantools import calc_htotdev_freq
+from .allantools import theo1
+
 from .allantools import mtie
 
 from .allantools import tierms

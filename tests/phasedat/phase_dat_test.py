@@ -26,6 +26,10 @@ def run():
     print(dname)
 
     data_file = 'PHASE.DAT'
+    
+    #theo1_result = 'phase_dat_theo1.txt'
+    theo1_result = 'phase_dat_theo1_alpha0.txt' # should have no bias-correction?
+    
     htotdev_result = 'phase_dat_htotdev_octave.txt'
     
     ttotdev_result1 = 'phase_dat_ttotdev_octave.txt'
@@ -48,6 +52,9 @@ def run():
     verbose = 1
     
     tolerance = 1e-4
+    
+    testutils.test_row_by_row( allan.theo1, data_file, 1.0, theo1_result , verbose=verbose, tolerance=tolerance)
+    
     testutils.test_row_by_row( allan.htotdev, data_file, 1.0, htotdev_result , verbose=verbose, tolerance=tolerance)
     
     testutils.test_row_by_row( allan.ttotdev, data_file, 1.0, ttotdev_result2 , verbose=verbose, tolerance=tolerance)

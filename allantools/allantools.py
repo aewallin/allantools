@@ -797,6 +797,63 @@ def calc_htotdev_freq(freq, rate, m):
     error = dev / np.sqrt(n)
     return (dev,error,n)
 
+def theo1(phase=None, frequency=None, rate=1.0, taus=[]):
+    """ PRELIMINARY - REQUIRES FURTHER TESTING.
+        Theo1
+        Thêo1 is a two-sample variance with improved confidence and 
+        extended averaging factor range. 
+
+        NIST SP 1065 eq (30) page 29
+        
+        see tests/phasedat/phase_dat_test.py for initial test
+        
+        TODO: bias correction
+        
+    Parameters
+    ----------
+    phase: np.array
+        Phase data in seconds. Provide either phase or frequency.
+    frequency: np.array
+        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    rate: float
+        The sampling rate for phase or frequency, in Hz
+    taus: np.array
+        Array of tau values for which to compute measurement
+    
+    """
+    if phase == None:
+        phase = frequency2phase(frequency, rate)
+        
+    rate = float(rate)
+    tau0 = 1.0/rate
+    (phase, ms, taus_used) = tau_generator(phase, rate, taus, even=True)
+
+    devs    = np.zeros_like(taus_used)
+    deverrs = np.zeros_like(taus_used)
+    ns      = np.zeros_like(taus_used)
+    
+    N=len(phase)
+    for idx, m in enumerate(ms):
+        assert( m % 2 == 0 ) # m must be even
+        dev=0
+        n=0
+        for i in range( int(N-m) ):
+            s=0
+            for d in range( int(m)/2 ): # inner sum
+                pre = 1.0 / (float(m)/2 - float(d))
+                s += pre*pow( phase[i]-phase[i-d+m/2] + phase[i+m]-phase[i+d+m/2] , 2)
+                n=n+1
+            dev += s
+        assert( n == (N-m)*m/2 ) # N-m outer sums, m/2 inner sums
+        dev = dev/( 0.75*(N-m)*pow(m*tau0,2) )
+        # factor 0.75 used here? http://tf.nist.gov/general/pdf/1990.pdf
+        # but not here? http://tf.nist.gov/timefreq/general/pdf/2220.pdf page 29
+        devs[idx] = np.sqrt( dev )
+        deverrs[idx] = devs[idx] / np.sqrt(N-m)
+        ns[idx] = n
+        
+    return remove_small_ns(taus_used, devs, deverrs, ns)
+    
 
 def tierms(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Time Interval Error RMS.
@@ -1051,7 +1108,7 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
 #
 
 
-def tau_generator(data, rate, taus=[], v=False):
+def tau_generator(data, rate, taus=[], v=False, even=False):
     """ pre-processing of the tau-list given by the user (Helper function)
 
     Does sanity checks, sorts data, removes duplicates and invalid values.
@@ -1068,6 +1125,10 @@ def tau_generator(data, rate, taus=[], v=False):
         Array of tau values for which to compute measurement.
         Alternatively one of the keywords: "all", "octave", "decade".
         Defaults to 'octave' if omitted.
+    v:
+        verbose output if True
+    even:
+        require even m, where tau=m*tau0, for Theo1 statistic
 
     Returns
     -------
@@ -1116,7 +1177,12 @@ def tau_generator(data, rate, taus=[], v=False):
         print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
 
     taus2 = m / float(rate)
-
+    
+    if even:
+        m_even = ((m % 2) == 0)
+        m = m[m_even]
+        taus2 = taus2[m_even]
+        
     return data, m, taus2
 
 def remove_small_ns(*args):
