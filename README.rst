@@ -77,9 +77,16 @@ Installation
 ============
 
 
-clone from github, or download from pypi::
+clone from github, then install with::  
 
-    sudo python setup.py install
+    sudo python setup.py install # system-wide install
+    python setup.py install --user # user-specific install
+    
+
+or download from pypi::
+
+    sudo pip install allantools
+
 
 Usage 
 =====
