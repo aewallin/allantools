@@ -72,9 +72,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-import numpy as np
 import os
 import json
+import numpy as np
 import scipy.stats # used in uncertainty_estimate()
 import enum  # requires "pip install enum34" on older python installs
 
@@ -83,6 +83,7 @@ pkginfo_path = os.path.join(os.path.dirname(__file__),
                             'allantools_info.json')
 pkginfo = json.load(open(pkginfo_path))
 __version__ = pkginfo["version"]
+
 
 def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Time deviation.
@@ -167,9 +168,9 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
     if phase == None:
         phase = frequency2phase(frequency, rate)
 
-    (phase, ms, taus_used) = tau_generator(phase, rate, taus=taus)
+    (phase, ms, taus_used) = tau_generator(phase, rate, taus=taus)    
     data, taus = np.array(phase), np.array(taus)
-
+    
     md    = np.zeros_like(ms)
     mderr = np.zeros_like(ms)
     ns    = np.zeros_like(ms)
@@ -250,7 +251,7 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
     """
     if phase == None:
         phase = frequency2phase(frequency, rate)
-
+        
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
 
     ad  = np.zeros_like(taus_used)
@@ -706,7 +707,7 @@ def htotdev(phase=None, frequency=None, rate=1.0, taus=[]):
         RW FM   0.771      alpha=-2
         FW FM   0.717      alpha=-3
         RR FM   0.679      alpha=-4
-
+        
     Parameters
     ----------
     phase: np.array
@@ -717,20 +718,20 @@ def htotdev(phase=None, frequency=None, rate=1.0, taus=[]):
         The sampling rate for phase or frequency, in Hz
     taus: np.array
         Array of tau values for which to compute measurement
-
+    
     """
     if phase == None:
         phase = frequency2phase(frequency, rate)
-
+        
     rate = float(rate)
     (phase, ms, taus_used) = tau_generator(phase, rate, taus)
 
     devs    = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
     ns      = np.zeros_like(taus_used)
-
+    
     freq = phase2frequency(phase, rate)
-
+    
     # NOTE at mj==1 we use ohdev(), based on comment from here:
     # http://www.wriley.com/paper4ht.htm
     # "For best consistency, the overlapping Hadamard variance is used instead of the Hadamard total variance at m=1"
@@ -746,14 +747,14 @@ def calc_htotdev_freq(freq, rate, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of htotdev for one averaging factor m
         tau = m*tau0
-
+        
     """
 
     N = int(len(freq)) # frequency data, N points
     m = int(m)
     n=0    # number of terms in the sum, for error estimation
     dev=0.0 # the deviation we are computing
-    err=0.0 # the error in the deviation
+    err=0.0 # the error in the deviation    
     for i in range(0,N-3*int(m)+1):
         xs = freq[i:i+3*m] # subsequence of length 3m, from the original phase data
         assert( len(xs) == 3*m )
@@ -762,9 +763,9 @@ def calc_htotdev_freq(freq, rate, m):
         half2_idx = int( np.ceil(3*m/2.0)  )
         # m
         # 1    0:1   2:2
-        mean1 = np.mean( xs[:half1_idx] )
+        mean1 = np.mean( xs[:half1_idx] ) 
         mean2 = np.mean( xs[half2_idx:] )
-
+        
         if int(3*m)%2==1: # m is odd
             # 3m = 2k+1 is odd, with the averages at both ends over k points
             # the distance between the averages is then k+1 = (3m-1)/2 +1
@@ -772,13 +773,13 @@ def calc_htotdev_freq(freq, rate, m):
         else: # m is even
             # 3m = 2k is even, so distance between averages is k=3m/2
             slope = (mean2-mean1) / (0.5*3*m)
-
+              
         x0 = [x - slope*(idx-np.floor(3*m/2)) for (idx,x) in enumerate(xs)]  # remove the linear trend
         x0_flip = x0[::-1] # left-right flipped version of array
         # extended sequence of length 9m, by uninverted even reflection
         xstar = np.concatenate( (x0_flip,x0,x0_flip ))
         assert( len(xstar)==9*m )
-
+        
         # now compute totdev on these 9m points
         # 6m unique groups of m-point averages, all possible overlapping second differences
         # one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2
@@ -791,14 +792,14 @@ def calc_htotdev_freq(freq, rate, m):
             squaresum += pow(xmean1-2.0*xmean2+xmean3, 2)
             k=k+1
         assert( k == 6*int(m) )
-
+        
         squaresum = (1.0/(6.0*k)) * squaresum
         dev += squaresum
         n=n+1
-
+    
     # scaling in front of double-sum
     assert( n == N-3*int(m)+1 ) # sanity check on the number of terms n
-    dev = dev* 1.0/ ( N-3*m+1 )
+    dev = dev* 1.0/ ( N-3*m+1 ) 
     dev = np.sqrt(dev)
     error = dev / np.sqrt(n)
     return (dev,error,n)
@@ -986,7 +987,7 @@ def gradev(phase=None, frequency=None, rate=1.0, taus=[], ci=0.9, noisetype='wp'
     if phase == None:
         frequency= trim_data(frequency)
         phase = frequency2phase(frequency, rate)
-
+        
     (data, m, taus_used) = tau_generator(phase, rate, taus)
 
     ad  = np.zeros_like(taus_used)
@@ -1086,14 +1087,14 @@ def tau_generator(data, rate, taus=[], v=False):
     taus: np.array
         Cleaned up list of tau values
     """
-
+    
 
     if rate == 0:
         raise RuntimeError("Warning! rate==0")
 
     if not taus: # empty or no tau-list supplied
         taus='octave' # default to octave
-
+    
     if taus == "all":
         taus = (1.0/rate)*np.linspace(1.0,len(data),len(data))
     elif taus == "octave":
@@ -1102,11 +1103,11 @@ def tau_generator(data, rate, taus=[], v=False):
     elif taus == "decade":
         maxn = np.floor( np.log10( len(data) ) )
         taus = (1.0/rate)*np.logspace(0,maxn,maxn+1,base=10.0)
-
+    
     data, taus = np.array(data), np.array(taus)
     rate = float(rate)
     m = [] # integer averaging factor. tau = m*tau0
-
+    
     taus_valid1 = taus < (1 / float(rate)) * float(len(data))
     taus_valid2 = taus > 0
     taus_valid  = taus_valid1 & taus_valid2
@@ -1392,15 +1393,15 @@ if __name__ == "__main__":
     print(mtot_dev, mtot_n)
 
     """
-
-
+    
+    
     Nmax = pow(2,8)
     phase = 0.2345* np.random.randn(Nmax)
     my_taus=[1,2,4,np.floor(Nmax/3)]
     (o_taus, o_dev, o_err, o_n)=htotdev(phase=phase, rate=1,taus=my_taus)
     print(len(phase))
     print(o_taus,  o_dev)
-
+    
     """
     # code to test mtie_phase_fast, incomplete!
     Nmax = pow(2,8)
