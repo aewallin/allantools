@@ -24,5 +24,4 @@ setup(name=pkginfo['name'],
       setup_requires=['pytest-runner'],
       tests_require=['pytest', 'numpy'],
       long_description=open('README.rst', 'r').read(),
-      include_package_data=True,
       )
