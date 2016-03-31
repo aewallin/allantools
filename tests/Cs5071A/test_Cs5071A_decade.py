@@ -45,7 +45,8 @@ data_file = '5071A_phase.txt.gz' # input data file
 verbose = 1
 tolerance = 1e-4
 rate = 1/float(1.0) # stable32 runs were done with this data-interval
-    
+
+@pytest.mark.slow
 class TestCS():
     def test_adev(self):
         self.generic_test( result= 'adev_decade.txt' , fct= allan.adev )

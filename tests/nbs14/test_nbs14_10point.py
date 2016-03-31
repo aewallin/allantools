@@ -76,10 +76,12 @@ class TestNBS14_10Point():
     def test_mtotdev(self):
         self.generic_test( allan.mtotdev, nbs14_devs[7] )     
     def test_ttotdev(self):
-        self.generic_test( allan.ttotdev, nbs14_devs[8] )  
+        self.generic_test( allan.ttotdev, nbs14_devs[8] )
+    @pytest.mark.fails
     def test_htotdev(self):
         # fails, no bias correction at tau=2, should be corrected by 0.995
-        self.generic_test( allan.htotdev, nbs14_devs[9] )  
+        self.generic_test( allan.htotdev, nbs14_devs[9] ) 
+    @pytest.mark.fails
     def test_htotdev2(self):
         # compare against Stable32 values - fixme!
         self.generic_test( allan.htotdev, nbs14_devs[10] )  

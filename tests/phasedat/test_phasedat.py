@@ -44,11 +44,15 @@ class TestPhaseDat():
         self.generic_test( result='phase_dat_ohdev.txt' , fct= allan.ohdev )
     def test_phasedat_totdev(self):
         self.generic_test( result='phase_dat_totdev.txt' , fct= allan.totdev )
+    @pytest.mark.fails
+    @pytest.mark.slow
     def test_phasedat_htotdev(self):
         # this test fails because bias-correction is not implemented
         self.generic_test( result='phase_dat_htotdev_octave.txt' , fct= allan.htotdev )
+    @pytest.mark.slow
     def test_phasedat_mtotdev(self):
         self.generic_test( result='phase_dat_mtotdev_octave.txt' , fct= allan.mtotdev )
+    @pytest.mark.slow
     def test_phasedat_ttotdev(self):
         self.generic_test( result='phase_dat_ttotdev_octave.txt' , fct= allan.ttotdev )
     def test_phasedat_theo1_alpha0(self):
