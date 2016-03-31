@@ -9,6 +9,7 @@
 
 import math
 import sys
+import pytest
 sys.path.append("..")
 sys.path.append("../..") # hack to import from parent directory
 # remove if you have allantools installed in your python path
@@ -19,68 +20,42 @@ import testutils
 import os
 import time
 
-def print_elapsed(start):
-    end = time.clock()
-    print(" %.2f s"% ( end-start ))
-    return time.clock()
-    
-def test_TIC():
+def change_to_test_dir():
     # hack to run script from its own directory
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
+    
+data_file = 'tic_phase.txt' # input data file
+verbose = 1
+tolerance = 1e-4
+rate = 1/float(1.0) # stable32 runs were done with this data-interval
+    
+class TestTIC():
+    def test_adev(self):
+        self.generic_test( result= 'tic_adev.txt' , fct= allan.adev )
+    def test_oadev(self):
+        self.generic_test( result='tic_oadev.txt' , fct= allan.oadev )
+    def test_mdev(self):
+        self.generic_test( result='tic_mdev.txt' , fct= allan.mdev )
+    def test_tdev(self):
+        self.generic_test( result='tic_tdev.txt' , fct= allan.tdev )
+    def test_hdev(self):
+        self.generic_test( result='tic_hdev.txt' , fct= allan.hdev )
+    def test_ohdev(self):
+        self.generic_test( result='tic_ohdev.txt' , fct= allan.ohdev )
+    def test_totdev(self):
+        self.generic_test( result='tic_totdev.txt' , fct= allan.totdev )
 
-    data_file = 'tic_phase.txt'
-    adev_result = 'tic_adev.txt'
-    oadev_result = 'tic_oadev.txt'
-    mdev_result = 'tic_mdev.txt'
-    tdev_result = 'tic_tdev.txt'
-    hdev_result = 'tic_hdev.txt'
-    ohdev_result = 'tic_ohdev.txt'
-    totdev_result = 'tic_totdev.txt'
-    #mtie_result = 'mtie_fast.txt'
-    tierms_result = 'tic_tierms.txt'
-    
-    verbose = 1
-    
-    tolerance = 1e-4
-    rate = 1/float(1.0) # stable32 runs were done with this data-interval
-    start0 = time.clock()
-    start = print_elapsed(time.clock())
-    
-    testutils.test_row_by_row( allan.adev, data_file, rate, adev_result , verbose, tolerance)
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.oadev, data_file, rate, oadev_result, verbose, tolerance )
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.mdev, data_file, rate, mdev_result, verbose, tolerance )
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.tdev, data_file, rate, tdev_result, verbose, tolerance )
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.hdev, data_file, rate, hdev_result, verbose, tolerance ) # 0.85 s
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.ohdev, data_file, rate, ohdev_result, verbose, tolerance ) # 5 s
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.tierms, data_file, rate, tierms_result, verbose, tolerance ) # 5.9 s
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.totdev, data_file, rate, totdev_result, verbose, tolerance ) # 13 s
-    start = print_elapsed(start)
-    
-    #testutils.test_row_by_row( allan.mtie_phase, data_file, rate, mtie_result, verbose, tolerance ) # 13 s
-    #start = print_elapsed(start)
 
-    print(" TIC tests took %.2f s" % ( time.clock()-start0 )) 
-    # 2015-03-29 running time without MTIE
-    # Laptop: i7-3537U CPU @ 2.00GHz
-    # tests took 2.38 s
+    #def test_mtie(self):
+    #    self.generic_test( result='mtie_fast.txt' , fct= allan.mtie )
+    def test_tierms(self):
+        self.generic_test( result='tic_tierms.txt' , fct= allan.tierms )
     
+    def generic_test(self, datafile = data_file, result="", fct=None):
+        change_to_test_dir()
+        testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)
+
 if __name__ == "__main__":
-    test_TIC()
-
-
+    pytest.main()
