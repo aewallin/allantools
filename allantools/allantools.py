@@ -6,6 +6,8 @@ Allan deviation tools
 
 Version history
 ---------------
+** current master ** unreleased
+- convert tests to use pytest
 
 **2016.3** 2016 March
 - improve documentation and add __version__
