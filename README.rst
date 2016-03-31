@@ -144,7 +144,7 @@ To exclude known failing tests::
 
 To exclude tests that run slowly::
 
-    $ py.test -m "not fails" --durations=10
+    $ py.test -m "not slow" --durations=10
 
 
 Test coverage may be obtained with the 
