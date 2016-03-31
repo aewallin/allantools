@@ -27,18 +27,13 @@ def run():
 
     data_file = 'PHASE.DAT'
     
-    #theo1_result = 'phase_dat_theo1.txt'
     theo1_result = 'phase_dat_theo1_alpha0.txt' # should have no bias-correction?
     
     htotdev_result = 'phase_dat_htotdev_octave.txt'
     
-    ttotdev_result1 = 'phase_dat_ttotdev_octave.txt'
-    #ttotdev_result2 = 'phase_dat_ttotdev_decade.txt'
-    #ttotdev_result3 = 'phase_dat_ttotdev_all.txt'
+    ttotdev_result = 'phase_dat_ttotdev_octave.txt'
         
-    #mtotdev_result1 = 'phase_dat_mtotdev_decade.txt'
-    mtotdev_result2 = 'phase_dat_mtotdev_octave.txt'
-    #mtotdev_result3 = 'phase_dat_mtotdev.txt'
+    mtotdev_result = 'phase_dat_mtotdev_octave.txt'
 
     adev_result = 'phase_dat_adev.txt'
     oadev_result = 'phase_dat_oadev.txt'
@@ -57,11 +52,10 @@ def run():
     
     testutils.test_row_by_row( allan.htotdev, data_file, 1.0, htotdev_result , verbose=verbose, tolerance=tolerance)
     
-    testutils.test_row_by_row( allan.ttotdev, data_file, 1.0, ttotdev_result2 , verbose=verbose, tolerance=tolerance)
-    testutils.test_row_by_row( allan.ttotdev, data_file, 1.0, ttotdev_result1 , verbose=verbose, tolerance=tolerance)
+    testutils.test_row_by_row( allan.ttotdev, data_file, 1.0, ttotdev_result , verbose=verbose, tolerance=tolerance)
 
-    testutils.test_row_by_row( allan.mtotdev, data_file, 1.0, mtotdev_result1 , verbose=verbose, tolerance=tolerance)
-    testutils.test_row_by_row( allan.mtotdev, data_file, 1.0, mtotdev_result2 , verbose=verbose, tolerance=tolerance)
+    testutils.test_row_by_row( allan.mtotdev, data_file, 1.0, mtotdev_result , verbose=verbose, tolerance=tolerance)
+
     testutils.test( allan.adev, data_file, 1.0, adev_result , verbose=verbose, tolerance=tolerance)
     testutils.test( allan.oadev, data_file, 1.0, oadev_result, verbose=verbose, tolerance=tolerance )
     testutils.test( allan.mdev, data_file, 1.0, mdev_result, verbose=verbose, tolerance=tolerance )
