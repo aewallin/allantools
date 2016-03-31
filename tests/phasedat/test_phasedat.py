@@ -18,7 +18,7 @@ import testutils
 import os
 
 
-def run():
+def test_phasedat():
     # hack to run script from its own directory
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
@@ -68,6 +68,6 @@ def run():
     
 
 if __name__ == "__main__":
-    run()
+    test_phasedat()
 
 

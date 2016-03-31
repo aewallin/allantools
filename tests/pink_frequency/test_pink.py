@@ -16,7 +16,7 @@ import testutils
 
 import os
 
-def run():
+def test_pink():
 	# hack to run script from its own directory
 	abspath = os.path.abspath(__file__)
 	dname = os.path.dirname(abspath)
@@ -45,6 +45,6 @@ def run():
 	testutils.test( allan.totdev, data_file, rate, totdev_result,frequency=True, verbose=0, tolerance=tolerance )
 
 if __name__ == "__main__":
-	run()
+	test_pink()
 
 

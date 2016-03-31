@@ -34,7 +34,7 @@ def print_elapsed(start):
 	print(" %.2f s"% ( end-start ))
 	return time.clock()
 	
-def run():
+def test_cs():
 	# hack to run script from its own directory
 	abspath = os.path.abspath(__file__)
 	dname = os.path.dirname(abspath)
@@ -82,8 +82,8 @@ def run():
 	print(" Cs5071A_decade tests took %.2f s"% ( time.clock()-start0 )) 
     # 2014-08-31 running time without MTIE
     # Laptop: i7-3537U CPU @ 2.00GHz
-	# Cs5071A_decade tests took 20.34 s
+    # Cs5071A_decade tests took 20.34 s
 if __name__ == "__main__":
-	run()
+    test_cs()
 
 

@@ -92,7 +92,7 @@ def nbs14_tester( function, pdata, fdata, correct_devs, soft=False ):
         else:
             assert( check_devs( devs[i], correct_devs[i] ) )
 
-def nbs14_1000_test():
+def test_nbs14_1000():
     fdata = nbs14_1000()
     print("nbs14 1000-point frequency data tests:")
     
@@ -171,7 +171,7 @@ def check_devs(dev2, dev1, soft=False):
             return True
         return False
 
-def nbs14_test():
+def test_nbs14_10():
     taus = [1, 2]
     devs = []
     tol = 1e-4
@@ -306,10 +306,6 @@ def nbs14_test():
     
     print("nbs14 all test OK")
 
-def run():
-    nbs14_test()
-    nbs14_1000_test()
-
-
 if __name__ == "__main__":
-    run()
+    test_nbs14_10()
+    test_nbs14_1000()

@@ -24,7 +24,7 @@ def print_elapsed(start):
     print(" %.2f s"% ( end-start ))
     return time.clock()
     
-def run():
+def test_TIC():
     # hack to run script from its own directory
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
@@ -81,6 +81,6 @@ def run():
     # tests took 2.38 s
     
 if __name__ == "__main__":
-    run()
+    test_TIC()
 
 

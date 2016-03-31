@@ -22,7 +22,7 @@ def print_elapsed(start):
     print(" %.2f s"% ( end-start ))
     return time.clock()
     
-def run():
+def test_gps():
     # hack to run script from its own directory
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
@@ -70,6 +70,6 @@ def run():
     print(" GPS tests took %.2f s" % ( time.clock()-start0 )) 
     
 if __name__ == "__main__":
-    run()
+    test_gps()
 
 
