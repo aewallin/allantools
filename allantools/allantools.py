@@ -67,7 +67,6 @@ import os
 import json
 import numpy as np
 import scipy.stats # used in uncertainty_estimate()
-import enum  # requires "pip install enum34" on older python installs
 
 # Get version number from json metadata
 pkginfo_path = os.path.join(os.path.dirname(__file__),
@@ -169,6 +168,7 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
     # this is a 'loop-unrolled' algorithm following
     # http://www.leapsecond.com/tools/adev_lib.c
     for idx, m in enumerate(ms):
+        m = int(m) # without this we get: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
         tau = taus_used[idx]
 
         # First loop sum
@@ -288,7 +288,7 @@ def calc_adev_phase(phase, rate, mj, stride):
     * http://www.leapsecond.com/tools/adev_lib.c
     NIST SP 1065, eqn (7) and (11) page 16
     """
-
+    mj = int(mj)
     d2 = phase[2 * mj::stride]
     d1 = phase[1 * mj::stride]
     d0 = phase[::stride]
@@ -460,6 +460,7 @@ def calc_hdev_phase(phase, rate, mj, stride):
     """
 
     tau0 = 1.0 / float(rate)
+    mj = int(mj)
 
     d3 = phase[3 * mj::stride]
     d2 = phase[2 * mj::stride]
@@ -680,6 +681,10 @@ def calc_mtotdev_phase(phase, rate, m):
         n=n+1
 
     # scaling in front of double-sum
+    if not ( n == N-3*int(m)+1 ):
+        print('Error: not n == N-3*int(m)+1 !!')
+        print(' n= %d  N= %d  m= %d '%(n,N,m))
+        print(' N-3m+1 = %d'%(N-3*m+1))
     assert( n == N-3*int(m)+1 ) # sanity check on the number of terms n
     dev = dev* 1.0/ ( 2.0*pow(m*tau0,2)*(N-3*m+1) )
     dev = np.sqrt(dev)
@@ -806,7 +811,7 @@ def calc_htotdev_freq(freq, rate, m):
 def theo1(phase=None, frequency=None, rate=1.0, taus=[]):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Theo1
-        Thêo1 is a two-sample variance with improved confidence and 
+        Theo1 is a two-sample variance with improved confidence and 
         extended averaging factor range. 
 
         NIST SP 1065 eq (30) page 29
@@ -840,6 +845,7 @@ def theo1(phase=None, frequency=None, rate=1.0, taus=[]):
     
     N=len(phase)
     for idx, m in enumerate(ms):
+        m = int(m) # to avoid: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
         assert( m % 2 == 0 ) # m must be even
         dev=0
         n=0

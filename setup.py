@@ -3,7 +3,6 @@
 from setuptools import setup
 import json
 import os
-# import numpy
 
 pkginfo_path = os.path.join(os.path.dirname(__file__),
                             'allantools',

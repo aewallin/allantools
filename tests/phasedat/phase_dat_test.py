@@ -33,12 +33,12 @@ def run():
     htotdev_result = 'phase_dat_htotdev_octave.txt'
     
     ttotdev_result1 = 'phase_dat_ttotdev_octave.txt'
-    ttotdev_result2 = 'phase_dat_ttotdev_decade.txt'
-    ttotdev_result3 = 'phase_dat_ttotdev_all.txt'
+    #ttotdev_result2 = 'phase_dat_ttotdev_decade.txt'
+    #ttotdev_result3 = 'phase_dat_ttotdev_all.txt'
         
-    mtotdev_result1 = 'phase_dat_mtotdev_decade.txt'
+    #mtotdev_result1 = 'phase_dat_mtotdev_decade.txt'
     mtotdev_result2 = 'phase_dat_mtotdev_octave.txt'
-    mtotdev_result3 = 'phase_dat_mtotdev.txt'
+    #mtotdev_result3 = 'phase_dat_mtotdev.txt'
 
     adev_result = 'phase_dat_adev.txt'
     oadev_result = 'phase_dat_oadev.txt'
