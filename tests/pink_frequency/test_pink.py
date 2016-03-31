@@ -7,6 +7,9 @@
 """
 import math
 import sys
+import os
+import pytest
+
 sys.path.append("..")
 sys.path.append("../..") # hack to import from parent directory
 # remove if you have allantools installed in your python path
@@ -14,37 +17,36 @@ sys.path.append("../..") # hack to import from parent directory
 import allantools as allan
 import testutils
 
-import os
-
-def test_pink():
+def change_to_test_dir():
     # hack to run script from its own directory
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
 
-    data_file = 'pink_frequency.txt'
-    adev_result = 'adev.txt'
-    oadev_result = 'oadev.txt'
-    mdev_result = 'mdev.txt'
-    tdev_result = 'tdev.txt'
-    hdev_result = 'hdev.txt'
-    ohdev_result = 'ohdev.txt'
-    totdev_result = 'totdev_alpha0.txt'
-    mtie_result = 'mtie.txt'
-    tierms_result = 'tierms.txt'
-    #verbose = 1
+data_file = 'pink_frequency.txt'
+verbose = 1
+tolerance = 1e-4 # relative tolerance
+rate = 1/float(42.0) # stable32 runs were done with this data-interval
     
-    tolerance = 1e-4
-    rate = 1/float(42.0) # stable32 runs were done with this data-interval
-    testutils.test( allan.adev, data_file, rate, adev_result ,frequency=True, verbose=0, tolerance=tolerance)
-    testutils.test( allan.oadev, data_file, rate, oadev_result,frequency=True, verbose=0, tolerance=tolerance )
-    testutils.test( allan.mdev, data_file, rate, mdev_result,frequency=True, verbose=0, tolerance=tolerance )
-    testutils.test( allan.tdev, data_file, rate, tdev_result,frequency=True, verbose=0, tolerance=tolerance )
-    testutils.test( allan.hdev, data_file, rate, hdev_result,frequency=True, verbose=0, tolerance=tolerance )
-    testutils.test( allan.ohdev, data_file, rate, ohdev_result,frequency=True, verbose=0, tolerance=tolerance )
-    testutils.test( allan.totdev, data_file, rate, totdev_result,frequency=True, verbose=0, tolerance=tolerance )
+class TestPink():
+    def test_adev(self):
+        self.generic_test( result= 'adev.txt' , fct= allan.adev )
+    def test_oadev(self):
+        self.generic_test( result= 'oadev.txt' , fct= allan.oadev )        
+    def test_mdev(self):
+        self.generic_test( result= 'mdev.txt' , fct= allan.mdev )        
+    def test_tdev(self):
+        self.generic_test( result= 'tdev.txt' , fct= allan.tdev )        
+    def test_hdev(self):
+        self.generic_test( result= 'hdev.txt' , fct= allan.hdev )        
+    def test_ohdev(self):
+        self.generic_test( result= 'ohdev.txt' , fct= allan.ohdev )        
+    def test_totdev(self):
+        self.generic_test( result= 'totdev_alpha0.txt' , fct= allan.totdev )        
+
+    def generic_test(self, datafile = data_file, result="", fct=None):
+        change_to_test_dir()
+        testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance, frequency=True, normalize=True)
 
 if __name__ == "__main__":
-    test_pink()
-
-
+    pytest.main()
