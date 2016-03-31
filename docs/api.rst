@@ -49,7 +49,7 @@ for code see e.g.:
 * http://www.leapsecond.com/tools/adev_lib.c
 
 
-General usage:
+General usage
 --------------
 
 *Inputs:*
@@ -69,6 +69,9 @@ General usage:
 Function listing
 ================
 
+Statistics
+----------
+
 .. autofunction:: adev
 .. autofunction:: oadev
 .. autofunction:: mdev     
@@ -81,6 +84,11 @@ Function listing
 .. autofunction:: htotdev                
 .. autofunction:: mtie
 .. autofunction:: tierms
+
+Utilities
+---------
 .. autofunction:: frequency2phase
+.. autofunction:: phase2frequency
+.. autofunction:: phase2radians
 .. autofunction:: uncertainty_estimate
 .. autofunction:: three_cornered_hat_phase

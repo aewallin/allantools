@@ -748,6 +748,14 @@ def calc_htotdev_freq(freq, rate, m):
         calculation of htotdev for one averaging factor m
         tau = m*tau0
         
+        Parameters
+        ----------
+        frequency: np.array
+            Fractional frequency data (nondimensional).
+        rate: float
+            The sampling rate for frequency, in Hz
+        m: int
+            Averaging factor. tau = m*tau0, where tau0=1/rate.
     """
 
     N = int(len(freq)) # frequency data, N points
@@ -1207,25 +1215,25 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
         will be at 0.05 and 0.95.
     noisetype: string
         the type of noise desired:
-            'wp' returns white phase noise.
-            'wf' returns white frequency noise.
-            'fp' returns flicker phase noise.
-            'ff' returns flicker frequency noise.
-            'rf' returns random walk frequency noise.
+        'wp' returns white phase noise.
+        'wf' returns white frequency noise.
+        'fp' returns flicker phase noise.
+        'ff' returns flicker frequency noise.
+        'rf' returns random walk frequency noise.
         If the input is not recognized, it defaults to idealized, uncorrelated
         noise with (N-1) degrees of freedom.
+
+    Notes
+    -----
+       S. Stein, Frequency and Time - Their Measurement and
+       Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
+       http://tf.boulder.nist.gov/general/pdf/666.pdf
 
     Returns
     -------
     [err_l, err_h] : list, float
         the upper and lower bounds of the confidence interval taken as
         distances from the the estimated two sample variance.
-
-    References
-    ----------
-       S. Stein, Frequency and Time - Their Measurement and
-       Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
-       http://tf.boulder.nist.gov/general/pdf/666.pdf
 
     """
 
