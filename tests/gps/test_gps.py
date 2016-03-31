@@ -16,60 +16,45 @@ import testutils
 
 import os
 import time
+import pytest
 
 def print_elapsed(start):
     end = time.clock()
     print(" %.2f s"% ( end-start ))
     return time.clock()
-    
-def test_gps():
+
+def change_to_test_dir():
     # hack to run script from its own directory
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
 
-    data_file = 'gps_1pps_phase_data.txt.gz'
+data_file = 'gps_1pps_phase_data.txt.gz'
+verbose = 1
+tolerance = 1e-4 # relative tolerance
+rate = 1/float(1.0) # 1 PPS measurements, data interval is 1 s
     
-    adev_result = 'stable32_ADEV_decade.txt'
-    oadev_result = 'stable32_OADEV_octave.txt'
-    mdev_result = 'stable32_MDEV_octave.txt'
-    tdev_result = 'stable32_TDEV_octave.txt'
-    hdev_result = 'stable32_HDEV_octave.txt'
-    ohdev_result = 'stable32_OHDEV_octave.txt'
-    totdev_result = 'stable32_TOTDEV_octave.txt'
+class TestGPS():
+    def test_adev(self):
+        self.generic_test( result='stable32_ADEV_decade.txt' , fct= allan.adev )
+    def test_oadev(self):
+        self.generic_test( result='stable32_OADEV_octave.txt' , fct= allan.oadev )
+    def test_mdev(self):
+        self.generic_test( result='stable32_MDEV_octave.txt' , fct= allan.mdev )
+    def test_tdev(self):
+        self.generic_test( result='stable32_TDEV_octave.txt' , fct= allan.tdev )
+    def test_hdev(self):
+        self.generic_test( result='stable32_HDEV_octave.txt' , fct= allan.hdev )
+    def test_ohdev(self):
+        self.generic_test( result='stable32_OHDEV_octave.txt' , fct= allan.ohdev )
+    def test_totdev(self):
+        self.generic_test( result='stable32_TOTDEV_octave.txt' , fct= allan.totdev )
     
-    verbose = 1
-    tolerance = 1e-4 # relative tolerance
-    rate = 1/float(1.0) # 1 PPS measurements, data interval is 1 s
+    def generic_test(self, datafile = data_file, result="", fct=None):
+        change_to_test_dir()
+        testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)
 
-    start0 = time.clock()
-    start = time.clock()
-
-    
-    testutils.test_row_by_row( allan.adev, data_file, rate, adev_result , verbose, tolerance)
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.oadev, data_file, rate, oadev_result, verbose, tolerance )
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.mdev, data_file, rate, mdev_result, verbose, tolerance)
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.tdev, data_file, rate, tdev_result, verbose, tolerance )
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.hdev, data_file, rate, hdev_result, verbose, tolerance )
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.ohdev, data_file, rate, ohdev_result, verbose, tolerance )
-    start = print_elapsed(start)
-    
-    testutils.test_row_by_row( allan.totdev, data_file, rate, totdev_result, verbose, tolerance )
-    start = print_elapsed(start)
-    
-    print(" GPS tests took %.2f s" % ( time.clock()-start0 )) 
-    
 if __name__ == "__main__":
-    test_gps()
+    pytest.main()
 
 
