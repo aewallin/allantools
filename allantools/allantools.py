@@ -7,7 +7,9 @@ Allan deviation tools
 Version history
 ---------------
 
-**Current master - unreleased**
+**2016.3** 2016 March
+- improve documentation and add __version__
+- added Theo1 deviation theo1()
 - added Hadamard Total Deviatio htotdev()
 - added Modified Total Deviation mtotdev(), and Time Total Deviation ttotdev()
   see http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/
@@ -42,17 +44,6 @@ Version history
 
 **v1.00** 2014 January, first version of allantools.
 - see http://www.anderswallin.net/2014/01/allantools/
-
-
-ToDo
-----
-
-Hadamard Total   Better confidence at long averages for Hadamard
-Theo1            Provides information over nearly full record length
-TheoH            Hybrid of Allan and TheoBR (bias-removed Theo1) variances
-
-Bias corrections for mtotdev() and ttotdev()
-Confidence interval estimation.
 
 License
 -------

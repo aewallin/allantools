@@ -87,6 +87,7 @@ Statistics
 
 Utilities
 ---------
+
 .. autofunction:: frequency2phase
 .. autofunction:: phase2frequency
 .. autofunction:: phase2radians

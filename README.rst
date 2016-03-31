@@ -24,6 +24,7 @@ These statistics are currently included:
 * mtotdev() Modified total deviation
 * ttotdev() Time total deviation
 * htotdev() Hadamard total deviation
+* theo1()   Thêo1 deviation
 
 Noise generators for creating synthetic datasets are also included:
 
@@ -114,7 +115,6 @@ Here follows an un-ordered to do list:
 * Statistics
 
     * The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
-    * Theo1
     * TheoH
     
 * Improve documentation
