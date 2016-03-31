@@ -77,9 +77,16 @@ Installation
 ============
 
 
-clone from github, or download from pypi::
+clone from github, then install with::  
 
-    sudo python setup.py install
+    sudo python setup.py install    
+
+(see `python setup.py --help install` for install options)
+
+or download from pypi::
+    
+    sudo pip install allantools
+
 
 Usage 
 =====
@@ -102,7 +109,7 @@ Usage
 Development 
 ===========
 
-Here follows an un-rodered to do list:
+Here follows an un-ordered to do list:
 
 * Statistics
 

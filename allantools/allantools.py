@@ -72,11 +72,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+import os
+import json
 import numpy as np
 import scipy.stats # used in uncertainty_estimate()
 import enum  # requires "pip install enum34" on older python installs
 
-__version__ = "2016.2"
+# Get version number from json metadata
+pkginfo_path = os.path.join(os.path.dirname(__file__),
+                            'allantools_info.json')
+pkginfo = json.load(open(pkginfo_path))
+__version__ = pkginfo["version"]
+
 
 def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Time deviation.

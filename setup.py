@@ -1,25 +1,27 @@
 #!/usr/bin/env python
 
 from setuptools import setup
+import json
+import os
 # import numpy
 
-setup(name='AllanTools',
-      version='2016.2', # must update __version__ in allantools.py also!
-      description='Allan deviation and related time/frequency statistics',
-      author='Anders Wallin',
-      author_email='anders.e.e.wallin@gmail.com',
-      url='https://github.com/aewallin/allantools',
-      license='GPLv3+',
-      packages=['allantools',],
-      install_requires=['numpy','scipy'],
-      requires=['numpy', 'scipy'],
-      #include_dirs=[numpy.get_include()],
-      setup_requires=['pytest-runner'],
-      tests_require=['pytest','numpy'],
-      long_description="""Given phase or fractional frequency data this package calculates:
-                        Allan deviation, overlapping Allan deviation, modified Allan deviation,
-                        Hadamard deviation, overlapping Hadamard deviation, time deviation,
-                        total deviation, modified total deviation, time total deviation, 
-                        MTIE, and TIE-RMS. Synthetic noise data generators are also included."""
-     )
+pkginfo_path = os.path.join(os.path.dirname(__file__),
+                            'allantools',
+                            'allantools_info.json')
+pkginfo = json.load(open(pkginfo_path))
 
+setup(name=pkginfo['name'],
+      version=pkginfo['version'],
+      description=pkginfo['description'],
+      author=pkginfo['main_author'],
+      author_email=pkginfo['main_author_email'],
+      url=pkginfo['url'],
+      license=pkginfo['license'],
+      packages=['allantools', ],
+      install_requires=['numpy', 'scipy'],
+      requires=['numpy', 'scipy'],
+      # include_dirs=[numpy.get_include()],
+      setup_requires=['pytest-runner'],
+      tests_require=['pytest', 'numpy'],
+      long_description=open('README.rst', 'r').read(),
+      )
