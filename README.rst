@@ -132,10 +132,22 @@ Tests
 =====
 
 The tests compare the output of allantools to other programs such
-as Stable32.
+as Stable32. Tests may be run using py.test (http://pytest.org).
+Slow tests are marked 'slow' and tests failing because of a known
+reason are marked 'fails'. To run all tests::
+    
+    $ py.test
 
-Tests may be run using py.test (http://pytest.org) (automatically finds 
-tests/test_run.py) Test coverage may be obtained with the 
+To exclude known failing tests::
+
+    $ py.test -m "not fails" --durations=10
+
+To exclude tests that run slowly::
+
+    $ py.test -m "not fails" --durations=10
+
+
+Test coverage may be obtained with the 
 (https://pypi.python.org/pypi/coverage) module::
 
     coverage run --source allantools setup.py test 
