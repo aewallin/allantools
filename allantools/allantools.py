@@ -1378,39 +1378,3 @@ def phase2frequency(phase, rate):
 
 if __name__ == "__main__":
     print("Nothing to see here.")
-
-    # test of mtotdev
-    """
-    Nmax = pow(2,10)
-    print(Nmax)
-    phase = 0.2345* np.cumsum(np.random.randn(Nmax))
-    #phase = 1* np.linspace(0,Nmax,Nmax)+0.02* np.random.randn(Nmax)
-    #phase = [1,-2,3,-4,5,-6]
-    my_taus=[1.0,2.0,3.0]
-    (m_taus, m_dev, m_err, m_n)=mdev(phase=phase, rate=1.0, taus=my_taus)
-    (mtot_taus, mtot_dev, mtot_err, mtot_n)=mtotdev(phase=phase, rate=1.0, taus=my_taus)
-    print(m_dev, m_n)
-    print(mtot_dev, mtot_n)
-
-    """
-    
-    
-    Nmax = pow(2,8)
-    phase = 0.2345* np.random.randn(Nmax)
-    my_taus=[1,2,4,np.floor(Nmax/3)]
-    (o_taus, o_dev, o_err, o_n)=htotdev(phase=phase, rate=1,taus=my_taus)
-    print(len(phase))
-    print(o_taus,  o_dev)
-    
-    """
-    # code to test mtie_phase_fast, incomplete!
-    Nmax = pow(2,8)
-    phase = 0.2345* np.random.randn(Nmax)
-    taus = []
-    rate = 1.0
-    mtie_phase_fast(phase, rate, taus)
-    # then try using old function
-    (o_taus, o_dev, o_err, o_n)=mtie(phase=phase, rate=rate, taus=[1,3,7,16,32,64,128,255])
-    print(o_taus)
-    print(o_dev)
-    """
