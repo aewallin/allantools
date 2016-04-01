@@ -531,23 +531,24 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     rate = float(rate)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
-    n = len(phase)
+    N = len(phase)
 
     # totdev requires a new dataset
     # Begin by adding reflected data before dataset
-    x1 = 2.0 * phase[0] * np.ones((n - 2,))
+    x1 = 2.0 * phase[0] * np.ones((N - 2,))
     x1 = x1 - phase[1:-1]
     x1 = x1[::-1]
 
     # Reflected data at end of dataset
-    x2 = 2.0 * phase[-1] * np.ones((n - 2,))
+    x2 = 2.0 * phase[-1] * np.ones((N - 2,))
     x2 = x2 - phase[1:-1][::-1]
 
+    assert( len(x1)+len(phase)+len(x2) == 3*N - 4 ) # check length of new dataset 
     # Combine into a single array
-    x = np.zeros((3*n - 4))
-    x[0:n-2] = x1
-    x[n-2:2*(n-2)+2] = phase # original data in the middle
-    x[2*(n-2)+2:] = x2
+    x = np.zeros((3*N - 4))
+    x[0:N-2] = x1
+    x[N-2:2*(N-2)+2] = phase # original data in the middle
+    x[2*(N-2)+2:] = x2
 
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
@@ -565,7 +566,7 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
         v_arr = d1n[:e] - 2.0 * d0[:e] + d1[:e]
         dev = np.sum(v_arr[:mid] * v_arr[:mid])
 
-        dev /= float(2 * pow(mj / rate, 2) * (n - 2))
+        dev /= float(2 * pow(mj / rate, 2) * (N - 2))
         dev = np.sqrt(dev)
         devs[idx] = dev
         deverrs[idx] = dev / np.sqrt(mid)
