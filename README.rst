@@ -148,11 +148,18 @@ To exclude tests that run slowly::
 
     $ py.test -m "not slow" --durations=10
 
+To exclude both (note option change)::
+
+    $ py.test -k "not (slow or fails)" --durations=10
+
+To run the above command without installing the package::
+
+    $ python setup.py test --addopts "-k 'not (fails or slow)'"
 
 Test coverage may be obtained with the 
 (https://pypi.python.org/pypi/coverage) module::
 
-    coverage run --source allantools setup.py test 
+    coverage run --source allantools setup.py test --addopts "-k 'not (fails or slow)'"
     coverage report # Reports on standard output 
     coverage html # Writes annotated source code as html in ./htmlcov/
 
@@ -167,7 +174,7 @@ Creating a source distribution
     python setup.py sdist
 
 Testing the source distribution. The install takes a long time while 
-compiling nympy and scipy.
+compiling numpy and scipy.
 
 ::
 
