@@ -1348,7 +1348,32 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
                              phasedata_ca, rate, taus, function):
     """
     Three Cornered Hat Method
-
+    
+    Parameters
+    ----------
+    phasedata_ab: np.array
+        phase measurements between clock A and B, in seconds
+    phasedata_bc: np.array
+        phase measurements between clock B and C, in seconds
+    phasedata_ca: np.array
+        phase measurements between clock C and A, in seconds
+    rate: float
+        The sampling rate for phase, in Hz
+    taus: np.array
+        The tau values for deviations, in seconds
+    function: allantools deviation function
+        The type of statistic to compute, e.g. allantools.oadev
+    
+    Returns
+    -------
+    tau_ab: np.array
+        Tau values corresponding to output deviations
+    dev_a: np.array
+        List of computed values for clock A
+        
+    Notes
+    -----
+    
     We have three clocks with unknown variances sa^2, sb^2, sc^3
     Three pairwise measurements give variances:
     sab^2, sbc^2, sca^2
@@ -1380,7 +1405,7 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
     var_a = 0.5 * (var_ab + var_ca - var_bc)
 
     dev_a = np.sqrt(var_a)
-    dev_a[var_a < 0] = 0
+    dev_a[var_a < 0] = 0 # don't return imaginary deviations (?)
 
     return tau_ab, dev_a
 
