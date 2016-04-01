@@ -1072,7 +1072,8 @@ def gradev(phase=None, frequency=None, rate=1.0, taus=[], ci=0.9, noisetype='wp'
         ade_h[idx] = deverr[1]
         adn[idx] = n
 
-    return remove_small_ns(taus_used, ad, ade_l, ade_h, adn)
+    # Note that errors are split in 2 arrays
+    return remove_small_ns(taus_used, ad, [ade_l, ade_h], adn)
 
 def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
     """ see http://www.leapsecond.com/tools/adev_lib.c
@@ -1199,43 +1200,40 @@ def tau_generator(data, rate, taus=[], v=False, even=False):
         
     return data, m, taus2
 
-def remove_small_ns(*args):
-    if len(args) == 4:
-        return remove_small_ns_4(*args)
-    elif len(args) == 5:
-        return remove_small_ns_5(*args)
-    else:
-        assert(0)
+def remove_small_ns(taus, devs, deverrs, ns):
+    """ Remove results with small number of samples.
+        If n is small (==1), reject the result
 
-# 4-parameter version of this function
-def remove_small_ns_4(taus, devs, deverrs, ns):
-    """ if n is small (==1), reject the result
+    Parameters
+    ----------
+    taus: array
+        List of tau values for which deviation were computed
+    devs: array
+        List of deviations
+    deverrs: array or array of arrays
+        List of estimated errors (possibly a list containing two arrays :
+        upper and lower values)
+    ns: array
+        Number of samples for each point
 
-        n is the number of averages in the deviation estimate at a
-        certain tau value.
+    Returns
+    -------
+    (taus, devs, deverrs, ns): tuple
+        Identical to input, except that values with low ns have been removed.
+
     """
-
     ns_big_enough = ns > 1
 
     o_taus = taus[ns_big_enough]
-    o_dev  = devs[ns_big_enough]
-    o_err  = deverrs[ns_big_enough]
-    o_n    = ns[ns_big_enough]
+    o_devs  = devs[ns_big_enough]
+    o_ns    = ns[ns_big_enough]
+    if isinstance(deverrs, list):
+        assert(len(deverrs) < 3)
+        o_deverrs = [deverrs[0][ns_big_enough], deverrs[1][ns_big_enough]]
+    else:
+        o_deverrs = deverrs[ns_big_enough]
+    return o_taus, o_devs, o_deverrs, o_ns
 
-    return o_taus, o_dev, o_err, o_n
-
-# FIXME: 5-parameter version of the exact same function as above.
-# try to merge both into one function.
-# This function handles low-side and high-side errors separately
-def remove_small_ns_5(taus, devs, deverrs_l, deverrs_h, ns):
-    """ if n is small (==1), reject the result """
-    ns_big_enough = ns > 1
-    o_taus = taus[ns_big_enough]
-    o_dev  = devs[ns_big_enough]
-    o_err_l  = deverrs_l[ns_big_enough]
-    o_err_h  = deverrs_h[ns_big_enough]
-    o_n    = ns[ns_big_enough]
-    return o_taus, o_dev, o_err_l, o_err_h, o_n
 
 def trim_data(x):
     """
