@@ -616,7 +616,7 @@ def mtotdev(phase=None, frequency=None, rate=1.0, taus=[]):
         phase = frequency2phase(frequency, rate)
 
     rate = float(rate)
-    (phase, ms, taus_used) = tau_generator(phase, rate, taus)
+    (phase, ms, taus_used) = tau_generator(phase, rate, taus, maximum_m = float(len(phase))/3.0)
 
     devs    = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
@@ -723,13 +723,12 @@ def htotdev(phase=None, frequency=None, rate=1.0, taus=[]):
         phase = frequency2phase(frequency, rate)
         
     rate = float(rate)
-    (phase, ms, taus_used) = tau_generator(phase, rate, taus)
+    freq = phase2frequency(phase, rate)
+    (phase, ms, taus_used) = tau_generator(freq, rate, taus, maximum_m = float(len(freq))/3.0)
 
     devs    = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
     ns      = np.zeros_like(taus_used)
-    
-    freq = phase2frequency(phase, rate)
     
     # NOTE at mj==1 we use ohdev(), based on comment from here:
     # http://www.wriley.com/paper4ht.htm
@@ -1124,7 +1123,7 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
 #
 
 
-def tau_generator(data, rate, taus=[], v=False, even=False):
+def tau_generator(data, rate, taus=[], v=False, even=False, maximum_m=-1):
     """ pre-processing of the tau-list given by the user (Helper function)
 
     Does sanity checks, sorts data, removes duplicates and invalid values.
@@ -1170,17 +1169,25 @@ def tau_generator(data, rate, taus=[], v=False, even=False):
     elif taus == "octave":
         maxn = np.floor( np.log2( len(data) ) )
         taus = (1.0/rate)*np.logspace(0,maxn,maxn+1,base=2.0)
-    elif taus == "decade":
+    elif taus == "decade": # 1, 2, 4, 10, 20, 40 spacing similar to Stable32
         maxn = np.floor( np.log10( len(data) ) )
-        taus = (1.0/rate)*np.logspace(0,maxn,maxn+1,base=10.0)
+        taus = []
+        for k in range(int(maxn+1)):
+            taus.append( 1.0*(1.0/rate)*pow(10.0,k) )
+            taus.append( 2.0*(1.0/rate)*pow(10.0,k) )
+            taus.append( 4.0*(1.0/rate)*pow(10.0,k) )
     
     data, taus = np.array(data), np.array(taus)
     rate = float(rate)
     m = [] # integer averaging factor. tau = m*tau0
     
+    if maximum_m == -1: # if no limit given
+        maximum_m = len(data)
+    
     taus_valid1 = taus < (1 / float(rate)) * float(len(data))
     taus_valid2 = taus > 0
-    taus_valid  = taus_valid1 & taus_valid2
+    taus_valid3 = taus <= (1 / float(rate)) * float(maximum_m)
+    taus_valid  = taus_valid1 & taus_valid2 & taus_valid3
     m = np.floor(taus[taus_valid] * rate)
     m = m[m != 0]       # m is tau in units of datapoints
     m = np.unique(m)    # remove duplicates and sort
