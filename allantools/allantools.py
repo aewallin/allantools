@@ -1210,7 +1210,7 @@ def remove_small_ns(taus, devs, deverrs, ns):
         List of tau values for which deviation were computed
     devs: array
         List of deviations
-    deverrs: array or array of arrays
+    deverrs: array or list of arrays
         List of estimated errors (possibly a list containing two arrays :
         upper and lower values)
     ns: array
