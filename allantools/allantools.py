@@ -213,7 +213,8 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
         \\sigma^2_x(\\tau) = { 1 \\over 2 \\tau^2 } \\langle ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2 \\rangle
                            = { 1 \\over 2 (N-2) \\tau^2 } \\sum_{n=1}^{N-2} ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2
     
-    where :math:`x_n` is the time-series of phase observations, with length :math:`N`.
+    where :math:`x_n` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau`, 
+    and with length :math:`N`.
     
     .. math::
 
@@ -320,7 +321,14 @@ def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ overlapping Allan deviation.
         General purpose - most widely used - first choice
 
+    .. math::
 
+        \\sigma^2_x(m\\tau_0) = { 1 \\over 2 \\tau_0^2 (N-2m) } 
+                           \\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2
+    
+    where :math:`\\sigma^2_x(m\\tau_0)` is the overlapping Allan deviation at an
+    averaging time of :math:`\\tau=m\\tau_0`, and :math:`x_n` is the time-series of phase observations, 
+    spaced by the measurement interval :math:`\\tau_0`, with length :math:`N`.
 
     Parameters
     ----------
