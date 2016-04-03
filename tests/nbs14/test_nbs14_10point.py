@@ -77,7 +77,6 @@ class TestNBS14_10Point():
         self.generic_test( allan.mtotdev, nbs14_devs[7] )     
     def test_ttotdev(self):
         self.generic_test( allan.ttotdev, nbs14_devs[8] )
-    @pytest.mark.fails
     def test_htotdev(self):
         # NOTE:
         # for tau=1, ohdev() is used instead of htotdev()
