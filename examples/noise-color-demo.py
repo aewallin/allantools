@@ -43,7 +43,7 @@ if __name__ == "__main__":
     # we test ADEV etc. by calculations on synthetic data
     # with known slopes of ADEV
 
-    t = numpy.logspace(0, 3, 50)  # tau values from 1 to 1000
+    t = [tt for tt in numpy.logspace(0, 3, 50)]  # tau values from 1 to 1000
     plt.subplot(111, xscale="log", yscale="log")
     N = 100000
 
