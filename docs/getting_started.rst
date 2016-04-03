@@ -12,20 +12,17 @@ Installation
 from Github
 ~~~~~~~~~~~
 
-To install, you first need to clone the directory from github::
+To clone and install from github::
 
     $ git clone https://github.com/awallin/allantools
-
-and then run::
-
     $ python setup.py install
     
-from the command line. 
+This installs the latest development version of allantools.
 
 from PyPi
 ~~~~~~~~~
 
-To install the latest released versions allantools from PyPi::
+To install the latest released version of allantools from PyPi::
 
     $ pip install allantools
     
