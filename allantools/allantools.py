@@ -724,8 +724,9 @@ def htotdev(phase=None, frequency=None, rate=1.0, taus=[]):
         
     rate = float(rate)
     freq = phase2frequency(phase, rate)
-    (phase, ms, taus_used) = tau_generator(freq, rate, taus, maximum_m = float(len(freq))/3.0)
-
+    (freq, ms, taus_used) = tau_generator(freq, rate, taus, maximum_m = float(len(freq))/3.0)
+    phase=np.array(phase)
+    freq=np.array(freq)
     devs    = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
     ns      = np.zeros_like(taus_used)
@@ -734,8 +735,8 @@ def htotdev(phase=None, frequency=None, rate=1.0, taus=[]):
     # http://www.wriley.com/paper4ht.htm
     # "For best consistency, the overlapping Hadamard variance is used instead of the Hadamard total variance at m=1"
     for idx, mj in enumerate(ms):
-        if mj==1:
-            (devs[idx], deverrs[idx], ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)
+        if int(mj)==1:
+            devs[idx], deverrs[idx], ns[idx] = calc_hdev_phase(phase, rate, mj, 1)
         else:
             devs[idx], deverrs[idx], ns[idx] = calc_htotdev_freq(freq, rate, mj)
 
