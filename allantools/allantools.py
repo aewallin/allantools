@@ -8,6 +8,8 @@ Version history
 ---------------
 ** current master ** unreleased
 - convert tests to use pytest
+- split tests into individual pytests, make them all pass
+- accept a numpy.array as taus parameter. 
 
 **2016.3** 2016 March
 - improve documentation and add __version__

@@ -23,8 +23,9 @@ Function                                Description
 ``mtie()``                              Maximum Time Interval Error
 ``tierms()``                            Time Interval Error RMS
 ``gradev()``                            Gap resistant overlapping Allan deviation
+``theo1()``                             Theo1 deviation
 ``uncertainty_estimate()``              Determine the uncertainty of a given two-sample variance estimate
-``three_cornered_hat_phase()``          Apply Three Cornered Hat Method (see examples)
+``three_cornered_hat_phase()``          Three Cornered Hat Method
 =====================================   ====================================================
 
 To implement
@@ -52,18 +53,22 @@ for code see e.g.:
 General usage
 --------------
 
+The deviation functions are generally of the form::
+
+    (tau_out, adev, adeverr, n) = allantools.adev(frequency=y, phase=x, rate=r, taus=t)
+
 *Inputs:*
 
     * **phase** = list of phase measurements in seconds, e.g. from a time-interval-counter
     * **frequency** = list of fractional frequency measurements (nondimensional), e.g. from a frequency-counter
-    * **rate**  = sample rate of data, i.e. interval between phase measurements is 1/rate
+    * **rate**  = sample rate of data in Hz , i.e. interval between phase measurements is 1/rate seconds.
     * **taus**  = list of tau-values for ADEV computation. The keywords "all", "octave", or "decade" can also be used.
 
-*Output (tau_out, adev, adeverr, n)*
+*Outputs*
 
     * **tau_out** = list of tau-values for which deviations were computed
     * **adev**    = list of ADEV (or another statistic) deviations
-    * **adeverr** = list of estimated errors of allan deviations
+    * **adeverr** = list of estimated errors of allan deviations. some functions instead return  a confidence interval (**err_l**, **err_h**)
     * **n**       = list of number of pairs in allan computation. standard error is adeverr = adev/sqrt(n)
     
 Function listing
@@ -74,14 +79,15 @@ Statistics
 
 .. autofunction:: adev
 .. autofunction:: oadev
-.. autofunction:: mdev     
+.. autofunction:: mdev
 .. autofunction:: hdev
 .. autofunction:: ohdev
 .. autofunction:: tdev
 .. autofunction:: totdev
 .. autofunction:: mtotdev
 .. autofunction:: ttotdev
-.. autofunction:: htotdev                
+.. autofunction:: htotdev
+.. autofunction:: theo1
 .. autofunction:: mtie
 .. autofunction:: tierms
 
