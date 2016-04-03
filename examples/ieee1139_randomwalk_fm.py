@@ -26,7 +26,7 @@ v0 = 1.2345e6 # nominal oscillator frequency
 y = noise.brown(N=N,b2=h2,fs=fs) # fractional frequency
 x = allantools.frequency2phase(y,fs) # phase in seconds
 fi = [2*math.pi*v0*xx for xx in x] # phase in radians
-t = np.linspace(0, (1.0/fs)*N, len(y))  # time-series time axis
+t = np.linspace(0, (1.0/fs)*N, len(y)) # time-series time axis
 
 # time-series figure
 plt.figure()
@@ -87,7 +87,7 @@ plt.ylabel('one-sided PSD / S_x(f)')
 plt.grid()
 
 plt.figure()
-taus=np.logspace(-2.2,4,100)
+taus=[tt for tt in np.logspace(-2.2,4,100)]
 (taus_y, devs_y, errs_y, ns_y) = allantools.oadev(frequency=y, rate=fs, taus=taus)
 (taus_x, devs_x, errs_x, ns_x) = allantools.oadev(phase=x, rate=fs, taus=taus)
 plt.loglog(taus_y,devs_y,'o',label='ADEV from y')

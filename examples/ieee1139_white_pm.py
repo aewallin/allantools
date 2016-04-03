@@ -114,7 +114,7 @@ plt.grid()
 
 # ADEV figure
 plt.figure()
-taus=np.logspace(-7,4,100)
+taus=[tt for tt in np.logspace(-7,4,100)]
 (taus_y, devs_y, errs_y, ns_y) = allantools.oadev(frequency=y, rate=fs, taus=taus)
 (taus_x, devs_x, errs_x, ns_x) = allantools.oadev(phase=x, rate=fs, taus=taus)
 plt.loglog(taus_y,devs_y,'o',label='ADEV from y')
