@@ -1408,7 +1408,7 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
     # Until MTIE stuff is ported, need this fix:
     npa = np.array
     phasedata_ab, phasedata_bc, phasedata_ca = npa(phasedata_ab), npa(phasedata_bc), npa(phasedata_ca)
-    taus = npa(taus)
+    #taus = npa(taus)
 
     (tau_ab, dev_ab, err_ab, ns_ab) = function(phase=phasedata_ab, rate=rate, taus=taus)
     (tau_bc, dev_bc, err_bc, ns_bc) = function(phase=phasedata_bc, rate=rate, taus=taus)
@@ -1424,8 +1424,8 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
     assert len(var_ab) == len(var_bc) == len(var_ca)
     var_a = 0.5 * (var_ab + var_ca - var_bc)
 
+    var_a[var_a < 0] = 0 # don't return imaginary deviations (?)
     dev_a = np.sqrt(var_a)
-    dev_a[var_a < 0] = 0 # don't return imaginary deviations (?)
 
     return tau_ab, dev_a
 
