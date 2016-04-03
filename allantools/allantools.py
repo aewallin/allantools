@@ -1046,7 +1046,19 @@ def mtie_phase_fast(phase, rate, taus):
 
 def gradev(phase=None, frequency=None, rate=1.0, taus=[], ci=0.9, noisetype='wp'):
     """ gap resistant overlapping Allan deviation
-
+    
+    Returns
+    -------
+    taus: np.array
+        list of tau vales in seconds
+    adev: np.array
+        deviations
+    [err_l, err_h] : list of len()==2, np.array
+        the upper and lower bounds of the confidence interval taken as
+        distances from the the estimated two sample variance.
+    ns: np.array
+        numper of terms n in the adev estimate.
+        
     """
     if phase == None:
         frequency= trim_data(frequency)
