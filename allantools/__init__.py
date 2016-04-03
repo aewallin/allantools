@@ -18,6 +18,7 @@ __all__ = [
     'tierms',
     'frequency2phase',
     'phase2frequency',
+    'phase2radians',
     'three_cornered_hat_phase',
     'noise',
     'gradev',
@@ -27,7 +28,7 @@ __all__ = [
 from .allantools import __version__
 from .allantools import frequency2phase
 from .allantools import phase2frequency
-
+from .allantools import phase2radians
 from .allantools import three_cornered_hat_phase
 
 from .allantools import adev
