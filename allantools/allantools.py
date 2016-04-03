@@ -210,12 +210,17 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     .. math::
 
-        \\sigma^2_x(\\tau) =
-
+        \\sigma^2_x(\\tau) = { 1 \\over 2 \\tau^2 } \\langle ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2 \\rangle
+                           = { 1 \\over 2 (N-2) \\tau^2 } \\sum_{n=1}^{N-2} ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2
+    
+    where :math:`x_n` is the time-series of phase observations, with length :math:`N`.
+    
     .. math::
 
         \\sigma^{2}_y(\\tau) =  { 1 \\over 2 } \\langle ( \\bar{y}_{n+1} - \\bar{y}_n )^2 \\rangle
 
+    where :math:`\\bar{y}_n` is the time-series of fractional frequency at averaging time :math:`\\tau`
+    
     NIST SP 1065 eqn (6) and (7), pages 14 and 15
 
     Parameters
