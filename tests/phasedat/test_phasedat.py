@@ -44,11 +44,10 @@ class TestPhaseDat():
         self.generic_test( result='phase_dat_ohdev.txt' , fct= allan.ohdev )
     def test_phasedat_totdev(self):
         self.generic_test( result='phase_dat_totdev.txt' , fct= allan.totdev )
-    @pytest.mark.fails
     @pytest.mark.slow
     def test_phasedat_htotdev(self):
-        # this test fails because bias-correction is not implemented
-        self.generic_test( result='phase_dat_htotdev_octave.txt' , fct= allan.htotdev )
+        # bias-correction is not implemented, so compare against Stable32-run without bias correction
+        self.generic_test( result='phase_dat_htotdev_octave_nobias.txt' , fct= allan.htotdev )
     @pytest.mark.slow
     def test_phasedat_mtotdev(self):
         self.generic_test( result='phase_dat_mtotdev_octave.txt' , fct= allan.mtotdev )
@@ -68,7 +67,5 @@ class TestPhaseDat():
         testutils.test( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)
 
 if __name__ == "__main__":
-    t = TestPhaseDat()
-    t.test_phasedat_theo1_alpha0()
-    #pytest.main()
+    pytest.main()
 
