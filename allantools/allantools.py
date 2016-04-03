@@ -1168,14 +1168,14 @@ def tau_generator(data, rate, taus=[], v=False, even=False, maximum_m=-1):
     taus: np.array
         Cleaned up list of tau values
     """
-    
+
 
     if rate == 0:
         raise RuntimeError("Warning! rate==0")
 
-    if not taus: # empty or no tau-list supplied
+    if not np.any(taus): # empty or no tau-list supplied
         taus='octave' # default to octave
-    
+
     if taus == "all":
         taus = (1.0/rate)*np.linspace(1.0,len(data),len(data))
     elif taus == "octave":
