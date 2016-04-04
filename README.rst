@@ -53,7 +53,6 @@ documentation in docs/_build/latex.
 The sphinx documentation is also auto-generated online
 
 * http://allantools.readthedocs.org
-* http://allantools-aewallin.readthedocs.org
 
 IPython notebooks with examples 
 =============================== 
