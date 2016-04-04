@@ -28,12 +28,6 @@ Function                                Description
 ``three_cornered_hat_phase()``          Three Cornered Hat Method
 =====================================   ====================================================
 
-To implement
-------------
-
-* Better confidence interval estimation
-* Bias corrections for biased estimators
-* Theo variances
 
 References
 -----------
