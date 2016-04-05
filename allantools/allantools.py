@@ -433,10 +433,10 @@ def hdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     .. math::
 
-        \\sigma^2_x(m\\tau_0) = { 1 \\over 6 (m \\tau_0 )^2 (N-3m) } 
+        \\sigma^2_x( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) } 
                            \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} + x_{i} )^2
     
-    where :math:`x_i` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau=m\\tau_0`, 
+    where :math:`x_i` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau`, 
     and with length :math:`N`.
                            
     NIST SP 1065 eqn (17) and (18), page 20
