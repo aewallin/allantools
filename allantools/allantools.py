@@ -323,7 +323,7 @@ def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     .. math::
 
-        \\sigma^2_x(m\\tau_0) = { 1 \\over 2 \\tau_0^2 (N-2m) } 
+        \\sigma^2_x(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-2m) } 
                            \\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2
     
     where :math:`\\sigma^2_x(m\\tau_0)` is the overlapping Allan deviation at an
