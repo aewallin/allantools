@@ -124,8 +124,13 @@ def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
 def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """  Modified Allan deviation.
-         Used to distinguish W and F PM.
+         Used to distinguish between White and Flicker Phase Modulation.
 
+    .. math::
+
+        \\sigma^2_x(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-3m+1) } 
+                           \\sum_{j=1}^{N-3m+1} \\lbrace  \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
+                           
     NIST SP 1065 eqn (14) and (15), page 17
 
     Parameters
@@ -156,7 +161,7 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
     -----
     see http://www.leapsecond.com/tools/adev_lib.c
 
-    NIST SP 1065 eqn (14)
+    NIST SP 1065 eqn (14), page 17
     """
 
     if phase == None:
@@ -215,6 +220,8 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
     
     where :math:`x_n` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau`, 
     and with length :math:`N`.
+    
+    Or alternatively calculated from a time-series of fractional frequency:
     
     .. math::
 
