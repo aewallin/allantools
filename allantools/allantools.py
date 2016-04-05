@@ -1385,6 +1385,25 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
     """
     Three Cornered Hat Method
     
+    Given three clocks A, B, C, we seek to find their variances :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`.
+    We measure three phase differences, assuming no correlation between the clocks, the measurements have variances:
+    
+    .. math::
+
+        \\sigma^2_{AB} = \\sigma^2_{A} + \\sigma^2_{B}
+
+        \\sigma^2_{BC} = \\sigma^2_{B} + \\sigma^2_{C}
+
+        \\sigma^2_{CA} = \\sigma^2_{C} + \\sigma^2_{A}
+
+    Which allows solving for the variance of one clock as:
+    
+    .. math::
+    
+        \\sigma^2_{A}  = {1 \\over 2} ( \\sigma^2_{AB} + \\sigma^2_{CA} - \\sigma^2_{BC} )
+    
+    and similarly cyclic permutations for :math:`\\sigma^2_B` and :math:`\\sigma^2_C`
+    
     Parameters
     ----------
     phasedata_ab: np.array
@@ -1406,16 +1425,6 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
         Tau values corresponding to output deviations
     dev_a: np.array
         List of computed values for clock A
-        
-    Notes
-    -----
-    
-    We have three clocks with unknown variances sa^2, sb^2, sc^3
-    Three pairwise measurements give variances:
-    sab^2, sbc^2, sca^2
-    Assuming covariances are zero (clocks are independent), we get:
-    sa^2 = 0.5*( sab^2 + sca^2 - sbc^2 )
-    (and cyclic permutations for sb and sc)
 
     References
     ----------
