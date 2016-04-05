@@ -380,6 +380,14 @@ def ohdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Overlapping Hadamard deviation.
         Better confidence than normal Hadamard.
 
+    .. math::
+
+        \\sigma^2_x(m\\tau_0) = { 1 \\over 6 (m \\tau_0 )^2 (N-3m) } 
+                           \\sum_{i=1}^{N-3m} ( {x}_{i+3m} - 3x_{i+2m} + 3x_{i+m} + x_{i} )^2
+    
+    where :math:`x_i` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau_0`, 
+    and with length :math:`N`.
+    
     Parameters
     ----------
     phase: np.array
@@ -423,6 +431,14 @@ def hdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Hadamard deviation.
         Rejects frequency drift, and handles divergent noise.
 
+    .. math::
+
+        \\sigma^2_x(m\\tau_0) = { 1 \\over 6 (m \\tau_0 )^2 (N-3m) } 
+                           \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} + x_{i} )^2
+    
+    where :math:`x_i` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau=m\\tau_0`, 
+    and with length :math:`N`.
+                           
     NIST SP 1065 eqn (17) and (18), page 20
 
     Parameters
