@@ -523,8 +523,19 @@ def calc_hdev_phase(phase, rate, mj, stride):
 def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Total deviation.
         Better confidence at long averages for Allan.
+        
+    .. math::
 
-        FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
+        \\sigma^2_x( m\\tau_0 ) = { 1 \\over 2 (m\\tau_0)^2 (N-2) } 
+                           \\sum_{i=2}^{N-1} ( {x}^*_{i-m} - 2x^*_{i} + x^*_{i+m} )^2
+                           
+    
+    Where :math:`x^*_i` is a new time-series of length :math:`3N-4` derived from the original phase
+    time-series :math:`x_n` of length :math:`N` by reflection at both ends.
+    
+    FIXME: better description of reflection operation.
+    
+    FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
 
     Parameters
     ----------
@@ -851,7 +862,6 @@ def calc_htotdev_freq(freq, rate, m):
 
 def theo1(phase=None, frequency=None, rate=1.0, taus=[]):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        Theo1
         Theo1 is a two-sample variance with improved confidence and 
         extended averaging factor range. 
 
