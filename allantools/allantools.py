@@ -539,7 +539,13 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
     Where :math:`x^*_i` is a new time-series of length :math:`3N-4` derived from the original phase
     time-series :math:`x_n` of length :math:`N` by reflection at both ends.
     
-    FIXME: better description of reflection operation.
+    FIXME: better description of reflection operation.     the original data x is in the center of x*:
+    x*(1-j) = 2x(1) - x(1+j)  for j=1..N-2
+    x*(i)   = x(i)            for i=1..N
+    x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
+    x* has length 3N-4
+    tau = m*tau0
+
     
     FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
 
@@ -561,22 +567,6 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
     *The total deviation approach to long-term characterization
     of frequency stability*,
     IEEE tr. UFFC vol 47 no 5 (2000)
-
-    Notes
-    -----
-    ..
-                     1        N-1
-    totvar(t) = ------------  sum   [ x*(i-m) - 2x*(i) + x*(i+m) ]**2
-                2 t**2 (N-2)  i=2
-
-    where x* is a new dataset with 'reflected' data at start/end.
-
-    the original data x is in the center of x*:
-    x*(1-j) = 2x(1) - x(1+j)  for j=1..N-2
-    x*(i)   = x(i)            for i=1..N
-    x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
-    x* has length 3N-4
-    tau = m*tau0
 
     NIST SP 1065 eqn (25) page 23
 
@@ -871,12 +861,19 @@ def theo1(phase=None, frequency=None, rate=1.0, taus=[]):
         Theo1 is a two-sample variance with improved confidence and 
         extended averaging factor range. 
 
+        .. math::
+
+            \\sigma^2_{THEO1}(m\\tau_0) = { 1 \\over  (m \\tau_0 )^2 (N-m) } 
+                           \\sum_{i=1}^{N-m}   \\sum_{\\delta=0}^{m/2-1} 
+                           {1\\over m/2-\\delta}\\lbrace ({x}_{i} - x_{i-\\delta +m/2}) + (x_{i+m}- x_{i+\\delta +m/2}) \\rbrace^2
+        
+        
+        Where :math:`10<=m<=N-1` is even.
+        
+        FIXME: bias correction
+        
         NIST SP 1065 eq (30) page 29
-        
-        see tests/phasedat/phase_dat_test.py for initial test
-        
-        TODO: bias correction
-        
+                
     Parameters
     ----------
     phase: np.array
