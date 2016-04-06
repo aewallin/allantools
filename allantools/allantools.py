@@ -1645,7 +1645,7 @@ def frequency2phase(freqdata, rate):
     """
     dt = 1.0 / float(rate)
     phasedata = np.cumsum(freqdata) * dt
-    phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this? 
+    phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this?
     # so that phase starts at zero and len(phase)=len(freq)+1 ??
     return phasedata
 
