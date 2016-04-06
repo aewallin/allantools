@@ -520,9 +520,9 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
     ns = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(m):
-        hdevs[idx],
+        (hdevs[idx],
         hdeverrs[idx],
-        ns[idx] = calc_hdev_phase(phase, rate, mj, mj)  # stride = mj
+        ns[idx]) = calc_hdev_phase(phase, rate, mj, mj)  # stride = mj
 
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
@@ -866,17 +866,17 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
     # instead of the Hadamard total variance at m=1"
     for idx, mj in enumerate(ms):
         if int(mj) == 1:
-            devs[idx],
+            (devs[idx],
             deverrs[idx],
-            ns[idx] = calc_hdev_phase(phase, rate, mj, 1)
+            ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)
         else:
-            devs[idx],
+            (devs[idx],
             deverrs[idx],
-            ns[idx] = calc_htotdev_freq(freq, rate, mj)
+            ns[idx]) = calc_htotdev_freq(freq, mj)
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
-def calc_htotdev_freq(freq, rate, m):
+def calc_htotdev_freq(freq, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of htotdev for one averaging factor m
         tau = m*tau0
@@ -895,7 +895,6 @@ def calc_htotdev_freq(freq, rate, m):
     m = int(m)
     n = 0    # number of terms in the sum, for error estimation
     dev = 0.0 # the deviation we are computing
-    err = 0.0 # the error in the deviation
     for i in range(0, N-3*int(m)+1):
         # subsequence of length 3m, from the original phase data
         xs = freq[i:i+3*m]
