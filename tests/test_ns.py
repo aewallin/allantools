@@ -9,7 +9,7 @@ import numpy
 
 def _test( function, data, rate, taus):
 
-    (taus2,devs2,errs2,ns2) = function(phase=data, rate=rate, taus=taus)
+    (taus2,devs2,errs2,ns2) = function(data, rate=rate, taus=taus)
     assert( len(taus2) == len(devs2) )
     assert( len(taus2) == len(errs2) )
     assert( len(taus2) == len(ns2) )

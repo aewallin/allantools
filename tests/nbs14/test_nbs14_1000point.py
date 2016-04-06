@@ -99,7 +99,16 @@ class TestNBS14_1000Point():
     def nbs14_tester( self, function, pdata, fdata, correct_devs, taus =[1, 10, 100], soft=False ):
         rate=1.0
         
-        (taus2, devs, deverrs, ns) = function( phase=pdata, frequency=fdata, rate=rate, taus=taus)
+        if pdata != None and fdata == None:
+            (taus2, devs, deverrs, ns) = function(pdata,
+                                                  rate=rate, taus=taus)
+        elif pdata == None and fdata != None:
+            (taus2, devs, deverrs, ns) = function(fdata,
+                                                  data_type="freq",
+                                                  rate=rate, taus=taus)
+        else:
+            raise Exception("Ambiguous input data")
+
         for i in range(3):
             if soft:
                 print(' calculated ', devs[i] )
