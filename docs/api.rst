@@ -49,13 +49,13 @@ General usage
 
 The deviation functions are generally of the form::
 
-    (tau_out, adev, adeverr, n) = allantools.adev(frequency=y, phase=x, rate=r, taus=t)
+    (tau_out, adev, adeverr, n) = allantools.adev(data, rate=1.0, data_type="phase", taus=None)
 
 *Inputs:*
 
-    * **phase** = list of phase measurements in seconds, e.g. from a time-interval-counter
-    * **frequency** = list of fractional frequency measurements (nondimensional), e.g. from a frequency-counter
+    * **data** = list of phase measurements in seconds, or list of fractional frequency measurements (nondimensional)
     * **rate**  = sample rate of data in Hz , i.e. interval between phase measurements is 1/rate seconds.
+    * **data_type=** = either "phase" or "freq"
     * **taus**  = list of tau-values for ADEV computation. The keywords "all", "octave", or "decade" can also be used.
 
 *Outputs*

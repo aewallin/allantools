@@ -260,7 +260,7 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
     Returns
@@ -373,7 +373,7 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
     Returns
@@ -430,7 +430,7 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
     Returns
@@ -491,7 +491,7 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
     """
     if data_type == "phase":
@@ -699,7 +699,7 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
     NIST SP 1065 eqn (27) page 25
@@ -815,7 +815,7 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
     
     """
@@ -947,7 +947,7 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
     
     """
@@ -1004,7 +1004,7 @@ def tierms(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
     """
@@ -1082,7 +1082,7 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
     Notes
@@ -1293,7 +1293,7 @@ def tau_generator(data, rate, taus=[], v=False, even=False, maximum_m=-1):
     taus: np.array
         Array of tau values for which to compute measurement.
         Alternatively one of the keywords: "all", "octave", "decade".
-        Defaults to 'octave' if omitted.
+        Defaults to "octave" if omitted.
     v:
         verbose output if True
     even:
@@ -1316,7 +1316,7 @@ def tau_generator(data, rate, taus=[], v=False, even=False, maximum_m=-1):
         raise RuntimeError("Warning! rate==0")
 
     if not np.any(taus): # empty or no tau-list supplied
-        taus='octave' # default to octave
+        taus="octave" # default to octave
 
     if taus == "all":
         taus = (1.0/rate)*np.linspace(1.0,len(data),len(data))
