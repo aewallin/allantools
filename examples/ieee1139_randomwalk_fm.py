@@ -88,8 +88,8 @@ plt.grid()
 
 plt.figure()
 taus=[tt for tt in np.logspace(-2.2,4,100)]
-(taus_y, devs_y, errs_y, ns_y) = allantools.oadev(frequency=y, rate=fs, taus=taus)
-(taus_x, devs_x, errs_x, ns_x) = allantools.oadev(phase=x, rate=fs, taus=taus)
+(taus_y, devs_y, errs_y, ns_y) = allantools.oadev(y, rate=fs,data_type='freq',  taus=taus)
+(taus_x, devs_x, errs_x, ns_x) = allantools.oadev(x, rate=fs, taus=taus)
 plt.loglog(taus_y,devs_y,'o',label='ADEV from y')
 plt.loglog(taus_x,devs_x,'*',label='ADEV from x')
 

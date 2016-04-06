@@ -28,7 +28,7 @@ import allantools
 from allantools import noise
 
 def plotallan_phase(plt,y,rate,taus, style, label):
-    (t2, ad, ade,adn) = allantools.mdev(phase=y,rate=rate,taus=taus)
+    (t2, ad, ade,adn) = allantools.mdev(y,data_type='phase',rate=rate,taus=taus)
     plt.loglog(t2, ad, style, label=label)
 
 # plot a line with the slope alpha

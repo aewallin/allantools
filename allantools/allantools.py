@@ -1561,9 +1561,9 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
     phasedata_ab, phasedata_bc, phasedata_ca = npa(phasedata_ab), npa(phasedata_bc), npa(phasedata_ca)
     #taus = npa(taus)
 
-    (tau_ab, dev_ab, err_ab, ns_ab) = function(phase=phasedata_ab, rate=rate, taus=taus)
-    (tau_bc, dev_bc, err_bc, ns_bc) = function(phase=phasedata_bc, rate=rate, taus=taus)
-    (tau_ca, dev_ca, err_ca, ns_ca) = function(phase=phasedata_ca, rate=rate, taus=taus)
+    (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab, data_type='phase', rate=rate, taus=taus)
+    (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc, data_type='phase', rate=rate, taus=taus)
+    (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca, data_type='phase', rate=rate, taus=taus)
 
     (tau_ab, dev_ab, err_ab, ns_ab) = npa(tau_ab), npa(dev_ab), npa(err_ab), npa(ns_ab)
     (tau_bc, dev_bc, err_bc, ns_bc) = npa(tau_bc), npa(dev_bc), npa(err_bc), npa(ns_bc)
