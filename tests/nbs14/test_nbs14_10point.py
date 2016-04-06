@@ -95,8 +95,9 @@ class TestNBS14_10Point():
     def generic_test(self, function, ref_devs):
         taus = [1, 2]
         tol = 1e-4
-        (taus1,adevs1,aerrs1,ns1) = function( phase= nbs14_phase, rate=1.0, taus=taus)
-        (taus2,adevs2,aerrs2,ns2) = function( frequency=nbs14_f, rate=1.0, taus=taus)
+        (taus1,adevs1,aerrs1,ns1) = function(nbs14_phase, rate=1.0, taus=taus)
+        (taus2,adevs2,aerrs2,ns2) = function(nbs14_f, rate=1.0,
+                                             data_type="freq",taus=taus)
         assert( check_devs( adevs1[0], ref_devs[0] ) ) # tau=1 from phase data
         assert( check_devs( adevs1[1], ref_devs[1] ) ) # tau=2 from phase data
         assert( check_devs( adevs2[0], ref_devs[0] ) ) # tau=1 from frequency data

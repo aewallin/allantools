@@ -10,6 +10,7 @@ Version history
 - convert tests to use pytest
 - split tests into individual pytests, make them all pass
 - accept a numpy.array as taus parameter. 
+- Switch to new signature (https://github.com/aewallin/allantools/issues/29)
 
 **2016.3** 2016 March
 - improve documentation and add __version__
@@ -79,24 +80,25 @@ pkginfo = json.load(open(pkginfo_path))
 __version__ = pkginfo["version"]
 
 
-def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
+def tdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time deviation.
         Based on modified Allan variance.
 
     .. math::
 
         \\sigma^2_{TDEV}( \\tau ) = { \\tau^2 \\over 3 } \\sigma^2_{MDEV}( \\tau )
-    
+
     Note that TDEV has a unit of seconds.
-    
+
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
         Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
@@ -120,35 +122,42 @@ def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
     http://en.wikipedia.org/wiki/Time_deviation
     """
 
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
 
-    (taus, md, mde, ns) = mdev(phase=phase, rate=rate, taus=taus)
+    (taus, md, mde, ns) = mdev(phase, rate=rate, taus=taus)
     td = taus * md / np.sqrt(3.0)
     tde = td / np.sqrt(ns)
     return taus, td, tde, ns
 
-def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
+def mdev(data, rate=1.0, data_type="phase", taus=None):
     """  Modified Allan deviation.
          Used to distinguish between White and Flicker Phase Modulation.
 
     .. math::
 
-        \\sigma^2_{MDEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-3m+1) } 
-                           \\sum_{j=1}^{N-3m+1} \\lbrace  \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
-                           
+        \\sigma^2_{MDEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-3m+1) }
+        \\sum_{j=1}^{N-3m+1} \\lbrace  \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
+
     NIST SP 1065 eqn (14) and (15), page 17
 
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
-        Array of tau values for which to compute measurement
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
 
     Returns
     -------
@@ -156,9 +165,8 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
           Tuple of values
     taus2: np.array
         Tau values for which td computed
-    md: np.array
-        Computed mdev for each tau value
-    mde: np.array
+        md: np.array
+            Computed mdev for each tau value    mde: np.array
         mdev errors
     ns: np.array
         Values of N used in each mdev calculation
@@ -170,12 +178,16 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
     NIST SP 1065 eqn (14), page 17
     """
 
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
 
-    (phase, ms, taus_used) = tau_generator(phase, rate, taus=taus)    
+    (phase, ms, taus_used) = tau_generator(phase, rate, taus=taus)
     data, taus = np.array(phase), np.array(taus)
-    
+ 
     md    = np.zeros_like(ms)
     mderr = np.zeros_like(ms)
     ns    = np.zeros_like(ms)
@@ -215,7 +227,7 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     return remove_small_ns(taus_used, md, mderr, ns)
 
-def adev(phase=None, frequency=None, rate=1.0, taus=[]):
+def adev(data, rate=1.0, data_type="phase", taus=None):
     """ Allan deviation.
         Classic - use only if required - relatively poor confidence.
 
@@ -234,20 +246,22 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
         \\sigma^{2}_{ADEV}(\\tau) =  { 1 \\over 2 } \\langle ( \\bar{y}_{n+1} - \\bar{y}_n )^2 \\rangle
 
     where :math:`\\bar{y}_n` is the time-series of fractional frequency at averaging time :math:`\\tau`
-    
+
     NIST SP 1065 eqn (6) and (7), pages 14 and 15
 
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
-        Array of tau values for which to compute measurement
-
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
 
     Returns
     -------
@@ -263,9 +277,14 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
         Values of N used in each adev calculation
 
     """
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
-        
+
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
+
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
 
     ad  = np.zeros_like(taus_used)
@@ -330,7 +349,7 @@ def calc_adev_phase(phase, rate, mj, stride):
 
     return dev, deverr, n
 
-def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
+def oadev(data, rate=1.0, data_type="phase", taus=None):
     """ overlapping Allan deviation.
         General purpose - most widely used - first choice
 
@@ -345,15 +364,17 @@ def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
-        Array of tau values for which to compute measurement
-
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
 
     Returns
     -------
@@ -369,8 +390,12 @@ def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
         Values of N used in each oadev calculation
 
     """
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
 
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     ad  = np.zeros_like(taus_used)
@@ -382,7 +407,7 @@ def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
 
-def ohdev(phase=None, frequency=None, rate=1.0, taus=[]):
+def ohdev(data, rate=1.0, data_type="phase", taus=None):
     """ Overlapping Hadamard deviation.
         Better confidence than normal Hadamard.
 
@@ -396,14 +421,17 @@ def ohdev(phase=None, frequency=None, rate=1.0, taus=[]):
     
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
-        Array of tau values for which to compute measurement
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
 
     Returns
     -------
@@ -419,8 +447,13 @@ def ohdev(phase=None, frequency=None, rate=1.0, taus=[]):
         Values of N used in each hdev calculation
 
     """
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
 
     rate = float(rate)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
@@ -433,7 +466,7 @@ def ohdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
-def hdev(phase=None, frequency=None, rate=1.0, taus=[]):
+def hdev(data, rate=1.0, data_type="phase", taus=None):
     """ Hadamard deviation.
         Rejects frequency drift, and handles divergent noise.
 
@@ -449,17 +482,24 @@ def hdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
-        Array of tau values for which to compute measurement
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
     """
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
 
     rate = float(rate)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
@@ -526,7 +566,7 @@ def calc_hdev_phase(phase, rate, mj, stride):
     e = h / np.sqrt(n)
     return h, e, n
 
-def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
+def totdev(data, rate=1.0, data_type="phase", taus=None):
     """ Total deviation.
         Better confidence at long averages for Allan.
         
@@ -571,8 +611,12 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
     NIST SP 1065 eqn (25) page 23
 
     """
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
 
     rate = float(rate)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
@@ -619,18 +663,19 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
-def ttotdev(phase=None, frequency=None, rate=1.0, taus=[]):
+def ttotdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time Total Deviation
         modified total variance scaled by tau^2 / 3
         NIST SP 1065 eqn (28) page 26  <--- formula should have tau squared !?!
     """
 
-    (taus, mtotdevs, mde, ns) = mtotdev(phase=phase, frequency=frequency, rate=rate, taus=taus)
+    (taus, mtotdevs, mde, ns) = mtotdev(data, data_type=data_type,
+                                        rate=rate, taus=taus)
     td = taus*mtotdevs / np.sqrt(3.0)
     tde = td / np.sqrt(ns)
     return taus, td, tde, ns
 
-def mtotdev(phase=None, frequency=None, rate=1.0, taus=[]):
+def mtotdev(data, rate=1.0, data_type="phase", taus=None):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Modified Total deviation.
         Better confidence at long averages for modified Allan
@@ -645,24 +690,31 @@ def mtotdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
-        Array of tau values for which to compute measurement
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
 
     NIST SP 1065 eqn (27) page 25
 
     """
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
 
     rate = float(rate)
-    (phase, ms, taus_used) = tau_generator(phase, rate, taus, maximum_m = float(len(phase))/3.0)
-
+    (phase, ms, taus_used) = tau_generator(phase, rate, taus,
+                                           maximum_m = float(len(phase))/3.0)
     devs    = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
     ns      = np.zeros_like(taus_used)
@@ -740,7 +792,7 @@ def calc_mtotdev_phase(phase, rate, m):
     return (dev,error,n)
 
 
-def htotdev(phase=None, frequency=None, rate=1.0, taus=[]):
+def htotdev(data, rate=1.0, data_type="phase", taus=None):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Hadamard Total deviation.
         Better confidence at long averages for Hadamard deviation
@@ -754,22 +806,31 @@ def htotdev(phase=None, frequency=None, rate=1.0, taus=[]):
         
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
-        Array of tau values for which to compute measurement
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
     
     """
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+    if data_type == "phase":
+        phase = data
+        freq = phase2frequency(phase, rate)
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+        freq = data
+    else:
+        raise Exception("unknown data_type: " + data_type)
         
     rate = float(rate)
-    freq = phase2frequency(phase, rate)
-    (freq, ms, taus_used) = tau_generator(freq, rate, taus, maximum_m = float(len(freq))/3.0)
+    (freq, ms, taus_used) = tau_generator(freq, rate, taus,
+                                          maximum_m = float(len(freq))/3.0)
     phase=np.array(phase)
     freq=np.array(freq)
     devs    = np.zeros_like(taus_used)
@@ -778,7 +839,8 @@ def htotdev(phase=None, frequency=None, rate=1.0, taus=[]):
     
     # NOTE at mj==1 we use ohdev(), based on comment from here:
     # http://www.wriley.com/paper4ht.htm
-    # "For best consistency, the overlapping Hadamard variance is used instead of the Hadamard total variance at m=1"
+    # "For best consistency, the overlapping Hadamard variance is used 
+    # instead of the Hadamard total variance at m=1"
     for idx, mj in enumerate(ms):
         if int(mj)==1:
             devs[idx], deverrs[idx], ns[idx] = calc_hdev_phase(phase, rate, mj, 1)
@@ -856,7 +918,7 @@ def calc_htotdev_freq(freq, rate, m):
     error = dev / np.sqrt(n)
     return (dev,error,n)
 
-def theo1(phase=None, frequency=None, rate=1.0, taus=[]):
+def theo1(data, rate=1.0, data_type="phase", taus=None):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Theo1 is a two-sample variance with improved confidence and 
         extended averaging factor range. 
@@ -876,18 +938,25 @@ def theo1(phase=None, frequency=None, rate=1.0, taus=[]):
                 
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
-        Array of tau values for which to compute measurement
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
     
     """
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
         
     rate = float(rate)
     tau0 = 1.0/rate
@@ -921,23 +990,30 @@ def theo1(phase=None, frequency=None, rate=1.0, taus=[]):
     return remove_small_ns(taus_used, devs, deverrs, ns)
     
 
-def tierms(phase=None, frequency=None, rate=1.0, taus=[]):
+def tierms(data, rate=1.0, data_type="phase", taus=None):
     """ Time Interval Error RMS.
 
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
-        Array of tau values for which to compute measurement
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
 
     """
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
 
     rate = float(rate)
     (data, m, taus_used) = tau_generator(phase, rate, taus)
@@ -992,17 +1068,22 @@ def mtie_rolling_window(a, window):
     strides = a.strides + (a.strides[-1],)
     return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
 
-def mtie(phase=None, frequency=None, rate=1.0, taus=[]):
+def mtie(data, rate=1.0, data_type="phase", taus=None):
     """ Maximum Time Interval Error.
 
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
+    taus: np.array
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        tau-list generation.
 
     Notes
     -----
@@ -1011,8 +1092,12 @@ def mtie(phase=None, frequency=None, rate=1.0, taus=[]):
     dataset is extended somehow?
     """
 
-    if phase == None:
-        phase = frequency2phase(frequency, rate)
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
 
     rate = float(rate)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
@@ -1096,7 +1181,9 @@ def mtie_phase_fast(phase, rate, taus):
 #  gap resistant Allan deviation
 #
 
-def gradev(phase=None, frequency=None, rate=1.0, taus=[], ci=0.9, noisetype='wp'):
+def gradev(data, rate=1.0, data_type="phase", taus=None, 
+           ci=0.9, noisetype='wp'):
+    # TODO : add parameters
     """ gap resistant overlapping Allan deviation
     
     Returns
@@ -1112,10 +1199,13 @@ def gradev(phase=None, frequency=None, rate=1.0, taus=[], ci=0.9, noisetype='wp'
         numper of terms n in the adev estimate.
         
     """
-    if phase == None:
-        frequency= trim_data(frequency)
-        phase = frequency2phase(frequency, rate)
-        
+    if data_type == "phase":
+        phase = data
+    elif data_type == "freq":
+        phase = frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
+
     (data, m, taus_used) = tau_generator(phase, rate, taus)
 
     ad  = np.zeros_like(taus_used)
