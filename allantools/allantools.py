@@ -83,6 +83,12 @@ def tdev(phase=None, frequency=None, rate=1.0, taus=[]):
     """ Time deviation.
         Based on modified Allan variance.
 
+    .. math::
+
+        \\sigma^2_{TDEV}( \\tau ) = { \\tau^2 \\over 3 } \\sigma^2_{MDEV}( \\tau )
+    
+    Note that TDEV has a unit of seconds.
+    
     Parameters
     ----------
     phase: np.array
@@ -128,7 +134,7 @@ def mdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     .. math::
 
-        \\sigma^2_x(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-3m+1) } 
+        \\sigma^2_{MDEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-3m+1) } 
                            \\sum_{j=1}^{N-3m+1} \\lbrace  \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
                            
     NIST SP 1065 eqn (14) and (15), page 17
@@ -215,7 +221,7 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     .. math::
 
-        \\sigma^2_x(\\tau) = { 1 \\over 2 \\tau^2 } \\langle ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2 \\rangle
+        \\sigma^2_{ADEV}(\\tau) = { 1 \\over 2 \\tau^2 } \\langle ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2 \\rangle
                            = { 1 \\over 2 (N-2) \\tau^2 } \\sum_{n=1}^{N-2} ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2
     
     where :math:`x_n` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau`, 
@@ -225,7 +231,7 @@ def adev(phase=None, frequency=None, rate=1.0, taus=[]):
     
     .. math::
 
-        \\sigma^{2}_y(\\tau) =  { 1 \\over 2 } \\langle ( \\bar{y}_{n+1} - \\bar{y}_n )^2 \\rangle
+        \\sigma^{2}_{ADEV}(\\tau) =  { 1 \\over 2 } \\langle ( \\bar{y}_{n+1} - \\bar{y}_n )^2 \\rangle
 
     where :math:`\\bar{y}_n` is the time-series of fractional frequency at averaging time :math:`\\tau`
     
@@ -330,7 +336,7 @@ def oadev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     .. math::
 
-        \\sigma^2_x(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-2m) } 
+        \\sigma^2_{OADEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-2m) } 
                            \\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2
     
     where :math:`\\sigma^2_x(m\\tau_0)` is the overlapping Allan deviation at an
@@ -382,7 +388,7 @@ def ohdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     .. math::
 
-        \\sigma^2_x(m\\tau_0) = { 1 \\over 6 (m \\tau_0 )^2 (N-3m) } 
+        \\sigma^2_{OHDEV}(m\\tau_0) = { 1 \\over 6 (m \\tau_0 )^2 (N-3m) } 
                            \\sum_{i=1}^{N-3m} ( {x}_{i+3m} - 3x_{i+2m} + 3x_{i+m} + x_{i} )^2
     
     where :math:`x_i` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau_0`, 
@@ -433,7 +439,7 @@ def hdev(phase=None, frequency=None, rate=1.0, taus=[]):
 
     .. math::
 
-        \\sigma^2_x( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) } 
+        \\sigma^2_{HDEV}( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) } 
                            \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} + x_{i} )^2
     
     where :math:`x_i` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau`, 
@@ -526,7 +532,7 @@ def totdev(phase=None, frequency=None, rate=1.0, taus=[]):
         
     .. math::
 
-        \\sigma^2_x( m\\tau_0 ) = { 1 \\over 2 (m\\tau_0)^2 (N-2) } 
+        \\sigma^2_{TOTDEV}( m\\tau_0 ) = { 1 \\over 2 (m\\tau_0)^2 (N-2) } 
                            \\sum_{i=2}^{N-1} ( {x}^*_{i-m} - 2x^*_{i} + x^*_{i+m} )^2
                            
     
