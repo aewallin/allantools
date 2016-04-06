@@ -9,7 +9,7 @@ Version history
 ** current master ** unreleased
 - convert tests to use pytest
 - split tests into individual pytests, make them all pass
-- accept a numpy.array as taus parameter. 
+- accept a numpy.array as taus parameter.
 - Switch to new signature (https://github.com/aewallin/allantools/issues/29)
 
 **2016.3** 2016 March
@@ -17,9 +17,10 @@ Version history
 - added Theo1 deviation theo1()
 - added Hadamard Total Deviatio htotdev()
 - added Modified Total Deviation mtotdev(), and Time Total Deviation ttotdev()
-  see http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/
+  http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/
 - automatic tau-lists:  taus=[ "all" | "octave" | "decade" ]
-- merge adev() and adev_phase() into one, requiring phase= or frequency= argument
+- merge adev() and adev_phase() into one, requiring phase= or
+  frequency= argument
 - add GPS dataset as example and test
 
 **2016.2** 2016 February
@@ -86,7 +87,8 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
 
     .. math::
 
-        \\sigma^2_{TDEV}( \\tau ) = { \\tau^2 \\over 3 } \\sigma^2_{MDEV}( \\tau )
+        \\sigma^2_{TDEV}( \\tau ) = { \\tau^2 \\over 3 }
+        \\sigma^2_{MDEV}( \\tau )
 
     Note that TDEV has a unit of seconds.
 
@@ -101,7 +103,7 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
     Returns
@@ -141,7 +143,8 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
     .. math::
 
         \\sigma^2_{MDEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-3m+1) }
-        \\sum_{j=1}^{N-3m+1} \\lbrace  \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
+        \\sum_{j=1}^{N-3m+1} \\lbrace
+        \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
 
     NIST SP 1065 eqn (14) and (15), page 17
 
@@ -156,7 +159,7 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
         Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=[autotau.alltau|autotau.octave|autotau.decade] for automatic
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
     Returns
@@ -187,15 +190,17 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
 
     (phase, ms, taus_used) = tau_generator(phase, rate, taus=taus)
     data, taus = np.array(phase), np.array(taus)
- 
-    md    = np.zeros_like(ms)
+
+    md = np.zeros_like(ms)
     mderr = np.zeros_like(ms)
-    ns    = np.zeros_like(ms)
+    ns = np.zeros_like(ms)
 
     # this is a 'loop-unrolled' algorithm following
     # http://www.leapsecond.com/tools/adev_lib.c
     for idx, m in enumerate(ms):
-        m = int(m) # without this we get: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+        m = int(m) # without this we get: VisibleDeprecationWarning:
+                   # using a non-integer number instead of an integer
+                   # will result in an error in the future
         tau = taus_used[idx]
 
         # First loop sum
@@ -233,19 +238,23 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
 
     .. math::
 
-        \\sigma^2_{ADEV}(\\tau) = { 1 \\over 2 \\tau^2 } \\langle ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2 \\rangle
-                           = { 1 \\over 2 (N-2) \\tau^2 } \\sum_{n=1}^{N-2} ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2
-    
-    where :math:`x_n` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau`, 
-    and with length :math:`N`.
-    
+        \\sigma^2_{ADEV}(\\tau) = { 1 \\over 2 \\tau^2 }
+        \\langle ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2 \\rangle
+        = { 1 \\over 2 (N-2) \\tau^2 }
+        \\sum_{n=1}^{N-2} ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2
+
+    where :math:`x_n` is the time-series of phase observations, spaced
+    by the measurement interval :math:`\\tau`, and with length :math:`N`.
+
     Or alternatively calculated from a time-series of fractional frequency:
-    
+
     .. math::
 
-        \\sigma^{2}_{ADEV}(\\tau) =  { 1 \\over 2 } \\langle ( \\bar{y}_{n+1} - \\bar{y}_n )^2 \\rangle
+        \\sigma^{2}_{ADEV}(\\tau) =  { 1 \\over 2 }
+        \\langle ( \\bar{y}_{n+1} - \\bar{y}_n )^2 \\rangle
 
-    where :math:`\\bar{y}_n` is the time-series of fractional frequency at averaging time :math:`\\tau`
+    where :math:`\\bar{y}_n` is the time-series of fractional frequency
+    at averaging time :math:`\\tau`
 
     NIST SP 1065 eqn (6) and (7), pages 14 and 15
 
@@ -287,14 +296,14 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
 
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
 
-    ad  = np.zeros_like(taus_used)
+    ad = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
     adn = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(m):  # loop through each tau value m(j)
         (ad[idx], ade[idx], adn[idx]) = calc_adev_phase(phase, rate, mj, mj)
 
-    return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
+    return remove_small_ns(taus_used, ad, ade, adn)
 
 
 def calc_adev_phase(phase, rate, mj, stride):
@@ -355,12 +364,13 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
 
     .. math::
 
-        \\sigma^2_{OADEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-2m) } 
-                           \\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2
-    
-    where :math:`\\sigma^2_x(m\\tau_0)` is the overlapping Allan deviation at an
-    averaging time of :math:`\\tau=m\\tau_0`, and :math:`x_n` is the time-series of phase observations, 
-    spaced by the measurement interval :math:`\\tau_0`, with length :math:`N`.
+        \\sigma^2_{OADEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-2m) }
+        \\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2
+
+    where :math:`\\sigma^2_x(m\\tau_0)` is the overlapping Allan
+    deviation at an averaging time of :math:`\\tau=m\\tau_0`, and
+    :math:`x_n` is the time-series of phase observations, spaced by the
+    measurement interval :math:`\\tau_0`, with length :math:`N`.
 
     Parameters
     ----------
@@ -398,14 +408,14 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
         raise Exception("unknown data_type: " + data_type)
 
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
-    ad  = np.zeros_like(taus_used)
+    ad = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
     adn = np.zeros_like(taus_used)
 
-    for idx, mj in enumerate(m):
-        (ad[idx], ade[idx], adn[idx]) = calc_adev_phase(phase, rate, mj, 1)  # stride=1 for overlapping ADEV
+    for idx, mj in enumerate(m): # stride=1 for overlapping ADEV
+        (ad[idx], ade[idx], adn[idx]) = calc_adev_phase(phase, rate, mj, 1)
 
-    return remove_small_ns(taus_used, ad, ade, adn)  # tau, adev, adeverror, naverages
+    return remove_small_ns(taus_used, ad, ade, adn)
 
 def ohdev(data, rate=1.0, data_type="phase", taus=None):
     """ Overlapping Hadamard deviation.
@@ -413,12 +423,12 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
 
     .. math::
 
-        \\sigma^2_{OHDEV}(m\\tau_0) = { 1 \\over 6 (m \\tau_0 )^2 (N-3m) } 
-                           \\sum_{i=1}^{N-3m} ( {x}_{i+3m} - 3x_{i+2m} + 3x_{i+m} + x_{i} )^2
-    
-    where :math:`x_i` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau_0`, 
-    and with length :math:`N`.
-    
+        \\sigma^2_{OHDEV}(m\\tau_0) = { 1 \\over 6 (m \\tau_0 )^2 (N-3m) }
+        \\sum_{i=1}^{N-3m} ( {x}_{i+3m} - 3x_{i+2m} + 3x_{i+m} + x_{i} )^2
+
+    where :math:`x_i` is the time-series of phase observations, spaced
+    by the measurement interval :math:`\\tau_0`, and with length :math:`N`.
+
     Parameters
     ----------
     data: np.array
@@ -462,7 +472,9 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
     ns = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(m):
-        (hdevs[idx], hdeverrs[idx], ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)  # stride = 1
+        (hdevs[idx],
+        hdeverrs[idx],
+        ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)
 
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
@@ -472,12 +484,12 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
 
     .. math::
 
-        \\sigma^2_{HDEV}( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) } 
-                           \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} + x_{i} )^2
-    
-    where :math:`x_i` is the time-series of phase observations, spaced by the measurement interval :math:`\\tau`, 
-    and with length :math:`N`.
-                           
+        \\sigma^2_{HDEV}( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) }
+        \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} + x_{i} )^2
+
+    where :math:`x_i` is the time-series of phase observations, spaced
+    by the measurement interval :math:`\\tau`, and with length :math:`N`.
+
     NIST SP 1065 eqn (17) and (18), page 20
 
     Parameters
@@ -508,7 +520,9 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
     ns = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(m):
-        hdevs[idx], hdeverrs[idx], ns[idx] = calc_hdev_phase(phase, rate, mj, mj)  # stride = mj
+        hdevs[idx],
+        hdeverrs[idx],
+        ns[idx] = calc_hdev_phase(phase, rate, mj, mj)  # stride = mj
 
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
@@ -569,24 +583,26 @@ def calc_hdev_phase(phase, rate, mj, stride):
 def totdev(data, rate=1.0, data_type="phase", taus=None):
     """ Total deviation.
         Better confidence at long averages for Allan.
-        
+
     .. math::
 
-        \\sigma^2_{TOTDEV}( m\\tau_0 ) = { 1 \\over 2 (m\\tau_0)^2 (N-2) } 
-                           \\sum_{i=2}^{N-1} ( {x}^*_{i-m} - 2x^*_{i} + x^*_{i+m} )^2
-                           
-    
-    Where :math:`x^*_i` is a new time-series of length :math:`3N-4` derived from the original phase
-    time-series :math:`x_n` of length :math:`N` by reflection at both ends.
-    
-    FIXME: better description of reflection operation.     the original data x is in the center of x*:
+        \\sigma^2_{TOTDEV}( m\\tau_0 ) = { 1 \\over 2 (m\\tau_0)^2 (N-2) }
+            \\sum_{i=2}^{N-1} ( {x}^*_{i-m} - 2x^*_{i} + x^*_{i+m} )^2
+
+
+    Where :math:`x^*_i` is a new time-series of length :math:`3N-4`
+    derived from the original phase time-series :math:`x_n` of
+    length :math:`N` by reflection at both ends.
+
+    FIXME: better description of reflection operation.
+    the original data x is in the center of x*:
     x*(1-j) = 2x(1) - x(1+j)  for j=1..N-2
     x*(i)   = x(i)            for i=1..N
     x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
     x* has length 3N-4
     tau = m*tau0
 
-    
+
     FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
 
     Parameters
@@ -594,7 +610,8 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     phase: np.array
         Phase data in seconds. Provide either phase or frequency.
     frequency: np.array
-        Fractional frequency data (nondimensional). Provide either frequency or phase.
+        Fractional frequency data (nondimensional). Provide either
+        frequency or phase.
     rate: float
         The sampling rate for phase or frequency, in Hz
     taus: np.array
@@ -632,7 +649,8 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     x2 = 2.0 * phase[-1] * np.ones((N - 2,))
     x2 = x2 - phase[1:-1][::-1]
 
-    assert( len(x1)+len(phase)+len(x2) == 3*N - 4 ) # check length of new dataset 
+    # check length of new dataset
+    assert len(x1)+len(phase)+len(x2) == 3*N - 4
     # Combine into a single array
     x = np.zeros((3*N - 4))
     x[0:N-2] = x1
@@ -681,7 +699,8 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
         Better confidence at long averages for modified Allan
 
         FIXME: bias-correction http://www.wriley.com/CI2.pdf page 6
-        The variance is scaled up (divided by this number) based on the noise-type identified.
+        The variance is scaled up (divided by this number) based on the
+        noise-type identified.
         WPM 0.94
         FPM 0.83
         WFM 0.73
@@ -714,10 +733,10 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
 
     rate = float(rate)
     (phase, ms, taus_used) = tau_generator(phase, rate, taus,
-                                           maximum_m = float(len(phase))/3.0)
-    devs    = np.zeros_like(taus_used)
+                                           maximum_m=float(len(phase))/3.0)
+    devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
-    ns      = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(ms):
         devs[idx], deverrs[idx], ns[idx] = calc_mtotdev_phase(phase, rate, mj)
@@ -733,63 +752,67 @@ def calc_mtotdev_phase(phase, rate, m):
     tau0 = 1.0/rate
     N = int(len(phase)) # phase data, N points
 
-    n=0    # number of terms in the sum, for error estimation
-    dev=0.0 # the deviation we are computing
-    err=0.0 # the error in the deviation
+    n = 0    # number of terms in the sum, for error estimation
+    dev = 0.0 # the deviation we are computing
+    err = 0.0 # the error in the deviation
     #print('calc_mtotdev N=%d m=%d' % (N,m) )
-    for i in range(0,N-3*int(m)+1):
-        xs = phase[i:i+3*m] # subsequence of length 3m, from the original phase data
-        assert( len(xs) == 3*m )
-        # remove linear trend. by averaging first/last half, computing slope, and subtracting
-        half1_idx =  np.floor(3*m/2.0)
-        half2_idx =  np.ceil(3*m/2.0)
+    for i in range(0, N-3*int(m)+1):
+        # subsequence of length 3m, from the original phase data
+        xs = phase[i:i+3*m]
+        assert len(xs) == 3*m
+        # remove linear trend. by averaging first/last half,
+        # computing slope, and subtracting
+        half1_idx = np.floor(3*m/2.0)
+        half2_idx = np.ceil(3*m/2.0)
         # m
         # 1    0:1   2:2
-        mean1 = np.mean( xs[:half1_idx] )
-        mean2 = np.mean( xs[half2_idx:] )
+        mean1 = np.mean(xs[:half1_idx])
+        mean2 = np.mean(xs[half2_idx:])
 
-        if int(3*m)%2==1: # m is odd
+        if int(3*m)%2 == 1: # m is odd
             # 3m = 2k+1 is odd, with the averages at both ends over k points
             # the distance between the averages is then k+1 = (3m-1)/2 +1
-            slope = (mean2-mean1) / ( (0.5*(3*m-1)+1)*tau0)
+            slope = (mean2-mean1) / ((0.5*(3*m-1)+1)*tau0)
         else: # m is even
             # 3m = 2k is even, so distance between averages is k=m/2
             slope = (mean2-mean1) / (0.5*3*m*tau0)
 
-        x0 = [x - slope*idx*tau0 for (idx,x) in enumerate(xs)]  # remove the linear trend
+        # remove the linear trend
+        x0 = [x - slope*idx*tau0 for (idx, x) in enumerate(xs)]
         x0_flip = x0[::-1] # left-right flipped version of array
         # extended sequence of length 9m, by uninverted even reflection
-        xstar = np.concatenate( (x0_flip,x0,x0_flip ))
-        assert( len(xstar)==9*m )
+        xstar = np.concatenate((x0_flip, x0, x0_flip))
+        assert len(xstar) == 9*m
 
         # now compute totdev on these 9m points
-        # 6m unique groups of m-point averages, all possible overlapping second differences
+        # 6m unique groups of m-point averages,
+        # use all possible overlapping second differences
         # one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2
-        squaresum=0.0
+        squaresum = 0.0
         #print('m=%d 9m=%d maxj+3*m=%d' %( m, len(xstar), 6*int(m)+3*int(m)) )
-        for j in range(0,6*int(m)): # summation of the 6m terms.
-            xmean1 = np.mean( xstar[j     : j+m  ] )
-            xmean2 = np.mean( xstar[j+m   : j+2*m] )
-            xmean3 = np.mean( xstar[j+2*m : j+3*m] )
-            assert( len(xstar[j : j+m]) == m )
-            assert( len(xstar[j+m : j+2*m]) == m )
-            assert( len(xstar[j+2*m : j+3*m]) == m )
+        for j in range(0, 6*int(m)): # summation of the 6m terms.
+            xmean1 = np.mean(xstar[j     :   j+m])
+            xmean2 = np.mean(xstar[j+m   : j+2*m])
+            xmean3 = np.mean(xstar[j+2*m : j+3*m])
+            assert len(xstar[j : j+m]) == m
+            assert len(xstar[j+m : j+2*m]) == m
+            assert len(xstar[j+2*m : j+3*m]) == m
             squaresum += pow(xmean1-2.0*xmean2+xmean3, 2)
 
         squaresum = (1.0/(6.0*m)) * squaresum
         dev += squaresum
-        n=n+1
+        n = n+1
 
     # scaling in front of double-sum
-    if not ( n == N-3*int(m)+1 ):
+    if not n == N-3*int(m)+1:
         print('Error: not n == N-3*int(m)+1 !!')
-        print(' n= %d  N= %d  m= %d '%(n,N,m))
+        print(' n= %d  N= %d  m= %d '%(n, N, m))
         print(' N-3m+1 = %d'%(N-3*m+1))
-    assert( n == N-3*int(m)+1 ) # sanity check on the number of terms n
-    dev = dev* 1.0/ ( 2.0*pow(m*tau0,2)*(N-3*m+1) )
+    assert n == N-3*int(m)+1 # sanity check on the number of terms n
+    dev = dev* 1.0/ (2.0*pow(m*tau0, 2)*(N-3*m+1))
     dev = np.sqrt(dev)
     error = dev / np.sqrt(n)
-    return (dev,error,n)
+    return (dev, error, n)
 
 
 def htotdev(data, rate=1.0, data_type="phase", taus=None):
@@ -803,7 +826,7 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
         RW FM   0.771      alpha=-2
         FW FM   0.717      alpha=-3
         RR FM   0.679      alpha=-4
-        
+
     Parameters
     ----------
     data: np.array
@@ -817,7 +840,7 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
         Array of tau values, in seconds, for which to compute statistic.
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
-    
+
     """
     if data_type == "phase":
         phase = data
@@ -827,25 +850,29 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
         freq = data
     else:
         raise Exception("unknown data_type: " + data_type)
-        
+
     rate = float(rate)
     (freq, ms, taus_used) = tau_generator(freq, rate, taus,
-                                          maximum_m = float(len(freq))/3.0)
-    phase=np.array(phase)
-    freq=np.array(freq)
-    devs    = np.zeros_like(taus_used)
+                                          maximum_m=float(len(freq))/3.0)
+    phase = np.array(phase)
+    freq = np.array(freq)
+    devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
-    ns      = np.zeros_like(taus_used)
-    
+    ns = np.zeros_like(taus_used)
+
     # NOTE at mj==1 we use ohdev(), based on comment from here:
     # http://www.wriley.com/paper4ht.htm
-    # "For best consistency, the overlapping Hadamard variance is used 
+    # "For best consistency, the overlapping Hadamard variance is used
     # instead of the Hadamard total variance at m=1"
     for idx, mj in enumerate(ms):
-        if int(mj)==1:
-            devs[idx], deverrs[idx], ns[idx] = calc_hdev_phase(phase, rate, mj, 1)
+        if int(mj) == 1:
+            devs[idx],
+            deverrs[idx],
+            ns[idx] = calc_hdev_phase(phase, rate, mj, 1)
         else:
-            devs[idx], deverrs[idx], ns[idx] = calc_htotdev_freq(freq, rate, mj)
+            devs[idx],
+            deverrs[idx],
+            ns[idx] = calc_htotdev_freq(freq, rate, mj)
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
@@ -853,7 +880,7 @@ def calc_htotdev_freq(freq, rate, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of htotdev for one averaging factor m
         tau = m*tau0
-        
+
         Parameters
         ----------
         frequency: np.array
@@ -866,76 +893,82 @@ def calc_htotdev_freq(freq, rate, m):
 
     N = int(len(freq)) # frequency data, N points
     m = int(m)
-    n=0    # number of terms in the sum, for error estimation
-    dev=0.0 # the deviation we are computing
-    err=0.0 # the error in the deviation    
-    for i in range(0,N-3*int(m)+1):
-        xs = freq[i:i+3*m] # subsequence of length 3m, from the original phase data
-        assert( len(xs) == 3*m )
-        # remove linear trend. by averaging first/last half, computing slope, and subtracting
-        half1_idx = int( np.floor(3*m/2.0) )
-        half2_idx = int( np.ceil(3*m/2.0)  )
+    n = 0    # number of terms in the sum, for error estimation
+    dev = 0.0 # the deviation we are computing
+    err = 0.0 # the error in the deviation
+    for i in range(0, N-3*int(m)+1):
+        # subsequence of length 3m, from the original phase data
+        xs = freq[i:i+3*m]
+        assert len(xs) == 3*m
+        # remove linear trend. by averaging first/last half,
+        # computing slope, and subtracting
+        half1_idx = int(np.floor(3*m/2.0))
+        half2_idx = int(np.ceil(3*m/2.0))
         # m
         # 1    0:1   2:2
-        mean1 = np.mean( xs[:half1_idx] ) 
-        mean2 = np.mean( xs[half2_idx:] )
-        
-        if int(3*m)%2==1: # m is odd
+        mean1 = np.mean(xs[:half1_idx])
+        mean2 = np.mean(xs[half2_idx:])
+
+        if int(3*m)%2 == 1: # m is odd
             # 3m = 2k+1 is odd, with the averages at both ends over k points
             # the distance between the averages is then k+1 = (3m-1)/2 +1
-            slope = (mean2-mean1) / ( (0.5*(3*m-1)+1))
+            slope = (mean2-mean1) / ((0.5*(3*m-1)+1))
         else: # m is even
             # 3m = 2k is even, so distance between averages is k=3m/2
             slope = (mean2-mean1) / (0.5*3*m)
-              
-        x0 = [x - slope*(idx-np.floor(3*m/2)) for (idx,x) in enumerate(xs)]  # remove the linear trend
+
+        # remove the linear trend
+        x0 = [x - slope*(idx-np.floor(3*m/2)) for (idx, x) in enumerate(xs)]
         x0_flip = x0[::-1] # left-right flipped version of array
         # extended sequence of length 9m, by uninverted even reflection
-        xstar = np.concatenate( (x0_flip,x0,x0_flip ))
-        assert( len(xstar)==9*m )
-        
+        xstar = np.concatenate((x0_flip, x0, x0_flip))
+        assert len(xstar) == 9*m
+
         # now compute totdev on these 9m points
-        # 6m unique groups of m-point averages, all possible overlapping second differences
+        # 6m unique groups of m-point averages,
+        # all possible overlapping second differences
         # one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2
-        squaresum=0.0
-        k=0
-        for j in range(0,6*int(m)): # summation of the 6m terms.
-            xmean1 = np.mean( xstar[j+0*m : j+1*m] )
-            xmean2 = np.mean( xstar[j+1*m : j+2*m] )
-            xmean3 = np.mean( xstar[j+2*m : j+3*m] )
+        squaresum = 0.0
+        k = 0
+        for j in range(0, 6*int(m)): # summation of the 6m terms.
+            xmean1 = np.mean(xstar[j+0*m : j+1*m])
+            xmean2 = np.mean(xstar[j+1*m : j+2*m])
+            xmean3 = np.mean(xstar[j+2*m : j+3*m])
             squaresum += pow(xmean1-2.0*xmean2+xmean3, 2)
-            k=k+1
-        assert( k == 6*int(m) )
-        
+            k = k+1
+        assert k == 6*int(m)
+
         squaresum = (1.0/(6.0*k)) * squaresum
         dev += squaresum
-        n=n+1
-    
+        n = n+1
+
     # scaling in front of double-sum
-    assert( n == N-3*int(m)+1 ) # sanity check on the number of terms n
-    dev = dev* 1.0/ ( N-3*m+1 ) 
+    assert n == N-3*int(m)+1 # sanity check on the number of terms n
+    dev = dev* 1.0/ (N-3*m+1)
     dev = np.sqrt(dev)
     error = dev / np.sqrt(n)
-    return (dev,error,n)
+    return (dev, error, n)
 
 def theo1(data, rate=1.0, data_type="phase", taus=None):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        Theo1 is a two-sample variance with improved confidence and 
-        extended averaging factor range. 
+        Theo1 is a two-sample variance with improved confidence and
+        extended averaging factor range.
 
         .. math::
 
-            \\sigma^2_{THEO1}(m\\tau_0) = { 1 \\over  (m \\tau_0 )^2 (N-m) } 
-                           \\sum_{i=1}^{N-m}   \\sum_{\\delta=0}^{m/2-1} 
-                           {1\\over m/2-\\delta}\\lbrace ({x}_{i} - x_{i-\\delta +m/2}) + (x_{i+m}- x_{i+\\delta +m/2}) \\rbrace^2
-        
-        
+            \\sigma^2_{THEO1}(m\\tau_0) = { 1 \\over  (m \\tau_0 )^2 (N-m) }
+                \\sum_{i=1}^{N-m}   \\sum_{\\delta=0}^{m/2-1}
+                {1\\over m/2-\\delta}\\lbrace
+                    ({x}_{i} - x_{i-\\delta +m/2}) +
+                    (x_{i+m}- x_{i+\\delta +m/2}) \\rbrace^2
+
+
         Where :math:`10<=m<=N-1` is even.
-        
+
         FIXME: bias correction
-        
+
         NIST SP 1065 eq (30) page 29
-                
+
     Parameters
     ----------
     data: np.array
@@ -949,7 +982,7 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
         Array of tau values, in seconds, for which to compute statistic.
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
-    
+
     """
     if data_type == "phase":
         phase = data
@@ -957,38 +990,41 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
         phase = frequency2phase(data, rate)
     else:
         raise Exception("unknown data_type: " + data_type)
-        
+
     rate = float(rate)
     tau0 = 1.0/rate
     (phase, ms, taus_used) = tau_generator(phase, rate, taus, even=True)
 
-    devs    = np.zeros_like(taus_used)
+    devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
-    ns      = np.zeros_like(taus_used)
-    
-    N=len(phase)
+    ns = np.zeros_like(taus_used)
+
+    N = len(phase)
     for idx, m in enumerate(ms):
-        m = int(m) # to avoid: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
-        assert( m % 2 == 0 ) # m must be even
-        dev=0
-        n=0
-        for i in range( int(N-m) ):
-            s=0
-            for d in range( int(m/2) ): # inner sum
+        m = int(m) # to avoid: VisibleDeprecationWarning: using a
+                   # non-integer number instead of an integer will
+                   # result in an error in the future
+        assert m % 2 == 0 # m must be even
+        dev = 0
+        n = 0
+        for i in range(int(N-m)):
+            s = 0
+            for d in range(int(m/2)): # inner sum
                 pre = 1.0 / (float(m)/2 - float(d))
-                s += pre*pow( phase[i]-phase[i-d+m/2] + phase[i+m]-phase[i+d+m/2] , 2)
-                n=n+1
+                s += pre*pow(phase[i]-phase[i-d+m/2] +
+                             phase[i+m]-phase[i+d+m/2], 2)
+                n = n+1
             dev += s
-        assert( n == (N-m)*m/2 ) # N-m outer sums, m/2 inner sums
-        dev = dev/( 0.75*(N-m)*pow(m*tau0,2) )
+        assert n == (N-m)*m/2 # N-m outer sums, m/2 inner sums
+        dev = dev/(0.75*(N-m)*pow(m*tau0, 2))
         # factor 0.75 used here? http://tf.nist.gov/general/pdf/1990.pdf
         # but not here? http://tf.nist.gov/timefreq/general/pdf/2220.pdf page 29
-        devs[idx] = np.sqrt( dev )
+        devs[idx] = np.sqrt(dev)
         deverrs[idx] = devs[idx] / np.sqrt(N-m)
         ns[idx] = n
-        
+
     return remove_small_ns(taus_used, devs, deverrs, ns)
-    
+
 
 def tierms(data, rate=1.0, data_type="phase", taus=None):
     """ Time Interval Error RMS.
@@ -1044,8 +1080,8 @@ def tierms(data, rate=1.0, data_type="phase", taus=None):
 
 def mtie_rolling_window(a, window):
     """
-    Make an ndarray with a rolling window of the last dimension
-    from http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html
+    Make an ndarray with a rolling window of the last dimension, from
+    http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html
 
     Parameters
     ----------
@@ -1131,13 +1167,13 @@ def mtie_phase_fast(phase, rate, taus):
     """
     rate = float(rate)
     phase = np.asarray(phase)
-    k_max = int( np.floor( np.log2( len(phase) ) ) )
-    phase = phase[0:pow(2,k_max)] # truncate data to 2**k_max datapoints
-    assert( len(phase) == pow(2,k_max) )
+    k_max = int(np.floor(np.log2(len(phase))))
+    phase = phase[0:pow(2, k_max)] # truncate data to 2**k_max datapoints
+    assert len(phase) == pow(2, k_max)
     k = 1
     taus = []
-    while k<=k_max:
-        tau = pow(2,k)
+    while k <= k_max:
+        tau = pow(2, k)
         taus.append(tau)
         #print tau
         k += 1
@@ -1146,27 +1182,29 @@ def mtie_phase_fast(phase, rate, taus):
     deverrs = np.zeros(len(taus))
     ns = np.zeros(len(taus))
     # matrices to store results
-    mtie_max = np.zeros( (len(phase)-1,k_max) )
-    mtie_min = np.zeros( (len(phase)-1,k_max) )
+    mtie_max = np.zeros((len(phase)-1, k_max))
+    mtie_min = np.zeros((len(phase)-1, k_max))
     for kidx in range(k_max):
-        k=kidx+1
-        imax = len(phase)-pow(2,k)+1
+        k = kidx+1
+        imax = len(phase)-pow(2, k)+1
         #print k, imax
         tie = np.zeros(imax)
         #print np.max( tie )
         for i in range(imax):
-            if k==1:
-                mtie_max[i,kidx] = max( phase[i], phase[i+1] )
-                mtie_min[i,kidx] = min( phase[i], phase[i+1] )
+            if k == 1:
+                mtie_max[i, kidx] = max(phase[i], phase[i+1])
+                mtie_min[i, kidx] = min(phase[i], phase[i+1])
             else:
-                p = int( pow(2,k-1) )
-                mtie_max[i,kidx] = max( mtie_max[i,kidx-1], mtie_max[i+p,kidx-1] )
-                mtie_min[i,kidx] = min( mtie_min[i,kidx-1], mtie_min[i+p,kidx-1] )
+                p = int(pow(2, k-1))
+                mtie_max[i, kidx] = max(mtie_max[i, kidx-1],
+                                        mtie_max[i+p, kidx-1])
+                mtie_min[i, kidx] = min(mtie_min[i, kidx-1],
+                                        mtie_min[i+p, kidx-1])
 
         #for i in range(imax):
-            tie[i] = mtie_max[i,kidx] - mtie_min[i,kidx]
+            tie[i] = mtie_max[i, kidx] - mtie_min[i, kidx]
             #print tie[i]
-        devs[kidx] = np.amax( tie )
+        devs[kidx] = np.amax(tie)
         #print "maximum %2.4f" % devs[kidx]
         #print np.amax( tie )
     #for tau in taus:
@@ -1181,11 +1219,11 @@ def mtie_phase_fast(phase, rate, taus):
 #  gap resistant Allan deviation
 #
 
-def gradev(data, rate=1.0, data_type="phase", taus=None, 
+def gradev(data, rate=1.0, data_type="phase", taus=None,
            ci=0.9, noisetype='wp'):
     # TODO : add parameters
     """ gap resistant overlapping Allan deviation
-    
+
     Returns
     -------
     taus: np.array
@@ -1197,7 +1235,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
         distances from the the estimated two sample variance.
     ns: np.array
         numper of terms n in the adev estimate.
-        
+
     """
     if data_type == "phase":
         phase = data
@@ -1208,7 +1246,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
 
     (data, m, taus_used) = tau_generator(phase, rate, taus)
 
-    ad  = np.zeros_like(taus_used)
+    ad = np.zeros_like(taus_used)
     ade_l = np.zeros_like(taus_used)
     ade_h = np.zeros_like(taus_used)
     adn = np.zeros_like(taus_used)
@@ -1221,7 +1259,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
                                              ci,
                                              noisetype)
         # stride=1 for overlapping ADEV
-        ad[idx]  = dev
+        ad[idx] = dev
         ade_l[idx] = deverr[0]
         ade_h[idx] = deverr[1]
         adn[idx] = n
@@ -1252,8 +1290,8 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
 
     v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
 
-    n = len(np.where(np.isnan(v_arr)==False)[0]) # only average for non-nans
-    N = len(np.where(np.isnan(data)==False)[0])
+    n = len(np.where(np.isnan(v_arr) == False)[0]) # only average for non-nans
+    N = len(np.where(np.isnan(data) == False)[0])
 
     s = np.nansum(v_arr * v_arr)   #  a summation robust to nans
 
@@ -1266,7 +1304,7 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
                                       ci,
                                       noisetype)
     else:
-        deverr = [0,0]
+        deverr = [0, 0]
 
     return dev, deverr, n
 
@@ -1289,7 +1327,8 @@ def tau_generator(data, rate, taus=[], v=False, even=False, maximum_m=-1):
     data: np.array
         data array
     rate: float
-        Sample rate of data in Hz. Time interval between measurements is 1/rate seconds.
+        Sample rate of data in Hz. Time interval between measurements
+        is 1/rate seconds.
     taus: np.array
         Array of tau values for which to compute measurement.
         Alternatively one of the keywords: "all", "octave", "decade".
@@ -1316,32 +1355,32 @@ def tau_generator(data, rate, taus=[], v=False, even=False, maximum_m=-1):
         raise RuntimeError("Warning! rate==0")
 
     if not np.any(taus): # empty or no tau-list supplied
-        taus="octave" # default to octave
+        taus = "octave" # default to octave
 
     if taus == "all":
-        taus = (1.0/rate)*np.linspace(1.0,len(data),len(data))
+        taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
     elif taus == "octave":
-        maxn = np.floor( np.log2( len(data) ) )
-        taus = (1.0/rate)*np.logspace(0,maxn,maxn+1,base=2.0)
+        maxn = np.floor(np.log2(len(data)))
+        taus = (1.0/rate)*np.logspace(0, maxn, maxn+1, base=2.0)
     elif taus == "decade": # 1, 2, 4, 10, 20, 40 spacing similar to Stable32
-        maxn = np.floor( np.log10( len(data) ) )
+        maxn = np.floor(np.log10(len(data)))
         taus = []
         for k in range(int(maxn+1)):
-            taus.append( 1.0*(1.0/rate)*pow(10.0,k) )
-            taus.append( 2.0*(1.0/rate)*pow(10.0,k) )
-            taus.append( 4.0*(1.0/rate)*pow(10.0,k) )
-    
+            taus.append(1.0*(1.0/rate)*pow(10.0, k))
+            taus.append(2.0*(1.0/rate)*pow(10.0, k))
+            taus.append(4.0*(1.0/rate)*pow(10.0, k))
+
     data, taus = np.array(data), np.array(taus)
     rate = float(rate)
     m = [] # integer averaging factor. tau = m*tau0
-    
+
     if maximum_m == -1: # if no limit given
         maximum_m = len(data)
-    
+
     taus_valid1 = taus < (1 / float(rate)) * float(len(data))
     taus_valid2 = taus > 0
     taus_valid3 = taus <= (1 / float(rate)) * float(maximum_m)
-    taus_valid  = taus_valid1 & taus_valid2 & taus_valid3
+    taus_valid = taus_valid1 & taus_valid2 & taus_valid3
     m = np.floor(taus[taus_valid] * rate)
     m = m[m != 0]       # m is tau in units of datapoints
     m = np.unique(m)    # remove duplicates and sort
@@ -1354,12 +1393,12 @@ def tau_generator(data, rate, taus=[], v=False, even=False, maximum_m=-1):
         print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
 
     taus2 = m / float(rate)
-    
+
     if even:
         m_even = ((m % 2) == 0)
         m = m[m_even]
         taus2 = taus2[m_even]
-        
+
     return data, m, taus2
 
 def remove_small_ns(taus, devs, deverrs, ns):
@@ -1387,8 +1426,8 @@ def remove_small_ns(taus, devs, deverrs, ns):
     ns_big_enough = ns > 1
 
     o_taus = taus[ns_big_enough]
-    o_devs  = devs[ns_big_enough]
-    o_ns    = ns[ns_big_enough]
+    o_devs = devs[ns_big_enough]
+    o_ns = ns[ns_big_enough]
     if isinstance(deverrs, list):
         assert(len(deverrs) < 3)
         o_deverrs = [deverrs[0][ns_big_enough], deverrs[1][ns_big_enough]]
@@ -1407,14 +1446,14 @@ def trim_data(x):
     # create boolean mask default True:
     mask = np.ones(len(x), dtype=bool)
     # Set indices of mask to False for leading NaNs
-    for i in range(0,len(x)):
+    for i in range(0, len(x)):
         if np.isnan(x[i]) == True:
             mask[i] = False
         else:
             break
 
     # Set indices of mask to False for trailing NaNs
-    for j in range(len(x)-1,0,-1):
+    for j in range(len(x)-1, 0, -1):
         if np.isnan(x[j]) == True:
             mask[j] = False
         else:
@@ -1462,24 +1501,24 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
 
     """
 
-    ci_l = min(np.abs(ci),np.abs((ci-1))) / 2
+    ci_l = min(np.abs(ci), np.abs((ci-1))) / 2
     ci_h = 1 - ci_l
 
     if noisetype in set(['wp', 'fp', 'wf', 'ff', 'rf']):
 
-        if noisetype =='wp':
+        if noisetype == 'wp':
             df = (N + 1) * (N - 2*m) / (2 * (N - m))
 
-        if noisetype =='wf':
+        if noisetype == 'wf':
             df = (((3 * (N - 1) / (2 * m)) - (2 * (N - 2) / N)) *
                   ((4*m**2) / ((4*m**2) + 5)))
 
-        if noisetype =='fp':
+        if noisetype == 'fp':
             a = (N - 1)/(2 * m)
             b = (2 * m + 1) * (N - 1) / 4
             df = np.exp(np.sqrt(np.log(a) * np.log(b)))
 
-        if noisetype =='ff':
+        if noisetype == 'ff':
             if m == 1:
                 df = 2 * (N - 2) /(2.3 * N - 4.9)
             if m >= 2:
@@ -1496,8 +1535,8 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
         df = (N - 1)
         print("Noise type not recognized. Defaulting to N - 1 degrees of freedom.")
 
-    chi2_l = scipy.stats.chi2.ppf(ci_l,df)
-    chi2_h = scipy.stats.chi2.ppf(ci_h,df)
+    chi2_l = scipy.stats.chi2.ppf(ci_l, df)
+    chi2_h = scipy.stats.chi2.ppf(ci_h, df)
 
     err_h = np.abs(df * s / chi2_l - s)
     err_l = np.abs(df * s / chi2_h - s)
@@ -1510,10 +1549,12 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
                              phasedata_ca, rate, taus, function):
     """
     Three Cornered Hat Method
-    
-    Given three clocks A, B, C, we seek to find their variances :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`.
-    We measure three phase differences, assuming no correlation between the clocks, the measurements have variances:
-    
+
+    Given three clocks A, B, C, we seek to find their variances
+    :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`.
+    We measure three phase differences, assuming no correlation between
+    the clocks, the measurements have variances:
+
     .. math::
 
         \\sigma^2_{AB} = \\sigma^2_{A} + \\sigma^2_{B}
@@ -1523,13 +1564,15 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
         \\sigma^2_{CA} = \\sigma^2_{C} + \\sigma^2_{A}
 
     Which allows solving for the variance of one clock as:
-    
+
     .. math::
-    
-        \\sigma^2_{A}  = {1 \\over 2} ( \\sigma^2_{AB} + \\sigma^2_{CA} - \\sigma^2_{BC} )
-    
-    and similarly cyclic permutations for :math:`\\sigma^2_B` and :math:`\\sigma^2_C`
-    
+
+        \\sigma^2_{A}  = {1 \\over 2} ( \\sigma^2_{AB} +
+        \\sigma^2_{CA} - \\sigma^2_{BC} )
+
+    and similarly cyclic permutations for :math:`\\sigma^2_B` and
+    :math:`\\sigma^2_C`
+
     Parameters
     ----------
     phasedata_ab: np.array
@@ -1544,7 +1587,7 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
         The tau values for deviations, in seconds
     function: allantools deviation function
         The type of statistic to compute, e.g. allantools.oadev
-    
+
     Returns
     -------
     tau_ab: np.array
@@ -1557,9 +1600,15 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
     http://www.wriley.com/3-CornHat.htm
     """
 
-    (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab, data_type='phase', rate=rate, taus=taus)
-    (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc, data_type='phase', rate=rate, taus=taus)
-    (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca, data_type='phase', rate=rate, taus=taus)
+    (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab,
+                                               data_type='phase',
+                                               rate=rate, taus=taus)
+    (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc,
+                                               data_type='phase',
+                                               rate=rate, taus=taus)
+    (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca,
+                                               data_type='phase',
+                                               rate=rate, taus=taus)
 
     var_ab = dev_ab * dev_ab
     var_bc = dev_bc * dev_bc
@@ -1596,10 +1645,11 @@ def frequency2phase(freqdata, rate):
     """
     dt = 1.0 / float(rate)
     phasedata = np.cumsum(freqdata) * dt
-    phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this? so that phase starts at zero and len(phase)=len(freq)+1 ??
+    phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this? 
+    # so that phase starts at zero and len(phase)=len(freq)+1 ??
     return phasedata
 
-def phase2radians(phasedata,v0):
+def phase2radians(phasedata, v0):
     """ Convert phase in seconds to phase in radians
 
     Parameters
