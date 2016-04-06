@@ -885,8 +885,6 @@ def calc_htotdev_freq(freq, m):
         ----------
         frequency: np.array
             Fractional frequency data (nondimensional).
-        rate: float
-            The sampling rate for frequency, in Hz
         m: int
             Averaging factor. tau = m*tau0, where tau0=1/rate.
     """
@@ -1663,7 +1661,7 @@ def phase2radians(phasedata, v0):
     fi:
         phase data in radians
     """
-    fi = [2*math.pi*v0*xx for xx in phasedata]
+    fi = [2*np.pi*v0*xx for xx in phasedata]
     return fi
 
 def phase2frequency(phase, rate):
