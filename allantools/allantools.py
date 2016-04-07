@@ -804,10 +804,6 @@ def calc_mtotdev_phase(phase, rate, m):
         n = n+1
 
     # scaling in front of double-sum
-    if not n == N-3*int(m)+1:
-        print('Error: not n == N-3*int(m)+1 !!')
-        print(' n= %d  N= %d  m= %d '%(n, N, m))
-        print(' N-3m+1 = %d'%(N-3*m+1))
     assert n == N-3*int(m)+1 # sanity check on the number of terms n
     dev = dev* 1.0/ (2.0*pow(m*tau0, 2)*(N-3*m+1))
     dev = np.sqrt(dev)
