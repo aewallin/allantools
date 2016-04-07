@@ -23,7 +23,7 @@ h2=2e-20 # PSD f^-2 coefficient
 N=10*4096 # number of samples 
 v0 = 1.2345e6 # nominal oscillator frequency
 
-y = noise.brown(N=N,b2=h2,fs=fs) # fractional frequency
+y = noise.brown(num_points=N,b2=h2,fs=fs) # fractional frequency
 x = allantools.frequency2phase(y,fs) # phase in seconds
 fi = [2*math.pi*v0*xx for xx in x] # phase in radians
 t = np.linspace(0, (1.0/fs)*N, len(y)) # time-series time axis

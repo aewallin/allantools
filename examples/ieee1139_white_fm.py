@@ -22,7 +22,7 @@ h0=2e-16
 N=16*4096
 v0 = 1e6 # nominal oscillator frequency
 
-y = noise.white(N=N,b0=h0,fs=fs) # fractional frequency
+y = noise.white(num_points=N,b0=h0,fs=fs) # fractional frequency
 x = allantools.frequency2phase(y,fs) # phase in seconds
 fi = [2*math.pi*v0*xx for xx in x] # phase in radians
 t = np.linspace(0, (1.0/fs)*N, len(y))

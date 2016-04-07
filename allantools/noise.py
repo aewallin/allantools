@@ -68,7 +68,7 @@ def brown(num_points=1024, b2=1.0, fs=1.0):
         we integrate white-noise to get Brownian noise.
 
     """
-    return (1.0/float(fs))*numpy.cumsum(white(N=num_points, b0=b2*(4.0*math.pi*math.pi), fs=fs))
+    return (1.0/float(fs))*numpy.cumsum(white(num_points, b0=b2*(4.0*math.pi*math.pi), fs=fs))
 
 def violet(num_points):
     """ violet noise with f^2 PSD """
