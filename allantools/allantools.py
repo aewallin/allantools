@@ -1308,7 +1308,7 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
 #
 
 
-def tau_generator(data, rate, taus=[], v=False, even=False, maximum_m=-1):
+def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     """ pre-processing of the tau-list given by the user (Helper function)
 
     Does sanity checks, sorts data, removes duplicates and invalid values.
@@ -1347,8 +1347,10 @@ def tau_generator(data, rate, taus=[], v=False, even=False, maximum_m=-1):
     if rate == 0:
         raise RuntimeError("Warning! rate==0")
 
-    if not np.any(taus): # empty or no tau-list supplied
+    if taus is None : # empty or no tau-list supplied
         taus = "octave" # default to octave
+    elif isinstance(taus, list) and taus == []:
+        taus = "octave"
 
     if taus == "all":
         taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
