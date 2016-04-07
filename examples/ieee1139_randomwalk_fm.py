@@ -23,15 +23,17 @@ h2=2e-20 # PSD f^-2 coefficient
 N=10*4096 # number of samples 
 v0 = 1.2345e6 # nominal oscillator frequency
 
-y = noise.brown(num_points=N,b2=h2,fs=fs) # fractional frequency
+y = noise.brown(num_points=N, b2=h2, fs=fs) # fractional frequency
 x = allantools.frequency2phase(y,fs) # phase in seconds
 fi = [2*math.pi*v0*xx for xx in x] # phase in radians
 t = np.linspace(0, (1.0/fs)*N, len(y)) # time-series time axis
 
 # time-series figure
 plt.figure()
-plt.plot(t,y,label='y')
-plt.plot(t,x[1:],label='x')
+fig, ax1 = plt.subplots()
+ax1.plot(t, y, label='y')
+ax2 = ax1.twinx()
+ax2.plot(t, x[1:], label='x')
 plt.legend()
 plt.xlabel('Time / s')
 plt.ylabel('Fractional frequency')
@@ -65,9 +67,9 @@ plt.ylabel('one-sided PSD / S_y(f)')
 
 # Phase (radians) PSD
 plt.figure()
-plt.loglog(f_fi,psd_fi,label='numpy.fft()')
-plt.loglog(f_fi2,psd_fi2,label='scipy.signal.welch()')
-plt.loglog(f_fi[1:],[h2*v0*v0/(ff**4.0) for ff in f_fi[1:]],label='h_2 * v0^2 * f^-4'  )
+plt.loglog(f_fi, psd_fi, label='numpy.fft()')
+plt.loglog(f_fi2, psd_fi2, label='scipy.signal.welch()')
+plt.loglog(f_fi[1:], [h2*v0*v0/(ff**4.0) for ff in f_fi[1:]], label='h_2 * v0^2 * f^-4'  )
 plt.legend(framealpha=0.5)
 plt.title('PSD of phase (radians)')
 plt.xlabel('Frequeny / Hz')
@@ -77,9 +79,9 @@ plt.grid()
 
 # Phase (time) PSD
 plt.figure()
-plt.loglog(f_x,psd_x,label='numpy.fft()')
-plt.loglog(f_x2,psd_x2,label='scipy.signal.welch()')
-plt.loglog(f_x[1:],[h2/((2*math.pi)**2 * ff**4.0 ) for ff in f_x[1:]],label='h2 * (2 pi)^-2 * f^-4'  )
+plt.loglog(f_x, psd_x, label='numpy.fft()')
+plt.loglog(f_x2, psd_x2, label='scipy.signal.welch()')
+plt.loglog(f_x[1:], [h2/((2*math.pi)**2 * ff**4.0 ) for ff in f_x[1:]], label='h2 * (2 pi)^-2 * f^-4'  )
 plt.legend(framealpha=0.5)
 plt.title('PSD of phase (time)')
 plt.xlabel('Frequeny / Hz')
@@ -88,13 +90,13 @@ plt.grid()
 
 plt.figure()
 taus=[tt for tt in np.logspace(-2.2,4,100)]
-(taus_y, devs_y, errs_y, ns_y) = allantools.oadev(y, rate=fs,data_type='freq',  taus=taus)
+(taus_y, devs_y, errs_y, ns_y) = allantools.oadev(y, rate=fs, data_type='freq',  taus=taus)
 (taus_x, devs_x, errs_x, ns_x) = allantools.oadev(x, rate=fs, taus=taus)
-plt.loglog(taus_y,devs_y,'o',label='ADEV from y')
-plt.loglog(taus_x,devs_x,'*',label='ADEV from x')
+plt.loglog(taus_y, devs_y, 'o', label='ADEV from y')
+plt.loglog(taus_x, devs_x, '*', label='ADEV from x')
 
 # sqrt{ 2*pi^2/3 * h2 * tau }
-adev_y = [math.sqrt( ((2*math.pi**2) /3)*h2*tt ) for tt in taus]
+adev_y = [math.sqrt(((2*math.pi**2)/3)*h2*tt ) for tt in taus]
 plt.loglog(taus,adev_y,label='sqrt{ 2*pi^2/3 * h2 * tau }')
 #plt.xlim((8e-3,1e3))
 plt.legend(framealpha=0.6)
