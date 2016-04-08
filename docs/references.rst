@@ -1,6 +1,16 @@
 References 
 ========== 
 
+Code
+----
+
+* http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
+* http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified
+* http://www.leapsecond.com/tools/adev_lib.c
+
+Papers
+------
+
 http://en.wikipedia.org/wiki/Allan_variance
 
 NIST Special Publication 1065
@@ -9,6 +19,8 @@ http://tf.nist.gov/timefreq/general/pdf/2220.pdf
 1139-2008 - IEEE Standard Definitions of Physical Quantities for 
 Fundamental Frequency and Time Metrology - Random Instabilities 
 http://dx.doi.org/10.1109/IEEESTD.2008.4797525
+
+http://www.stable32.com/Handbook.pdf
 
 Confidence Intervals and Bias Corrections  for the Stable32  Variance Functions
 W.J. Riley, Hamilton Technical Services

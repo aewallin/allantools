@@ -29,22 +29,6 @@ Function                                Description
 ``three_cornered_hat_phase()``          Three Cornered Hat Method
 =====================================   ====================================================
 
-
-References
------------
-
-* http://www.wriley.com/paper4ht.htm
-* http://en.wikipedia.org/wiki/Allan_variance
-* http://tf.nist.gov/general/pdf/2220.pdf
-* http://www.stable32.com/Handbook.pdf
-
-for code see e.g.:
-    
-* http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
-* http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified
-* http://www.leapsecond.com/tools/adev_lib.c
-
-
 General usage
 --------------
 
