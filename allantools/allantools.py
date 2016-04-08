@@ -1330,7 +1330,10 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         verbose output if True
     even:
         require even m, where tau=m*tau0, for Theo1 statistic
-
+    maximum_m:
+        limit m, where tau=m*tau0, to this value.
+        used by mtotdev() and htotdev() to limit maximum tau.
+    
     Returns
     -------
     (data, m, taus): tuple
@@ -1347,7 +1350,7 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     if rate == 0:
         raise RuntimeError("Warning! rate==0")
 
-    if taus is None : # empty or no tau-list supplied
+    if taus is None: # empty or no tau-list supplied
         taus = "octave" # default to octave
     elif isinstance(taus, list) and taus == []:
         taus = "octave"
@@ -1424,7 +1427,7 @@ def remove_small_ns(taus, devs, deverrs, ns):
     o_devs = devs[ns_big_enough]
     o_ns = ns[ns_big_enough]
     if isinstance(deverrs, list):
-        assert(len(deverrs) < 3)
+        assert len(deverrs) < 3
         o_deverrs = [deverrs[0][ns_big_enough], deverrs[1][ns_big_enough]]
     else:
         o_deverrs = deverrs[ns_big_enough]
