@@ -33,7 +33,6 @@ def test_tau_generator_octave():
 
 def test_tau_generator_decade():
     (taus_used, adev, adeverror, adev_n) = at.adev(d, rate=r, taus="decade")
-    print(taus_used)
     np.testing.assert_array_equal(taus_used, expected_decade)
 
 
