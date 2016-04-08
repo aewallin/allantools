@@ -20,6 +20,9 @@ def test_tau_generator_empty():
     (taus_used, adev, adeverror, adev_n) = at.adev(d)
     np.testing.assert_array_equal(taus_used, expected_octave)
 
+def test_tau_generator_empty_list():
+    (taus_used, adev, adeverror, adev_n) = at.adev(d, taus=[])
+    np.testing.assert_array_equal(taus_used, expected_octave)
 
 def test_tau_generator_all():
     (taus_used, adev, adeverror, adev_n) = at.adev(d, rate=r, taus="all")
@@ -38,6 +41,11 @@ def test_tau_generator_decade():
 
 def test_tau_generator_1234():
     wanted_taus = [1, 2, 3, 4]
+    (taus_used, adev, adeverror, adev_n) = at.adev(d, rate=r, taus=wanted_taus)
+    np.testing.assert_array_equal(taus_used, wanted_taus)
+
+def test_tau_generator_numpy1234():
+    wanted_taus = np.array([1, 2, 3, 4])
     (taus_used, adev, adeverror, adev_n) = at.adev(d, rate=r, taus=wanted_taus)
     np.testing.assert_array_equal(taus_used, wanted_taus)
 
