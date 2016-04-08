@@ -168,8 +168,9 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
           Tuple of values
     taus2: np.array
         Tau values for which td computed
-        md: np.array
-            Computed mdev for each tau value    mde: np.array
+    md: np.array
+        Computed mdev for each tau value
+    mde: np.array
         mdev errors
     ns: np.array
         Values of N used in each mdev calculation
@@ -179,6 +180,7 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
     see http://www.leapsecond.com/tools/adev_lib.c
 
     NIST SP 1065 eqn (14), page 17
+
     """
 
     if data_type == "phase":
