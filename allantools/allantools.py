@@ -6,7 +6,7 @@ Allan deviation tools
 
 Version history
 ---------------
-** current master ** unreleased
+**2016.4** 2016 April 8
 - convert tests to use pytest
 - split tests into individual pytests, make them all pass
 - accept a numpy.array as taus parameter.
