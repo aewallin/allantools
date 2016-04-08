@@ -147,8 +147,6 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
         \\sum_{j=1}^{N-3m+1} \\lbrace
         \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
 
-    NIST SP 1065 eqn (14) and (15), page 17
-
     Parameters
     ----------
     data: np.array
@@ -178,9 +176,10 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
 
     Notes
     -----
+    
     see http://www.leapsecond.com/tools/adev_lib.c
 
-    NIST SP 1065 eqn (14), page 17
+    NIST SP 1065 eqn (14) and (15), page 17
 
     """
 

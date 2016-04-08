@@ -1,5 +1,6 @@
 .. py:currentmodule:: allantools
 .. py:module: allantools
+.. py:module: allantools.noise
 
 API
 ===
@@ -84,6 +85,14 @@ Statistics
 .. autofunction:: theo1
 .. autofunction:: mtie
 .. autofunction:: tierms
+
+Noise Generation
+----------------
+
+.. autofunction:: allantools.noise.white
+.. autofunction:: allantools.noise.brown
+.. autofunction:: allantools.noise.violet
+.. autofunction:: allantools.noise.pink
 
 Utilities
 ---------

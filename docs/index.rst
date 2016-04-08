@@ -11,6 +11,8 @@ allantools documentation
 
    getting_started
    api
+   dev
+   references
 ..
    
 .. include:: ../README.rst

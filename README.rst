@@ -105,30 +105,6 @@ Usage
     #  - taus_used may differ from taus, if taus has a non-integer multiples 
     #  of data_interval - adeverror assumes 1/sqrt(adev_n) errors
 
-
-Development 
-===========
-
-Here follows an un-ordered to do list:
-
-* Statistics and core algorithms
-
-    * The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)
-    * TheoH
-    * Confidence intervals based on identified noise-type and equivalent degrees of freedom.
-    * Bias corrections for biased statistics (totdev, mtotdev, htotdev, theo1)
-    
-* Improve documentation
-* Improve packaging for PyPi and/or other packaging systems (PPA for Ubuntu/Debian?)
-* Stable32-style plots using matplotlib 
-* Tests for different noise types according to IEEE 1139, include power-spectral-density calculations 
-* Conversion between phase noise and Allan variance 
-* Phase noise calculations and plots
-* Comparison to other libraries such as GPSTk
-
-Make sure your patch does not break any of the tests, and does not 
-significantly reduce the readability of the code.
-
 Tests
 =====
 
@@ -165,78 +141,5 @@ Test coverage may be obtained with the
 On Ubuntu this requires packages **python-pytest** and 
 **python-coverage**.
 
-Notes for Pypi
-==============
 
-Creating a source distribution
 
-    python setup.py sdist
-
-Testing the source distribution. The install takes a long time while 
-compiling numpy and scipy.
-
-::
-
-    $ virtualenv tmp
-    $ tmp/bin/pip install dist/AllanTools-2016.2.tar.gz 
-    $ tmp/bin/python
-    >>> import allantools
-
-Registering, uploading and testing  source distribution to PyPi test server
-(requries a ~/.pypirc with username and password)
-
-::
-
-    $ python setup.py register -r test
-    $ python setup.py sdist upload -r test
-    $ pip install -i https://testpypi.python.org/pypi AllanTools
-
-Registering and uploading to PyPi
-
-::
-
-    $ python setup.py register
-    $ python setup.py sdist upload
-
-References 
-========== 
-
-http://en.wikipedia.org/wiki/Allan_variance
-
-1139-2008 - IEEE Standard Definitions of Physical Quantities for 
-Fundamental Frequency and Time Metrology - Random Instabilities 
-http://dx.doi.org/10.1109/IEEESTD.2008.4797525
-
-F. Vernotte, "Variance Measurements", 2011 IFCS & EFTF
-http://www.ieee-uffc.org/frequency-control/learning/pdf/Vernotte-Varience_Measurements.pdf
-
-S. Stein, Frequency and Time - Their Measurement and Characterization. 
-Precision Frequency Control Vol 2, 1985, pp 191-416. 
-http://tf.boulder.nist.gov/general/pdf/666.pdf
-
-W.J.Riley, "THE CALCULATION OF TIME DOMAIN FREQUENCY STABILITY" 
-http://www.wriley.com/paper1ht.htm
-
-Tom Van Baak http://www.leapsecond.com/tools/adev_lib.c
-
-Fabian Czerwinski, Matlab code
-http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
-
-M. A. Hopcroft, Matlab code
-http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified
-
-SESIA I., GALLEANI L., TAVELLA P., Application of the Dynamic Allan Variance 
-for the Characterization of Space Clock Behavior, 
-http://dx.doi.org/10.1109/TAES.2011.5751232
-       
-S. BREGNI, Fast Algorithms for TVAR and MTIE Computation in Characterization of
-Network Synchronization Performance. 
-http://home.deib.polimi.it/bregni/papers/cscc2001_fastalgo.pdf
-
-David A. Howe, The total deviation approach to long-term characterization
-of frequency stability, IEEE tr. UFFC vol 47 no 5 (2000)
-http://dx.doi.org/10.1109/58.869040
-
-Ilaria Sesia and Patrizia Tavella, Estimating the Allan variance in the 
-presence of long periods of missing data and outliers.
-2008 Metrologia 45 S134 http://dx.doi.org/10.1088/0026-1394/45/6/S19
