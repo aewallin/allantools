@@ -31,6 +31,8 @@ Notes for Pypi
 
 Creating a source distribution
 
+::
+
     python setup.py sdist
 
 Testing the source distribution. The install takes a long time while 
