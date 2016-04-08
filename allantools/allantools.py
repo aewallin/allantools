@@ -11,6 +11,7 @@ Version history
 - split tests into individual pytests, make them all pass
 - accept a numpy.array as taus parameter.
 - Switch to new signature (https://github.com/aewallin/allantools/issues/29)
+- remove old and slow pure-python implementation
 
 **2016.3** 2016 March
 - improve documentation and add __version__
