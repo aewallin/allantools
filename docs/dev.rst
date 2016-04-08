@@ -12,6 +12,8 @@ Here follows an un-ordered to do list:
     * TheoH
     * Confidence intervals based on identified noise-type and equivalent degrees of freedom.
     * Bias corrections for biased statistics (totdev, mtotdev, htotdev, theo1)
+    * Multi-threading for faster processing of (very) large datasets
+    * Faster algorithms for mtotdev() and htotdev() which are currently very slow
     
 * Improve documentation
 * Improve packaging for PyPi and/or other packaging systems (PPA for Ubuntu/Debian?)
