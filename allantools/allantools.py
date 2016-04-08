@@ -1616,8 +1616,9 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
 
     var_a[var_a < 0] = 0 # don't return imaginary deviations (?)
     dev_a = np.sqrt(var_a)
+    err_a = [ d/np.sqrt(nn) for (d,nn) in zip(dev_a, ns_ab) ]
 
-    return tau_ab, dev_a
+    return tau_ab, dev_a, err_a, ns_ab
 
 ########################################################################
 #
