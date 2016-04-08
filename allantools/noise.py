@@ -128,22 +128,5 @@ def iterpink(depth=20):
         sumvals += source[i] - values[c]
         values[c] = source[i]
 
-
-def pinknoise_to_file(num_points=10000, filename="pinknoise_frequency.txt"):
-    """ generate pink frequency noise and write to file """
-    n = pink(num_points, depth=80)
-    f0 = 10e6  # imagined carrier, 10 MHz
-    n = [x + f0 for x in n]  # add noise and carrier
-    fr = [(x - f0) / float(f0) for x in n]  # fractional frequency
-    with open(filename, 'w') as f:
-        f.write("# simulated oscillator with pink frequency noise\n")
-        f.write("# fractional frequency data \n")
-        f.write("# number of datapoints %d\n" % len(fr))
-        for ff in fr:
-            f.write("%0.6g\n" % ff)
-        #print sum(n)/float(len(n))
-
-
 if __name__ == "__main__":
-    # pinknoise_to_file()
     print("Nothing to see here.")
