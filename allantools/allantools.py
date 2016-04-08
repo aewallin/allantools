@@ -169,8 +169,9 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
           Tuple of values
     taus2: np.array
         Tau values for which td computed
-        md: np.array
-            Computed mdev for each tau value    mde: np.array
+    md: np.array
+        Computed mdev for each tau value
+    mde: np.array
         mdev errors
     ns: np.array
         Values of N used in each mdev calculation
@@ -180,6 +181,7 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
     see http://www.leapsecond.com/tools/adev_lib.c
 
     NIST SP 1065 eqn (14), page 17
+
     """
 
     if data_type == "phase":
@@ -1215,8 +1217,33 @@ def mtie_phase_fast(phase, rate, taus):
 
 def gradev(data, rate=1.0, data_type="phase", taus=None,
            ci=0.9, noisetype='wp'):
-    # TODO : add parameters
     """ gap resistant overlapping Allan deviation
+
+    Parameters
+    ----------
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
+    rate: float
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
+    taus: np.array
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
+        tau-list generation.
+    ci: float
+        the total confidence interval desired, i.e. if ci = 0.9, the bounds
+        will be at 0.05 and 0.95.
+    noisetype: string
+        the type of noise desired:
+        'wp' returns white phase noise.
+        'wf' returns white frequency noise.
+        'fp' returns flicker phase noise.
+        'ff' returns flicker frequency noise.
+        'rf' returns random walk frequency noise.
+        If the input is not recognized, it defaults to idealized, uncorrelated
+        noise with (N-1) degrees of freedom.
 
     Returns
     -------
