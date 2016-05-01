@@ -5,3 +5,7 @@ docs/_build/**
 MANIFEST
 build/**
 dist/**
+.eggs/
+.tox/
+*.egg-info/
+*.egg
