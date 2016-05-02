@@ -141,5 +141,11 @@ Test coverage may be obtained with the
 On Ubuntu this requires packages **python-pytest** and 
 **python-coverage**.
 
+Testing on multiple python versions can be done with tox (https://testrun.org/tox)
+
+    $ tox
+
+Tests run continuously on Travis-CI at https://travis-ci.org/aewallin/allantools
+
 
 
