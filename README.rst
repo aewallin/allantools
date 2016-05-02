@@ -1,6 +1,9 @@
 AllanTools
 ==========
 
+.. image:: https://travis-ci.org/aewallin/allantools.svg?branch=master
+    :target: https://travis-ci.org/aewallin/allantools
+
 A python library for calculating Allan deviation and related 
 time & frequency statistics. GPL v3+ license.
 
