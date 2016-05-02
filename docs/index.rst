@@ -3,16 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-allantools documentation
+AllanTools documentation
 ========================
 
 .. toctree::
-   :maxdepth: 2
-
-   getting_started
-   api
-   dev
-   references
+    :maxdepth: 2
+   
+    readme_copy
+    getting_started
+    api
+    dev
+    references
 ..
    
-.. include:: ../README.rst
