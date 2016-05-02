@@ -9,11 +9,10 @@ AllanTools documentation
 .. toctree::
     :maxdepth: 2
    
-    ../README
+    readme_copy
     getting_started
     api
     dev
     references
 ..
    
-.. include:: ../README.rst
