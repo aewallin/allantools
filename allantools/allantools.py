@@ -6,6 +6,11 @@ Allan deviation tools
 
 Version history
 ---------------
+**unreleased**
+- testing on multiple python versions with tox
+- continuous integration with travis-ci.org
+- test coverage report on coveralls.io
+
 **2016.4** 2016 April 8
 - convert tests to use pytest
 - split tests into individual pytests, make them all pass
@@ -176,7 +181,7 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
 
     Notes
     -----
-    
+
     see http://www.leapsecond.com/tools/adev_lib.c
 
     NIST SP 1065 eqn (14) and (15), page 17
@@ -475,8 +480,8 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
 
     for idx, mj in enumerate(m):
         (hdevs[idx],
-        hdeverrs[idx],
-        ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)
+         hdeverrs[idx],
+         ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)
 
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
@@ -523,8 +528,8 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
 
     for idx, mj in enumerate(m):
         (hdevs[idx],
-        hdeverrs[idx],
-        ns[idx]) = calc_hdev_phase(phase, rate, mj, mj)  # stride = mj
+         hdeverrs[idx],
+         ns[idx]) = calc_hdev_phase(phase, rate, mj, mj)  # stride = mj
 
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
@@ -865,12 +870,12 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
     for idx, mj in enumerate(ms):
         if int(mj) == 1:
             (devs[idx],
-            deverrs[idx],
-            ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)
+             deverrs[idx],
+             ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)
         else:
             (devs[idx],
-            deverrs[idx],
-            ns[idx]) = calc_htotdev_freq(freq, mj)
+             deverrs[idx],
+             ns[idx]) = calc_htotdev_freq(freq, mj)
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
@@ -1360,7 +1365,7 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     maximum_m:
         limit m, where tau=m*tau0, to this value.
         used by mtotdev() and htotdev() to limit maximum tau.
-    
+
     Returns
     -------
     (data, m, taus): tuple
@@ -1643,7 +1648,7 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
 
     var_a[var_a < 0] = 0 # don't return imaginary deviations (?)
     dev_a = np.sqrt(var_a)
-    err_a = [ d/np.sqrt(nn) for (d,nn) in zip(dev_a, ns_ab) ]
+    err_a = [d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)]
 
     return tau_ab, dev_a, err_a, ns_ab
 
