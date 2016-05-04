@@ -10,3 +10,5 @@ dist/**
 .cache/
 *.egg-info/
 *.egg
+.coverage
+htmlcov/
