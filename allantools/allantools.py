@@ -8,8 +8,8 @@ Version history
 ---------------
 **unreleased**
 - testing on multiple python versions with tox
-- continuous integration with travis-ci.org
-- test coverage report on coveralls.io
+- continuous integration with https://travis-ci.org/aewallin/allantools
+- test coverage report on https://coveralls.io/github/aewallin/allantools?branch=master
 
 **2016.4** 2016 April 8
 - convert tests to use pytest
@@ -30,7 +30,7 @@ Version history
 - add GPS dataset as example and test
 
 **2016.2** 2016 February
-- update release on PyPi
+- update release on PyPi https://pypi.python.org/pypi/AllanTools
 - pytest and coverage
 - setuptools
 - change version number to year.month
@@ -1509,11 +1509,11 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
         will be at 0.05 and 0.95.
     noisetype: string
         the type of noise desired:
-        'wp' returns white phase noise.
-        'wf' returns white frequency noise.
-        'fp' returns flicker phase noise.
-        'ff' returns flicker frequency noise.
-        'rf' returns random walk frequency noise.
+        'wp' returns white phase noise.             alpha=+2
+        'wf' returns white frequency noise.         alpha= 0
+        'fp' returns flicker phase noise.           alpha=+1
+        'ff' returns flicker frequency noise.       alpha=-1
+        'rf' returns random walk frequency noise.   alpha=-2
         If the input is not recognized, it defaults to idealized, uncorrelated
         noise with (N-1) degrees of freedom.
 
@@ -1535,7 +1535,7 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
     ci_h = 1 - ci_l
 
     if noisetype in set(['wp', 'fp', 'wf', 'ff', 'rf']):
-
+        # NIST SP 1065, Table 5
         if noisetype == 'wp':
             df = (N + 1) * (N - 2*m) / (2 * (N - m))
 
@@ -1568,7 +1568,8 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
     chi2_l = scipy.stats.chi2.ppf(ci_l, df)
     chi2_h = scipy.stats.chi2.ppf(ci_h, df)
 
-    err_h = np.abs(df * s / chi2_l - s)
+    # note these are variances, not deviations
+    err_h = np.abs(df * s / chi2_l - s)  # NIST SP1065 eqn (45) 
     err_l = np.abs(df * s / chi2_h - s)
 
 #    print N, m, s, df, chi2_l, err_h
