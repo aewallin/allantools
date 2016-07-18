@@ -1578,12 +1578,12 @@ def uncertainty_estimate(N, m, dev, ci=0.9, noisetype='wp'):
     var_l = float(df) * variance / chi2_h  # NIST SP1065 eqn (45) 
     var_h = float(df) * variance / chi2_l
     (dev_l, dev_h) = (np.sqrt(var_l), np.sqrt(var_h))
-    print "ci_l ", ci_l, chi2_l
-    print "ci_h ", ci_h, chi2_h
-    print "dev = ", dev
-    print "edf = ", df
-    print " lo= ", dev_l
-    print " hi= ", dev_h
+    print( "ci_l ", ci_l, chi2_l)
+    print( "ci_h ", ci_h, chi2_h)
+    print( "dev = ", dev)
+    print( "edf = ", df)
+    print( " lo= ", dev_l)
+    print( " hi= ", dev_h)
     # chi2_l, err_h
 
     return (dev_l, dev_h)

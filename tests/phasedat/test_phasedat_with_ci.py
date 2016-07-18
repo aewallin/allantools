@@ -101,12 +101,12 @@ class TestPhaseDatCI():
         #   1   999     782.030     821.358 , 742.689
         #  2.851498,  2.922319  2.998720
         for (t1,d1,lo1,hi1, n1, t2, d2, lo2, hi2, n2) in zip(s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns, taus, devs, los, his, ns):
-            print n1, t1, lo1, d1, hi1
-            print n2, t2, lo2, d2, hi2
+            print(n1, t1, lo1, d1, hi1)
+            print(n2, t2, lo2, d2, hi2)
 
-            print "----"
-        print s32_devs_lo
-        print los
+            print("----")
+        print(s32_devs_lo)
+        print(los)
         #print taus, s32_taus
         
 if __name__ == "__main__":
