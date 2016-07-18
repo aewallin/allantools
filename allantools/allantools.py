@@ -347,6 +347,7 @@ def calc_adev_phase(phase, rate, mj, stride):
     NIST SP 1065, eqn (7) and (11) page 16
     """
     mj = int(mj)
+    stride = int(stride)
     d2 = phase[2 * mj::stride]
     d1 = phase[1 * mj::stride]
     d0 = phase[::stride]
