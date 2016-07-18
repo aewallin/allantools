@@ -1491,10 +1491,10 @@ def trim_data(x):
 
     return x[mask]
 
-def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
+def uncertainty_estimate(N, m, dev, ci=0.9, noisetype='wp'):
     """Determine the uncertainty of a given two-sample variance estimate for
-    a given number of samples (N), sampling distance (m), variance estimate
-    (s), confindence interval (ci), and type of noise (noisetype).
+    a given number of samples (N), sampling distance (m), devation estimate
+    (dev), confindence interval (ci), and type of noise (noisetype).
 
     Parameters
     ----------
@@ -1502,8 +1502,8 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
         the number of samples used in a two sample variance estimate
     m : int
         the length of the window, tau = m * tau0
-    s : float
-        the estimated two-sample variance
+    dev: float
+        the estimated deviation
     ci: float
         the total confidence interval desired, i.e. if ci = 0.9, the bounds
         will be at 0.05 and 0.95.
@@ -1533,7 +1533,9 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
 
     ci_l = min(np.abs(ci), np.abs((ci-1))) / 2
     ci_h = 1 - ci_l
-
+    #print ci_l, ci_h
+    N=float(N)
+    m=float(m)
     if noisetype in set(['wp', 'fp', 'wf', 'ff', 'rf']):
         # NIST SP 1065, Table 5
         if noisetype == 'wp':
@@ -1541,7 +1543,7 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
 
         if noisetype == 'wf':
             df = (((3 * (N - 1) / (2 * m)) - (2 * (N - 2) / N)) *
-                  ((4*m**2) / ((4*m**2) + 5)))
+                  ((4*pow(m,2)) / ((4*pow(m,2)) + 5)) )
 
         if noisetype == 'fp':
             a = (N - 1)/(2 * m)
@@ -1565,16 +1567,26 @@ def uncertainty_estimate(N, m, s, ci=0.9, noisetype='wp'):
         df = (N - 1)
         print("Noise type not recognized. Defaulting to N - 1 degrees of freedom.")
 
+    # inverse of cumulative chi2 distribution
+    #chi2_l = scipy.stats.chi2.ppf(q=ci_l, df=df)
+    #chi2_h = scipy.stats.chi2.ppf(q=ci_h, df=df)
     chi2_l = scipy.stats.chi2.ppf(ci_l, df)
     chi2_h = scipy.stats.chi2.ppf(ci_h, df)
-
+    
     # note these are variances, not deviations
-    err_h = np.abs(df * s / chi2_l - s)  # NIST SP1065 eqn (45) 
-    err_l = np.abs(df * s / chi2_h - s)
+    variance = dev*dev
+    var_l = float(df) * variance / chi2_h  # NIST SP1065 eqn (45) 
+    var_h = float(df) * variance / chi2_l
+    (dev_l, dev_h) = (np.sqrt(var_l), np.sqrt(var_h))
+    print "ci_l ", ci_l, chi2_l
+    print "ci_h ", ci_h, chi2_h
+    print "dev = ", dev
+    print "edf = ", df
+    print " lo= ", dev_l
+    print " hi= ", dev_h
+    # chi2_l, err_h
 
-#    print N, m, s, df, chi2_l, err_h
-
-    return [err_l, err_h]
+    return (dev_l, dev_h)
 
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
                              phasedata_ca, rate, taus, function):
