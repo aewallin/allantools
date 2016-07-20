@@ -443,8 +443,6 @@ class TestPhaseDatCI():
         # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
         # alpha+2*d >1
         # m = tau/tau0 averaging factor
-        # F filter factor, 1 modified variance, m unmodified variance
-        # S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
         # N number of phase obs
         los=[]
         his=[]
@@ -457,12 +455,37 @@ class TestPhaseDatCI():
             los.append(lo)
             his.append(hi)
         
-        #print greenhall_simple_edf( alpha=0, d=2, m=1, S=1, F=1, N=len(phase) )
-        #print confidence_intervals( dev
-        #   tau N       edf         chi2    chi2    dev_lo      dev         dev_hi
-        #   1   999     782.030     821.358 742.689 2.8515e-01  2.9223e-01  2.9987e-01
-        #   2   997     540.681     573.374 507.975 1.9520e-01  2.0102e-01  2.0738e-01
+        for (t1,d1,lo1,hi1, n1, t2, d2, lo2, hi2, n2) in zip(s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns, taus, devs, los, his, ns):
+            print("s32 %03d %03f %1.6f %1.6f %1.6f" % (n1, t1, lo1, d1, hi1))
+            print("at  %03d %03f %1.6f %1.6f %1.6f" % (n2, t2, round(lo2,5), round(d2,5), round(hi2,5) ))
+            approx_equal(lo1, lo2,tolerance=1e-3)
+            approx_equal(hi1, hi2,tolerance=1e-3)
+            print("----")
+            
+    def test_phasedat_ohdev(self):
+        (s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns) = read_stable32( 'phase_dat_ohdev_octave.txt' , 1.0 )
+        phase = read_datafile('PHASE.DAT')
+        (taus,devs,errs,ns) = allan.ohdev(phase, taus=s32_taus)
         
+        # CI computation
+        # alhpa= +2,...,-4   noise power
+        # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
+        # alpha+2*d >1
+        # m = tau/tau0 averaging factor
+        # F filter factor, 1 modified variance, m unmodified variance
+        # S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
+        # N number of phase obs
+        los=[]
+        his=[]
+        for (d,t, n) in zip(devs, taus, ns):
+            #edf = greenhall_simple_edf( alpha=0, d=3, m=t, S=1, F=t, N=len(phase) )
+            edf2 = greenhall_edf( alpha=0, d=3, m=int(t), N=len(phase), overlapping = True, modified=False  )
+            #print(edf,edf2,edf2/edf)
+            (lo,hi) = confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
+            los.append(lo)
+            his.append(hi)
+
         for (t1,d1,lo1,hi1, n1, t2, d2, lo2, hi2, n2) in zip(s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns, taus, devs, los, his, ns):
             print("s32 %03d %03f %1.6f %1.6f %1.6f" % (n1, t1, lo1, d1, hi1))
             print("at  %03d %03f %1.6f %1.6f %1.6f" % (n2, t2, round(lo2,5), round(d2,5), round(hi2,5) ))
@@ -480,8 +503,6 @@ class TestPhaseDatCI():
         # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
         # alpha+2*d >1
         # m = tau/tau0 averaging factor
-        # F filter factor, 1 modified variance, m unmodified variance
-        # S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
         # N number of phase obs
         los=[]
         his=[]
@@ -502,24 +523,56 @@ class TestPhaseDatCI():
             los.append(lo)
             his.append(hi)
         
-        #print greenhall_simple_edf( alpha=0, d=2, m=1, S=1, F=1, N=len(phase) )
-        #print confidence_intervals( dev
-        #   tau N       edf         chi2    chi2    dev_lo      dev         dev_hi
-        #   1   999     782.030     821.358 742.689 2.8515e-01  2.9223e-01  2.9987e-01
-        #   2   997     540.681     573.374 507.975 1.9520e-01  2.0102e-01  2.0738e-01
-        
         for (t1,d1,lo1,hi1, n1, t2, d2, lo2, hi2, n2) in zip(s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns, taus, devs, los, his, ns):
             print("s32 %03d %03f %1.6f %1.6f %1.6f" % (n1, t1, lo1, d1, hi1))
             print("at  %03d %03f %1.6f %1.6f %1.6f" % (n2, t2, round(lo2,5), round(d2,5), round(hi2,5) ))
             approx_equal(lo1, lo2,tolerance=1e-3)
             approx_equal(hi1, hi2,tolerance=1e-3)
             print("----")
+
+    def test_phasedat_totdev(self):
+        (s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns) = read_stable32( 'phase_dat_totdev_octave.txt' , 1.0 )
+        phase = read_datafile('PHASE.DAT')
+        (taus,devs,errs,ns) = allan.totdev(phase, taus=s32_taus)
+        
+
+        los=[]
+        his=[]
+        for (d,t, n) in zip(devs, taus, ns):
+            #edf = greenhall_simple_edf( alpha=0, d=3, m=t, S=1, F=t, N=len(phase) )
+            #edf2 = greenhall_edf( alpha=0, d=3, m=int(t), N=len(phase), overlapping = True, modified=False  )
+            #print(edf,edf2,edf2/edf)
+            edf = totdev_edf(len(phase), t, alpha=0)
+            (lo,hi) = confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf )  # 0.68268949213708585
+            #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
+            los.append(lo)
+            his.append(hi)
+
+        for (t1,d1,lo1,hi1, n1, t2, d2, lo2, hi2, n2) in zip(s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns, taus, devs, los, his, ns):
+            print("s32 %03d %03f %1.6f %1.6f %1.6f" % (n1, t1, lo1, d1, hi1))
+            print("at  %03d %03f %1.6f %1.6f %1.6f" % (n2, t2, round(lo2,7), round(d2,7), round(hi2,7) ))
+            approx_equal(lo1, lo2,tolerance=1e-3)
+            approx_equal(hi1, hi2,tolerance=1e-3)
+            print("----")
             
+
+def totdev_edf(N,m,alpha):
+    assert( alpha in [0,-1,-2] )
+    # alpha  0 WFM
+    # alpha -1 FFM
+    # alpha -2 RWFM
+    NIST_SP1065_table7=[ (1.50, 0.0) , (1.17,0.22), (0.93,0.36)]
+    (b,c) = NIST_SP1065_table7[ abs(alpha) ]
+    return b*(N/m)-c
+    
 if __name__ == "__main__":
     #pytest.main()
     t = TestPhaseDatCI()
     t.test_phasedat_adev()
     t.test_phasedat_oadev() 
     t.test_phasedat_mdev()
-    t.test_phasedat_hdev()
     t.test_phasedat_tdev()
+    t.test_phasedat_hdev()
+    t.test_phasedat_ohdev()
+    t.test_phasedat_totdev()
+    
