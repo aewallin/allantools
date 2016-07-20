@@ -90,13 +90,7 @@ def read_stable32(resultfile, datarate):
 
 # greenhall ci computation
 
-# alhpa= +2,...,-4   noise power
-# d= 1 first-difference variance, 2 Allan variance, 3 hadamard variance
-# alpha+2*d >1
-# m = tau/tau0 averaging factor
-# F filter factor, 1 modified variance, m unmodified variance
-# S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
-# N number of phase obs
+
 
 
 # this is Eqn (7) from Greenhall2004
@@ -180,14 +174,30 @@ def greenhall_simple_edf(alpha, d, m, S, F, N):
     inv_edf = (1.0/(pow(greenhall_sz(0,F,alpha,d),2)*M))*greenhall_BasicSum(J, M, S, F, alpha, d)
     return 1.0/inv_edf
 
-def greenhall_edf(alpha, d, m, S, F, N, vartype = 'unmodified', verbose=True):
+# alhpa= +2,...,-4   noise power
+# d= 1 first-difference variance, 2 Allan variance, 3 hadamard variance
+# alpha+2*d >1
+# m = tau/tau0 averaging factor
+# F filter factor, 1 modified variance, m unmodified variance
+# S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
+# N number of phase obs
+
+def greenhall_edf(alpha, d, m, N, overlapping = False, modified = False, verbose=True):
+    if modified:
+        F=1
+    else:
+        F=int(m)
+    if overlapping:
+        S=int(m)
+    else:
+        S=1
     assert( alpha+2*d > 1.0 )
     L = m/F+m*d # length of filter applied to phase samples
     M = 1 + np.floor( S*(N-L) / m )
     J = min( M, (d+1)*S)
     J_max = 100
     r = M/S
-    if int(F)==1 and vartype=='modified': # case 1, modified variances, all alpha
+    if int(F)==1 and modified: # case 1, modified variances, all alpha
         if J <= J_max:
             inv_edf = (1.0/(pow( greenhall_sz(0,1,alpha,d),2)*M))*greenhall_BasicSum(J, M, S, 1, alpha, d)
             if verbose:
@@ -205,7 +215,7 @@ def greenhall_edf(alpha, d, m, S, F, N, vartype = 'unmodified', verbose=True):
             if verbose:
                 print( "case 1.3 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
-    elif int(F)==int(m) and int(alpha)<= 0 and vartype=='unmodified': # case 2, unmodified variances, alpha <= 0
+    elif int(F)==int(m) and int(alpha)<= 0 and not modified: # case 2, unmodified variances, alpha <= 0
         if J <= J_max:
             if m*(d+1)<= J_max:
                 m_prime = m
@@ -227,8 +237,10 @@ def greenhall_edf(alpha, d, m, S, F, N, vartype = 'unmodified', verbose=True):
         else:
             m_prime = J_max/r
             inv_edf = (1.0/(pow( greenhall_sz(0,float('inf'),alpha,d),2)*J_max))*greenhall_BasicSum(J_max, J_max, m_prime, float('inf'), alpha, d)
+            if verbose:
+                print( "case 2.3 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
-    elif int(F)==int(m) and int(alpha)==1 and vartype=='unmodified': # case 3, unmodified variances, alpha=1
+    elif int(F)==int(m) and int(alpha)==1 and not modified: # case 3, unmodified variances, alpha=1
         if J <= J_max:
             inv_edf = (1.0/(pow( greenhall_sz(0,m,1,d),2)*M))*greenhall_BasicSum(J, M, S, m, 1, d) # note: m<1e6 to avoid roundoff
             return 1.0/inv_edf
@@ -242,7 +254,7 @@ def greenhall_edf(alpha, d, m, S, F, N, vartype = 'unmodified', verbose=True):
             (b0, b1) = greenhall_table3(alpha, d)
             inv_edf = (1.0/(pow(b0+b1*np.log(m),2)*J_max))*greenhall_BasicSum(J_max, J_max, m_prime, m_prime, 1, d)
             return 1.0/inv_edf
-    elif int(F)==int(m) and int(alpha)==2 and vartype=='unmodified': # case 4, unmodified variances, alpha=2
+    elif int(F)==int(m) and int(alpha)==2 and not modified: # case 4, unmodified variances, alpha=2
         K = np.ceil(r)
         if K <= d:
             pass
@@ -252,6 +264,7 @@ def greenhall_edf(alpha, d, m, S, F, N, vartype = 'unmodified', verbose=True):
             inv_edf = (1.0/M)*(a0-a1/r)
             return 1.0/inv_edf
             
+    print("greenhall_edf() no matching case!")
     assert(0) # ERROR
             
 def greenhall_table3(alpha, d):
@@ -277,13 +290,13 @@ def greenhall_table2(alpha, d):
 def greenhall_table1(alpha, d):
     row_idx = -alpha+2 # map 2-> row0 and -4-> row6
     col_idx = d-1
-    table1 = [ [ (2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0), (22.0/25.0, 2.0/3.0) ], # alpha=+2
-               [ (0.840,0.345), (0.997,0.616), (1.141,0.843) ],
-               [ (1.079,0.368), (1.033,0.607), (1.184,0.848) ],
-               [ (-1,-1), (1.048,0.534), (1.180,0.816) ], # -1
-               [ (-1,-1), (1.302,0.535), (1.175,0.777) ], #-2
-               [ (-1,-1), (-1,-1), (1.194,0.703) ], #-3
-               [ (-1,-1), (-1,-1), (1.489,0.702)], # alpha=-4
+    table1 = [ [ (2.0/3.0, 1.0/3.0) , (7.0/9.0, 1.0/2.0)    , (22.0/25.0, 2.0/3.0) ], # alpha=+2
+               [ (0.840,0.345)      , (0.997,0.616)         , (1.141,0.843) ],
+               [ (1.079,0.368)      , (1.033,0.607)         , (1.184,0.848) ],
+               [ (-1,-1)            , (1.048,0.534)         , (1.180,0.816) ], # -1
+               [ (-1,-1)            , (1.302,0.535)         , (1.175,0.777) ], #-2
+               [ (-1,-1)            , (-1,-1)               , (1.194,0.703) ], #-3
+               [ (-1,-1)            , (-1,-1)               , (1.489,0.702) ], # alpha=-4
             ]
     #print("table1 = ", table1[row_idx][col_idx])
     return table1[row_idx][col_idx]
@@ -323,8 +336,8 @@ class TestPhaseDatCI():
         los=[]
         his=[]
         for (d,t, n) in zip(devs, taus, ns):
-            edf = greenhall_simple_edf( alpha=0, d=2, m=t, S=1, F=t, N=len(phase) )
-            edf2 = greenhall_edf( alpha=0, d=2, m=t, S=1, F=t, N=len(phase) )
+            #edf = greenhall_simple_edf( alpha=0, d=2, m=t, S=1, F=t, N=len(phase) )
+            edf2 = greenhall_edf( alpha=0, d=2, m=t, N=len(phase), overlapping = False, modified=False )
             #print(edf,edf2,edf2/edf)
             (lo,hi) = confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
             #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
@@ -361,9 +374,9 @@ class TestPhaseDatCI():
         los=[]
         his=[]
         for (d,t, n) in zip(devs, taus, ns):
-            edf = greenhall_simple_edf( alpha=0, d=2, m=t, S=1, F=t, N=len(phase) )
-            edf2 = greenhall_edf( alpha=0, d=2, m=int(t), S=int(t), F=int(t), N=len(phase) )
-            print(edf,edf2,edf2/edf)
+            #edf = greenhall_simple_edf( alpha=0, d=2, m=t, S=1, F=t, N=len(phase) )
+            edf2 = greenhall_edf( alpha=0, d=2, m=int(t), N=len(phase), overlapping = True, modified=False  )
+            #print(edf,edf2,edf2/edf)
             (lo,hi) = confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
             #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
             los.append(lo)
@@ -400,7 +413,7 @@ class TestPhaseDatCI():
         his=[]
         for (d,t, n) in zip(devs, taus, ns):
             #edf = greenhall_simple_edf( alpha=0, d=2, m=t, S=1, F=t, N=len(phase) )
-            edf2 = greenhall_edf( alpha=0, d=2, m=int(t), S=int(t), F=1, N=len(phase), vartype='modified' )
+            edf2 = greenhall_edf( alpha=0, d=2, m=int(t), N=len(phase), overlapping = True, modified=True  )
             #print(edf,edf2,edf2/edf)
             (lo,hi) = confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
             #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
@@ -437,7 +450,7 @@ class TestPhaseDatCI():
         his=[]
         for (d,t, n) in zip(devs, taus, ns):
             #edf = greenhall_simple_edf( alpha=0, d=3, m=t, S=1, F=t, N=len(phase) )
-            edf2 = greenhall_edf( alpha=0, d=3, m=int(t), S=1, F=int(t), N=len(phase), vartype='unmodified' )
+            edf2 = greenhall_edf( alpha=0, d=3, m=int(t), N=len(phase), overlapping = False, modified=False  )
             #print(edf,edf2,edf2/edf)
             (lo,hi) = confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
             #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
@@ -457,8 +470,56 @@ class TestPhaseDatCI():
             approx_equal(hi1, hi2,tolerance=1e-3)
             print("----")
             
+    def test_phasedat_tdev(self):
+        (s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns) = read_stable32( 'phase_dat_tdev_octave.txt' , 1.0 )
+        phase = read_datafile('PHASE.DAT')
+        (taus,devs,errs,ns) = allan.tdev(phase, taus=s32_taus)
+        
+        # CI computation
+        # alhpa= +2,...,-4   noise power
+        # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
+        # alpha+2*d >1
+        # m = tau/tau0 averaging factor
+        # F filter factor, 1 modified variance, m unmodified variance
+        # S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
+        # N number of phase obs
+        los=[]
+        his=[]
+        for (d,t, n) in zip(devs, taus, ns):
+            #edf = greenhall_simple_edf( alpha=0, d=2, m=t, S=1, F=t, N=len(phase) )
+            edf2 = greenhall_edf( alpha=0, d=2, m=int(t), N=len(phase), overlapping = True, modified=True  )
+            
+            # covert to mdev
+            # taus * md / np.sqrt(3.0)
+            mdev = d/t*np.sqrt(3.0)
+            
+            (lo,hi) = confidence_intervals( dev=mdev, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            
+            # convert back to tdev
+            lo = t*lo/np.sqrt(3.0)
+            hi = t*hi/np.sqrt(3.0)
+            
+            los.append(lo)
+            his.append(hi)
+        
+        #print greenhall_simple_edf( alpha=0, d=2, m=1, S=1, F=1, N=len(phase) )
+        #print confidence_intervals( dev
+        #   tau N       edf         chi2    chi2    dev_lo      dev         dev_hi
+        #   1   999     782.030     821.358 742.689 2.8515e-01  2.9223e-01  2.9987e-01
+        #   2   997     540.681     573.374 507.975 1.9520e-01  2.0102e-01  2.0738e-01
+        
+        for (t1,d1,lo1,hi1, n1, t2, d2, lo2, hi2, n2) in zip(s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns, taus, devs, los, his, ns):
+            print("s32 %03d %03f %1.6f %1.6f %1.6f" % (n1, t1, lo1, d1, hi1))
+            print("at  %03d %03f %1.6f %1.6f %1.6f" % (n2, t2, round(lo2,5), round(d2,5), round(hi2,5) ))
+            approx_equal(lo1, lo2,tolerance=1e-3)
+            approx_equal(hi1, hi2,tolerance=1e-3)
+            print("----")
             
 if __name__ == "__main__":
     #pytest.main()
     t = TestPhaseDatCI()
+    t.test_phasedat_adev()
+    t.test_phasedat_oadev() 
+    t.test_phasedat_mdev()
     t.test_phasedat_hdev()
+    t.test_phasedat_tdev()
