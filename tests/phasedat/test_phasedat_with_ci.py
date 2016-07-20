@@ -132,10 +132,9 @@ def greenhall_sx(t, F, alpha):
     if F==float('inf'):
         return greenhall_sw(t,alpha+2)
     a = 2*greenhall_sw(t, alpha)
-    b = greenhall_sw( t-1.0/F, alpha)
-    c = greenhall_sw( t+1.0/F, alpha)
+    b = greenhall_sw( t-1.0/float(F), alpha)
+    c = greenhall_sw( t+1.0/float(F), alpha)
     
-    # F=Inf case!?
     return pow(F,2)*(a-b-c)
 
 # this is Eqn (9) from Greenhall2004
@@ -149,18 +148,18 @@ def greenhall_sz(t, F, alpha, d):
         a = 6*greenhall_sx(t, F, alpha)
         b = 4*greenhall_sx(t-1.0, F, alpha)
         c = 4*greenhall_sx(t+1.0, F, alpha)
-        d = greenhall_sx(t-2.0, F, alpha)
+        dd = greenhall_sx(t-2.0, F, alpha)
         e = greenhall_sx(t+2.0, F, alpha)
-        return a-b-c+d+e
+        return a-b-c+dd+e
     elif d==3:
-        a = 20*greenhall_sx(t, F, alpha)
-        b = 15*greenhall_sx(t-1, F, alpha)
-        c = 15*greenhall_sx(t+1, F, alpha)
-        d = 6*greenhall_sx(t-2, F, alpha)
-        e = 6*greenhall_sx(t+2, F, alpha)
-        f = greenhall_sx(t-3, F, alpha)
-        g = greenhall_sx(t+3, F, alpha)
-        return a-b-c+d+e-f-g
+        a = 20.0*greenhall_sx(t    , F, alpha)
+        b = 15.0*greenhall_sx(t-1.0, F, alpha)
+        c = 15.0*greenhall_sx(t+1.0, F, alpha)
+        dd = 6.0*greenhall_sx(t-2.0, F, alpha)
+        e =  6.0*greenhall_sx(t+2.0, F, alpha)
+        f =      greenhall_sx(t-3.0, F, alpha)
+        g =      greenhall_sx(t+3.0, F, alpha)
+        return a-b-c+dd+e-f-g
     
     assert( 0 ) # ERROR
 
@@ -170,7 +169,7 @@ def greenhall_BasicSum(J, M, S, F, alpha, d):
     second = (1-float(J)/float(M))*pow( greenhall_sz( float(J)/float(S), F, alpha, d ), 2)
     third = 0
     for j in range(1,J):
-        third += 2*(1-float(j)/float(M))*pow( greenhall_sz(float(j)/float(S), F, alpha, d), 2)
+        third += 2*(1.0-float(j)/float(M))*pow( greenhall_sz(float(j)/float(S), F, alpha, d), 2)
     return first+second+third
     
 # this is Eqn (13) from Greenhall2004
@@ -210,12 +209,14 @@ def greenhall_edf(alpha, d, m, S, F, N, vartype = 'unmodified', verbose=True):
         if J <= J_max:
             if m*(d+1)<= J_max:
                 m_prime = m
+                variant = "a"
             else:
                 m_prime = float('inf')
+                variant = "b"
             
             inv_edf = (1.0/(pow( greenhall_sz(0,m_prime,alpha,d),2)*M))*greenhall_BasicSum(J, M, S, m_prime, alpha, d)
             if verbose:
-                print( "case 2.1 edf= %3f" % float(1.0/inv_edf) )
+                print( "case 2.1%s edf= %3f" % (variant, float(1.0/inv_edf)) )
             return 1.0/inv_edf
         elif r>d+1:
             (a0, a1) = greenhall_table2(alpha, d)
@@ -418,8 +419,46 @@ class TestPhaseDatCI():
             approx_equal(lo1, lo2,tolerance=1e-3)
             approx_equal(hi1, hi2,tolerance=1e-3)
             print("----")
+
+    def test_phasedat_hdev(self):
+        (s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns) = read_stable32( 'phase_dat_hdev_octave.txt' , 1.0 )
+        phase = read_datafile('PHASE.DAT')
+        (taus,devs,errs,ns) = allan.hdev(phase, taus=s32_taus)
+        
+        # CI computation
+        # alhpa= +2,...,-4   noise power
+        # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
+        # alpha+2*d >1
+        # m = tau/tau0 averaging factor
+        # F filter factor, 1 modified variance, m unmodified variance
+        # S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
+        # N number of phase obs
+        los=[]
+        his=[]
+        for (d,t, n) in zip(devs, taus, ns):
+            #edf = greenhall_simple_edf( alpha=0, d=3, m=t, S=1, F=t, N=len(phase) )
+            edf2 = greenhall_edf( alpha=0, d=3, m=int(t), S=1, F=int(t), N=len(phase), vartype='unmodified' )
+            #print(edf,edf2,edf2/edf)
+            (lo,hi) = confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
+            los.append(lo)
+            his.append(hi)
+        
+        #print greenhall_simple_edf( alpha=0, d=2, m=1, S=1, F=1, N=len(phase) )
+        #print confidence_intervals( dev
+        #   tau N       edf         chi2    chi2    dev_lo      dev         dev_hi
+        #   1   999     782.030     821.358 742.689 2.8515e-01  2.9223e-01  2.9987e-01
+        #   2   997     540.681     573.374 507.975 1.9520e-01  2.0102e-01  2.0738e-01
+        
+        for (t1,d1,lo1,hi1, n1, t2, d2, lo2, hi2, n2) in zip(s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns, taus, devs, los, his, ns):
+            print("s32 %03d %03f %1.6f %1.6f %1.6f" % (n1, t1, lo1, d1, hi1))
+            print("at  %03d %03f %1.6f %1.6f %1.6f" % (n2, t2, round(lo2,5), round(d2,5), round(hi2,5) ))
+            approx_equal(lo1, lo2,tolerance=1e-3)
+            approx_equal(hi1, hi2,tolerance=1e-3)
+            print("----")
+            
             
 if __name__ == "__main__":
     #pytest.main()
     t = TestPhaseDatCI()
-    t.test_phasedat_mdev()
+    t.test_phasedat_hdev()
