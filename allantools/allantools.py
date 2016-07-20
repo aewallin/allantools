@@ -569,7 +569,7 @@ def calc_hdev_phase(phase, rate, mj, stride):
 
     tau0 = 1.0 / float(rate)
     mj = int(mj)
-
+    stride = int(stride)
     d3 = phase[3 * mj::stride]
     d2 = phase[2 * mj::stride]
     d1 = phase[1 * mj::stride]
