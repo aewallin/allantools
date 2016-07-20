@@ -1,3 +1,4 @@
+# Stable32 1.60
 # STATISTICS FOR FILE: PHASE.DAT
 # Phase Data Points 1 thru 1001 of 1001
 # Maximum = 4.356529e+00
