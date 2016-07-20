@@ -91,7 +91,7 @@ def read_stable32(resultfile, datarate):
 # greenhall ci computation
 
 # alhpa= +2,...,-4   noise power
-# d= 1 first-difference variance, 2 allaan variance, 3 hadamard variance
+# d= 1 first-difference variance, 2 Allan variance, 3 hadamard variance
 # alpha+2*d >1
 # m = tau/tau0 averaging factor
 # F filter factor, 1 modified variance, m unmodified variance
@@ -142,15 +142,15 @@ def greenhall_sx(t, F, alpha):
 def greenhall_sz(t, F, alpha, d):
     if d==1:
         a = 2*greenhall_sx(t, F, alpha)
-        b = greenhall_sx(t-1, F, alpha)
-        c = greenhall_sx(t+1, F, alpha)
+        b = greenhall_sx(t-1.0, F, alpha)
+        c = greenhall_sx(t+1.0, F, alpha)
         return a-b-c
     elif d==2:
         a = 6*greenhall_sx(t, F, alpha)
-        b = 4*greenhall_sx(t-1, F, alpha)
-        c = 4*greenhall_sx(t+1, F, alpha)
-        d = greenhall_sx(t-2, F, alpha)
-        e = greenhall_sx(t+2, F, alpha)
+        b = 4*greenhall_sx(t-1.0, F, alpha)
+        c = 4*greenhall_sx(t+1.0, F, alpha)
+        d = greenhall_sx(t-2.0, F, alpha)
+        e = greenhall_sx(t+2.0, F, alpha)
         return a-b-c+d+e
     elif d==3:
         a = 20*greenhall_sx(t, F, alpha)
@@ -167,10 +167,10 @@ def greenhall_sz(t, F, alpha, d):
 # this is Eqn (10) from Greenhall2004
 def greenhall_BasicSum(J, M, S, F, alpha, d):
     first = pow( greenhall_sz(0, F, alpha, d), 2)
-    second = (1-J/M)*pow( greenhall_sz( J/S, F, alpha, d ), 2)
+    second = (1-float(J)/float(M))*pow( greenhall_sz( float(J)/float(S), F, alpha, d ), 2)
     third = 0
     for j in range(1,J):
-        third += 2*(1-j/M)*pow( greenhall_sz(j/S, F, alpha, d), 2)
+        third += 2*(1-float(j)/float(M))*pow( greenhall_sz(float(j)/float(S), F, alpha, d), 2)
     return first+second+third
     
 # this is Eqn (13) from Greenhall2004
@@ -181,7 +181,8 @@ def greenhall_simple_edf(alpha, d, m, S, F, N):
     inv_edf = (1.0/(pow(greenhall_sz(0,F,alpha,d),2)*M))*greenhall_BasicSum(J, M, S, F, alpha, d)
     return 1.0/inv_edf
 
-def greenhall_edf(alpha, d, m, S, F, N, vartype = 'unmodified'):
+def greenhall_edf(alpha, d, m, S, F, N, vartype = 'unmodified', verbose=True):
+    assert( alpha+2*d > 1.0 )
     L = m/F+m*d # length of filter applied to phase samples
     M = 1 + np.floor( S*(N-L) / m )
     J = min( M, (d+1)*S)
@@ -190,14 +191,20 @@ def greenhall_edf(alpha, d, m, S, F, N, vartype = 'unmodified'):
     if int(F)==1 and vartype=='modified': # case 1, modified variances, all alpha
         if J <= J_max:
             inv_edf = (1.0/(pow( greenhall_sz(0,1,alpha,d),2)*M))*greenhall_BasicSum(J, M, S, 1, alpha, d)
+            if verbose:
+                print( "case 1.1 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
         elif r>d+1:
             (a0, a1) = greenhall_table1(alpha, d)
             inv_edf = (1.0/r)*(a0-a1/r)
+            if verbose:
+                print( "case 1.2 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
         else:
             m_prime = J_max/r
             inv_edf = (1.0/(pow( greenhall_sz(0,F,alpha,d),2)*J_max))*greenhall_BasicSum(J_max, J_max, m_prime, 1, alpha, d)
+            if verbose:
+                print( "case 1.3 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
     elif int(F)==int(m) and int(alpha)<= 0 and vartype=='unmodified': # case 2, unmodified variances, alpha <= 0
         if J <= J_max:
@@ -207,11 +214,14 @@ def greenhall_edf(alpha, d, m, S, F, N, vartype = 'unmodified'):
                 m_prime = float('inf')
             
             inv_edf = (1.0/(pow( greenhall_sz(0,m_prime,alpha,d),2)*M))*greenhall_BasicSum(J, M, S, m_prime, alpha, d)
-            print( "case 2.1 edf= %3f" % float(1.0/inv_edf) )
+            if verbose:
+                print( "case 2.1 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
         elif r>d+1:
             (a0, a1) = greenhall_table2(alpha, d)
             inv_edf = (1.0/r)*(a0-a1/r)
+            if verbose:
+                print( "case 2.2 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
         else:
             m_prime = J_max/r
@@ -250,7 +260,18 @@ def greenhall_table3(alpha, d):
     return table3[idx]
                 
 def greenhall_table2(alpha, d):
-    pass
+    row_idx = -alpha+2 # map 2-> row0 and -4-> row6
+    col_idx = d-1
+    table2 = [ [ (3.0/2.0, 1.0/2.0) , (35.0/18.0, 1.0)  , (231.0/100.0, 3.0/2.0) ], # alpha=+2
+               [ (78.6,25.2 )       , (790.0,410.0)     , (9950.0,6520.0) ],
+               [ (2.0/3.0,1.0/6.0)  , (2.0/3.0,1.0/3.0) , (7.0/9.0,1.0/2.0) ], # alpha=0
+               [ (-1,-1)            , (0.852,0.375)     , (0.997,0.617) ], # -1
+               [ (-1,-1)            , (1.079,0.368)     , (1.033,0.607) ], #-2
+               [ (-1,-1)            , (-1,-1)           , (1.053,0.553) ], #-3
+               [ (-1,-1)            , (-1,-1)           , (1.302,0.535)], # alpha=-4
+            ]
+    #print("table2 = ", table2[row_idx][col_idx])
+    return table2[row_idx][col_idx]
 
 def greenhall_table1(alpha, d):
     row_idx = -alpha+2 # map 2-> row0 and -4-> row6
@@ -263,7 +284,7 @@ def greenhall_table1(alpha, d):
                [ (-1,-1), (-1,-1), (1.194,0.703) ], #-3
                [ (-1,-1), (-1,-1), (1.489,0.702)], # alpha=-4
             ]
-    print("table1 = ", table1[row_idx][col_idx])
+    #print("table1 = ", table1[row_idx][col_idx])
     return table1[row_idx][col_idx]
     
 def confidence_intervals(dev, ci, edf):
@@ -284,16 +305,20 @@ def confidence_intervals(dev, ci, edf):
     #print edf, chi2_h,chi2_l
     return (np.sqrt(var_l), np.sqrt(var_h))
 
-def approx_equal(a1,a2,tolerance=1e-5):
+def approx_equal(a1,a2,tolerance=1e-5, assertions=True):
     rel_error = (a2 - a1) / a1
     if abs(rel_error) > tolerance:
         print("ERROR ", a1,a2,rel_error)
+        if assertions:
+            assert( abs(rel_error) < tolerance )
     
 class TestPhaseDatCI():
     def test_phasedat_adev(self):
         (s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns) = read_stable32( 'phase_dat_adev_octave.txt' , 1.0 )
         phase = read_datafile('PHASE.DAT')
         (taus,devs,errs,ns) = allan.adev(phase, taus=s32_taus)
+        
+        # CI computation
         los=[]
         his=[]
         for (d,t, n) in zip(devs, taus, ns):
@@ -317,8 +342,84 @@ class TestPhaseDatCI():
             approx_equal(lo1, lo2,tolerance=1e-3)
             approx_equal(hi1, hi2,tolerance=1e-3)
             print("----")
+    
+    
+    def test_phasedat_oadev(self):
+        (s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns) = read_stable32( 'phase_dat_oadev_octave.txt' , 1.0 )
+        phase = read_datafile('PHASE.DAT')
+        (taus,devs,errs,ns) = allan.oadev(phase, taus=s32_taus)
         
+        # CI computation
+        # alhpa= +2,...,-4   noise power
+        # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
+        # alpha+2*d >1
+        # m = tau/tau0 averaging factor
+        # F filter factor, 1 modified variance, m unmodified variance
+        # S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
+        # N number of phase obs
+        los=[]
+        his=[]
+        for (d,t, n) in zip(devs, taus, ns):
+            edf = greenhall_simple_edf( alpha=0, d=2, m=t, S=1, F=t, N=len(phase) )
+            edf2 = greenhall_edf( alpha=0, d=2, m=int(t), S=int(t), F=int(t), N=len(phase) )
+            print(edf,edf2,edf2/edf)
+            (lo,hi) = confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
+            los.append(lo)
+            his.append(hi)
+        
+        #print greenhall_simple_edf( alpha=0, d=2, m=1, S=1, F=1, N=len(phase) )
+        #print confidence_intervals( dev
+        #   tau N       edf         chi2    chi2    dev_lo      dev         dev_hi
+        #   1   999     782.030     821.358 742.689 2.8515e-01  2.9223e-01  2.9987e-01
+        #   2   997     540.681     573.374 507.975 1.9520e-01  2.0102e-01  2.0738e-01
+        
+        for (t1,d1,lo1,hi1, n1, t2, d2, lo2, hi2, n2) in zip(s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns, taus, devs, los, his, ns):
+            print("s32 %03d %03f %1.6f %1.6f %1.6f" % (n1, t1, lo1, d1, hi1))
+            print("at  %03d %03f %1.6f %1.6f %1.6f" % (n2, t2, round(lo2,5), round(d2,5), round(hi2,5) ))
+            approx_equal(lo1, lo2,tolerance=1e-3)
+            approx_equal(hi1, hi2,tolerance=1e-3)
+            print("----")
+            
+    
+    def test_phasedat_mdev(self):
+        (s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns) = read_stable32( 'phase_dat_mdev_octave.txt' , 1.0 )
+        phase = read_datafile('PHASE.DAT')
+        (taus,devs,errs,ns) = allan.mdev(phase, taus=s32_taus)
+        
+        # CI computation
+        # alhpa= +2,...,-4   noise power
+        # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
+        # alpha+2*d >1
+        # m = tau/tau0 averaging factor
+        # F filter factor, 1 modified variance, m unmodified variance
+        # S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
+        # N number of phase obs
+        los=[]
+        his=[]
+        for (d,t, n) in zip(devs, taus, ns):
+            #edf = greenhall_simple_edf( alpha=0, d=2, m=t, S=1, F=t, N=len(phase) )
+            edf2 = greenhall_edf( alpha=0, d=2, m=int(t), S=int(t), F=1, N=len(phase), vartype='modified' )
+            #print(edf,edf2,edf2/edf)
+            (lo,hi) = confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
+            los.append(lo)
+            his.append(hi)
+        
+        #print greenhall_simple_edf( alpha=0, d=2, m=1, S=1, F=1, N=len(phase) )
+        #print confidence_intervals( dev
+        #   tau N       edf         chi2    chi2    dev_lo      dev         dev_hi
+        #   1   999     782.030     821.358 742.689 2.8515e-01  2.9223e-01  2.9987e-01
+        #   2   997     540.681     573.374 507.975 1.9520e-01  2.0102e-01  2.0738e-01
+        
+        for (t1,d1,lo1,hi1, n1, t2, d2, lo2, hi2, n2) in zip(s32_taus, s32_devs, s32_devs_lo, s32_devs_hi, s32_ns, taus, devs, los, his, ns):
+            print("s32 %03d %03f %1.6f %1.6f %1.6f" % (n1, t1, lo1, d1, hi1))
+            print("at  %03d %03f %1.6f %1.6f %1.6f" % (n2, t2, round(lo2,5), round(d2,5), round(hi2,5) ))
+            approx_equal(lo1, lo2,tolerance=1e-3)
+            approx_equal(hi1, hi2,tolerance=1e-3)
+            print("----")
+            
 if __name__ == "__main__":
     #pytest.main()
     t = TestPhaseDatCI()
-    t.test_phasedat_adev()
+    t.test_phasedat_mdev()
