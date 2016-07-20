@@ -672,7 +672,7 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     mid = len(x1)
 
     for idx, mj in enumerate(m):
-
+        mj = int(mj)
         d0 = x[mid + 1:]
         d1 = x[mid  + mj + 1:]
         d1n = x[mid - mj + 1:]
