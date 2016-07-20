@@ -1,0 +1,19 @@
+# S32 1.60
+# STATISTICS FOR FILE: PHASE.DAT
+# Phase Data Points 1 thru 1001 of 1001
+# Maximum = 4.356529e+00
+# Minimum = -4.707879e+00
+# Average = -5.403683e-01
+# Sigma Type: Overlapping Hadamard
+# Confidence Factor = 0.683
+# Deadtime T/Tau = 1.000000
+#
+#  AF        Tau         #    Alpha  Min Sigma   Hadamard Sig     Max Sigma
+    1   1.0000e+00      998     0   2.8635e-01    2.9439e-01     3.0315e-01
+    2   2.0000e+00      995     0   1.9491e-01    2.0125e-01     2.0825e-01
+    4   4.0000e+00      989     0   1.3777e-01    1.4368e-01     1.5043e-01
+    8   8.0000e+00      977     0   1.0388e-01    1.0987e-01     1.1704e-01
+   16   1.6000e+01      953     0   5.6173e-02    6.0638e-02     6.6369e-02
+   32   3.2000e+01      905     0   4.0664e-02    4.5095e-02     5.1382e-02
+   64   6.4000e+01      809     0   2.9271e-02    3.3824e-02     4.1477e-02
+  128   1.2800e+02      617     0   2.3761e-02    2.9147e-02     4.1367e-02
