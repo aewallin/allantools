@@ -1687,7 +1687,7 @@ def greenhall_BasicSum(J, M, S, F, alpha, d):
     first = pow( greenhall_sz(0, F, alpha, d), 2)
     second = (1-float(J)/float(M))*pow( greenhall_sz( float(J)/float(S), F, alpha, d ), 2)
     third = 0
-    for j in range(1,J):
+    for j in range(1,int(J)):
         third += 2*(1.0-float(j)/float(M))*pow( greenhall_sz(float(j)/float(S), F, alpha, d), 2)
     return first+second+third
 
@@ -1794,12 +1794,13 @@ def greenhall_table1(alpha, d):
 def edf_totdev(N,m,alpha):
     """ Equivalent degrees of freedom for Total Deviation
     """
+    alpha=int(alpha)
     assert( alpha in [0,-1,-2] )
     # alpha  0 WFM
     # alpha -1 FFM
     # alpha -2 RWFM
     NIST_SP1065_table7=[ (1.50, 0.0) , (1.17,0.22), (0.93,0.36)]
-    (b,c) = NIST_SP1065_table7[ abs(alpha) ]
+    (b,c) = NIST_SP1065_table7[ int( abs(alpha) ) ]
     return b*(float(N)/float(m))-c
 
 # NIST SP1065 page 41, Table 8
