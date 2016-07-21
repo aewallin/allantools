@@ -1758,11 +1758,12 @@ def greenhall_sw(t, alpha):
 def greenhall_table3(alpha, d):
     assert(alpha==1)
     idx = d-1
-    table=[ (6.0,4.0), (15.23,12.0), (47.8,40.0) ]
+    table3=[ (6.0,4.0), (15.23,12.0), (47.8,40.0) ]
     return table3[idx]
                 
 def greenhall_table2(alpha, d):
-    row_idx = -alpha+2 # map 2-> row0 and -4-> row6
+    row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
+    assert( row_idx in [0,1,2,3,4,5] )
     col_idx = d-1
     table2 = [ [ (3.0/2.0, 1.0/2.0) , (35.0/18.0, 1.0)  , (231.0/100.0, 3.0/2.0) ], # alpha=+2
                [ (78.6,25.2 )       , (790.0,410.0)     , (9950.0,6520.0) ],
