@@ -50,6 +50,20 @@ rate = 1/float(1.0) # stable32 runs were done with this data-interval
 class TestCS():
     def test_adev(self):
         self.generic_test( result= 'adev_decade.txt' , fct= allan.adev )
+    
+    def test_adev_ci(self):
+        s32rows = testutils.read_stable32(resultfile='adev_decade.txt', datarate=1.0)
+        for row in s32rows:
+            data = testutils.read_datafile(data_file)
+            (taus, devs, errs, ns) = allan.adev(data, rate=rate,
+                                                  taus=[ row['tau'] ])
+            edf = allan.edf_greenhall(alpha=row['alpha'],d=2,m=row['m'],N=len(data),overlapping=False, modified = False, verbose=True)
+            (lo,hi) =allan.confidence_intervals(devs[0],ci=0.68268949213708585, edf=edf)
+            print("n check: ", testutils.check_equal( ns[0], row['n'] ) )
+            print("dev check: ", testutils.check_approx_equal( devs[0], row['dev'] ) )
+            print("min dev check: ",  lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=1e-3 ) )
+            print("max dev check: ", hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=1e-3 ) )
+        
     def test_oadev(self):
         self.generic_test( result='oadev_decade.txt' , fct= allan.oadev )
     def test_mdev(self):
@@ -76,5 +90,6 @@ class TestCS():
 if __name__ == "__main__":
     #pytest.main()
     t=TestCS()
-    t.test_adev()
+    #t.test_adev()
+    t.test_adev_ci()
 

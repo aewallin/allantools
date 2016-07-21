@@ -1650,25 +1650,33 @@ def edf_greenhall(alpha, d, m, N, overlapping = False, modified = False, verbose
     elif int(F)==int(m) and int(alpha)==1 and not modified: # case 3, unmodified variances, alpha=1
         if J <= J_max:
             inv_edf = (1.0/(pow( greenhall_sz(0,m,1,d),2)*M))*greenhall_BasicSum(J, M, S, m, 1, d) # note: m<1e6 to avoid roundoff
+            if verbose:
+                print( "case 3.1 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
         elif r>d+1:
             (a0, a1) = greenhall_table2(alpha, d)
             (b0, b1) = greenhall_table3(alpha, d)
             inv_edf = (1.0/(pow(b0+b1*np.log(m),2)*r))*(a0-a1/r)
+            if verbose:
+                print( "case 3.2 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
         else:
             m_prime=J_max/r
             (b0, b1) = greenhall_table3(alpha, d)
             inv_edf = (1.0/(pow(b0+b1*np.log(m),2)*J_max))*greenhall_BasicSum(J_max, J_max, m_prime, m_prime, 1, d)
+            if verbose:
+                print( "case 3.3 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
     elif int(F)==int(m) and int(alpha)==2 and not modified: # case 4, unmodified variances, alpha=2
         K = np.ceil(r)
         if K <= d:
-            pass
+            pass # FIXME: add formula from the paper here!
         else:
             a0 = scipy.special.binom(4*d, 2*d) / pow(scipy.special.binom(2*d,d), 2)
             a1 = d/2.0
             inv_edf = (1.0/M)*(a0-a1/r)
+            if verbose:
+                print( "case 4.2 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
             
     print("greenhall_edf() no matching case!")
