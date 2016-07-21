@@ -1764,7 +1764,7 @@ def greenhall_table3(alpha, d):
 def greenhall_table2(alpha, d):
     row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
     assert( row_idx in [0,1,2,3,4,5] )
-    col_idx = d-1
+    col_idx = int(d-1)
     table2 = [ [ (3.0/2.0, 1.0/2.0) , (35.0/18.0, 1.0)  , (231.0/100.0, 3.0/2.0) ], # alpha=+2
                [ (78.6,25.2 )       , (790.0,410.0)     , (9950.0,6520.0) ],
                [ (2.0/3.0,1.0/6.0)  , (2.0/3.0,1.0/3.0) , (7.0/9.0,1.0/2.0) ], # alpha=0
@@ -1777,8 +1777,8 @@ def greenhall_table2(alpha, d):
     return table2[row_idx][col_idx]
 
 def greenhall_table1(alpha, d):
-    row_idx = -alpha+2 # map 2-> row0 and -4-> row6
-    col_idx = d-1
+    row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
+    col_idx = int(d-1)
     table1 = [ [ (2.0/3.0, 1.0/3.0) , (7.0/9.0, 1.0/2.0)    , (22.0/25.0, 2.0/3.0) ], # alpha=+2
                [ (0.840,0.345)      , (0.997,0.616)         , (1.141,0.843) ],
                [ (1.079,0.368)      , (1.033,0.607)         , (1.184,0.848) ],
