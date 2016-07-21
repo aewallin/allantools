@@ -40,77 +40,48 @@ def read_resultfile(filename):
                 rows.append(row)
     return rows
 
-
+# parse numbers from a Stable32 result-file
+# the columns are:
+# AF          Tau        #     Alpha  Min Sigma     Mod Totdev      Max Sigma
+# AF = m, averaging factor i.e. tau=m*tau0
+# # = n, number of pairs in the dev calculation
+# alpha = noise PSD coefficient
 def read_stable32(resultfile, datarate):
     devresults = read_resultfile(resultfile)
     print("Read ", len(devresults), " rows from ", resultfile)
-    taus = []
-    devs = []
-    ns = []
+    rows=[] 
     # parse textfile produced by Stable32
     for row in devresults:
         if len(row) == 7:  # typical ADEV result file has 7 columns of data
-            tau_n = row[0]  # tau in number of datapoints
-            tau_s = row[1]  # tau in seconds
-            taus.append(tau_n * (1 / float(datarate)))
-            n = row[2]  # n averages
-            a = row[5]  # deviation
-            # Note we don't read the error-columns, since they are mostly zero for 'all tau' runs of Stable32
-            devs.append(a)
-            ns.append(n)
+            d={}
+            d['m']= row[0]
+            d['tau']= row[0] * (1 / float(datarate))
+            d['n']=row[2]
+            d['alpha']=row[3]
+            d['dev_min']=row[4]
+            d['dev']=row[5]
+            d['dev_max']=row[6]
+
+            rows.append(d)
         elif len(row) == 4:  # the MTIE/TIErms results are formatted slightly differently
-            tau_n = row[0]  # tau in number of datapoints
-            tau_s = row[1]  # tau in seconds
-            taus.append(tau_n * (1 / float(datarate)))
-            n = row[2]  # n averages
-            a = row[3]  # MTIE or TIErms
-            devs.append(a)
-            ns.append(n)
-    return (taus, devs, ns)
-
-
-# test a deviation function by:
-# - running the function on the datafile
-# - reading the correct answers from the resultfile
-# - checking that tau, n, and dev are correct
-def test(function, datafile, datarate, resultfile, frequency=False, verbose=0, tolerance=1e-4):
-    # if Stable32 results were given with more digits we could decrease tolerance
-
-    data = read_datafile(datafile)
-    print("Read ", len(data), " phase values from ", datafile)
-    (taus, devs, ns) = read_stable32(resultfile, datarate)
-
-    # run allantools algorithm
-    if frequency:
-        (taus2, devs2, errs2, ns2) = function(data, rate=datarate,
-                                              data_type="freq",
-                                              taus=taus)
-    else:
-        (taus2, devs2, errs2, ns2) = function(data, rate=datarate, taus=taus)
-
-    # check that allantools and Stable32 agree on length of DEV, Tau, and N results
-
-    assert ( len(taus) == len(taus2) )
-    assert ( len(devs) == len(devs2) )
-    assert ( len(ns) == len(ns2) )
-
-    n_errors = 0  # number of errors/problems detected
-    for (t1, a1, n1, t2, a2, n2) in zip(taus, devs, ns, taus2, devs2, ns2):
-        # Check that allantools and Stable32 give exactly the same Tau and N results
-        errs = check_deviations((t1, a1, n1, t2, a2, n2), tolerance, verbose)
-        n_errors = n_errors + errs
-
-
-    assert ( n_errors == 0)  # no errors allowed!
-    print("test of function ", function, " Done. Errors=", n_errors)
-
+            d={}
+            d['m']= row[0]
+            d['tau']= row[0] * (1 / float(datarate))
+            d['n']=row[2]
+            d['dev']=row[3]
+            rows.append(d)
+    return rows
 
 def to_fractional(data):
     mu = numpy.mean(data)
     return [(x-mu)/mu for x in data]
 
 # test one tau-value (i.e. one row in the result file) at a time
-def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, tolerance=1e-4, frequency=False, normalize=False):
+# test a deviation function by:
+# - running the function on the datafile
+# - reading the correct answers from the resultfile
+# - checking that tau, n, and dev are correct
+def test_row_by_row(function, datafile, datarate, resultfile, verbose=False, tolerance=1e-4, frequency=False, normalize=False):
     # if Stable32 results were given with more digits we could decrease tolerance
 
     data = read_datafile(datafile)
@@ -120,37 +91,35 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=0, toleran
 
     print("Read ", len(data), " values from ", datafile)
 
-    (taus, devs, ns) = read_stable32(resultfile, datarate)
+    s32rows = read_stable32(resultfile, datarate)
     print("test of function ", function )
     if verbose:
         print("Tau N  \t DEV(Stable32) \t DEV(allantools) \t rel.error\t bias")
+    
+    n_errors=0
     # run allantools algorithm, row by row
-    for (tau, dev, n) in zip(taus, devs, ns):
+    for s32data in s32rows:
         if frequency:
             (taus2, devs2, errs2, ns2) = function(data, rate=datarate,
                                                   data_type="freq",
-                                                  taus=[tau])
+                                                  taus=[s32data['tau']])
         else:
             (taus2, devs2, errs2, ns2) = function(data, rate=datarate,
-                                                  taus=[tau])
-        check_deviations((tau, dev, n, taus2[0], devs2[0], ns2[0]), tolerance, verbose)
+                                                  taus=[s32data['tau']])
+        
+        n_errors += check_equal( s32data['n'], ns2[0] )
+        n_errors += check_equal( s32data['tau'], taus2[0] )
+        n_errors += check_approx_equal( s32data['dev'], devs2[0], tolerance=tolerance, verbose=verbose )
 
-
-def check_deviations(xxx_todo_changeme, tolerance, verbose):
-    # Check that allantools and Stable32 give exactly the same Tau and N results
-    (t1, a1, n1, t2, a2, n2) = xxx_todo_changeme
-    n_errors = 0
+def check_equal(a,b):
     try:
-        assert ( t1 == t2 )
+        assert ( a == b )
+        return 0
     except:
-        print("ERROR tau1=", t1, " tau2=", t2)
-        n_errors = n_errors + 1
-    try:
-        assert ( n1 == n2 )
-    except:
-        n_errors = n_errors + 1
-        print("ERROR n1=", n1, " n2=", n2, " at t1=", t1, " t2=", t2)
+        print("ERROR a=", a, " b=", b)
+        return 1
 
+def check_approx_equal(a1,a2, tolerance=1e-4, verbose=False):
     # check the DEV result, with a given relative error tolerance
     rel_error = (a2 - a1) / a1
     bias = pow(a2/a1,2)
@@ -158,13 +127,11 @@ def check_deviations(xxx_todo_changeme, tolerance, verbose):
     try:
         assert ( abs(rel_error) < tolerance )
         if verbose:
-            print("%d %d  \t %0.6g \t %0.6g \t %0.6f \t %0.4f OK!" % (t1, n1, a1, a2, rel_error,bias))
+            print(" %0.6g \t %0.6g \t %0.6f \t %0.4f OK!" % (a1, a2, rel_error,bias))
+        return 0
     except:
-        n_errors = n_errors + 1
-        print("ERROR %d  %d %0.6g \t %0.6g \t %0.6f \t %0.4f" % (t1, n1, a1, a2, rel_error, bias))
-        n_errors = n_errors + 1
-
-    return n_errors
+        print("ERROR %0.6g \t %0.6g \t %0.6f \t %0.4f" % ( a1, a2, rel_error, bias))
+        return 1
 
 
 if __name__ == "__main__":

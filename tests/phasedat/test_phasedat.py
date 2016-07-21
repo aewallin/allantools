@@ -31,7 +31,7 @@ def change_to_test_dir():
 
 class TestPhaseDat():
     def test_phasedat_adev(self):
-        self.generic_test( result= 'phase_dat_adev.txt' , fct= allan.adev )
+        self.generic_test( result= 'phase_dat_adev.txt' , fct= allan.adev, verbose=True )
     def test_phasedat_oadev(self):
         self.generic_test( result='phase_dat_oadev.txt' , fct= allan.oadev )
     def test_phasedat_mdev(self):
@@ -62,10 +62,11 @@ class TestPhaseDat():
     def test_phasedat_tierms(self):
         self.generic_test( result='phase_dat_tierms.txt' , fct= allan.tierms )
     
-    def generic_test(self, datafile = data_file, result="", fct=None):
+    def generic_test(self, datafile = data_file, result="", fct=None, verbose=False):
         change_to_test_dir()
-        testutils.test( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)
+        testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)
 
 if __name__ == "__main__":
-    pytest.main()
-
+    #pytest.main()
+    t = TestPhaseDat()
+    t.test_phasedat_adev()

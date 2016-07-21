@@ -74,6 +74,7 @@ class TestCS():
         testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)
 
 if __name__ == "__main__":
-    pytest.main()
-
+    #pytest.main()
+    t=TestCS()
+    t.test_adev()
 
