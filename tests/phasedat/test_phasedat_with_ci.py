@@ -335,14 +335,14 @@ class TestPhaseDatCI():
         for (d,t, n) in zip(devs, taus, ns):
             #edf = greenhall_simple_edf( alpha=0, d=3, m=t, S=1, F=t, N=len(phase) )
             if int(t)<10:
-                edf = greenhall_edf( alpha=0, d=2, m=int(t), N=len(phase), overlapping = True, modified=True  )
+                edf = allan.edf_greenhall( alpha=0, d=2, m=int(t), N=len(phase), overlapping = True, modified=True  )
             else:
-                edf = mtotdev_edf(len(phase), t, alpha=0)
+                edf = allan.edf_mtotdev(len(phase), t, alpha=0)
             #print edf, edf2
             #print(edf,edf2,edf2/edf)
             
-            print edf
-            (lo,hi) = confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf )  # 0.68268949213708585
+            print(edf)
+            (lo,hi) = allan.confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf )  # 0.68268949213708585
             #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
             los.append(lo)
             his.append(hi)

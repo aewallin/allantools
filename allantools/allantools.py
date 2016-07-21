@@ -1494,6 +1494,83 @@ def trim_data(x):
 
     return x[mask]
 
+def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
+                             phasedata_ca, rate, taus, function):
+    """
+    Three Cornered Hat Method
+
+    Given three clocks A, B, C, we seek to find their variances
+    :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`.
+    We measure three phase differences, assuming no correlation between
+    the clocks, the measurements have variances:
+
+    .. math::
+
+        \\sigma^2_{AB} = \\sigma^2_{A} + \\sigma^2_{B}
+
+        \\sigma^2_{BC} = \\sigma^2_{B} + \\sigma^2_{C}
+
+        \\sigma^2_{CA} = \\sigma^2_{C} + \\sigma^2_{A}
+
+    Which allows solving for the variance of one clock as:
+
+    .. math::
+
+        \\sigma^2_{A}  = {1 \\over 2} ( \\sigma^2_{AB} +
+        \\sigma^2_{CA} - \\sigma^2_{BC} )
+
+    and similarly cyclic permutations for :math:`\\sigma^2_B` and
+    :math:`\\sigma^2_C`
+
+    Parameters
+    ----------
+    phasedata_ab: np.array
+        phase measurements between clock A and B, in seconds
+    phasedata_bc: np.array
+        phase measurements between clock B and C, in seconds
+    phasedata_ca: np.array
+        phase measurements between clock C and A, in seconds
+    rate: float
+        The sampling rate for phase, in Hz
+    taus: np.array
+        The tau values for deviations, in seconds
+    function: allantools deviation function
+        The type of statistic to compute, e.g. allantools.oadev
+
+    Returns
+    -------
+    tau_ab: np.array
+        Tau values corresponding to output deviations
+    dev_a: np.array
+        List of computed values for clock A
+
+    References
+    ----------
+    http://www.wriley.com/3-CornHat.htm
+    """
+
+    (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab,
+                                               data_type='phase',
+                                               rate=rate, taus=taus)
+    (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc,
+                                               data_type='phase',
+                                               rate=rate, taus=taus)
+    (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca,
+                                               data_type='phase',
+                                               rate=rate, taus=taus)
+
+    var_ab = dev_ab * dev_ab
+    var_bc = dev_bc * dev_bc
+    var_ca = dev_ca * dev_ca
+    assert len(var_ab) == len(var_bc) == len(var_ca)
+    var_a = 0.5 * (var_ab + var_ca - var_bc)
+
+    var_a[var_a < 0] = 0 # don't return imaginary deviations (?)
+    dev_a = np.sqrt(var_a)
+    err_a = [d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)]
+
+    return tau_ab, dev_a, err_a, ns_ab
+
 ########################################################################
 #
 #  Confidence intervals
@@ -1508,19 +1585,17 @@ def edf_greenhall_simple(alpha, d, m, S, F, N):
     return 1.0/inv_edf
 
 # alhpa= +2,...,-4   noise power
-# d= 1 first-difference variance, 2 Allan variance, 3 hadamard variance
+# d= 1 first-difference variance, 2 Allan variance, 3 Hadamard variance
 # alpha+2*d >1
 # m = tau/tau0 averaging factor
-# F filter factor, 1 modified variance, m unmodified variance
-# S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
 # N number of phase obs
 def edf_greenhall(alpha, d, m, N, overlapping = False, modified = False, verbose=True):
     if modified:
-        F=1
+        F=1 # F filter factor, 1 modified variance, m unmodified variance
     else:
         F=int(m)
     if overlapping:
-        S=int(m)
+        S=int(m) # S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
     else:
         S=1
     assert( alpha+2*d > 1.0 )
@@ -1727,7 +1802,75 @@ def edf_mtotdev(N,m,alpha):
     #(b,c) = NIST_SP1065_table8[ abs(alpha-2) ]
     (b,c) = NIST_SP1065_table8[ abs(alpha-2) ]
     edf = b*(float(N)/float(m))-c
-    print "mtotdev b,c= ", (b,c)," edf=", edf
+    print("mtotdev b,c= ", (b,c)," edf=", edf)
+    return edf
+
+def edf_simple(N, m, alpha):
+    """Equivalent degrees of freedom.
+    Simple approximate formulae.
+    
+    Parameters
+    ----------
+    N : int
+        the number of phase samples 
+    m : int
+        averaging factor, tau = m * tau0
+    alpha: int
+        exponent of f for the frequency PSD:
+        'wp' returns white phase noise.             alpha=+2
+        'wf' returns white frequency noise.         alpha= 0
+        'fp' returns flicker phase noise.           alpha=+1
+        'ff' returns flicker frequency noise.       alpha=-1
+        'rf' returns random walk frequency noise.   alpha=-2
+        If the input is not recognized, it defaults to idealized, uncorrelated
+        noise with (N-1) degrees of freedom.
+
+    Notes
+    -----
+       S. Stein, Frequency and Time - Their Measurement and
+       Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
+       http://tf.boulder.nist.gov/general/pdf/666.pdf
+
+    Returns
+    -------
+    edf : float
+        Equivalent degrees of freedom
+
+    """
+
+    N=float(N)
+    m=float(m)
+    if alpha in [2,1,0,-1,-2]:
+        # NIST SP 1065, Table 5
+        if alpha == +2:
+            edf = (N + 1) * (N - 2*m) / (2 * (N - m))
+
+        if alpha == 0:
+            edf = (((3 * (N - 1) / (2 * m)) - (2 * (N - 2) / N)) *
+                  ((4*pow(m,2)) / ((4*pow(m,2)) + 5)) )
+
+        if alpha == 1:
+            a = (N - 1)/(2 * m)
+            b = (2 * m + 1) * (N - 1) / 4
+            edf = np.exp(np.sqrt(np.log(a) * np.log(b)))
+
+        if alpha == -1:
+            if m == 1:
+                edf = 2 * (N - 2) /(2.3 * N - 4.9)
+            if m >= 2:
+                edf = 5 * N**2 / (4 * m * (N + (3 * m)))
+
+        if alpha == -2:
+            a = (N - 2) / (m * (N - 3)**2)
+            b = (N - 1)**2
+            c = 3 * m * (N - 1)
+            d = 4 * m **2
+            edf = a * (b - c + d)
+
+    else:
+        edf = (N - 1)
+        print("Noise type not recognized. Defaulting to N - 1 degrees of freedom.")
+
     return edf
 
 def confidence_intervals(dev, ci, edf):
@@ -1745,180 +1888,9 @@ def confidence_intervals(dev, ci, edf):
     var_l = float(edf) * variance / chi2_h  # NIST SP1065 eqn (45) 
     var_h = float(edf) * variance / chi2_l
     return (np.sqrt(var_l), np.sqrt(var_h))
-
-def uncertainty_estimate(N, m, dev, ci=0.9, noisetype='wp'):
-    """Determine the uncertainty of a given two-sample variance estimate for
-    a given number of samples (N), sampling distance (m), devation estimate
-    (dev), confindence interval (ci), and type of noise (noisetype).
-
-    Parameters
-    ----------
-    N : int
-        the number of samples used in a two sample variance estimate
-    m : int
-        the length of the window, tau = m * tau0
-    dev: float
-        the estimated deviation
-    ci: float
-        the total confidence interval desired, i.e. if ci = 0.9, the bounds
-        will be at 0.05 and 0.95.
-    noisetype: string
-        the type of noise desired:
-        'wp' returns white phase noise.             alpha=+2
-        'wf' returns white frequency noise.         alpha= 0
-        'fp' returns flicker phase noise.           alpha=+1
-        'ff' returns flicker frequency noise.       alpha=-1
-        'rf' returns random walk frequency noise.   alpha=-2
-        If the input is not recognized, it defaults to idealized, uncorrelated
-        noise with (N-1) degrees of freedom.
-
-    Notes
-    -----
-       S. Stein, Frequency and Time - Their Measurement and
-       Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
-       http://tf.boulder.nist.gov/general/pdf/666.pdf
-
-    Returns
-    -------
-    [err_l, err_h] : list, float
-        the upper and lower bounds of the confidence interval taken as
-        distances from the the estimated two sample variance.
-
-    """
-
-    ci_l = min(np.abs(ci), np.abs((ci-1))) / 2
-    ci_h = 1 - ci_l
-    #print ci_l, ci_h
-    N=float(N)
-    m=float(m)
-    if noisetype in set(['wp', 'fp', 'wf', 'ff', 'rf']):
-        # NIST SP 1065, Table 5
-        if noisetype == 'wp':
-            df = (N + 1) * (N - 2*m) / (2 * (N - m))
-
-        if noisetype == 'wf':
-            df = (((3 * (N - 1) / (2 * m)) - (2 * (N - 2) / N)) *
-                  ((4*pow(m,2)) / ((4*pow(m,2)) + 5)) )
-
-        if noisetype == 'fp':
-            a = (N - 1)/(2 * m)
-            b = (2 * m + 1) * (N - 1) / 4
-            df = np.exp(np.sqrt(np.log(a) * np.log(b)))
-
-        if noisetype == 'ff':
-            if m == 1:
-                df = 2 * (N - 2) /(2.3 * N - 4.9)
-            if m >= 2:
-                df = 5 * N**2 / (4 * m * (N + (3 * m)))
-
-        if noisetype == 'rf':
-            a = (N - 2) / (m * (N - 3)**2)
-            b = (N - 1)**2
-            c = 3 * m * (N - 1)
-            d = 4 * m **2
-            df = a * (b - c + d)
-
-    else:
-        df = (N - 1)
-        print("Noise type not recognized. Defaulting to N - 1 degrees of freedom.")
-
-    # inverse of cumulative chi2 distribution
-    #chi2_l = scipy.stats.chi2.ppf(q=ci_l, df=df)
-    #chi2_h = scipy.stats.chi2.ppf(q=ci_h, df=df)
-    chi2_l = scipy.stats.chi2.ppf(ci_l, df)
-    chi2_h = scipy.stats.chi2.ppf(ci_h, df)
     
-    # note these are variances, not deviations
-    variance = dev*dev
-    var_l = float(df) * variance / chi2_h  # NIST SP1065 eqn (45) 
-    var_h = float(df) * variance / chi2_l
-    (dev_l, dev_h) = (np.sqrt(var_l), np.sqrt(var_h))
-    print( "ci_l ", ci_l, chi2_l)
-    print( "ci_h ", ci_h, chi2_h)
-    print( "dev = ", dev)
-    print( "edf = ", df)
-    print( " lo= ", dev_l)
-    print( " hi= ", dev_h)
-    # chi2_l, err_h
 
-    return (dev_l, dev_h)
 
-def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
-                             phasedata_ca, rate, taus, function):
-    """
-    Three Cornered Hat Method
-
-    Given three clocks A, B, C, we seek to find their variances
-    :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`.
-    We measure three phase differences, assuming no correlation between
-    the clocks, the measurements have variances:
-
-    .. math::
-
-        \\sigma^2_{AB} = \\sigma^2_{A} + \\sigma^2_{B}
-
-        \\sigma^2_{BC} = \\sigma^2_{B} + \\sigma^2_{C}
-
-        \\sigma^2_{CA} = \\sigma^2_{C} + \\sigma^2_{A}
-
-    Which allows solving for the variance of one clock as:
-
-    .. math::
-
-        \\sigma^2_{A}  = {1 \\over 2} ( \\sigma^2_{AB} +
-        \\sigma^2_{CA} - \\sigma^2_{BC} )
-
-    and similarly cyclic permutations for :math:`\\sigma^2_B` and
-    :math:`\\sigma^2_C`
-
-    Parameters
-    ----------
-    phasedata_ab: np.array
-        phase measurements between clock A and B, in seconds
-    phasedata_bc: np.array
-        phase measurements between clock B and C, in seconds
-    phasedata_ca: np.array
-        phase measurements between clock C and A, in seconds
-    rate: float
-        The sampling rate for phase, in Hz
-    taus: np.array
-        The tau values for deviations, in seconds
-    function: allantools deviation function
-        The type of statistic to compute, e.g. allantools.oadev
-
-    Returns
-    -------
-    tau_ab: np.array
-        Tau values corresponding to output deviations
-    dev_a: np.array
-        List of computed values for clock A
-
-    References
-    ----------
-    http://www.wriley.com/3-CornHat.htm
-    """
-
-    (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab,
-                                               data_type='phase',
-                                               rate=rate, taus=taus)
-    (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc,
-                                               data_type='phase',
-                                               rate=rate, taus=taus)
-    (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca,
-                                               data_type='phase',
-                                               rate=rate, taus=taus)
-
-    var_ab = dev_ab * dev_ab
-    var_bc = dev_bc * dev_bc
-    var_ca = dev_ca * dev_ca
-    assert len(var_ab) == len(var_bc) == len(var_ca)
-    var_a = 0.5 * (var_ab + var_ca - var_bc)
-
-    var_a[var_a < 0] = 0 # don't return imaginary deviations (?)
-    dev_a = np.sqrt(var_a)
-    err_a = [d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)]
-
-    return tau_ab, dev_a, err_a, ns_ab
 
 ########################################################################
 #

@@ -22,9 +22,10 @@ __all__ = [
     'three_cornered_hat_phase',
     'noise',
     'gradev',
-    'uncertainty_estimate',
+    'edf_simple',
     'edf_greenhall',
     'edf_totdev',
+    'edf_mtotdev',
     'confidence_intervals',
     ]
 
@@ -60,9 +61,10 @@ from .allantools import tierms
 
 from .allantools import gradev
 
-from .allantools import uncertainty_estimate
+from .allantools import edf_simple
 from .allantools import edf_greenhall
-from .allantools import edf_totdev
+from .allantools import edf_totdev 
+from .allantools import edf_mtotdev
 from .allantools import confidence_intervals
 
 
