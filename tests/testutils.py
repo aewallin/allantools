@@ -121,6 +121,7 @@ def check_equal(a,b):
         return 0
     except:
         print("ERROR a=", a, " b=", b)
+        assert(0)
         return 1
 
 def check_approx_equal(a1,a2, tolerance=1e-4, verbose=False):
@@ -134,6 +135,7 @@ def check_approx_equal(a1,a2, tolerance=1e-4, verbose=False):
         return 0
     except:
         print("ERROR %0.6g \t %0.6g \t %0.6f \t %0.4f" % ( a1, a2, rel_error, bias))
+        assert(0)
         return 1
 
 

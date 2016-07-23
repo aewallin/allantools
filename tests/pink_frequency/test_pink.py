@@ -46,7 +46,10 @@ class TestPink():
 
     def generic_test(self, datafile = data_file, result="", fct=None):
         change_to_test_dir()
-        testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance, frequency=True, normalize=True)
+        testutils.test_row_by_row( fct, datafile, rate, result , verbose=verbose, tolerance=tolerance, frequency=True, normalize=False)
+        
 
 if __name__ == "__main__":
-    pytest.main()
+    #pytest.main()
+    t = TestPink()
+    t.test_adev()

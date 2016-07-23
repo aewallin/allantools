@@ -708,6 +708,7 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
         Better confidence at long averages for modified Allan
 
         FIXME: bias-correction http://www.wriley.com/CI2.pdf page 6
+        
         The variance is scaled up (divided by this number) based on the
         noise-type identified.
         WPM 0.94
@@ -1590,6 +1591,16 @@ def edf_greenhall_simple(alpha, d, m, S, F, N):
 # m = tau/tau0 averaging factor
 # N number of phase obs
 def edf_greenhall(alpha, d, m, N, overlapping = False, modified = False, verbose=True):
+    """
+        Used for the following deviations (see http://www.wriley.com/CI2.pdf page 8)
+        adev()
+        oadev()
+        mdev()
+        tdev()
+        hdev()
+        ohdev()
+    """
+    
     if modified:
         F=1 # F filter factor, 1 modified variance, m unmodified variance
     else:
@@ -1670,7 +1681,7 @@ def edf_greenhall(alpha, d, m, N, overlapping = False, modified = False, verbose
     elif int(F)==int(m) and int(alpha)==2 and not modified: # case 4, unmodified variances, alpha=2
         K = np.ceil(r)
         if K <= d:
-            pass # FIXME: add formula from the paper here!
+            raise NotImplementedError  # FIXME: add formula from the paper here!
         else:
             a0 = scipy.special.binom(4*d, 2*d) / pow(scipy.special.binom(2*d,d), 2)
             a1 = d/2.0
@@ -1729,6 +1740,7 @@ def greenhall_sx(t, F, alpha):
 
 # this is Eqn (7) from Greenhall2004
 def greenhall_sw(t, alpha):
+    alpha=int(alpha)
     if alpha==2:
             return -np.abs(t)
     elif alpha==1:
@@ -1966,5 +1978,12 @@ def phase2frequency(phase, rate):
     y = rate*np.diff(phase)
     return y
 
+def frequency2fractional(frequency, mean_frequency=-1):
+    if mean_frequency==-1:
+        mu = np.mean(frequency)
+    else:
+        mu = mean_frequency
+    return [(x-mu)/mu for x in frequency]
+    
 if __name__ == "__main__":
     print("Nothing to see here.")
