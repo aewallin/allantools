@@ -22,7 +22,8 @@ __all__ = [
     'three_cornered_hat_phase',
     'noise',
     'gradev',
-    'uncertainty_estimate'
+    'uncertainty_estimate',
+    'Dataset'
     ]
 
 from .allantools import __version__
@@ -60,3 +61,5 @@ from .allantools import gradev
 from .allantools import uncertainty_estimate
 
 from . import noise
+
+from .dataset import Dataset
