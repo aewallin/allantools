@@ -119,5 +119,6 @@ class Dataset():
         result = func(self.inp["data"], rate=self.inp["rate"],
                       data_type=self.inp["data_type"], taus=self.inp["taus"])
         keys = ["taus", "stat", "stat_err", "stat_n"]
-        self.out = {key: result[i] for i, key in enumerate(keys)}
+        result = {key: result[i] for i, key in enumerate(keys)}
+        self.out = result.copy()
         return result
