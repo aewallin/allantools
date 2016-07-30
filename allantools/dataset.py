@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+from . import allantools
+
 
 class Dataset():
     """ Dataset class for Allantools
@@ -48,6 +50,7 @@ class Dataset():
         taus: np.array
             Array of tau values, in seconds, for which to compute statistic.
             Optionally set taus=["all"|"octave"|"decade"] for automatic
+
         Returns
         -------
         Dataset()
@@ -88,11 +91,33 @@ class Dataset():
         self.inp["taus"] = taus
 
     def compute(self, function):
-        (self.out["taus"],
-         self.out["stat"],
-         self.out["stat_err"],
-         self.out["stat_n"]) = function(self.inp["data"],
-                                        rate=self.inp["rate"],
-                                        data_type=self.inp["data_type"],
-                                        taus=self.inp["taus"])
-        return self.out
+        """Evaluate the passed function with the supplied data.
+
+        Parameters
+        ----------
+        function: str
+            Name of the :mod:`allantools` function to evaluate
+
+        Returns
+        -------
+        result: dict
+            The results of the calculation.
+
+        """
+        try:
+            func = getattr(allantools, function)
+        except AttributeError:
+            raise AttributeError("function must be defined in allantools")
+
+        whitelisted = ["theo1", "mtie", "tierms"]
+
+        if function[-3:] != "dev" and function not in whitelisted:
+            # this should probably raise a custom exception type so
+            # it's easier to distinguish from other bad things
+            raise RuntimeError("function must be one of the 'dev' functions")
+
+        result = func(self.inp["data"], rate=self.inp["rate"],
+                      data_type=self.inp["data_type"], taus=self.inp["taus"])
+        keys = ["taus", "stat", "stat_err", "stat_n"]
+        self.out = {key: result[i] for i, key in enumerate(keys)}
+        return result
