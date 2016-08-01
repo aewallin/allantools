@@ -1,3 +1,4 @@
+env/
 *.pyc
 # sphinx docs generated here:
 docs/_build/**
