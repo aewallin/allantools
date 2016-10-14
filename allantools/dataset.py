@@ -1,7 +1,7 @@
 """
 Allantools dataset object
 
-**Authors:** Frédéric Meynadier (frederic.meynadier "at" gmail.com),
+**Authors:** Frederic Meynadier (frederic.meynadier "at" gmail.com),
     Mike DePalatis (http://mike.depalatis.net)
 
 Version history
@@ -66,7 +66,8 @@ class Dataset():
                     "stat": None,
                     "stat_err": None,
                     "stat_n": None,
-                    "stat_unc": None}
+                    "stat_unc": None,
+                    "stat_id": None}
 
     def set_input(self, data,
                   rate=1.0, data_type="phase", taus=None):
@@ -115,10 +116,10 @@ class Dataset():
             # this should probably raise a custom exception type so
             # it's easier to distinguish from other bad things
             raise RuntimeError("function must be one of the 'dev' functions")
-
         result = func(self.inp["data"], rate=self.inp["rate"],
                       data_type=self.inp["data_type"], taus=self.inp["taus"])
         keys = ["taus", "stat", "stat_err", "stat_n"]
         result = {key: result[i] for i, key in enumerate(keys)}
         self.out = result.copy()
+        self.out["stat_id"] = function
         return result

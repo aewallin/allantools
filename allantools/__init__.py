@@ -23,7 +23,8 @@ __all__ = [
     'noise',
     'gradev',
     'uncertainty_estimate',
-    'Dataset'
+    'Dataset',
+    'Plot'
     ]
 
 from .allantools import __version__
@@ -63,3 +64,4 @@ from .allantools import uncertainty_estimate
 from . import noise
 
 from .dataset import Dataset
+from .plot import Plot

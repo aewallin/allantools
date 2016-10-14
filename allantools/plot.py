@@ -1,7 +1,7 @@
 """
 Allantools plotting utilities
 
-**Authors:** Frédéric Meynadier (frederic.meynadier "at" gmail.com),
+**Authors:** Frederic Meynadier (frederic.meynadier "at" gmail.com),
     Mike DePalatis (http://mike.depalatis.net)
 
 Version history
@@ -30,15 +30,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import matplotlib.pyplot as plt
 
 
-class atPlot():
+class Plot():
+    """ A class for plotting data once computed by Allantools
+
+    example :
+        import allantools
+        import numpy as np
+        a = allantools.Dataset(data=np.random.rand(1000))
+        a.compute("mdev")
+        b = allantools.Plot()
+        b.plot(a)
+        b.show()
+
+    Uses matplotlib. self.fig and self.ax stores the return values of
+    matplotlib.pyplot.subplots(). plot() sets various defaults, but you
+    can change them by using standard matplotlib method on self.fig and self.ax
+    """
     def __init__(self):
         self.fig, self.ax = plt.subplots()
         self.ax.set_xscale("log")
         self.ax.set_yscale("log")
 
-    def plot(self, atDataset):
-        self.ax.plot(atDataset.out["taus"],
-                     atDataset.out["stat"])
+    def plot(self, atDataset,
+             errorbars=False,
+             grid=False):
+        """ use matplotlib methods for plotting
+
+        Parameters
+        ----------
+        atDataset : allantools.Dataset()
+            a dataset with computed data
+        errorbars : boolean
+            Plot errorbars. Defaults to False
+        grid : boolean
+            Plot grid. Defaults to False
+        """
+        if errorbars:
+            self.ax.errorbar(atDataset.out["taus"],
+                             atDataset.out["stat"],
+                             yerr=atDataset.out["stat_err"],
+                             )
+        else:
+            self.ax.plot(atDataset.out["taus"],
+                         atDataset.out["stat"],
+                         )
+        self.ax.set_xlabel("Tau")
+        self.ax.set_ylabel(atDataset.out["stat_id"])
+        self.ax.grid(grid, which="minor", ls="-", color='0.65')
+        self.ax.grid(grid, which="major", ls="-", color='0.25')
 
     def show(self):
+        """Calls matplotlib.pyplot.show()
+
+        Keeping this separated from "plot" allows to tweak display before
+        rendering
+        """
         plt.show()
