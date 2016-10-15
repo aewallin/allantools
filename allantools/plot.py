@@ -27,7 +27,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-import matplotlib.pyplot as plt
 
 
 class Plot():
@@ -47,6 +46,11 @@ class Plot():
     can change them by using standard matplotlib method on self.fig and self.ax
     """
     def __init__(self):
+        try:
+            import matplotlib.pyplot as plt
+            self.plt = plt
+        except ImportError:
+            raise RuntimeError("Matplotlib is required for plotting")
         self.fig, self.ax = plt.subplots()
         self.ax.set_xscale("log")
         self.ax.set_yscale("log")
@@ -85,4 +89,4 @@ class Plot():
         Keeping this separated from "plot" allows to tweak display before
         rendering
         """
-        plt.show()
+        self.plt.show()
