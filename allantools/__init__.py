@@ -28,6 +28,9 @@ __all__ = [
     'edf_totdev',
     'edf_mtotdev',
     'confidence_intervals',
+    'uncertainty_estimate',
+    'Dataset',
+    'Plot'
     ]
 
 from .allantools import __version__
@@ -71,3 +74,6 @@ from .allantools import confidence_intervals
 
 
 from . import noise
+
+from .dataset import Dataset
+from .plot import Plot
