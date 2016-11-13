@@ -1435,6 +1435,47 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
 
     return data, m, taus2
 
+def tau_reduction(ms, rate, n_per_decade):
+    """Reduce the number of taus to maximum of n per decade (Helper function)
+    
+    takes in a tau list and reduces the number of taus to a maximum amount per
+    decade. This is only usefull if more that the "decade" and "octave" but
+    less than the "all" taus are wanted. E.g. in to show certain features of
+    the data one might want 100 points per decade.
+    
+    NOTE: The algorithm is slightly inaccurate for ms under n_per_decade, and
+    will also remove some points in this range, which is usually fine.
+    
+    Typical use would be something like:
+    (data,m,taus)=tau_generator(data,rate,taus="all")
+    (m,taus)=tau_reduction(m,rate,n_per_decade)
+        
+    Parameters
+    ----------
+    ms: array of integers
+        List of m values (assumed to be an "all" list) to remove points from.
+    rate: float
+        Sample rate of data in Hz. Time interval between measurements
+        is 1/rate seconds. Used to convert to taus.
+    n_per_decade: int
+        Number of ms/taus to keep per decade.
+
+    Returns
+    -------
+    m: np.array
+        Reduced list of m values
+    taus: np.array
+        Reduced list of tau values
+    """
+    ms=np.int64(ms)
+    keep=np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) - 
+                        np.rint(n_per_decade*np.log10(ms[:-1])))
+
+    ms=ms[keep]
+    taus=ms/float(rate)
+
+    return ms, taus
+
 def remove_small_ns(taus, devs, deverrs, ns):
     """ Remove results with small number of samples.
         If n is small (==1), reject the result
