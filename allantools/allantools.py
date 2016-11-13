@@ -7,6 +7,8 @@ Allan deviation tools
 Version history
 ---------------
 **unreleased**
+- Dataset class
+- plotting with a Plot class
 - confidence intervals based on Greenhall's EDF algorithm
 - testing on multiple python versions with tox
 - continuous integration with https://travis-ci.org/aewallin/allantools
@@ -130,14 +132,7 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
     -----
     http://en.wikipedia.org/wiki/Time_deviation
     """
-
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
+    phase = input_to_phase(data,rate, data_type)
     (taus, md, mde, ns) = mdev(phase, rate=rate, taus=taus)
     td = taus * md / np.sqrt(3.0)
     tde = td / np.sqrt(ns)
@@ -188,14 +183,7 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
     NIST SP 1065 eqn (14) and (15), page 17
 
     """
-
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
+    phase = input_to_phase(data,rate, data_type)
     (phase, ms, taus_used) = tau_generator(phase, rate, taus=taus)
     data, taus = np.array(phase), np.array(taus)
 
@@ -294,14 +282,7 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each adev calculation
 
     """
-
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
+    phase = input_to_phase(data,rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
 
     ad = np.zeros_like(taus_used)
@@ -409,13 +390,7 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each oadev calculation
 
     """
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
+    phase = input_to_phase(data,rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     ad = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
@@ -466,15 +441,7 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each hdev calculation
 
     """
-
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
-    rate = float(rate)
+    phase = input_to_phase(data,rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
@@ -515,14 +482,7 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
     """
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
-    rate = float(rate)
+    phase = input_to_phase(data,rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
@@ -637,14 +597,7 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     NIST SP 1065 eqn (25) page 23
 
     """
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
-    rate = float(rate)
+    phase = input_to_phase(data,rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     N = len(phase)
 
@@ -734,14 +687,7 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
     NIST SP 1065 eqn (27) page 25
 
     """
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
-    rate = float(rate)
+    phase = input_to_phase(data,rate, data_type)
     (phase, ms, taus_used) = tau_generator(phase, rate, taus,
                                            maximum_m=float(len(phase))/3.0)
     devs = np.zeros_like(taus_used)
@@ -871,6 +817,7 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
     # http://www.wriley.com/paper4ht.htm
     # "For best consistency, the overlapping Hadamard variance is used
     # instead of the Hadamard total variance at m=1"
+    # FIXME: this uses both freq and phase datasets, which uses double the memory really needed...
     for idx, mj in enumerate(ms):
         if int(mj) == 1:
             (devs[idx],
@@ -988,14 +935,8 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
         tau-list generation.
 
     """
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
+    phase = input_to_phase(data,rate, data_type)
 
-    rate = float(rate)
     tau0 = 1.0/rate
     (phase, ms, taus_used) = tau_generator(phase, rate, taus, even=True)
 
@@ -1048,14 +989,7 @@ def tierms(data, rate=1.0, data_type="phase", taus=None):
         tau-list generation.
 
     """
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
-    rate = float(rate)
+    phase = input_to_phase(data,rate, data_type)
     (data, m, taus_used) = tau_generator(phase, rate, taus)
 
     count = len(phase)
@@ -1131,15 +1065,7 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
     Stable32 also has "Decade" and "Octave" modes where the
     dataset is extended somehow?
     """
-
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
-    rate = float(rate)
+    phase = input_to_phase(data,rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
@@ -1266,13 +1192,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
         numper of terms n in the adev estimate.
 
     """
-    if data_type == "phase":
-        phase = data
-    elif data_type == "freq":
-        phase = frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
+    phase = input_to_phase(data,rate, data_type)
     (data, m, taus_used) = tau_generator(phase, rate, taus)
 
     ad = np.zeros_like(taus_used)
@@ -1343,6 +1263,15 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
 #  Various helper functions and utilities
 #
 
+def input_to_phase(data, rate, data_type):
+    """ Take either phase or frequency as input and return phase
+    """
+    if data_type == "phase":
+        return data
+    elif data_type == "freq":
+        return frequency2phase(data, rate)
+    else:
+        raise Exception("unknown data_type: " + data_type)
 
 def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     """ pre-processing of the tau-list given by the user (Helper function)
