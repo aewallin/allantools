@@ -127,6 +127,3 @@ def iterpink(depth=20):
         # replace value c with a new source element
         sumvals += source[i] - values[c]
         values[c] = source[i]
-
-if __name__ == "__main__":
-    print("Nothing to see here.")
