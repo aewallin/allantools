@@ -45,8 +45,11 @@ class Plot():
     matplotlib.pyplot.subplots(). plot() sets various defaults, but you
     can change them by using standard matplotlib method on self.fig and self.ax
     """
-    def __init__(self):
+    def __init__(self, no_display="False"):
         try:
+            import matplotlib
+            if no_display:
+                matplotlib.use('Agg') # when we don't want an X-window displayed (e.g. from tests)
             import matplotlib.pyplot as plt
             self.plt = plt
         except ImportError:

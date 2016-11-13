@@ -11,7 +11,7 @@ import pytest
 def test_plot():
     ds = at.Dataset(data=at.noise.white(1000), rate=1.234)
     ds.compute("adev")
-    p = at.Plot()
+    p = at.Plot(no_display=True)
     p.plot(ds)
     p.show()
     
