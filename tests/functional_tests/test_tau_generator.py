@@ -54,13 +54,13 @@ def test_tau_generator_numpy1234():
 def test_tau_reduction_10():
     (ms, taus)=at.allantools.tau_reduction(ms=expected_all, rate=r,
                                                 n_per_decade=10)
-    print ms, taus
+    print(ms, taus)
     np.testing.assert_array_equal(expected_reduced_10, ms)
 
 def test_tau_reduction_2():
     (ms, taus)=at.allantools.tau_reduction(ms=expected_all, rate=r,
                                                 n_per_decade=2)
-    print ms, taus
+    print(ms, taus)
     np.testing.assert_array_equal(expected_reduced_2, ms)
 
 if __name__ == "__main__":
