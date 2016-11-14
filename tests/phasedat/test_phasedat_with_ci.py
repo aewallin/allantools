@@ -42,6 +42,10 @@ class TestPhaseDatCI():
             #edf = greenhall_simple_edf( alpha=0, d=2, m=t, S=1, F=t, N=len(phase) )
             edf2 = allan.edf_greenhall( alpha=0, d=2, m=t, N=len(phase), overlapping = False, modified=False )
             (lo,hi) = allan.confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            #(lo2,hi2) = allan.confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2, use_scipy_chi2_ppf=False ) 
+            #testutils.check_approx_equal(lo, lo2, tolerance=1e-4)
+            #testutils.check_approx_equal(hi, hi2, tolerance=1e-4)
+            
             #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
             los.append(lo)
             his.append(hi)

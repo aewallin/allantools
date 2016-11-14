@@ -81,7 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import json
 import numpy as np
-import scipy.stats # used in uncertainty_estimate()
+import scipy.stats # used in confidence_intervals()
 
 # Get version number from json metadata
 pkginfo_path = os.path.join(os.path.dirname(__file__),
@@ -1873,6 +1873,7 @@ def confidence_intervals(dev, ci, edf):
     ci_l = min(np.abs(ci), np.abs((ci-1))) / 2
     ci_h = 1 - ci_l
     
+    # function from scipy, works OK, but scipy is large and slow to build
     chi2_l = scipy.stats.chi2.ppf(ci_l, edf)
     chi2_h = scipy.stats.chi2.ppf(ci_h, edf)
     
