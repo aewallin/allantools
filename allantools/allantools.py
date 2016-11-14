@@ -1949,11 +1949,26 @@ def phase2frequency(phase, rate):
     return y
 
 def frequency2fractional(frequency, mean_frequency=-1):
+    """ Convert frequency in Hz to fractional frequency
+    
+    Parameters
+    ----------
+    frequency: np.array
+        Data array of frequency in Hz
+    mean_frequency: float
+        (optional) The nominal mean frequency, in Hz
+        if omitted, defaults to mean frequency=np.mean(frequency)
+
+    Returns
+    -------
+    y:
+        Data array of fractional frequency
+    """
     if mean_frequency==-1:
         mu = np.mean(frequency)
     else:
         mu = mean_frequency
-    return [(x-mu)/mu for x in frequency]
+    y = [(x-mu)/mu for x in frequency]
+    return y
     
-if __name__ == "__main__":
-    print("Nothing to see here.")
+
