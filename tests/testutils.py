@@ -134,12 +134,6 @@ def check_approx_equal(a1,a2, tolerance=1e-4, verbose=False):
 
         return 0
     except:
-        print("ERROR %0.6g \t %0.6g \t %0.6f \t %0.4f" % ( a1, a2, rel_error, bias))
+        print("ERROR %0.6g \t %0.6g \t rel_err = %0.6f \t %0.4f" % ( a1, a2, rel_error, bias))
         assert(0)
         return 1
-
-
-if __name__ == "__main__":
-    print("nothing to see here.")
-    pass
-
