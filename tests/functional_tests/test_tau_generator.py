@@ -63,6 +63,10 @@ def test_tau_reduction_2():
     print(ms, taus)
     np.testing.assert_array_equal(expected_reduced_2, ms)
 
+def test_zero_rate():
+    with pytest.raises(RuntimeError):
+        at.adev(d, rate=0.0)
+
 if __name__ == "__main__":
     test_tau_generator_empty()
     test_tau_generator_all()
@@ -71,3 +75,4 @@ if __name__ == "__main__":
     test_tau_generator_1234()
     test_tau_reduction_10()
     test_tau_reduction_2()
+    test_zero_rate()
