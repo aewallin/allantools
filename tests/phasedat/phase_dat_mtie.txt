@@ -3,7 +3,7 @@
 # Maximum = 4.356529e+00
 # Minimum = -4.707879e+00
 # Average = -5.403683e-01
-# Sigma Type: MTIE
+# Sigma Type: MTIE (Fast)
 # Deadtime T/Tau = 1.000000
 #
 #  AF      Tau           #       MTIE
