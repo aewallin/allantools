@@ -10,6 +10,9 @@ Code
 
 Papers
 ------
+.. [Greenhall2004] Greenhall & Riley, "UNCERTAINTY OF STABILITY VARIANCES
+    BASED ON FINITE DIFFERENCES" 35th Annual Precise Time and Time Interval (PTTI) Meeting
+    https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
 
 .. [wikipedia_adev] http://en.wikipedia.org/wiki/Allan_variance
 
