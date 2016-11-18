@@ -45,7 +45,7 @@ class Plot():
     matplotlib.pyplot.subplots(). plot() sets various defaults, but you
     can change them by using standard matplotlib method on self.fig and self.ax
     """
-    def __init__(self, no_display="False"):
+    def __init__(self, no_display=False):
         try:
             import matplotlib
             if no_display:
