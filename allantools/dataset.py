@@ -34,7 +34,34 @@ from . import allantools
 class Dataset():
     """ Dataset class for Allantools
 
+    :Example:
+        ::
+
+            import numpy as np
+            # Load random data
+            a = allantools.Dataset(data=np.random.rand(1000))
+            # compute mdev
+            a.compute("mdev")
+            print(a.out["stat"])
+
+    compute() returns the result of the computation and also stores it in the
+    object's ``out`` member.
+
     """
+    #: input data Dict, will be initialized by __init__()
+    inp = {"data": None,
+           "rate": None,
+           "data_type": None,
+           "taus": None}
+
+    #: output data Dict, to be populated by compute()
+    out = {"taus": None,
+           "stat": None,
+           "stat_err": None,
+           "stat_n": None,
+           "stat_unc": None,
+           "stat_id": None}
+
     def __init__(self, data=None, rate=1.0, data_type="phase", taus=None):
         """ Initialize object with input data
 
@@ -50,6 +77,7 @@ class Dataset():
         taus: np.array
             Array of tau values, in seconds, for which to compute statistic.
             Optionally set taus=["all"|"octave"|"decade"] for automatic
+            calculation of taus list
 
         Returns
         -------
@@ -57,17 +85,10 @@ class Dataset():
             A Dataset() instance
 
         """
-
-        self.inp = {"data": data,
-                    "rate": rate,
-                    "data_type": data_type,
-                    "taus": taus}
-        self.out = {"taus": None,
-                    "stat": None,
-                    "stat_err": None,
-                    "stat_n": None,
-                    "stat_unc": None,
-                    "stat_id": None}
+        self.inp["data"] = data
+        self.inp["rate"] = rate
+        self.inp["data_type"] = data_type
+        self.inp["taus"] = taus
 
     def set_input(self, data,
                   rate=1.0, data_type="phase", taus=None):
@@ -93,6 +114,8 @@ class Dataset():
 
     def compute(self, function):
         """Evaluate the passed function with the supplied data.
+
+        Stores result in self.out.
 
         Parameters
         ----------
