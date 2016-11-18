@@ -6,7 +6,7 @@ Allan deviation tools
 
 Version history
 ---------------
-**unreleased**
+**2016.11** 2016 November 18
 - Dataset class
 - plotting with a Plot class
 - confidence intervals based on Greenhall's EDF algorithm
