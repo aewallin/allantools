@@ -661,7 +661,7 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
         Better confidence at long averages for modified Allan
 
         FIXME: bias-correction http://www.wriley.com/CI2.pdf page 6
-        
+
         The variance is scaled up (divided by this number) based on the
         noise-type identified.
         WPM 0.94
@@ -708,7 +708,7 @@ def calc_mtotdev_phase(phase, rate, m):
     tau0 = 1.0/rate
     N = len(phase) # phase data, N points
     m = int(m)
-    
+
     n = 0    # number of terms in the sum, for error estimation
     dev = 0.0 # the deviation we are computing
     err = 0.0 # the error in the deviation
@@ -1366,19 +1366,19 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
 
 def tau_reduction(ms, rate, n_per_decade):
     """Reduce the number of taus to maximum of n per decade (Helper function)
-    
+
     takes in a tau list and reduces the number of taus to a maximum amount per
     decade. This is only usefull if more that the "decade" and "octave" but
     less than the "all" taus are wanted. E.g. in to show certain features of
     the data one might want 100 points per decade.
-    
+
     NOTE: The algorithm is slightly inaccurate for ms under n_per_decade, and
     will also remove some points in this range, which is usually fine.
-    
+
     Typical use would be something like:
     (data,m,taus)=tau_generator(data,rate,taus="all")
     (m,taus)=tau_reduction(m,rate,n_per_decade)
-        
+
     Parameters
     ----------
     ms: array of integers
@@ -1397,7 +1397,7 @@ def tau_reduction(ms, rate, n_per_decade):
         Reduced list of tau values
     """
     ms=np.int64(ms)
-    keep=np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) - 
+    keep=np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) -
                         np.rint(n_per_decade*np.log10(ms[:-1])))
 
     ms=ms[keep]
@@ -1570,7 +1570,7 @@ def edf_greenhall(alpha, d, m, N, overlapping = False, modified = False, verbose
         hdev()
         ohdev()
     """
-    
+
     if modified:
         F=1 # F filter factor, 1 modified variance, m unmodified variance
     else:
@@ -1611,7 +1611,7 @@ def edf_greenhall(alpha, d, m, N, overlapping = False, modified = False, verbose
             else:
                 m_prime = float('inf')
                 variant = "b"
-            
+
             inv_edf = (1.0/(pow( greenhall_sz(0,m_prime,alpha,d),2)*M))*greenhall_BasicSum(J, M, S, m_prime, alpha, d)
             if verbose:
                 print( "case 2.1%s edf= %3f" % (variant, float(1.0/inv_edf)) )
@@ -1659,7 +1659,7 @@ def edf_greenhall(alpha, d, m, N, overlapping = False, modified = False, verbose
             if verbose:
                 print( "case 4.2 edf= %3f" % float(1.0/inv_edf) )
             return 1.0/inv_edf
-            
+
     print("greenhall_edf() no matching case!")
     assert(0) # ERROR
 
@@ -1695,9 +1695,9 @@ def greenhall_sz(t, F, alpha, d):
         f =      greenhall_sx(t-3.0, F, alpha)
         g =      greenhall_sx(t+3.0, F, alpha)
         return a-b-c+dd+e-f-g
-    
+
     assert( 0 ) # ERROR
-    
+
 # this is Eqn (8) from Greenhall2004
 def greenhall_sx(t, F, alpha):
     if F==float('inf'):
@@ -1705,7 +1705,7 @@ def greenhall_sx(t, F, alpha):
     a = 2*greenhall_sw(t, alpha)
     b = greenhall_sw( t-1.0/float(F), alpha)
     c = greenhall_sw( t+1.0/float(F), alpha)
-    
+
     return pow(F,2)*(a-b-c)
 
 # this is Eqn (7) from Greenhall2004
@@ -1734,7 +1734,7 @@ def greenhall_sw(t, alpha):
             return pow(t,6)*np.log( np.abs(t) )
     elif alpha==-4:
         return np.abs( pow(t,7) )
-        
+
     assert( 0 ) # ERROR
 
 def greenhall_table3(alpha, d):
@@ -1742,7 +1742,7 @@ def greenhall_table3(alpha, d):
     idx = d-1
     table3=[ (6.0,4.0), (15.23,12.0), (47.8,40.0) ]
     return table3[idx]
-                
+
 def greenhall_table2(alpha, d):
     row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
     assert( row_idx in [0,1,2,3,4,5] )
@@ -1800,11 +1800,11 @@ def edf_mtotdev(N,m,alpha):
 def edf_simple(N, m, alpha):
     """Equivalent degrees of freedom.
     Simple approximate formulae.
-    
+
     Parameters
     ----------
     N : int
-        the number of phase samples 
+        the number of phase samples
     m : int
         averaging factor, tau = m * tau0
     alpha: int
@@ -1869,19 +1869,19 @@ def confidence_intervals(dev, ci, edf):
     # for 1-sigma standard error set
     # ci = scipy.special.erf(1/math.sqrt(2))
     #    = 0.68268949213708585
-    
+
     ci_l = min(np.abs(ci), np.abs((ci-1))) / 2
     ci_h = 1 - ci_l
-    
+
     # function from scipy, works OK, but scipy is large and slow to build
     chi2_l = scipy.stats.chi2.ppf(ci_l, edf)
     chi2_h = scipy.stats.chi2.ppf(ci_h, edf)
-    
+
     variance = dev*dev
-    var_l = float(edf) * variance / chi2_h  # NIST SP1065 eqn (45) 
+    var_l = float(edf) * variance / chi2_h  # NIST SP1065 eqn (45)
     var_h = float(edf) * variance / chi2_l
     return (np.sqrt(var_l), np.sqrt(var_h))
-    
+
 
 
 
@@ -1951,7 +1951,7 @@ def phase2frequency(phase, rate):
 
 def frequency2fractional(frequency, mean_frequency=-1):
     """ Convert frequency in Hz to fractional frequency
-    
+
     Parameters
     ----------
     frequency: np.array
@@ -1971,5 +1971,5 @@ def frequency2fractional(frequency, mean_frequency=-1):
         mu = mean_frequency
     y = [(x-mu)/mu for x in frequency]
     return y
-    
+
 

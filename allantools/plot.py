@@ -32,7 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Plot():
     """ A class for plotting data once computed by Allantools
 
-    example :
+    :Example:
+        ::
+
         import allantools
         import numpy as np
         a = allantools.Dataset(data=np.random.rand(1000))
@@ -46,10 +48,13 @@ class Plot():
     can change them by using standard matplotlib method on self.fig and self.ax
     """
     def __init__(self, no_display=False):
+        """ set ``no_display`` to ``True`` when we don't have an X-window
+        (e.g. for tests)
+        """
         try:
             import matplotlib
             if no_display:
-                matplotlib.use('Agg') # when we don't want an X-window displayed (e.g. from tests)
+                matplotlib.use('Agg')
             import matplotlib.pyplot as plt
             self.plt = plt
         except ImportError:
@@ -89,7 +94,7 @@ class Plot():
     def show(self):
         """Calls matplotlib.pyplot.show()
 
-        Keeping this separated from "plot" allows to tweak display before
+        Keeping this separated from ``plot()`` allows to tweak display before
         rendering
         """
         self.plt.show()

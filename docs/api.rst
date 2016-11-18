@@ -5,8 +5,34 @@
 API
 ===
 
-Implemented functions
----------------------
+The Dataset() class
+-------------------
+
+**New in version 2016.11**
+
+This class allows simple data handling.
+
+.. autoclass:: Dataset
+    :members:
+
+    .. automethod:: __init__
+
+
+The Plot() class
+-------------------
+
+**New in version 2016.11**
+
+This class allows simple data plotting.
+
+
+.. autoclass:: Plot
+    :members:
+    
+    .. automethod:: __init__
+
+Implemented statistics functions
+--------------------------------
 
 =====================================   ====================================================
 Function                                Description
@@ -21,16 +47,14 @@ Function                                Description
 ``mtotdev()``                           Modified total deviation
 ``ttotdev()``                           Time total deviation
 ``htotdev()``                           Hadamard total deviation
+``theo1()``                             Theo1 deviation
 ``mtie()``                              Maximum Time Interval Error
 ``tierms()``                            Time Interval Error RMS
 ``gradev()``                            Gap resistant overlapping Allan deviation
-``theo1()``                             Theo1 deviation
-``uncertainty_estimate()``              Determine the uncertainty of a given two-sample variance estimate
-``three_cornered_hat_phase()``          Three Cornered Hat Method
 =====================================   ====================================================
 
-General usage
---------------
+Low-level access to the statistics functions
+--------------------------------------------
 
 The deviation functions are generally of the form::
 
@@ -52,6 +76,7 @@ The deviation functions are generally of the form::
     
 Function listing
 ================
+
 
 Statistics
 ----------
@@ -84,5 +109,8 @@ Utilities
 .. autofunction:: frequency2phase
 .. autofunction:: phase2frequency
 .. autofunction:: phase2radians
-.. autofunction:: uncertainty_estimate
+.. autofunction:: edf_simple
+.. autofunction:: edf_greenhall
+.. autofunction:: edf_totdev
+.. autofunction:: edf_mtotdev
 .. autofunction:: three_cornered_hat_phase
