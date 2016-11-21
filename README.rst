@@ -16,6 +16,7 @@ time & frequency statistics. GPL v3+ license.
 
 Developed at https://github.com/aewallin/allantools and also available 
 on PyPi at https://pypi.python.org/pypi/AllanTools
+Discussion group at https://groups.google.com/d/forum/allantools
 
 Input data should be evenly spaced observations of either fractional frequency,
 or phase in seconds. Deviations are calculated for given tau values in seconds.
