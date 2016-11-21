@@ -132,7 +132,7 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
     -----
     http://en.wikipedia.org/wiki/Time_deviation
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (taus, md, mde, ns) = mdev(phase, rate=rate, taus=taus)
     td = taus * md / np.sqrt(3.0)
     tde = td / np.sqrt(ns)
@@ -183,7 +183,7 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
     NIST SP 1065 eqn (14) and (15), page 17
 
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (phase, ms, taus_used) = tau_generator(phase, rate, taus=taus)
     data, taus = np.array(phase), np.array(taus)
 
@@ -282,7 +282,7 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each adev calculation
 
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
 
     ad = np.zeros_like(taus_used)
@@ -390,7 +390,7 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each oadev calculation
 
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     ad = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
@@ -441,7 +441,7 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each hdev calculation
 
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
@@ -482,7 +482,7 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
@@ -597,7 +597,7 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     NIST SP 1065 eqn (25) page 23
 
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     N = len(phase)
 
@@ -687,7 +687,7 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
     NIST SP 1065 eqn (27) page 25
 
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (phase, ms, taus_used) = tau_generator(phase, rate, taus,
                                            maximum_m=float(len(phase))/3.0)
     devs = np.zeros_like(taus_used)
@@ -719,8 +719,8 @@ def calc_mtotdev_phase(phase, rate, m):
         assert len(xs) == 3*m
         # remove linear trend. by averaging first/last half,
         # computing slope, and subtracting
-        half1_idx = int( np.floor(3*m/2.0) )
-        half2_idx = int( np.ceil(3*m/2.0) )
+        half1_idx = int(np.floor(3*m/2.0))
+        half2_idx = int(np.ceil(3*m/2.0))
         # m
         # 1    0:1   2:2
         mean1 = np.mean(xs[:half1_idx])
@@ -935,7 +935,7 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
         tau-list generation.
 
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
 
     tau0 = 1.0/rate
     (phase, ms, taus_used) = tau_generator(phase, rate, taus, even=True)
@@ -989,7 +989,7 @@ def tierms(data, rate=1.0, data_type="phase", taus=None):
         tau-list generation.
 
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (data, m, taus_used) = tau_generator(phase, rate, taus)
 
     count = len(phase)
@@ -1065,7 +1065,7 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
     Stable32 also has "Decade" and "Octave" modes where the
     dataset is extended somehow?
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
@@ -1192,7 +1192,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
         numper of terms n in the adev estimate.
 
     """
-    phase = input_to_phase(data,rate, data_type)
+    phase = input_to_phase(data, rate, data_type)
     (data, m, taus_used) = tau_generator(phase, rate, taus)
 
     ad = np.zeros_like(taus_used)
@@ -1396,12 +1396,12 @@ def tau_reduction(ms, rate, n_per_decade):
     taus: np.array
         Reduced list of tau values
     """
-    ms=np.int64(ms)
-    keep=np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) -
-                        np.rint(n_per_decade*np.log10(ms[:-1])))
+    ms = np.int64(ms)
+    keep = np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) -
+                    np.rint(n_per_decade*np.log10(ms[:-1])))
 
-    ms=ms[keep]
-    taus=ms/float(rate)
+    ms = ms[keep]
+    taus = ms/float(rate)
 
     return ms, taus
 
@@ -1550,9 +1550,10 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
 # this is Eqn (13) from Greenhall2004
 def edf_greenhall_simple(alpha, d, m, S, F, N):
     L = m/F+m*d # length of filter applied to phase samples
-    M = 1 + np.floor( S*(N-L) / m )
-    J = min( M, (d+1)*S)
-    inv_edf = (1.0/(pow(greenhall_sz(0,F,alpha,d),2)*M))*greenhall_BasicSum(J, M, S, F, alpha, d)
+    M = 1 + np.floor(S*(N-L) / m)
+    J = min(M, (d+1)*S)
+    inv_edf = (1.0/(pow(greenhall_sz(0, F, alpha, d), 2)*M))* \
+               greenhall_BasicSum(J, M, S, F, alpha, d)
     return 1.0/inv_edf
 
 # alhpa= +2,...,-4   noise power
@@ -1560,7 +1561,7 @@ def edf_greenhall_simple(alpha, d, m, S, F, N):
 # alpha+2*d >1
 # m = tau/tau0 averaging factor
 # N number of phase obs
-def edf_greenhall(alpha, d, m, N, overlapping = False, modified = False, verbose=True):
+def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=True):
     """
         Used for the following deviations (see http://www.wriley.com/CI2.pdf page 8)
         adev()
@@ -1572,92 +1573,101 @@ def edf_greenhall(alpha, d, m, N, overlapping = False, modified = False, verbose
     """
 
     if modified:
-        F=1 # F filter factor, 1 modified variance, m unmodified variance
+        F = 1 # F filter factor, 1 modified variance, m unmodified variance
     else:
-        F=int(m)
+        F = int(m)
     if overlapping:
-        S=int(m) # S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
+        S = int(m) # S stride factor, 1 nonoverlapped estimator, m overlapped estimator (estimator stride = tau/S )
     else:
-        S=1
-    assert( alpha+2*d > 1.0 )
+        S = 1
+    assert(alpha+2*d > 1.0)
     L = m/F+m*d # length of filter applied to phase samples
-    M = 1 + np.floor( S*(N-L) / m )
-    J = min( M, (d+1)*S)
+    M = 1 + np.floor(S*(N-L) / m)
+    J = min(M, (d+1)*S)
     J_max = 100
     r = M/S
-    if int(F)==1 and modified: # case 1, modified variances, all alpha
+    if int(F) == 1 and modified: # case 1, modified variances, all alpha
         if J <= J_max:
-            inv_edf = (1.0/(pow( greenhall_sz(0,1,alpha,d),2)*M))*greenhall_BasicSum(J, M, S, 1, alpha, d)
+            inv_edf = (1.0/(pow(greenhall_sz(0, 1, alpha, d), 2)*M))* \
+                       greenhall_BasicSum(J, M, S, 1, alpha, d)
             if verbose:
-                print( "case 1.1 edf= %3f" % float(1.0/inv_edf) )
+                print("case 1.1 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
-        elif r>d+1:
+        elif r > d+1:
             (a0, a1) = greenhall_table1(alpha, d)
             inv_edf = (1.0/r)*(a0-a1/r)
             if verbose:
-                print( "case 1.2 edf= %3f" % float(1.0/inv_edf) )
+                print("case 1.2 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
         else:
             m_prime = J_max/r
-            inv_edf = (1.0/(pow( greenhall_sz(0,F,alpha,d),2)*J_max))*greenhall_BasicSum(J_max, J_max, m_prime, 1, alpha, d)
+            inv_edf = (1.0/(pow(greenhall_sz(0, F, alpha, d), 2)*J_max))* \
+                       greenhall_BasicSum(J_max, J_max, m_prime, 1, alpha, d)
             if verbose:
-                print( "case 1.3 edf= %3f" % float(1.0/inv_edf) )
+                print("case 1.3 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
-    elif int(F)==int(m) and int(alpha)<= 0 and not modified: # case 2, unmodified variances, alpha <= 0
+    elif int(F) == int(m) and int(alpha) <= 0 and not modified: 
+        # case 2, unmodified variances, alpha <= 0
         if J <= J_max:
-            if m*(d+1)<= J_max:
+            if m*(d+1) <= J_max:
                 m_prime = m
                 variant = "a"
             else:
                 m_prime = float('inf')
                 variant = "b"
 
-            inv_edf = (1.0/(pow( greenhall_sz(0,m_prime,alpha,d),2)*M))*greenhall_BasicSum(J, M, S, m_prime, alpha, d)
+            inv_edf = (1.0/(pow(greenhall_sz(0, m_prime, alpha, d), 2)*M))* \
+                       greenhall_BasicSum(J, M, S, m_prime, alpha, d)
             if verbose:
-                print( "case 2.1%s edf= %3f" % (variant, float(1.0/inv_edf)) )
+                print("case 2.1%s edf= %3f" % (variant, float(1.0/inv_edf)))
             return 1.0/inv_edf
-        elif r>d+1:
+        elif r > d+1:
             (a0, a1) = greenhall_table2(alpha, d)
             inv_edf = (1.0/r)*(a0-a1/r)
             if verbose:
-                print( "case 2.2 edf= %3f" % float(1.0/inv_edf) )
+                print("case 2.2 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
         else:
             m_prime = J_max/r
-            inv_edf = (1.0/(pow( greenhall_sz(0,float('inf'),alpha,d),2)*J_max))*greenhall_BasicSum(J_max, J_max, m_prime, float('inf'), alpha, d)
+            inv_edf = (1.0/(pow(greenhall_sz(0, float('inf'), alpha, d), 2)*J_max))* \
+                       greenhall_BasicSum(J_max, J_max, m_prime, float('inf'), alpha, d)
             if verbose:
-                print( "case 2.3 edf= %3f" % float(1.0/inv_edf) )
+                print("case 2.3 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
-    elif int(F)==int(m) and int(alpha)==1 and not modified: # case 3, unmodified variances, alpha=1
+    elif int(F) == int(m) and int(alpha) == 1 and not modified: 
+        # case 3, unmodified variances, alpha=1
         if J <= J_max:
-            inv_edf = (1.0/(pow( greenhall_sz(0,m,1,d),2)*M))*greenhall_BasicSum(J, M, S, m, 1, d) # note: m<1e6 to avoid roundoff
+            inv_edf = (1.0/(pow(greenhall_sz(0, m, 1, d), 2)*M))* \
+                       greenhall_BasicSum(J, M, S, m, 1, d) # note: m<1e6 to avoid roundoff
             if verbose:
-                print( "case 3.1 edf= %3f" % float(1.0/inv_edf) )
+                print("case 3.1 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
-        elif r>d+1:
+        elif r > d+1:
             (a0, a1) = greenhall_table2(alpha, d)
             (b0, b1) = greenhall_table3(alpha, d)
-            inv_edf = (1.0/(pow(b0+b1*np.log(m),2)*r))*(a0-a1/r)
+            inv_edf = (1.0/(pow(b0+b1*np.log(m), 2)*r))*(a0-a1/r)
             if verbose:
-                print( "case 3.2 edf= %3f" % float(1.0/inv_edf) )
+                print("case 3.2 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
         else:
-            m_prime=J_max/r
+            m_prime = J_max/r
             (b0, b1) = greenhall_table3(alpha, d)
-            inv_edf = (1.0/(pow(b0+b1*np.log(m),2)*J_max))*greenhall_BasicSum(J_max, J_max, m_prime, m_prime, 1, d)
+            inv_edf = (1.0/(pow(b0+b1*np.log(m), 2)*J_max))* \
+                       greenhall_BasicSum(J_max, J_max, m_prime, m_prime, 1, d)
             if verbose:
-                print( "case 3.3 edf= %3f" % float(1.0/inv_edf) )
+                print("case 3.3 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
-    elif int(F)==int(m) and int(alpha)==2 and not modified: # case 4, unmodified variances, alpha=2
+    elif int(F) == int(m) and int(alpha) == 2 and not modified: 
+        # case 4, unmodified variances, alpha=2
         K = np.ceil(r)
         if K <= d:
             raise NotImplementedError  # FIXME: add formula from the paper here!
         else:
-            a0 = scipy.special.binom(4*d, 2*d) / pow(scipy.special.binom(2*d,d), 2)
+            a0 = scipy.special.binom(4*d, 2*d) / pow(scipy.special.binom(2*d, d), 2)
             a1 = d/2.0
             inv_edf = (1.0/M)*(a0-a1/r)
             if verbose:
-                print( "case 4.2 edf= %3f" % float(1.0/inv_edf) )
+                print("case 4.2 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
 
     print("greenhall_edf() no matching case!")
@@ -1665,87 +1675,87 @@ def edf_greenhall(alpha, d, m, N, overlapping = False, modified = False, verbose
 
 # this is Eqn (10) from Greenhall2004
 def greenhall_BasicSum(J, M, S, F, alpha, d):
-    first = pow( greenhall_sz(0, F, alpha, d), 2)
-    second = (1-float(J)/float(M))*pow( greenhall_sz( float(J)/float(S), F, alpha, d ), 2)
+    first = pow(greenhall_sz(0, F, alpha, d), 2)
+    second = (1-float(J)/float(M))*pow(greenhall_sz(float(J)/float(S), F, alpha, d), 2)
     third = 0
-    for j in range(1,int(J)):
-        third += 2*(1.0-float(j)/float(M))*pow( greenhall_sz(float(j)/float(S), F, alpha, d), 2)
+    for j in range(1, int(J)):
+        third += 2*(1.0-float(j)/float(M))*pow(greenhall_sz(float(j)/float(S), F, alpha, d), 2)
     return first+second+third
 
 # this is Eqn (9) from Greenhall2004
 def greenhall_sz(t, F, alpha, d):
-    if d==1:
+    if d == 1:
         a = 2*greenhall_sx(t, F, alpha)
         b = greenhall_sx(t-1.0, F, alpha)
         c = greenhall_sx(t+1.0, F, alpha)
         return a-b-c
-    elif d==2:
+    elif d == 2:
         a = 6*greenhall_sx(t, F, alpha)
         b = 4*greenhall_sx(t-1.0, F, alpha)
         c = 4*greenhall_sx(t+1.0, F, alpha)
         dd = greenhall_sx(t-2.0, F, alpha)
         e = greenhall_sx(t+2.0, F, alpha)
         return a-b-c+dd+e
-    elif d==3:
-        a = 20.0*greenhall_sx(t    , F, alpha)
+    elif d == 3:
+        a = 20.0*greenhall_sx(t, F, alpha)
         b = 15.0*greenhall_sx(t-1.0, F, alpha)
         c = 15.0*greenhall_sx(t+1.0, F, alpha)
         dd = 6.0*greenhall_sx(t-2.0, F, alpha)
-        e =  6.0*greenhall_sx(t+2.0, F, alpha)
-        f =      greenhall_sx(t-3.0, F, alpha)
-        g =      greenhall_sx(t+3.0, F, alpha)
+        e = 6.0*greenhall_sx(t+2.0, F, alpha)
+        f = greenhall_sx(t-3.0, F, alpha)
+        g = greenhall_sx(t+3.0, F, alpha)
         return a-b-c+dd+e-f-g
 
-    assert( 0 ) # ERROR
+    assert(0) # ERROR
 
 # this is Eqn (8) from Greenhall2004
 def greenhall_sx(t, F, alpha):
-    if F==float('inf'):
-        return greenhall_sw(t,alpha+2)
+    if F == float('inf'):
+        return greenhall_sw(t, alpha+2)
     a = 2*greenhall_sw(t, alpha)
-    b = greenhall_sw( t-1.0/float(F), alpha)
-    c = greenhall_sw( t+1.0/float(F), alpha)
+    b = greenhall_sw(t-1.0/float(F), alpha)
+    c = greenhall_sw(t+1.0/float(F), alpha)
 
-    return pow(F,2)*(a-b-c)
+    return pow(F, 2)*(a-b-c)
 
 # this is Eqn (7) from Greenhall2004
 def greenhall_sw(t, alpha):
-    alpha=int(alpha)
-    if alpha==2:
+    alpha = int(alpha)
+    if alpha == 2:
             return -np.abs(t)
-    elif alpha==1:
+    elif alpha == 1:
         if t == 0:
             return 0
         else:
-            return pow(t,2)*np.log( np.abs(t) )
-    elif alpha==0:
-        return np.abs( pow(t,3) )
-    elif alpha==-1:
+            return pow(t, 2)*np.log(np.abs(t))
+    elif alpha == 0:
+        return np.abs(pow(t, 3))
+    elif alpha == -1:
         if t == 0:
             return 0
         else:
-            return pow(t,4)*np.log( np.abs(t) )
-    elif alpha==-2:
-        return np.abs( pow(t,5) )
-    elif alpha==-3:
+            return pow(t, 4)*np.log(np.abs(t))
+    elif alpha == -2:
+        return np.abs(pow(t, 5))
+    elif alpha == -3:
         if t == 0:
             return 0
         else:
-            return pow(t,6)*np.log( np.abs(t) )
-    elif alpha==-4:
-        return np.abs( pow(t,7) )
+            return pow(t, 6)*np.log(np.abs(t))
+    elif alpha == -4:
+        return np.abs(pow(t, 7))
 
-    assert( 0 ) # ERROR
+    assert(0) # ERROR
 
 def greenhall_table3(alpha, d):
-    assert(alpha==1)
+    assert(alpha == 1)
     idx = d-1
-    table3=[ (6.0,4.0), (15.23,12.0), (47.8,40.0) ]
+    table3 = [(6.0,4.0), (15.23,12.0), (47.8,40.0)]
     return table3[idx]
 
 def greenhall_table2(alpha, d):
     row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
-    assert( row_idx in [0,1,2,3,4,5] )
+    assert(row_idx in [0, 1, 2, 3, 4, 5])
     col_idx = int(d-1)
     table2 = [ [ (3.0/2.0, 1.0/2.0) , (35.0/18.0, 1.0)  , (231.0/100.0, 3.0/2.0) ], # alpha=+2
                [ (78.6,25.2 )       , (790.0,410.0)     , (9950.0,6520.0) ],
@@ -1773,28 +1783,28 @@ def greenhall_table1(alpha, d):
     return table1[row_idx][col_idx]
 
 # NIST SP1065 page 41, Table 7
-def edf_totdev(N,m,alpha):
+def edf_totdev(N, m, alpha):
     """ Equivalent degrees of freedom for Total Deviation
     """
     alpha=int(alpha)
-    assert( alpha in [0,-1,-2] )
+    assert(alpha in [0, -1, -2])
     # alpha  0 WFM
     # alpha -1 FFM
     # alpha -2 RWFM
-    NIST_SP1065_table7=[ (1.50, 0.0) , (1.17,0.22), (0.93,0.36)]
-    (b,c) = NIST_SP1065_table7[ int( abs(alpha) ) ]
+    NIST_SP1065_table7 = [(1.50, 0.0) , (1.17,0.22), (0.93,0.36)]
+    (b, c) = NIST_SP1065_table7[int(abs(alpha))]
     return b*(float(N)/float(m))-c
 
 # NIST SP1065 page 41, Table 8
-def edf_mtotdev(N,m,alpha):
+def edf_mtotdev(N, m, alpha):
     """ Equivalent degrees of freedom for Modified Total Deviation
     """
     assert( alpha in [2,1,0,-1,-2] )
     NIST_SP1065_table8=[ (1.90, 2.1) , (1.20,1.40), (1.10,1.2), (0.85,0.50), (0.75, 0.31)]
     #(b,c) = NIST_SP1065_table8[ abs(alpha-2) ]
-    (b,c) = NIST_SP1065_table8[ abs(alpha-2) ]
+    (b,c) = NIST_SP1065_table8[abs(alpha-2)]
     edf = b*(float(N)/float(m))-c
-    print("mtotdev b,c= ", (b,c)," edf=", edf)
+    print("mtotdev b,c= ", (b, c)," edf=", edf)
     return edf
 
 def edf_simple(N, m, alpha):
@@ -1830,16 +1840,16 @@ def edf_simple(N, m, alpha):
 
     """
 
-    N=float(N)
-    m=float(m)
-    if alpha in [2,1,0,-1,-2]:
+    N = float(N)
+    m = float(m)
+    if alpha in [2, 1, 0, -1, -2]:
         # NIST SP 1065, Table 5
         if alpha == +2:
             edf = (N + 1) * (N - 2*m) / (2 * (N - m))
 
         if alpha == 0:
             edf = (((3 * (N - 1) / (2 * m)) - (2 * (N - 2) / N)) *
-                  ((4*pow(m,2)) / ((4*pow(m,2)) + 5)) )
+                   ((4*pow(m, 2)) / ((4*pow(m, 2)) + 5)))
 
         if alpha == 1:
             a = (N - 1)/(2 * m)
@@ -1965,7 +1975,7 @@ def frequency2fractional(frequency, mean_frequency=-1):
     y:
         Data array of fractional frequency
     """
-    if mean_frequency==-1:
+    if mean_frequency == -1:
         mu = np.mean(frequency)
     else:
         mu = mean_frequency

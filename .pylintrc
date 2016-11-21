@@ -1,3 +1,6 @@
 [TYPECHECK]
 
 ignored-modules = numpy, scipy.stats
+
+# allow these variable names
+good-names=i,j,k,x,n,m
