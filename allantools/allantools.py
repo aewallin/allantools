@@ -1708,8 +1708,10 @@ def greenhall_sz(t, F, alpha, d):
 
     assert(0) # ERROR
 
-# this is Eqn (8) from Greenhall2004
+
 def greenhall_sx(t, F, alpha):
+    """ this is Eqn (8) from Greenhall2004
+    """
     if F == float('inf'):
         return greenhall_sw(t, alpha+2)
     a = 2*greenhall_sw(t, alpha)
@@ -1718,8 +1720,9 @@ def greenhall_sx(t, F, alpha):
 
     return pow(F, 2)*(a-b-c)
 
-# this is Eqn (7) from Greenhall2004
 def greenhall_sw(t, alpha):
+    """ this is Eqn (7) from Greenhall2004
+    """
     alpha = int(alpha)
     if alpha == 2:
             return -np.abs(t)
@@ -1750,35 +1753,35 @@ def greenhall_sw(t, alpha):
 def greenhall_table3(alpha, d):
     assert(alpha == 1)
     idx = d-1
-    table3 = [(6.0,4.0), (15.23,12.0), (47.8,40.0)]
+    table3 = [(6.0, 4.0), (15.23, 12.0), (47.8, 40.0)]
     return table3[idx]
 
 def greenhall_table2(alpha, d):
     row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
     assert(row_idx in [0, 1, 2, 3, 4, 5])
     col_idx = int(d-1)
-    table2 = [ [ (3.0/2.0, 1.0/2.0) , (35.0/18.0, 1.0)  , (231.0/100.0, 3.0/2.0) ], # alpha=+2
-               [ (78.6,25.2 )       , (790.0,410.0)     , (9950.0,6520.0) ],
-               [ (2.0/3.0,1.0/6.0)  , (2.0/3.0,1.0/3.0) , (7.0/9.0,1.0/2.0) ], # alpha=0
-               [ (-1,-1)            , (0.852,0.375)     , (0.997,0.617) ], # -1
-               [ (-1,-1)            , (1.079,0.368)     , (1.033,0.607) ], #-2
-               [ (-1,-1)            , (-1,-1)           , (1.053,0.553) ], #-3
-               [ (-1,-1)            , (-1,-1)           , (1.302,0.535)], # alpha=-4
-            ]
+    table2 = [[(3.0/2.0, 1.0/2.0), (35.0/18.0, 1.0), (231.0/100.0, 3.0/2.0)], # alpha=+2
+              [(78.6, 25.2), (790.0, 410.0), (9950.0, 6520.0)],
+              [(2.0/3.0, 1.0/6.0), (2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0)], # alpha=0
+              [(-1, -1), (0.852, 0.375), (0.997, 0.617)], # -1
+              [(-1, -1), (1.079, 0.368), (1.033, 0.607)], #-2
+              [(-1, -1), (-1, -1), (1.053, 0.553)], #-3
+              [(-1, -1), (-1, -1), (1.302, 0.535)], # alpha=-4
+             ]
     #print("table2 = ", table2[row_idx][col_idx])
     return table2[row_idx][col_idx]
 
 def greenhall_table1(alpha, d):
     row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
     col_idx = int(d-1)
-    table1 = [ [ (2.0/3.0, 1.0/3.0) , (7.0/9.0, 1.0/2.0)    , (22.0/25.0, 2.0/3.0) ], # alpha=+2
-               [ (0.840,0.345)      , (0.997,0.616)         , (1.141,0.843) ],
-               [ (1.079,0.368)      , (1.033,0.607)         , (1.184,0.848) ],
-               [ (-1,-1)            , (1.048,0.534)         , (1.180,0.816) ], # -1
-               [ (-1,-1)            , (1.302,0.535)         , (1.175,0.777) ], #-2
-               [ (-1,-1)            , (-1,-1)               , (1.194,0.703) ], #-3
-               [ (-1,-1)            , (-1,-1)               , (1.489,0.702) ], # alpha=-4
-            ]
+    table1 = [[(2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0), (22.0/25.0, 2.0/3.0)], # alpha=+2
+              [(0.840, 0.345), (0.997, 0.616), (1.141, 0.843)],
+              [(1.079, 0.368), (1.033, 0.607), (1.184, 0.848)],
+              [(-1, -1), (1.048, 0.534), (1.180, 0.816)], # -1
+              [(-1, -1), (1.302, 0.535), (1.175, 0.777)], #-2
+              [(-1, -1), (-1, -1), (1.194, 0.703)], #-3
+              [(-1, -1), (-1, -1), (1.489, 0.702)], # alpha=-4
+             ]
     #print("table1 = ", table1[row_idx][col_idx])
     return table1[row_idx][col_idx]
 
@@ -1786,12 +1789,12 @@ def greenhall_table1(alpha, d):
 def edf_totdev(N, m, alpha):
     """ Equivalent degrees of freedom for Total Deviation
     """
-    alpha=int(alpha)
+    alpha = int(alpha)
     assert(alpha in [0, -1, -2])
     # alpha  0 WFM
     # alpha -1 FFM
     # alpha -2 RWFM
-    NIST_SP1065_table7 = [(1.50, 0.0) , (1.17,0.22), (0.93,0.36)]
+    NIST_SP1065_table7 = [(1.50, 0.0), (1.17, 0.22), (0.93, 0.36)]
     (b, c) = NIST_SP1065_table7[int(abs(alpha))]
     return b*(float(N)/float(m))-c
 
@@ -1799,12 +1802,12 @@ def edf_totdev(N, m, alpha):
 def edf_mtotdev(N, m, alpha):
     """ Equivalent degrees of freedom for Modified Total Deviation
     """
-    assert( alpha in [2,1,0,-1,-2] )
-    NIST_SP1065_table8=[ (1.90, 2.1) , (1.20,1.40), (1.10,1.2), (0.85,0.50), (0.75, 0.31)]
-    #(b,c) = NIST_SP1065_table8[ abs(alpha-2) ]
-    (b,c) = NIST_SP1065_table8[abs(alpha-2)]
+    assert(alpha in [2, 1, 0, -1, -2])
+    NIST_SP1065_table8 = [(1.90, 2.1), (1.20, 1.40), (1.10, 1.2), (0.85, 0.50), (0.75, 0.31)]
+    #(b, c) = NIST_SP1065_table8[ abs(alpha-2) ]
+    (b, c) = NIST_SP1065_table8[abs(alpha-2)]
     edf = b*(float(N)/float(m))-c
-    print("mtotdev b,c= ", (b, c)," edf=", edf)
+    print("mtotdev b,c= ", (b, c), " edf=", edf)
     return edf
 
 def edf_simple(N, m, alpha):
