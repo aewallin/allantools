@@ -26,24 +26,24 @@ import math
 import numpy
 import scipy.signal # for welch PSD
 
-def numpy_psd(x, fs=1.0):
+def numpy_psd(x, f_sample=1.0):
     """ calculate power spectral density of input signal x
         x = signal
-        fs = sampling frequency in Hz. i.e. 1/fs is the time-interval 
+        f_sample = sampling frequency in Hz. i.e. 1/fs is the time-interval
              in seconds between datapoints
         scale fft so that output corresponds to 1-sided PSD
         output has units of [X^2/Hz] where X is the unit of x
     """
-    psd = (2.0/ (float(len(x)) * fs)) * numpy.abs(numpy.fft.rfft(x))**2
-    f = numpy.linspace(0, fs/2.0, len(psd)) # frequency axis
-    return f, psd
+    psd_of_x = (2.0/ (float(len(x)) * f_sample)) * numpy.abs(numpy.fft.rfft(x))**2
+    f_axis = numpy.linspace(0, f_sample/2.0, len(psd_of_x)) # frequency axis
+    return f_axis, psd_of_x
 
-def scipy_psd(x, fs=1.0, nr_segments=4):
+def scipy_psd(x, f_sample=1.0, nr_segments=4):
     """ PSD routine from scipy
         we can compare our own numpy result against this one
     """
-    fxx, Pxx_den = scipy.signal.welch(x, fs, nperseg=len(x)/nr_segments)
-    return fxx, Pxx_den
+    f_axis, psd_of_x = scipy.signal.welch(x, f_sample, nperseg=len(x)/nr_segments)
+    return f_axis, psd_of_x
 
 def white(num_points=1024, b0=1.0, fs=1.0):
     """ generate time series with white noise that has constant PSD = b0,
@@ -51,7 +51,7 @@ def white(num_points=1024, b0=1.0, fs=1.0):
         N = number of samples
         b0 = desired power-spectral density in [X^2/Hz] where X is the unit of x
         fs = sampling frequency, i.e. 1/fs is the time-interval between datapoints
-        
+
         the pre-factor corresponds to the area 'box' under the PSD-curve:
         The PSD is at 'height' b0 and extends from 0 Hz up to the nyquist frequency fs/2
     """
@@ -60,7 +60,7 @@ def white(num_points=1024, b0=1.0, fs=1.0):
 def brown(num_points=1024, b2=1.0, fs=1.0):
     """ Brownian or random walk (diffusion) noise with 1/f^2 PSD
         (not really a color... rather Brownian or random-walk)
-        
+
         N = number of samples
         b2 = desired PSD is b2*f^-2
         fs = sampling frequency
@@ -75,9 +75,9 @@ def violet(num_points):
     return numpy.diff(numpy.random.randn(num_points))
 
 def pink(N, depth=80):
-    """ 
+    """
     N-length vector with (approximate) pink noise
-    pink noise has 1/f PSD 
+    pink noise has 1/f PSD
     """
     a = []
     s = iterpink(depth)
