@@ -1792,15 +1792,18 @@ def greenhall_table1(alpha, d):
 # NIST SP1065 page 41, Table 7
 def edf_totdev(N, m, alpha):
     """ Equivalent degrees of freedom for Total Deviation
+        FIXME: what is the right behavior for alpha outside 0,-1,-2?
     """
     alpha = int(alpha)
-    assert(alpha in [0, -1, -2])
-    # alpha  0 WFM
-    # alpha -1 FFM
-    # alpha -2 RWFM
-    NIST_SP1065_table7 = [(1.50, 0.0), (1.17, 0.22), (0.93, 0.36)]
-    (b, c) = NIST_SP1065_table7[int(abs(alpha))]
-    return b*(float(N)/float(m))-c
+    if alpha in [0, -1, -2]:
+        # alpha  0 WFM
+        # alpha -1 FFM
+        # alpha -2 RWFM
+        NIST_SP1065_table7 = [(1.50, 0.0), (1.17, 0.22), (0.93, 0.36)]
+        (b, c) = NIST_SP1065_table7[int(abs(alpha))]
+        return b*(float(N)/float(m))-c
+    else:
+        return edf_simple(N, m, alpha)
 
 # NIST SP1065 page 41, Table 8
 def edf_mtotdev(N, m, alpha):
