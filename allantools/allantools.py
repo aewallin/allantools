@@ -960,8 +960,8 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
             s = 0
             for d in range(int(m/2)): # inner sum
                 pre = 1.0 / (float(m)/2 - float(d))
-                s += pre*pow(phase[i]-phase[i-d+m/2] +
-                             phase[i+m]-phase[i+d+m/2], 2)
+                s += pre*pow(phase[i]-phase[i-d+int(m/2)] +
+                             phase[i+m]-phase[i+d+int(m/2)], 2)
                 n = n+1
             dev += s
         assert n == (N-m)*m/2 # N-m outer sums, m/2 inner sums
