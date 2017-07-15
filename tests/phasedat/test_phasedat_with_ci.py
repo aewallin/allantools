@@ -39,7 +39,7 @@ class TestPhaseDatCI():
         his=[]
         for (d,t, n) in zip(devs, taus, ns):
             edf2 = allan.edf_greenhall( alpha=0, d=2, m=t, N=len(phase), overlapping = False, modified=False )
-            (lo,hi) = allan.confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585            
+            (lo,hi) = allan.confidence_interval( dev=d, edf=edf2 )           
             los.append(lo)
             his.append(hi)
         
@@ -71,7 +71,7 @@ class TestPhaseDatCI():
         his=[]
         for (d,t, n) in zip(devs, taus, ns):
             edf2 = allan.edf_greenhall( alpha=0, d=2, m=int(t), N=len(phase), overlapping = True, modified=False  )
-            (lo,hi) = allan.confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            (lo,hi) = allan.confidence_interval( dev=d, edf=edf2 )
             los.append(lo)
             his.append(hi)
         # compare to Stable32
@@ -102,7 +102,7 @@ class TestPhaseDatCI():
         his=[]
         for (d,t, n) in zip(devs, taus, ns):
             edf2 = allan.edf_greenhall( alpha=0, d=2, m=int(t), N=len(phase), overlapping = True, modified=True  )
-            (lo,hi) = allan.confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            (lo,hi) = allan.confidence_interval( dev=d, edf=edf2 )
             los.append(lo)
             his.append(hi)
         # compare to Stable32
@@ -133,7 +133,7 @@ class TestPhaseDatCI():
             #edf = greenhall_simple_edf( alpha=0, d=3, m=t, S=1, F=t, N=len(phase) )
             edf2 = allan.edf_greenhall( alpha=0, d=3, m=int(t), N=len(phase), overlapping = False, modified=False  )
             #print(edf,edf2,edf2/edf)
-            (lo,hi) = allan.confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            (lo,hi) = allan.confidence_interval( dev=d, edf=edf2 )
             #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
             los.append(lo)
             his.append(hi)
@@ -164,7 +164,7 @@ class TestPhaseDatCI():
             #edf = greenhall_simple_edf( alpha=0, d=3, m=t, S=1, F=t, N=len(phase) )
             edf2 = allan.edf_greenhall( alpha=0, d=3, m=int(t), N=len(phase), overlapping = True, modified=False  )
             #print(edf,edf2,edf2/edf)
-            (lo,hi) = allan.confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            (lo,hi) = allan.confidence_interval( dev=d, edf=edf2 )
             #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
             los.append(lo)
             his.append(hi)
@@ -194,7 +194,7 @@ class TestPhaseDatCI():
             # covert to mdev
             # tdev = taus * mdev / np.sqrt(3.0)
             mdev = d/t*np.sqrt(3.0)
-            (lo,hi) = allan.confidence_intervals( dev=mdev, ci=0.68268949213708585, edf=edf2 )  # 0.68268949213708585
+            (lo,hi) = allan.confidence_interval( dev=mdev, edf=edf2 )
             # convert back to tdev
             lo = t*lo/np.sqrt(3.0)
             hi = t*hi/np.sqrt(3.0)
@@ -220,7 +220,7 @@ class TestPhaseDatCI():
             #edf2 = greenhall_edf( alpha=0, d=3, m=int(t), N=len(phase), overlapping = True, modified=False  )
             #print(edf,edf2,edf2/edf)
             edf = allan.edf_totdev(len(phase), t, alpha=0)
-            (lo,hi) = allan.confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf )  # 0.68268949213708585
+            (lo,hi) = allan.confidence_interval( dev=d,  edf=edf )
             #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
             los.append(lo)
             his.append(hi)
@@ -249,7 +249,7 @@ class TestPhaseDatCI():
             #print(edf,edf2,edf2/edf)
             
             print(edf)
-            (lo,hi) = allan.confidence_intervals( dev=d, ci=0.68268949213708585, edf=edf )  # 0.68268949213708585
+            (lo,hi) = allan.confidence_interval( dev=d, edf=edf )
             #allan.uncertainty_estimate(len(phase), t, d,ci=0.683,noisetype='wf')
             los.append(lo)
             his.append(hi)
