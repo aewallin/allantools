@@ -1076,7 +1076,7 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
     ns = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(m):
-        rw = mtie_rolling_window(phase, mj + 1)
+        rw = mtie_rolling_window(phase, int(mj + 1))
         win_max = np.max(rw, axis=1)
         win_min = np.min(rw, axis=1)
         tie = win_max - win_min
