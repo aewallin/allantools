@@ -6,6 +6,10 @@ Allan deviation tools
 
 Version history
 ---------------
+Unreleased development version
+- work on Greenhall's EDF and confidence intervals
+- tests for confidence intervals
+
 **2016.11** 2016 November 18
 - Dataset class
 - plotting with a Plot class
@@ -1878,7 +1882,13 @@ def edf_simple(N, m, alpha):
 
     return edf
 
-def confidence_intervals(dev, ci, edf):
+one_sigma_ci = ci = scipy.special.erf(1/np.sqrt(2))
+#    = 0.68268949213708585
+
+def confidence_interval(dev, edf, ci=one_sigma_ci):
+    # returns confidence interval (dev_min, dev_max) 
+    # for a given deviation dev, and equivalent degrees of freedom edf
+    #
     # for 1-sigma standard error set
     # ci = scipy.special.erf(1/math.sqrt(2))
     #    = 0.68268949213708585

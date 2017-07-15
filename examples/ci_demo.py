@@ -49,9 +49,7 @@ for (t,dev) in zip(taus,devs):
     # N         number of phase observations
     edf = at.edf_greenhall( alpha=0, d=2, m=t, N=len(phase), overlapping = False, modified=False )
     # with the known EDF we get CIs 
-    # for 1-sigma confidence we set
-    # ci = scipy.special.erf(1/math.sqrt(2)) = 0.68268949213708585
-    (lo,hi) = at.confidence_intervals( dev=dev, ci=0.68268949213708585, edf=edf )
+    (lo,hi) = at.confidence_interval( dev=dev,  edf=edf )
     cis.append( (lo,hi) )
 
 # now we are ready to print and plot the results
@@ -83,7 +81,7 @@ plt.xlabel('Tau (s)')
 plt.ylabel('ADEV')
 plt.title('AllanTools 2016.11 - now with Confidence Intervals!')
 # just to check plot the intervals as dots also
-plt.plot(taus, [ci[0] for ci in cis],'r.')
-plt.plot(taus, [ci[1] for ci in cis],'g.')
-
+plt.plot(taus, [ci[0] for ci in cis],'r.',label="Lower CI")
+plt.plot(taus, [ci[1] for ci in cis],'g.',label="Upper CI")
+plt.legend(loc='best')
 plt.show()
