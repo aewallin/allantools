@@ -412,7 +412,7 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
     .. math::
 
         \\sigma^2_{OHDEV}(m\\tau_0) = { 1 \\over 6 (m \\tau_0 )^2 (N-3m) }
-        \\sum_{i=1}^{N-3m} ( {x}_{i+3m} - 3x_{i+2m} + 3x_{i+m} + x_{i} )^2
+        \\sum_{i=1}^{N-3m} ( {x}_{i+3m} - 3x_{i+2m} + 3x_{i+m} - x_{i} )^2
 
     where :math:`x_i` is the time-series of phase observations, spaced
     by the measurement interval :math:`\\tau_0`, and with length :math:`N`.
@@ -465,7 +465,7 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
     .. math::
 
         \\sigma^2_{HDEV}( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) }
-        \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} + x_{i} )^2
+        \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} - x_{i} )^2
 
     where :math:`x_i` is the time-series of phase observations, spaced
     by the measurement interval :math:`\\tau`, and with length :math:`N`.
