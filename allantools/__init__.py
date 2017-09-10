@@ -30,6 +30,7 @@ __all__ = [
     'confidence_intervals',
     'uncertainty_estimate',
     'Dataset',
+    'Noise',
     'Plot'
     ]
 
@@ -68,7 +69,7 @@ from .allantools import gradev
 
 from .allantools import edf_simple
 from .allantools import edf_greenhall
-from .allantools import edf_totdev 
+from .allantools import edf_totdev
 from .allantools import edf_mtotdev
 from .allantools import confidence_interval
 
@@ -77,3 +78,4 @@ from . import noise
 
 from .dataset import Dataset
 from .plot import Plot
+from .noise_kasdin import Noise
