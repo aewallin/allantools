@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import numpy as np
 
 class Noise:
-    """ Generate Dicrete Colored Noise
+    """ Generate discrete colored noise
 
     Python / Numpy implementation of:
     Kasdin, N.J., Walter, T., "Discrete simulation of power law noise [for
@@ -109,11 +109,11 @@ class Noise:
 
         """
         # Fill wfb array with white noise based on given discrete variance
-	wfb = np.zeros(self.nr*2)
-	wfb[:self.nr] = np.random.normal(0, np.sqrt(self.qd), self.nr)
+        wfb = np.zeros(self.nr*2)
+        wfb[:self.nr] = np.random.normal(0, np.sqrt(self.qd), self.nr)
         # Generate the hfb coefficients based on the noise type
         mhb = -self.b/2.0
-	hfb = np.zeros(self.nr*2)
+        hfb = np.zeros(self.nr*2)
         hfb = np.zeros(self.nr*2)
         hfb[0] = 1.0
         indices = np.arange(self.nr-1)
@@ -123,7 +123,7 @@ class Noise:
         wfb_fft = np.fft.rfft(wfb)
         hfb_fft = np.fft.rfft(hfb)
         # Perform inverse Fourier transform of the product of wfb and hfb FFTs
-	time_series = np.fft.irfft(wfb_fft*hfb_fft)[:self.nr]
+        time_series = np.fft.irfft(wfb_fft*hfb_fft)[:self.nr]
         self.time_series = time_series
 
     def phase_psd_from_qd(self, tau0=1.0):
