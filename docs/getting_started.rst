@@ -14,7 +14,7 @@ from Github
 
 To clone and install from github::
 
-    $ git clone https://github.com/awallin/allantools
+    $ git clone https://github.com/aewallin/allantools
     $ python setup.py install
     
 This installs the latest development version of allantools. Cloning the
