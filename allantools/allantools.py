@@ -1093,7 +1093,7 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
 # FIXME: mtie_phase_fast() is incomplete.
 # !!!!!!!
 #
-def mtie_phase_fast(phase, rate, taus):
+def mtie_phase_fast(phase, rate=1.0, data_type="phase", taus=None):
     """ fast binary decomposition algorithm for MTIE
 
         See: STEFANO BREGNI "Fast Algorithms for TVAR and MTIE Computation in
@@ -1104,17 +1104,18 @@ def mtie_phase_fast(phase, rate, taus):
     k_max = int(np.floor(np.log2(len(phase))))
     phase = phase[0:pow(2, k_max)] # truncate data to 2**k_max datapoints
     assert len(phase) == pow(2, k_max)
-    k = 1
-    taus = []
-    while k <= k_max:
-        tau = pow(2, k)
-        taus.append(tau)
+    #k = 1
+    taus = [ pow(2,k) for k in range(k_max)]
+    #while k <= k_max:
+    #    tau = pow(2, k)
+    #    taus.append(tau)
         #print tau
-        k += 1
-    print("taus ", taus)
+    #    k += 1
+    print("taus N=", len(taus), " ",taus)
     devs = np.zeros(len(taus))
     deverrs = np.zeros(len(taus))
     ns = np.zeros(len(taus))
+    taus_used = np.array(taus) # [(1.0/rate)*t for t in taus]
     # matrices to store results
     mtie_max = np.zeros((len(phase)-1, k_max))
     mtie_min = np.zeros((len(phase)-1, k_max))
@@ -1123,6 +1124,7 @@ def mtie_phase_fast(phase, rate, taus):
         imax = len(phase)-pow(2, k)+1
         #print k, imax
         tie = np.zeros(imax)
+        ns[kidx]=imax
         #print np.max( tie )
         for i in range(imax):
             if k == 1:
@@ -1138,13 +1140,16 @@ def mtie_phase_fast(phase, rate, taus):
         #for i in range(imax):
             tie[i] = mtie_max[i, kidx] - mtie_min[i, kidx]
             #print tie[i]
-        devs[kidx] = np.amax(tie)
+        devs[kidx] = np.amax(tie) # maximum along axis
         #print "maximum %2.4f" % devs[kidx]
         #print np.amax( tie )
     #for tau in taus:
     #for
-
-    print(devs)
+    devs = np.array(devs)
+    print("devs N=",len(devs)," ",devs)
+    print("taus N=", len(taus_used), " ",taus_used)
+    return remove_small_ns(taus_used, devs, deverrs, ns)
+    
     #print k_max
     #devs =
 

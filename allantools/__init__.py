@@ -15,6 +15,7 @@ __all__ = [
     'calc_htotdev_freq',
     'theo1',
     'mtie',
+    'mtie_phase_fast',
     'tierms',
     'frequency2phase',
     'phase2frequency',
@@ -61,6 +62,7 @@ from .allantools import calc_htotdev_freq
 from .allantools import theo1
 
 from .allantools import mtie
+from .allantools import mtie_phase_fast
 
 from .allantools import tierms
 
