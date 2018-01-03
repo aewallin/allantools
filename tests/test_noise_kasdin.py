@@ -3,6 +3,10 @@
 import allantools as at
 import pytest
 
+"""
+    unit-tests for allantools.Noise() Kasdin & Walter
+    noise-generator
+"""
 
 @pytest.fixture
 def noisegen():

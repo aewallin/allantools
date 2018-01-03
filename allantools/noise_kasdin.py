@@ -107,6 +107,7 @@ class Noise:
         -------
         time_series: np.array
             Time series with colored noise.
+            len(time_series) == nr
 
         """
         # Fill wfb array with white noise based on given discrete variance
@@ -136,8 +137,7 @@ class Noise:
 
             Kasdin & Walter eqn (39)
         """
-        self.g_b = self.qd*2.0*pow(2.0*np.pi, self.b)*pow(tau0, self.b+1.0)
-        return self.g_b
+        return self.qd*2.0*pow(2.0*np.pi, self.b)*pow(tau0, self.b+1.0)
 
     def frequency_psd_from_qd(self, tau0=1.0):
         """ return frequency power spectral density coefficient h_a from QD
@@ -152,8 +152,7 @@ class Noise:
             Kasdin & Walter eqn (39)
         """
         a = self.b + 2.0
-        self.h_a = self.qd*2.0*pow(2.0*np.pi, a)*pow(tau0, a-1.0)
-        return self.h_a
+        return self.qd*2.0*pow(2.0*np.pi, a)*pow(tau0, a-1.0)
 
     def adev_from_qd(self, tau0=1.0, tau=1.0):
         """ prefactor for Allan deviation from QD and slope
@@ -183,7 +182,7 @@ class Noise:
             doi: 10.1109/TUFFC.2007.337
 
         """
-        self.phase_psd_from_qd(tau0)
+        g_b = self.phase_psd_from_qd(tau0)
         f_h = 0.5/tau0
         if self.b == 0:
             coeff = 3.0*f_h / (4.0*pow(np.pi,2)) # E, White PM, tau^-1
@@ -196,7 +195,7 @@ class Noise:
         elif self.b == -4:
             coeff = 2.0*pow(np.pi,2)/3.0 #  A, RW FM, sqrt(tau)
 
-        return np.sqrt(coeff*self.g_b*pow(2.0*np.pi,2))
+        return np.sqrt(coeff*g_b*pow(2.0*np.pi,2))
 
     def mdev_from_qd(self, tau0=1.0, tau=1.0):
         """ prefactor for Modified Allan deviation from QD and slope
@@ -226,7 +225,7 @@ class Noise:
             doi: 10.1109/TUFFC.2007.337
 
         """
-        self.phase_psd_from_qd(tau0)
+        g_b = self.phase_psd_from_qd(tau0)
         f_h = 0.5/tau0
         if self.b == 0:
             coeff = 3.0/(8.0*pow(np.pi,2)) # E, White PM, tau^-{3/2}
@@ -239,6 +238,6 @@ class Noise:
         elif self.b == -4:
             coeff = 11.0/20.0*pow(np.pi,2) #  A, RW FM, sqrt(tau)
 
-        return np.sqrt(coeff*self.g_b*pow(2.0*np.pi,2))
+        return np.sqrt(coeff*g_b*pow(2.0*np.pi,2))
 
 # end of file.
