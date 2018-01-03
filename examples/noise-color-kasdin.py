@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import allantools as at
 import math
+# note that latex requires e.g. a texlive installation and dvipng
 plt.rc('text', usetex=True) # for latex
 plt.rc('font', family='serif')
 
@@ -15,6 +16,7 @@ for different noise types.
 Anders Wallin 2016-04-09
 
 This example uses the Noise() class and Kasdin&Walter
+updated 2018-01
 """
 
 
