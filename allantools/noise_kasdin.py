@@ -55,6 +55,7 @@ class Noise:
         Parameters
         -------
         nr: integer
+            length of generated time-series
             must be power of two
         qd: float
             discrete variance
