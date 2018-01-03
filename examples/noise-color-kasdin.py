@@ -13,6 +13,8 @@ colorednoise example with phase-PSD, frequency-PSD, and ADEV/MDEV
 for different noise types.
 
 Anders Wallin 2016-04-09
+
+This example uses the Noise() class and Kasdin&Walter
 """
 
 

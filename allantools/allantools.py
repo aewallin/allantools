@@ -7,6 +7,7 @@ Allan deviation tools
 Version history
 ---------------
 Unreleased development version
+- Noise class with Kasdin & Walter algorithm
 - work on Greenhall's EDF and confidence intervals
 - tests for confidence intervals
 

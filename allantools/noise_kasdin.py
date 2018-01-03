@@ -162,7 +162,7 @@ class Noise:
 
             AVAR = prefactor * h_a * tau^c
 
-            where a = b+2 is the slope of the frequency PSD.
+            where a = b + 2 is the slope of the frequency PSD.
             and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
 
             The relation between a, b, c is:
@@ -205,7 +205,7 @@ class Noise:
 
             MVAR = prefactor * h_a * tau^c
 
-            where a = b+2 is the slope of the frequency PSD.
+            where a = b + 2 is the slope of the frequency PSD.
             and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
 
             The relation between a, b, c is:
@@ -239,3 +239,5 @@ class Noise:
             coeff = 11.0/20.0*pow(np.pi,2) #  A, RW FM, sqrt(tau)
 
         return np.sqrt(coeff*self.g_b*pow(2.0*np.pi,2))
+
+# end of file.
