@@ -156,11 +156,16 @@ class Noise:
     
     def adev(self, tau0, tau):
         prefactor = self.adev_from_qd(tau0=tau0, tau=tau)
-        h_a = self.frequency_psd_from_qd( tau0 = tau0 )
         c = self.c_avar()
         avar = pow(prefactor,2)*pow(tau,c)
         return np.sqrt( avar )
-    
+
+    def mdev(self, tau0, tau):
+        prefactor = self.mdev_from_qd(tau0=tau0, tau=tau)
+        c = self.c_mvar()
+        mvar = pow(prefactor,2)*pow(tau,c)
+        return np.sqrt( mvar )
+            
     def c_avar(self):
         if self.b==-4:
             return 1.0
@@ -172,7 +177,19 @@ class Noise:
             return -2.0
         elif self.b==0:
             return -2.0
-    
+
+    def c_mvar(self):
+        if self.b==-4:
+            return 1.0
+        elif self.b==-3:
+            return 0.0
+        elif self.b==-2:
+            return -1.0
+        elif self.b==-1:
+            return -2.0
+        elif self.b==0:
+            return -3.0
+            
     def adev_from_qd(self, tau0=1.0, tau=1.0):
         """ prefactor for Allan deviation from QD and slope
 
