@@ -155,13 +155,13 @@ class TestOCXO():
 if __name__ == "__main__":
     #pytest.main()
     t =TestOCXO()
-    #t.test_ocxo_adev()
-    #t.test_adev_ci()
-    #t.test_oadev_ci()
-    #t.test_mdev_ci()
+    t.test_ocxo_adev()
+    t.test_adev_ci()
+    t.test_oadev_ci()
+    t.test_mdev_ci()
     t.test_tdev_ci()
-    #t.test_hdev_ci()
-    #t.test_ohdev_ci()
+    t.test_hdev_ci()
+    t.test_ohdev_ci()
 
     #t.test_totdev_ci()
 
