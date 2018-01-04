@@ -33,11 +33,9 @@ tolerance = 1e-4 # relative tolerance
 rate = 1/float(1.0) # stable32 runs were done with this data-interval
     
 class TestOCXO():
-    #def test_ocxo_adev(self):
-    #    self.generic_test( result= 'stable32_adev_alltau.txt' , fct= allan.adev )
-    
-    
+
     def test_adev_ci(self):
+        """ ADEV with confidence intervals """
         change_to_test_dir()
         s32rows = testutils.read_stable32(resultfile='adev_octave.txt', datarate=1.0)
         for row in s32rows:
@@ -54,10 +52,8 @@ class TestOCXO():
             print("min dev check: %.4g %.4g %d" % ( lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=1e-3 ) ) )
             print("max dev check: %.4g %.4g %d" % ( hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=1e-3 ) ) )
     
-    #def test_ocxo_oadev(self):
-    #    self.generic_test( result= 'stable32_oadev_alltau.txt' , fct= allan.oadev )    
-    
     def test_oadev_ci(self):
+        """ Overlapping ADEV with confidence intervals """
         s32rows = testutils.read_stable32(resultfile='oadev_octave.txt', datarate=1.0)
         for row in s32rows:
             data = testutils.read_datafile(data_file)
@@ -71,11 +67,9 @@ class TestOCXO():
             print("dev check: ", devs[0], row['dev'], testutils.check_approx_equal( devs[0], row['dev'], tolerance=2e-3 ) )
             print("min dev check: ",  lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=2e-3 ) )
             print("max dev check: ", hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=2e-3 ) )
-            
-    #def test_ocxo_mdev(self):
-    #    self.generic_test( result= 'stable32_mdev_alltau.txt' , fct= allan.mdev )   
     
     def test_mdev_ci(self):
+        """ Overlapping ADEV with confidence intervals """
         s32rows = testutils.read_stable32(resultfile='mdev_octave.txt', datarate=1.0)
         for row in s32rows:
             data = testutils.read_datafile(data_file)
@@ -89,14 +83,25 @@ class TestOCXO():
             print("dev check: ", devs[0], row['dev'], testutils.check_approx_equal( devs[0], row['dev'], tolerance=2e-3 ) )
             print("min dev check: ",  lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=2e-3 ) )
             print("max dev check: ", hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=2e-3 ) )
-             
-    #def test_ocxo_tdev(self):
-    #    self.generic_test( result= 'stable32_tdev_alltau.txt' , fct= allan.tdev )  
-              
-    #def test_ocxo_hdev(self):
-    #    self.generic_test( result= 'stable32_hdev_alltau.txt' , fct= allan.hdev )  
-    
+
+    def test_tdev_ci(self):
+        """ Time Deviation with confidence intervals """
+        s32rows = testutils.read_stable32(resultfile='tdev_octave.txt', datarate=1.0)
+        for row in s32rows:
+            data = testutils.read_datafile(data_file)
+            data = allan.frequency2fractional(data, mean_frequency=1.0e7)
+            (taus, devs, errs, ns) = allan.tdev(data, rate=rate, data_type="freq",
+                                                  taus=[ row['tau'] ])
+            # NOTE! Here we use alhpa from Stable32-results for the allantools edf computation!
+            edf = allan.edf_greenhall(alpha=row['alpha'],d=2,m=row['m'],N=len(data),overlapping=True, modified = True, verbose=True)
+            (lo,hi) =allan.confidence_interval(devs[0], edf=edf)
+            print("n check: ", testutils.check_equal( ns[0], row['n'] ) )
+            print("dev check: ", devs[0], row['dev'], testutils.check_approx_equal( devs[0], row['dev'], tolerance=2e-3 ) )
+            print("min dev check: ",  lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=2e-3 ) )
+            print("max dev check: ", hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=2e-3 ) )
+
     def test_hdev_ci(self):
+        """ Hadamard with confidence intervals """
         s32rows = testutils.read_stable32(resultfile='hdev_octave.txt', datarate=1.0)
         for row in s32rows:
             data = testutils.read_datafile(data_file)
@@ -111,10 +116,8 @@ class TestOCXO():
             print("min dev check: ",  lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=2e-3 ) )
             print("max dev check: ", hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=2e-3 ) )
     
-    #def test_ocxo_ohdev(self):
-    #    self.generic_test( result= 'stable32_ohdev_alltau.txt' , fct= allan.ohdev )
-        
     def test_ohdev_ci(self):
+        """ Overlapping Hadamard deviation with confidence intervals  """
         s32rows = testutils.read_stable32(resultfile='ohdev_octave.txt', datarate=1.0)
         for row in s32rows:
             data = testutils.read_datafile(data_file)
@@ -148,21 +151,17 @@ class TestOCXO():
             print("dev check: ", testutils.check_approx_equal( devs[0], row['dev'], tolerance=2e-3 ) )
             print("min dev check: %.4g %.4g %d" %( lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=2e-3 ) ) )
             print("max dev check: %.4g %.4g %d" %( hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=2e-3 ) ) )
-    #"""
-            
-    #def generic_test(self, datafile = data_file, result="", fct=None):
-        #change_to_test_dir()
-    #    testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance, frequency=True, normalize=True)
 
 if __name__ == "__main__":
     #pytest.main()
     t =TestOCXO()
     #t.test_ocxo_adev()
-    t.test_adev_ci()
-    t.test_oadev_ci()
-    t.test_mdev_ci()
-    t.test_hdev_ci()
-    t.test_ohdev_ci()
+    #t.test_adev_ci()
+    #t.test_oadev_ci()
+    #t.test_mdev_ci()
+    t.test_tdev_ci()
+    #t.test_hdev_ci()
+    #t.test_ohdev_ci()
 
     #t.test_totdev_ci()
 
