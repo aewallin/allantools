@@ -13,18 +13,17 @@ import numpy as np
 def noisegen():
     return at.Noise()
 
-
-def test_timeseries_length(noisegen):
+@pytest.mark.parametrize("n", range(2,20))
+def test_timeseries_length(noisegen, n):
     """
         check that the time-series is of correct length
     """
-    for n in range(2,20):
-        nr = pow(2,n)
-        noisegen.set_input(nr=nr)
-        noisegen.generateNoise()
-        print nr
-        print len( noisegen.time_series )
-        assert( len( noisegen.time_series ) == nr )
+    nr = pow(2,n)
+    noisegen.set_input(nr=nr)
+    noisegen.generateNoise()
+    print nr
+    print len( noisegen.time_series )
+    assert( len( noisegen.time_series ) == nr )
 
 @pytest.mark.parametrize("b",[0, -1, -2, -3, -4])
 @pytest.mark.parametrize("tau",[1,2,3,4,5, 20, 30])
