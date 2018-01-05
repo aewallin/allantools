@@ -21,8 +21,8 @@ def test_timeseries_length(noisegen, n):
     nr = pow(2,n)
     noisegen.set_input(nr=nr)
     noisegen.generateNoise()
-    print nr
-    print len( noisegen.time_series )
+    print( nr )
+    print( len( noisegen.time_series ) )
     assert( len( noisegen.time_series ) == nr )
 
 
@@ -40,8 +40,8 @@ def test_adev(noisegen, b, tau, qd):
     
     adev_calculated = devs[0]
     adev_predicted = noisegen.adev(tau0=1.0, tau=tau)
-    #print taus,devs
-    print b, tau, qd, adev_calculated, adev_predicted, adev_calculated/adev_predicted 
+    #print( taus,devs )
+    print( b, tau, qd, adev_calculated, adev_predicted, adev_calculated/adev_predicted )
     assert np.isclose( adev_calculated, adev_predicted, rtol=3e-1, atol=0)
     # NOTE high relative tolarence here !!
 
@@ -65,8 +65,8 @@ def test_mdev(noisegen, b, tau, qd):
     
     mdev_calculated = devs[0]
     mdev_predicted = noisegen.mdev(tau0=1.0, tau=tau)
-    #print taus,devs
-    print b, tau, qd, mdev_calculated, mdev_predicted, mdev_calculated/mdev_predicted 
+    #print( taus,devs )
+    print( b, tau, qd, mdev_calculated, mdev_predicted, mdev_calculated/mdev_predicted )
     assert np.isclose( mdev_calculated, mdev_predicted, rtol=2e-1, atol=0)
     # NOTE high relative tolarence here !!
             

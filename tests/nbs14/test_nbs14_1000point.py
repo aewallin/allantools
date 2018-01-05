@@ -99,10 +99,10 @@ class TestNBS14_1000Point():
     def nbs14_tester( self, function, pdata, fdata, correct_devs, taus =[1, 10, 100], soft=False ):
         rate=1.0
         
-        if pdata != None and fdata == None:
+        if pdata is not None and fdata is None:
             (taus2, devs, deverrs, ns) = function(pdata,
                                                   rate=rate, taus=taus)
-        elif pdata == None and fdata != None:
+        elif pdata is None and fdata is not None:
             (taus2, devs, deverrs, ns) = function(fdata,
                                                   data_type="freq",
                                                   rate=rate, taus=taus)
