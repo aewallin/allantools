@@ -1410,7 +1410,7 @@ def tau_reduction(ms, rate, n_per_decade):
     ms = np.int64(ms)
     keep = np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) -
                     np.rint(n_per_decade*np.log10(ms[:-1])))
-
+    assert len(ms) == len(keep) # this causes a test-error!
     ms = ms[keep]
     taus = ms/float(rate)
 
