@@ -84,6 +84,7 @@ class Noise:
         Parameters
         -------
         nr: integer
+            length of generated time-series
             number must be power of two
         qd: float
             discrete variance
@@ -129,7 +130,9 @@ class Noise:
         self.time_series = time_series
 
     def phase_psd_from_qd(self, tau0=1.0):
-        """ return phase power spectral density coefficient g_b from QD
+        """ return phase power spectral density coefficient g_b 
+            for noise-type defined by (qd, b, tau0)
+            where tau0 is the interval between data points
 
             Colored noise generated with (qd, b, tau0) parameters will
             show a phase power spectral density of
@@ -140,8 +143,9 @@ class Noise:
         return self.qd*2.0*pow(2.0*np.pi, self.b)*pow(tau0, self.b+1.0)
 
     def frequency_psd_from_qd(self, tau0=1.0):
-        """ return frequency power spectral density coefficient h_a from QD
-
+        """ return frequency power spectral density coefficient h_a 
+            for the noise type defined by (qd, b, tau0)
+            
             Colored noise generated with (qd, b, tau0) parameters will
             show a frequency power spectral density of
 
@@ -155,18 +159,27 @@ class Noise:
         return self.qd*2.0*pow(2.0*np.pi, a)*pow(tau0, a-1.0)
     
     def adev(self, tau0, tau):
+        """ return predicted ADEV of noise-type at given tau
+        
+        """
         prefactor = self.adev_from_qd(tau0=tau0, tau=tau)
         c = self.c_avar()
         avar = pow(prefactor,2)*pow(tau,c)
         return np.sqrt( avar )
 
     def mdev(self, tau0, tau):
+        """ return predicted MDEV of noise-type at given tau
+        
+        """
         prefactor = self.mdev_from_qd(tau0=tau0, tau=tau)
         c = self.c_mvar()
         mvar = pow(prefactor,2)*pow(tau,c)
         return np.sqrt( mvar )
             
     def c_avar(self):
+        """ return tau exponent "c" for noise type.
+            AVAR = prefactor * h_a * tau^c
+        """
         if self.b==-4:
             return 1.0
         elif self.b==-3:
@@ -179,6 +192,9 @@ class Noise:
             return -2.0
 
     def c_mvar(self):
+        """ return tau exponent "c" for noise type.
+            MVAR = prefactor * h_a * tau^c
+        """
         if self.b==-4:
             return 1.0
         elif self.b==-3:
@@ -191,8 +207,9 @@ class Noise:
             return -3.0
             
     def adev_from_qd(self, tau0=1.0, tau=1.0):
-        """ prefactor for Allan deviation from QD and slope
-
+        """ prefactor for Allan deviation for noise
+            type defined by (qd, b, tau0)
+            
             Colored noise generated with (qd, b, tau0) parameters will
             show an Allan variance of:
 
@@ -234,8 +251,9 @@ class Noise:
         return np.sqrt(coeff*g_b*pow(2.0*np.pi,2))
 
     def mdev_from_qd(self, tau0=1.0, tau=1.0):
-        """ prefactor for Modified Allan deviation from QD and slope
-
+        """ prefactor for Modified Allan deviation for noise
+            type defined by (qd, b, tau0)
+            
             Colored noise generated with (qd, b, tau0) parameters will
             show an Modified Allan variance of:
 
