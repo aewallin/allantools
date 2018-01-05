@@ -7,7 +7,8 @@ Allan deviation tools
 Version history
 ---------------
 Unreleased development version
-- Noise class with Kasdin & Walter algorithm
+- lag-1 autocorrelation noise identification function
+- Noise() class using Kasdin & Walter algorithm
 - work on Greenhall's EDF and confidence intervals
 - tests for confidence intervals
 
