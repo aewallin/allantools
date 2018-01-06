@@ -167,7 +167,7 @@ class TestOCXO():
             # average frequency series
             y_cut = np.array( y_freq[:len(y_freq)-(len(y_freq)%s32_AF)] )
             assert len(y_cut)%s32_AF == 0
-            y_shaped = y_cut.reshape( (len(y_cut)/s32_AF, s32_AF) )
+            y_shaped = y_cut.reshape( ( int(len(y_cut)/s32_AF), s32_AF) )
             y_average = np.average(y_shaped,axis=1)
             
             # noise-ID from frequency
