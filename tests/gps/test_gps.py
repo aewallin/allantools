@@ -50,11 +50,27 @@ class TestGPS():
     def test_totdev(self):
         self.generic_test( result='stable32_TOTDEV_octave.txt' , fct= allan.totdev )
     
+    def test_noise_id(self):
+        """ test for noise-identification """
+        s32_rows = testutils.read_stable32( 'stable32_ADEV_decade.txt' , rate )
+        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+        (taus,devs,errs,ns) = allan.oadev(phase, taus=[s32['tau'] for s32 in s32_rows])
+        # test noise-ID
+        for s32 in s32_rows:
+            tau, alpha, AF = s32['tau'], s32['alpha'], int(s32['m'])
+            phase_decimated = phase[0:len(phase):AF]
+            if len(phase_decimated) > 30:
+                alpha_int = allan.autocorr_noise_id( phase_decimated )[0]
+                print( tau, alpha, alpha_int )
+                assert alpha_int == alpha
+                
     def generic_test(self, datafile = data_file, result="", fct=None):
         change_to_test_dir()
         testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)
 
 if __name__ == "__main__":
-    pytest.main()
+    t = TestGPS()
+    t.test_noise_id()
+    #pytest.main()
 
 
