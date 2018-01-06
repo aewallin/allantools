@@ -1965,7 +1965,7 @@ def autocorr_noise_id(x, data_type="phase", dmin=0, dmax=2):
     assert False # we should not get here ever.
     
     
-one_sigma_ci = ci = scipy.special.erf(1/np.sqrt(2))
+one_sigma_ci = scipy.special.erf(1/np.sqrt(2))
 #    = 0.68268949213708585
 
 def confidence_interval(dev, edf, ci=one_sigma_ci):
