@@ -1896,32 +1896,6 @@ def edf_simple(N, m, alpha):
 
     return edf
 
-def rn_noise_id(x, af, rate):
-    """ R(n) noise identification algorithm
-    
-        based on expected ratio of MVAR/AVAR
-    """
-    limits =  [0.24824921356451901, # these magic constants are  
-               0.42185051497328158, # experimentally found...
-               0.59319297991254749, 
-               0.74828227411683867]
-    (taus,devs,errs,ns) = oadev(x,taus=[af*rate], rate=rate) # fixme: assumes rate=1
-    oadev_x = devs[0]
-    (mtaus,mdevs,errs,ns) = mdev(x,taus=[af*rate], rate=rate) # fixme: assumes rate=1
-    mdev_x = mdevs[0]
-    rn = pow(mdev_x/oadev_x,2)
-    print "rn = ",rn
-    if rn < limits[0]:
-        return +2
-    elif rn < limits[1]:
-        return +1
-    elif rn < limits[2]:
-        return 0
-    elif rn < limits[3]:
-        return -1
-    else:
-        return -2
-
 def lag1_acf(x):
     """ Lag-1 autocorrelation function
     

@@ -183,11 +183,17 @@ class TestOCXO():
                 alpha_int, alpha, d, rho = allan.autocorr_noise_id( phase_decimated, data_type='phase' )
                 print( "x: ",s32_tau, s32_alpha, alpha_int, alpha, rho, d, len(phase_decimated) )
                 assert alpha_int == s32_alpha
+            """
+                if s32_AF > 10:
+                    rn_alpha = allan.rn_noise_id(phase, s32_AF, rate)+3
+                    print s32_alpha, rn_alpha
+                    assert s32_alpha == rn_alpha
             else: # use R(n) instead
                 alpha_int = allan.rn_noise_id(phase, s32_AF, rate)
                 print( "Rn: ",s32_tau, s32_alpha, alpha_int)
                 print alpha_int == s32_alpha
-                
+            """
+            
 if __name__ == "__main__":
     #pytest.main()
     t =TestOCXO()
