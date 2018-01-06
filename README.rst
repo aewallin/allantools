@@ -1,8 +1,8 @@
 AllanTools
 ==========
 
-.. image:: https://badge.fury.io/py/allantools.svg
-    :target: https://badge.fury.io/py/allantools
+.. image:: https://badge.fury.io/py/AllanTools.svg
+    :target: https://badge.fury.io/py/AllanTools
 .. image:: https://travis-ci.org/aewallin/allantools.svg?branch=master
     :target: https://travis-ci.org/aewallin/allantools
 .. image:: http://readthedocs.org/projects/allantools/badge/?version=latest
