@@ -12,6 +12,7 @@
 import math
 import sys
 import pytest
+import numpy as np
 
 sys.path.append("..")
 sys.path.append("../..") # hack to import from parent directory
@@ -152,10 +153,41 @@ class TestOCXO():
             print("min dev check: %.4g %.4g %d" %( lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=2e-3 ) ) )
             print("max dev check: %.4g %.4g %d" %( hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=2e-3 ) ) )
 
+    def test_noise_id(self):
+        """ test for noise-identification """
+        s32_rows = testutils.read_stable32( 'mdev_octave.txt' , rate )
+        freq = testutils.read_datafile(data_file)
+        y_freq = allan.frequency2fractional(freq, mean_frequency=1.0e7)
+        phase = allan.frequency2phase(freq, rate)
+
+        for s32 in s32_rows:
+            s32_tau, s32_alpha, s32_AF = s32['tau'], s32['alpha'], int(s32['m'])
+            phase_decimated = phase[0:len(phase):s32_AF]
+            
+            # average frequency series
+            y_cut = np.array( y_freq[:len(y_freq)-(len(y_freq)%s32_AF)] )
+            assert len(y_cut)%s32_AF == 0
+            y_shaped = y_cut.reshape( (len(y_cut)/s32_AF, s32_AF) )
+            y_average = np.average(y_shaped,axis=1)
+            
+            # noise-ID from frequency
+            if len(y_average) > 30:
+                alpha_int, alpha, d, rho = allan.autocorr_noise_id( y_average, data_type='freq' )
+                print( s32_tau, s32_alpha, alpha_int, alpha, rho, d, len(y_average) )
+                assert alpha_int == s32_alpha               
+            
+            # noise-ID from phase
+            if len(phase_decimated) > 30:
+                alpha_int, alpha, d, rho = allan.autocorr_noise_id( phase_decimated, data_type='phase' )
+                print( s32_tau, s32_alpha, alpha_int, alpha, d )
+                assert alpha_int == s32_alpha
+            
+                
 if __name__ == "__main__":
     #pytest.main()
     t =TestOCXO()
-    t.test_ocxo_adev()
+    t.test_noise_id()
+
     t.test_adev_ci()
     t.test_oadev_ci()
     t.test_mdev_ci()
