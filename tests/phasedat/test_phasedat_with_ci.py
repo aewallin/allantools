@@ -231,7 +231,20 @@ class TestPhaseDatCI():
             testutils.check_approx_equal(s32['dev_min'], lo2, tolerance=1e-3)
             testutils.check_approx_equal(s32['dev_max'], hi2, tolerance=1e-3)
         print("----")
-            
+    
+    def test_noise_id(self):
+        """ test for noise-identification """
+        s32_rows = testutils.read_stable32( 'phase_dat_oadev_octave.txt' , 1.0 )
+        phase = testutils.read_datafile('PHASE.DAT')
+        (taus,devs,errs,ns) = allan.oadev(phase, taus=[s32['tau'] for s32 in s32_rows])
+        # test noise-ID
+        for s32 in s32_rows:
+            tau, alpha = s32['tau'], s32['alpha']
+            alpha_int = allan.autocorr_noise_id( phase )[0]
+            assert alpha_int == alpha
+            print( tau, alpha, alpha_int )
+    
+    # FIXME: failing test that we don't run
     def slow_failing_phasedat_mtotdev(self):
         s32_rows = testutils.read_stable32( 'phase_dat_mtotdev_octave_alpha0.txt' , 1.0 )
         phase = testutils.read_datafile('PHASE.DAT')
@@ -265,6 +278,8 @@ class TestPhaseDatCI():
 if __name__ == "__main__":
     #pytest.main()
     t = TestPhaseDatCI()
+    t.test_noise_id()
+    """
     t.test_phasedat_adev()
     t.test_phasedat_oadev() 
     t.test_phasedat_mdev()
@@ -272,6 +287,6 @@ if __name__ == "__main__":
     t.test_phasedat_ohdev()
     t.test_phasedat_tdev()
     t.test_phasedat_totdev()
-    
+    """
     #t.slow_failing_phasedat_mtotdev()
     

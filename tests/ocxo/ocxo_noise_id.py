@@ -35,7 +35,7 @@ def read_Stable32_resultfile(filename):
                 row={}
                 for column in range(7):
                     row[ keys[column] ] = float(line[column])
-                print row
+                #print row
                 data.append(row)
     return data
     
@@ -78,16 +78,14 @@ def B1_noise_id(x,rate, m):
 def autocorr(x, lag=1):
     #print x
     c = numpy.corrcoef( numpy.array(x[:-lag]), numpy.array(x[lag:]) )
-    #print c
+    print c
     return c[0,1]
     
 def autocorr_noise_id(x, data_type="phase", dmin=0, dmax=2):
     # for Hadamard, set dmax=3
     done = False
     d = 0 # number of differentiations
-    #dmin = 0
-    #dmax = 3
-    while not done:
+    while True:
         r1 = autocorr(x)
         rho = r1/(1.0+r1)
         if d >= dmin and ( rho < 0.25 or d >= dmax ):
@@ -98,12 +96,11 @@ def autocorr_noise_id(x, data_type="phase", dmin=0, dmax=2):
             alpha = p+2.0
             alpha_int = int( -1*numpy.round(2*rho) - 2*d )+2 
             #print "d=",d,"alpha=",p+2
-            return alpha_int, alpha,r1, d
+            return alpha_int, alpha, d
         else:
             x = numpy.diff(x)
             d = d + 1
-            
-    print "autocorr= ",c
+    assert False # we should not get here ever.
 
 fname = "ocxo_frequency.txt"
 rate = 1/float(10) # data collected with 10s gate time

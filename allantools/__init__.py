@@ -28,7 +28,8 @@ __all__ = [
     'edf_greenhall',
     'edf_totdev',
     'edf_mtotdev',
-    'confidence_intervals',
+    'confidence_interval',
+    'autocorr_noise_id',
     'uncertainty_estimate',
     'Dataset',
     'Noise',
@@ -74,7 +75,7 @@ from .allantools import edf_greenhall
 from .allantools import edf_totdev
 from .allantools import edf_mtotdev
 from .allantools import confidence_interval
-
+from .allantools import autocorr_noise_id
 
 from . import noise
 

@@ -1892,17 +1892,84 @@ def edf_simple(N, m, alpha):
 
     return edf
 
+def autocorr_noise_id(x, data_type="phase", dmin=0, dmax=2):
+    """ Lag-1 autocorrelation based noise identification
+        
+    Parameters
+    ----------
+    x: numpy.array
+        phase or fractional frequency time-series data
+        minimum recommended length is len(x)>30 roughly.
+    data_type: string
+        "phase" for phase data in seconds
+        "freq" for fractional frequency data
+    dmin: int 
+        minimum required number of differentiations in the algorithm
+    dmax: int
+        maximum number of differentiations
+        defaults to 2 for ADEV
+        set to 3 for HDEV
+        
+    Returns
+    -------
+    alpha_int: int
+        noise-slope as integer
+    alpha: float
+        noise-slope as float
+    d: int
+        number of differentiations of the time-series performed
+    
+    Notes
+    -----
+        http://www.stable32.com/Auto.pdf
+        http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.503.9864&rep=rep1&type=pdf
+        
+    """
+    d = 0 # number of differentiations
+    lag = 1
+    while True:
+        c = np.corrcoef( np.array(x[:-lag]), np.array(x[lag:]) )
+        r1 = c[0,1] # lag-1 autocorrelation of x
+        rho = r1/(1.0+r1)
+        if d >= dmin and ( rho < 0.25 or d >= dmax ):
+            p = -2*(rho+d)
+            #print r1
+            #assert r1 < 0
+            #assert r1 > -1.0/2.0
+            alpha = p+2.0
+            alpha_int = int( -1.0*np.round(2*rho) - 2.0*d )+2 
+            #print "d=",d,"alpha=",p+2
+            return alpha_int, alpha, d
+        else:
+            x = np.diff(x)
+            d = d + 1
+    assert False # we should not get here ever.
+    
+    
 one_sigma_ci = ci = scipy.special.erf(1/np.sqrt(2))
 #    = 0.68268949213708585
 
 def confidence_interval(dev, edf, ci=one_sigma_ci):
-    # returns confidence interval (dev_min, dev_max) 
-    # for a given deviation dev, and equivalent degrees of freedom edf
-    #
-    # for 1-sigma standard error set
-    # ci = scipy.special.erf(1/math.sqrt(2))
-    #    = 0.68268949213708585
-
+    """ returns confidence interval (dev_min, dev_max) 
+        for a given deviation dev, equivalent degrees of freedom edf,
+        and degree of confidence ci.
+        
+    Parameters
+    ----------
+    dev: float
+        Mean value (e.g. adev) around which we produce the confidence interval
+    edf: float
+        Equivalent degrees of freedon
+    ci: float, defaults to scipy.special.erf(1/math.sqrt(2))
+        for 1-sigma standard error set
+        ci = scipy.special.erf(1/math.sqrt(2))
+            = 0.68268949213708585
+        
+    Returns
+    -------
+    (dev_min, dev_max): (float, float)
+        Confidence interval
+    """
     ci_l = min(np.abs(ci), np.abs((ci-1))) / 2
     ci_h = 1 - ci_l
 
