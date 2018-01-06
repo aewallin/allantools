@@ -1896,6 +1896,17 @@ def edf_simple(N, m, alpha):
 
     return edf
 
+
+def lag1_acf(x):
+    mu = np.mean(x)
+    a=0
+    b=0
+    for n in range(len(x)-1):
+        a = a + (x[n]-mu)*(x[n+1]-mu)
+    for n in range(len(x)):
+        b=b+pow( x[n]-mu , 2 )
+    return a/b
+    
 def autocorr_noise_id(x, data_type="phase", dmin=0, dmax=2):
     """ Lag-1 autocorrelation based noise identification
         
@@ -1904,7 +1915,7 @@ def autocorr_noise_id(x, data_type="phase", dmin=0, dmax=2):
     x: numpy.array
         phase or fractional frequency time-series data
         minimum recommended length is len(x)>30 roughly.
-    data_type: string
+    data_type: string {'phase', 'freq'}
         "phase" for phase data in seconds
         "freq" for fractional frequency data
     dmin: int 
@@ -1932,18 +1943,22 @@ def autocorr_noise_id(x, data_type="phase", dmin=0, dmax=2):
     d = 0 # number of differentiations
     lag = 1
     while True:
-        c = np.corrcoef( np.array(x[:-lag]), np.array(x[lag:]) )
-        r1 = c[0,1] # lag-1 autocorrelation of x
+        #c = np.corrcoef( np.array(x[:-lag]), np.array(x[lag:]) )
+        #r1 = c[0,1] # lag-1 autocorrelation of x
+        r1 = lag1_acf(x)
         rho = r1/(1.0+r1)
         if d >= dmin and ( rho < 0.25 or d >= dmax ):
             p = -2*(rho+d)
             #print r1
             #assert r1 < 0
             #assert r1 > -1.0/2.0
-            alpha = p+2.0
-            alpha_int = int( -1.0*np.round(2*rho) - 2.0*d )+2 
+            phase_add2 = 0
+            if data_type is "phase":
+                phase_add2 = 2
+            alpha = p+phase_add2
+            alpha_int = int( -1.0*np.round(2*rho) - 2.0*d )+phase_add2 
             #print "d=",d,"alpha=",p+2
-            return alpha_int, alpha, d
+            return alpha_int, alpha, d, rho
         else:
             x = np.diff(x)
             d = d + 1
