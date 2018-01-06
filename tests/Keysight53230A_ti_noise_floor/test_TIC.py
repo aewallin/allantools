@@ -57,5 +57,20 @@ class TestTIC():
         change_to_test_dir()
         testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)
 
+    def test_noise_id(self):
+        """ test for noise-identification """
+        s32_rows = testutils.read_stable32( 'tic_oadev.txt' , 1.0 )
+        phase = testutils.read_datafile(data_file)
+        for s32 in s32_rows:
+            tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
+            alpha_int = allan.autocorr_noise_id( phase , af=af)[0]
+            if len(phase)/af > 30: # noise-id only works for length 30 or longer time-series
+                assert alpha_int == alpha
+                print( tau, alpha, alpha_int )
+            else:
+                print ("no noise-ID: ",tau, alpha, alpha_int )
+            
 if __name__ == "__main__":
-    pytest.main()
+    #pytest.main()
+    t=TestTIC()
+    t.test_noise_id()
