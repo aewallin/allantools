@@ -171,29 +171,34 @@ class TestOCXO():
             y_average = np.average(y_shaped,axis=1)
             
             # noise-ID from frequency
+            
             if len(y_average) > 30:
                 alpha_int, alpha, d, rho = allan.autocorr_noise_id( y_average, data_type='freq' )
-                print( s32_tau, s32_alpha, alpha_int, alpha, rho, d, len(y_average) )
-                assert alpha_int == s32_alpha               
+                print( "y: ",s32_tau, s32_alpha, alpha_int, alpha, rho, d, len(y_average) )
+                assert alpha_int == s32_alpha      
+            
             
             # noise-ID from phase
             if len(phase_decimated) > 30:
                 alpha_int, alpha, d, rho = allan.autocorr_noise_id( phase_decimated, data_type='phase' )
-                print( s32_tau, s32_alpha, alpha_int, alpha, d )
+                print( "x: ",s32_tau, s32_alpha, alpha_int, alpha, rho, d, len(phase_decimated) )
                 assert alpha_int == s32_alpha
-            
+            else: # use R(n) instead
+                alpha_int = allan.rn_noise_id(phase, s32_AF, rate)
+                print( "Rn: ",s32_tau, s32_alpha, alpha_int)
+                print alpha_int == s32_alpha
                 
 if __name__ == "__main__":
     #pytest.main()
     t =TestOCXO()
     t.test_noise_id()
-
+"""
     t.test_adev_ci()
     t.test_oadev_ci()
     t.test_mdev_ci()
     t.test_tdev_ci()
     t.test_hdev_ci()
     t.test_ohdev_ci()
-
+"""
     #t.test_totdev_ci()
 
