@@ -236,12 +236,13 @@ class TestPhaseDatCI():
         """ test for noise-identification """
         s32_rows = testutils.read_stable32( 'phase_dat_oadev_octave.txt' , 1.0 )
         phase = testutils.read_datafile('PHASE.DAT')
-        (taus,devs,errs,ns) = allan.oadev(phase, taus=[s32['tau'] for s32 in s32_rows])
+        # (taus,devs,errs,ns) = allan.oadev(phase, taus=[s32['tau'] for s32 in s32_rows])
         # test noise-ID
         for s32 in s32_rows:
-            tau, alpha = s32['tau'], s32['alpha']
-            alpha_int = allan.autocorr_noise_id( phase )[0]
-            assert alpha_int == alpha
+            tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
+            alpha_int = allan.autocorr_noise_id( phase , af=af)[0]
+            if len(phase)/af > 30: # noise-id only works for length 30 or longer time-series
+                assert alpha_int == alpha
             print( tau, alpha, alpha_int )
     
     # FIXME: failing test that we don't run

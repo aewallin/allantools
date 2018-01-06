@@ -1912,7 +1912,7 @@ def lag1_acf(x):
         b=b+pow( x[n]-mu , 2 )
     return a/b
     
-def autocorr_noise_id(x, data_type="phase", dmin=0, dmax=2):
+def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
     """ Lag-1 autocorrelation based noise identification
         
     Parameters
@@ -1920,6 +1920,8 @@ def autocorr_noise_id(x, data_type="phase", dmin=0, dmax=2):
     x: numpy.array
         phase or fractional frequency time-series data
         minimum recommended length is len(x)>30 roughly.
+    af: int
+        averaging factor
     data_type: string {'phase', 'freq'}
         "phase" for phase data in seconds
         "freq" for fractional frequency data
@@ -1947,6 +1949,15 @@ def autocorr_noise_id(x, data_type="phase", dmin=0, dmax=2):
     """
     d = 0 # number of differentiations
     lag = 1
+    if data_type is "phase":
+        x = x[0:len(x):af] # decimate by averaging factor
+    elif data_type is "freq":
+        # average by averaging factor
+        y_cut = np.array( x[:len(x)-(len(x)%af)] ) # cut to length
+        assert len(y_cut)%af == 0
+        y_shaped = y_cut.reshape( ( int(len(y_cut)/af), af) )
+        x = np.average(y_shaped,axis=1) # average
+        
     while True:
         #c = np.corrcoef( np.array(x[:-lag]), np.array(x[lag:]) )
         #r1 = c[0,1] # lag-1 autocorrelation of x

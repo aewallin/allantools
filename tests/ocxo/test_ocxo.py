@@ -162,6 +162,7 @@ class TestOCXO():
 
         for s32 in s32_rows:
             s32_tau, s32_alpha, s32_AF = s32['tau'], s32['alpha'], int(s32['m'])
+            """
             phase_decimated = phase[0:len(phase):s32_AF]
             
             # average frequency series
@@ -169,19 +170,19 @@ class TestOCXO():
             assert len(y_cut)%s32_AF == 0
             y_shaped = y_cut.reshape( ( int(len(y_cut)/s32_AF), s32_AF) )
             y_average = np.average(y_shaped,axis=1)
-            
+            """
             # noise-ID from frequency
             
-            if len(y_average) > 30:
-                alpha_int, alpha, d, rho = allan.autocorr_noise_id( y_average, data_type='freq' )
-                print( "y: ",s32_tau, s32_alpha, alpha_int, alpha, rho, d, len(y_average) )
+            if len(phase)/s32_AF > 20:
+                alpha_int, alpha, d, rho = allan.autocorr_noise_id(freq, data_type='freq', af=s32_AF )
+                print( "y: ",s32_tau, s32_alpha, alpha_int, alpha, rho, d )
                 assert alpha_int == s32_alpha      
             
             
             # noise-ID from phase
-            if len(phase_decimated) > 30:
-                alpha_int, alpha, d, rho = allan.autocorr_noise_id( phase_decimated, data_type='phase' )
-                print( "x: ",s32_tau, s32_alpha, alpha_int, alpha, rho, d, len(phase_decimated) )
+            if len(phase)/s32_AF > 30:
+                alpha_int, alpha, d, rho = allan.autocorr_noise_id( phase, data_type='phase', af=s32_AF )
+                print( "x: ",s32_tau, s32_alpha, alpha_int, alpha, rho, d )
                 assert alpha_int == s32_alpha
             """
                 if s32_AF > 10:

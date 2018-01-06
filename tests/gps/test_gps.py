@@ -58,9 +58,9 @@ class TestGPS():
         # test noise-ID
         for s32 in s32_rows:
             tau, alpha, AF = s32['tau'], s32['alpha'], int(s32['m'])
-            phase_decimated = phase[0:len(phase):AF]
-            if len(phase_decimated) > 30:
-                alpha_int = allan.autocorr_noise_id( phase_decimated )[0]
+            #phase_decimated = phase[0:len(phase):AF]
+            if len(phase)/AF > 30:
+                alpha_int = allan.autocorr_noise_id( phase, af=AF )[0]
                 print( tau, alpha, alpha_int )
                 assert alpha_int == alpha
                 
