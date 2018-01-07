@@ -1957,7 +1957,12 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
         assert len(y_cut)%af == 0
         y_shaped = y_cut.reshape( ( int(len(y_cut)/af), af) )
         x = np.average(y_shaped,axis=1) # average
-        
+    
+    # require minimum length for time-series
+    if len(x)<30:
+        print("autocorr_noise_id() Don't know how to do noise-ID for time-series length= %d"%len(x))
+        raise NotImplementedError
+    
     while True:
         #c = np.corrcoef( np.array(x[:-lag]), np.array(x[lag:]) )
         #r1 = c[0,1] # lag-1 autocorrelation of x
@@ -2017,7 +2022,58 @@ def confidence_interval(dev, edf, ci=one_sigma_ci):
     var_h = float(edf) * variance / chi2_l
     return (np.sqrt(var_l), np.sqrt(var_h))
 
-
+def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", ci=one_sigma_ci):
+    """ returns confidence interval (dev_min, dev_max) 
+        for a given deviation dev = Xdev( x, tau )
+        
+        steps:
+        1) identify noise type
+        2) compute EDF
+        3) compute confidence interval
+        
+    Parameters
+    ----------
+    x: numpy.array
+        time-series
+    dev: float
+        Mean value (e.g. adev) around which we produce the confidence interval
+    af: int
+        averaging factor
+    dev_type: string
+        adev, oadev, mdev, tdev, hdev, ohdev
+    data_type:
+        "phase" or "freq"
+    ci: float, defaults to scipy.special.erf(1/math.sqrt(2))
+        for 1-sigma standard error set
+        ci = scipy.special.erf(1/math.sqrt(2))
+            = 0.68268949213708585
+        
+    Returns
+    -------
+    (dev_min, dev_max): (float, float)
+        Confidence interval
+    """
+    # 1) noise ID
+    dmax = 2
+    if (dev_type is "hdev") or (dev_type is "ohdev"):
+        dmax = 3
+    alpha_int = autocorr_noise_id( x, int(af), data_type=data_type, dmin=0, dmax=dmax)[0]
+    #print("noise ID ", af, alpha_int)
+    
+    # 2) EDF
+    if dev_type is "adev":
+        edf = edf_greenhall( alpha=alpha_int, d=2, m=af, N=len(x), overlapping = False, modified=False )
+    elif dev_type is "oadev":
+        edf = edf_greenhall( alpha=alpha_int, d=2, m=af, N=len(x), overlapping = True, modified=False  )
+    elif (dev_type is "mdev") or (dev_type is "tdev"):
+        edf = edf_greenhall( alpha=alpha_int, d=2, m=af, N=len(x), overlapping = True, modified=True  )
+    # hdev edf_greenhall( alpha=0, d=3, m=int(t), N=len(phase), overlapping = False, modified=False  )
+    # ohdev edf_greenhall( alpha=0, d=3, m=int(t), N=len(phase), overlapping = True, modified=False  )
+    # tdev edf_greenhall( alpha=0, d=2, m=int(t), N=len(phase), overlapping = True, modified=True  )
+    
+    # 3) confidence interval
+    (low, high)  = confidence_interval(dev, edf, ci)
+    return (low, high)
 
 
 ########################################################################

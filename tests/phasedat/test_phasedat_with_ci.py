@@ -31,17 +31,26 @@ class TestPhaseDatCI():
     """
     def test_phasedat_adev(self):
         s32_rows = testutils.read_stable32( 'phase_dat_adev_octave.txt' , 1.0 )
-        phase = testutils.read_datafile('PHASE.DAT')
+        phase = np.array( testutils.read_datafile('PHASE.DAT') )
         (taus,devs,errs,ns) = allan.adev(phase, taus=[s32['tau'] for s32 in s32_rows])
         
         # separate CI computation
         los=[]
         his=[]
-        for (d,t, n) in zip(devs, taus, ns):
+        for (d,t, n, s32) in zip(devs, taus, ns,s32_rows):
+            # Note FIXED alpha here 
             edf2 = allan.edf_greenhall( alpha=0, d=2, m=t, N=len(phase), overlapping = False, modified=False )
             (lo,hi) = allan.confidence_interval( dev=d, edf=edf2 )           
             los.append(lo)
             his.append(hi)
+            try:
+                (lo2,hi2) = allan.confidence_interval_noiseID(phase, d, af=int(t), dev_type="adev", data_type="phase")
+                assert np.isclose( lo2, s32['dev_min'] , rtol=1e-1)
+                assert np.isclose( hi2, s32['dev_max'] , rtol=1e-1)
+                print(" CI OK! tau= ",t)
+            except NotImplementedError:
+                print("can't do CI for tau= ",t)
+                pass
         
         # compare to Stable32
         print("adev()")
@@ -238,9 +247,12 @@ class TestPhaseDatCI():
         phase = testutils.read_datafile('PHASE.DAT')
         for s32 in s32_rows:
             tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
-            alpha_int = allan.autocorr_noise_id( phase , af=af)[0]
-            if len(phase)/af > 30: # noise-id only works for length 30 or longer time-series
+            try:
+                alpha_int = allan.autocorr_noise_id( phase , af=af)[0]
                 assert alpha_int == alpha
+            except:
+                print("can't do noise-ID for af= ",af)
+                pass
             print( tau, alpha, alpha_int )
     
     # FIXME: failing test that we don't run
@@ -278,8 +290,8 @@ if __name__ == "__main__":
     #pytest.main()
     t = TestPhaseDatCI()
     t.test_noise_id()
-    """
     t.test_phasedat_adev()
+    """
     t.test_phasedat_oadev() 
     t.test_phasedat_mdev()
     t.test_phasedat_hdev()
