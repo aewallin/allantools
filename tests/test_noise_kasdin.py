@@ -25,7 +25,41 @@ def test_timeseries_length(noisegen, n):
     print( len( noisegen.time_series ) )
     assert( len( noisegen.time_series ) == nr )
 
-
+# failing cases
+# (b, tau, qd)
+# these seem problematic, even with nr=pow(2,16) and N_averages=30
+failing = [ (-4, 1, 6e-09),
+            (-3, 1, 6e-09),
+            (-4, 1, 5e-10),
+            (-3, 1, 5e-10),
+            (-4, 1, 3e-15),
+            (-3, 1, 3e-15) ]
+@pytest.mark.xfail
+@pytest.mark.parametrize("params", failing)
+def test_adev_average_failing(noisegen, params):
+    test_adev_average(noisegen, params[0], params[1], params[2])
+ 
+@pytest.mark.parametrize("b",[0, -1, -2, ])
+@pytest.mark.parametrize("tau",[1,2,3,4,5, 20, 30])
+@pytest.mark.parametrize("qd",[3e-15, 5e-10, 6e-9, ]) # 7e-6 2e-20
+def test_adev_average(noisegen,b,tau,qd, nr=pow(2,16), N_averages=30, rtol=1e-1):
+    """
+        check that time-series has the ADEV that we expect
+        generate many time-series (N_averages)
+        compute average adev from the multiple time-series
+    """
+    noisegen.set_input(nr=nr, qd=qd , b=b)
+    adevs=[]
+    for n in range(N_averages):
+        noisegen.generateNoise()
+        (taus,devs,errs,ns)=at.adev( noisegen.time_series, taus=[tau], rate=1.0 )
+        adev_calculated = devs[0]
+        adevs.append( adev_calculated )
+    adev_mu = np.mean( adevs )
+    adev_predicted = noisegen.adev(tau0=1.0, tau=tau)
+    print( b, tau, qd, adev_predicted, adev_mu, adev_mu/adev_predicted )
+    # NOTE relative tolerance here!
+    assert np.isclose( adev_predicted, adev_mu, rtol=rtol, atol=0)
 
 @pytest.mark.parametrize("b",[0, -1, -2, -3, -4])
 @pytest.mark.parametrize("tau",[1,2,3,4,5, 20, 30])
@@ -75,3 +109,4 @@ if __name__ == "__main__":
     #test_adev( at.Noise() )
     #test_mdev( at.Noise() )
     pytest.main()
+    #test_adev_average( at.Noise(), -2, 1, 6e-9)
