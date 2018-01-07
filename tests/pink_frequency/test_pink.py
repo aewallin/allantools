@@ -54,11 +54,12 @@ class TestPink():
         phase = testutils.read_datafile(data_file)
         for s32 in s32_rows:
             tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
-            alpha_int = allan.autocorr_noise_id( phase , data_type='freq', af=af)[0]
-            if len(phase)/af > 30: # noise-id only works for length 30 or longer time-series
+            try:
+                alpha_int = allan.autocorr_noise_id( phase , data_type='freq', af=af)[0]
+                #if len(phase)/af > 30: # noise-id only works for length 30 or longer time-series
                 assert alpha_int == alpha
                 print( tau, alpha, alpha_int )
-            else:
+            except NotImplementedError:
                 print ("no noise-ID: ",tau, alpha, alpha_int )
 
 if __name__ == "__main__":
