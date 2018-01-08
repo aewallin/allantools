@@ -55,7 +55,6 @@ class TestGPS():
         """ test for noise-identification """
         s32_rows = testutils.read_stable32( 'stable32_ADEV_decade.txt' , rate )
         phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
-        #(taus,devs,errs,ns) = allan.oadev(phase, taus=[s32['tau'] for s32 in s32_rows])
         # test noise-ID
         for s32 in s32_rows:
             tau, alpha, AF = s32['tau'], s32['alpha'], int(s32['m'])
@@ -72,16 +71,120 @@ class TestGPS():
         s32rows = testutils.read_stable32(resultfile='stable32_ADEV_decade.txt', datarate=1.0)
         for row in s32rows:
             phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
-            #data = allan.frequency2fractional(data, mean_frequency=1.0e7)
             (taus, devs, errs, ns) = allan.adev(phase, rate=rate, data_type="phase",
                                                   taus=[ row['tau'] ])
             dev=devs[0]
             try:
                 # CI including noise-ID
                 (lo2,hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="adev", data_type="phase")
-                assert np.isclose( lo2, row['dev_min'] , rtol=1e-2)
-                assert np.isclose( hi2, row['dev_max'] , rtol=1e-2)
+                assert np.isclose( lo2, row['dev_min'] , rtol=1e-2, atol=0)
+                assert np.isclose( hi2, row['dev_max'] , rtol=1e-2, atol=0)
                 print(" CI OK! tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']) )
+            except NotImplementedError:
+                print("can't do CI for tau= %f"%row['tau'])
+                pass
+    
+    def test_oadev_ci_and_noiseID(self):
+        """ ADEV with confidence intervals, including noise-ID """
+        change_to_test_dir()
+        s32rows = testutils.read_stable32(resultfile='stable32_OADEV_octave.txt', datarate=1.0)
+        for row in s32rows:
+            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+            (taus, devs, errs, ns) = allan.oadev(phase, rate=rate, data_type="phase",
+                                                  taus=[ row['tau'] ])
+            dev=devs[0]
+            #print(dev/row['dev'])
+            assert np.isclose( dev, row['dev'] , rtol=1e-2, atol=0)
+            try:
+                # CI including noise-ID
+                (lo2,hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="oadev", data_type="phase")
+                print(" tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']) )
+                assert np.isclose( lo2, row['dev_min'] , rtol=1e-2, atol=0)
+                assert np.isclose( hi2, row['dev_max'] , rtol=1e-2, atol=0)
+            except NotImplementedError:
+                print("can't do CI for tau= %f"%row['tau'])
+                pass
+                
+    def test_mdev_ci_and_noiseID(self):
+        """ ADEV with confidence intervals, including noise-ID """
+        change_to_test_dir()
+        s32rows = testutils.read_stable32(resultfile='stable32_MDEV_octave.txt', datarate=1.0)
+        for row in s32rows:
+            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+            (taus, devs, errs, ns) = allan.mdev(phase, rate=rate, data_type="phase",
+                                                  taus=[ row['tau'] ])
+            dev=devs[0]
+            #print(dev/row['dev'])
+            assert np.isclose( dev, row['dev'] , rtol=1e-2, atol=0)
+            try:
+                # CI including noise-ID
+                (lo2,hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="mdev", data_type="phase")
+                print(" tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']) )
+                assert np.isclose( lo2, row['dev_min'] , rtol=1e-2, atol=0)
+                assert np.isclose( hi2, row['dev_max'] , rtol=1e-2, atol=0)
+            except NotImplementedError:
+                print("can't do CI for tau= %f"%row['tau'])
+                pass
+    
+    def test_tdev_ci_and_noiseID(self):
+        """ ADEV with confidence intervals, including noise-ID """
+        change_to_test_dir()
+        s32rows = testutils.read_stable32(resultfile='stable32_TDEV_octave.txt', datarate=1.0)
+        for row in s32rows:
+            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+            (taus, devs, errs, ns) = allan.tdev(phase, rate=rate, data_type="phase",
+                                                  taus=[ row['tau'] ])
+            dev=devs[0]
+            #print(dev/row['dev'])
+            assert np.isclose( dev, row['dev'] , rtol=1e-2, atol=0)
+            try:
+                # CI including noise-ID
+                (lo2,hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="tdev", data_type="phase")
+                print(" tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']) )
+                assert np.isclose( lo2, row['dev_min'] , rtol=1e-2, atol=0)
+                assert np.isclose( hi2, row['dev_max'] , rtol=1e-2, atol=0)
+            except NotImplementedError:
+                print("can't do CI for tau= %f"%row['tau'])
+                pass
+                
+    def test_hdev_ci_and_noiseID(self):
+        """ ADEV with confidence intervals, including noise-ID """
+        change_to_test_dir()
+        s32rows = testutils.read_stable32(resultfile='stable32_HDEV_octave.txt', datarate=1.0)
+        for row in s32rows:
+            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+            (taus, devs, errs, ns) = allan.hdev(phase, rate=rate, data_type="phase",
+                                                  taus=[ row['tau'] ])
+            dev=devs[0]
+            #print(dev/row['dev'])
+            assert np.isclose( dev, row['dev'] , rtol=1e-2, atol=0)
+            try:
+                # CI including noise-ID
+                (lo2,hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="hdev", data_type="phase")
+                print(" tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']) )
+                assert np.isclose( lo2, row['dev_min'] , rtol=1e-2, atol=0)
+                assert np.isclose( hi2, row['dev_max'] , rtol=1e-2, atol=0)
+            except NotImplementedError:
+                print("can't do CI for tau= %f"%row['tau'])
+                pass
+    
+    def test_ohdev_ci_and_noiseID(self):
+        """ ADEV with confidence intervals, including noise-ID """
+        change_to_test_dir()
+        s32rows = testutils.read_stable32(resultfile='stable32_OHDEV_octave.txt', datarate=1.0)
+        for row in s32rows:
+            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+            (taus, devs, errs, ns) = allan.ohdev(phase, rate=rate, data_type="phase",
+                                                  taus=[ row['tau'] ])
+            dev=devs[0]
+            #print(dev/row['dev'])
+            assert np.isclose( dev, row['dev'] , rtol=1e-2, atol=0)
+            try:
+                # CI including noise-ID
+                (lo2,hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="ohdev", data_type="phase")
+                print(" tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']) )
+                assert np.isclose( lo2, row['dev_min'] , rtol=1e-2, atol=0)
+                assert np.isclose( hi2, row['dev_max'] , rtol=1e-2, atol=0)
             except NotImplementedError:
                 print("can't do CI for tau= %f"%row['tau'])
                 pass
@@ -92,7 +195,8 @@ class TestGPS():
 
 if __name__ == "__main__":
     t = TestGPS()
-    t.test_adev_ci_and_noiseID()
+    t.test_ohdev_ci_and_noiseID()
+    #t.test_oadev_ci_and_noiseID()
     #pytest.main()
 
 

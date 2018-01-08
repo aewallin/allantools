@@ -2067,10 +2067,13 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", 
         edf = edf_greenhall( alpha=alpha_int, d=2, m=af, N=len(x), overlapping = True, modified=False  )
     elif (dev_type is "mdev") or (dev_type is "tdev"):
         edf = edf_greenhall( alpha=alpha_int, d=2, m=af, N=len(x), overlapping = True, modified=True  )
-    # hdev edf_greenhall( alpha=0, d=3, m=int(t), N=len(phase), overlapping = False, modified=False  )
-    # ohdev edf_greenhall( alpha=0, d=3, m=int(t), N=len(phase), overlapping = True, modified=False  )
-    # tdev edf_greenhall( alpha=0, d=2, m=int(t), N=len(phase), overlapping = True, modified=True  )
-    
+    elif dev_type is "hdev":
+        edf = edf_greenhall( alpha=alpha_int, d=3, m=af, N=len(x), overlapping = False, modified=False  )
+    elif dev_type is "ohdev":
+        edf = edf_greenhall( alpha=alpha_int, d=3, m=af, N=len(x), overlapping = True, modified=False  )
+    else:
+        raise NotImplementedError
+
     # 3) confidence interval
     (low, high)  = confidence_interval(dev, edf, ci)
     return (low, high)
