@@ -17,6 +17,7 @@ import testutils
 import os
 import time
 import pytest
+import numpy as np
 
 def print_elapsed(start):
     end = time.clock()
@@ -54,15 +55,36 @@ class TestGPS():
         """ test for noise-identification """
         s32_rows = testutils.read_stable32( 'stable32_ADEV_decade.txt' , rate )
         phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
-        (taus,devs,errs,ns) = allan.oadev(phase, taus=[s32['tau'] for s32 in s32_rows])
+        #(taus,devs,errs,ns) = allan.oadev(phase, taus=[s32['tau'] for s32 in s32_rows])
         # test noise-ID
         for s32 in s32_rows:
             tau, alpha, AF = s32['tau'], s32['alpha'], int(s32['m'])
-            #phase_decimated = phase[0:len(phase):AF]
-            if len(phase)/AF > 30:
+            try:
                 alpha_int = allan.autocorr_noise_id( phase, af=AF )[0]
                 print( tau, alpha, alpha_int )
                 assert alpha_int == alpha
+            except NotImplementedError:
+                print( "can't do noise-ID for tau= %f"%s32['tau'])
+    
+    def test_adev_ci_and_noiseID(self):
+        """ ADEV with confidence intervals, including noise-ID """
+        change_to_test_dir()
+        s32rows = testutils.read_stable32(resultfile='stable32_ADEV_decade.txt', datarate=1.0)
+        for row in s32rows:
+            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+            #data = allan.frequency2fractional(data, mean_frequency=1.0e7)
+            (taus, devs, errs, ns) = allan.adev(phase, rate=rate, data_type="phase",
+                                                  taus=[ row['tau'] ])
+            dev=devs[0]
+            try:
+                # CI including noise-ID
+                (lo2,hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="adev", data_type="phase")
+                assert np.isclose( lo2, row['dev_min'] , rtol=1e-2)
+                assert np.isclose( hi2, row['dev_max'] , rtol=1e-2)
+                print(" CI OK! tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']) )
+            except NotImplementedError:
+                print("can't do CI for tau= %f"%row['tau'])
+                pass
                 
     def generic_test(self, datafile = data_file, result="", fct=None):
         change_to_test_dir()
@@ -70,7 +92,7 @@ class TestGPS():
 
 if __name__ == "__main__":
     t = TestGPS()
-    t.test_noise_id()
+    t.test_adev_ci_and_noiseID()
     #pytest.main()
 
 
