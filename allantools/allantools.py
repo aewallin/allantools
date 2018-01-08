@@ -1576,7 +1576,7 @@ def edf_greenhall_simple(alpha, d, m, S, F, N):
 # alpha+2*d >1
 # m = tau/tau0 averaging factor
 # N number of phase obs
-def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=True):
+def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=False):
     """
         Used for the following deviations (see http://www.wriley.com/CI2.pdf page 8)
         adev()
