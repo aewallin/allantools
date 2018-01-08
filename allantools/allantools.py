@@ -1562,8 +1562,8 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
 #  Confidence intervals
 #
 
-# this is Eqn (13) from Greenhall2004
 def edf_greenhall_simple(alpha, d, m, S, F, N):
+    """ Eqn (13) from Greenhall2004 """
     L = m/F+m*d # length of filter applied to phase samples
     M = 1 + np.floor(S*(N-L) / m)
     J = min(M, (d+1)*S)
@@ -1571,13 +1571,35 @@ def edf_greenhall_simple(alpha, d, m, S, F, N):
                greenhall_BasicSum(J, M, S, F, alpha, d)
     return 1.0/inv_edf
 
-# alhpa= +2,...,-4   noise power
-# d= 1 first-difference variance, 2 Allan variance, 3 Hadamard variance
-# alpha+2*d >1
-# m = tau/tau0 averaging factor
-# N number of phase obs
 def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=False):
-    """
+    """ returns Equivalent degrees of freedom
+        
+        Parameters
+        ----------
+        alpha: int
+            noise type, +2...-4
+        d: int
+            1 first-difference variance
+            2 Allan variance
+            3 Hadamard variance
+            require alpha+2*d>1
+        m: int
+            averaging factor
+            tau = m*tau0 = m*(1/rate)
+        N: int
+            number of phase observations (length of time-series)
+        overlapping: bool
+            True for oadev, ohdev
+        modified: bool
+            True for mdev, tdev
+        
+        Returns
+        -------
+        edf: float
+            Equivalent degrees of freedom
+        
+        Notes
+        -----
         Used for the following deviations (see http://www.wriley.com/CI2.pdf page 8)
         adev()
         oadev()
@@ -1686,10 +1708,11 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
             return 1.0/inv_edf
 
     print("greenhall_edf() no matching case!")
-    assert(0) # ERROR
+    raise NotImplementedError
+    #assert(0) # ERROR
 
-# this is Eqn (10) from Greenhall2004
 def greenhall_BasicSum(J, M, S, F, alpha, d):
+    """ Eqn (10) from Greenhall2004 """
     first = pow(greenhall_sz(0, F, alpha, d), 2)
     second = (1-float(J)/float(M))*pow(greenhall_sz(float(J)/float(S), F, alpha, d), 2)
     third = 0
@@ -1697,8 +1720,8 @@ def greenhall_BasicSum(J, M, S, F, alpha, d):
         third += 2*(1.0-float(j)/float(M))*pow(greenhall_sz(float(j)/float(S), F, alpha, d), 2)
     return first+second+third
 
-# this is Eqn (9) from Greenhall2004
 def greenhall_sz(t, F, alpha, d):
+    """ Eqn (9) from Greenhall2004 """
     if d == 1:
         a = 2*greenhall_sx(t, F, alpha)
         b = greenhall_sx(t-1.0, F, alpha)
@@ -1725,7 +1748,7 @@ def greenhall_sz(t, F, alpha, d):
 
 
 def greenhall_sx(t, F, alpha):
-    """ this is Eqn (8) from Greenhall2004
+    """ Eqn (8) from Greenhall2004
     """
     if F == float('inf'):
         return greenhall_sw(t, alpha+2)
@@ -1736,7 +1759,7 @@ def greenhall_sx(t, F, alpha):
     return pow(F, 2)*(a-b-c)
 
 def greenhall_sw(t, alpha):
-    """ this is Eqn (7) from Greenhall2004
+    """ Eqn (7) from Greenhall2004
     """
     alpha = int(alpha)
     if alpha == 2:
@@ -1766,12 +1789,14 @@ def greenhall_sw(t, alpha):
     assert(0) # ERROR
 
 def greenhall_table3(alpha, d):
+    """ Table 3 from Greenhall 2004 """
     assert(alpha == 1)
     idx = d-1
     table3 = [(6.0, 4.0), (15.23, 12.0), (47.8, 40.0)]
     return table3[idx]
 
 def greenhall_table2(alpha, d):
+    """ Table 2 from Greenhall 2004 """
     row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
     assert(row_idx in [0, 1, 2, 3, 4, 5])
     col_idx = int(d-1)
@@ -1787,6 +1812,7 @@ def greenhall_table2(alpha, d):
     return table2[row_idx][col_idx]
 
 def greenhall_table1(alpha, d):
+    """ Table 1 from Greenhall 2004 """
     row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
     col_idx = int(d-1)
     table1 = [[(2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0), (22.0/25.0, 2.0/3.0)], # alpha=+2
@@ -1800,10 +1826,11 @@ def greenhall_table1(alpha, d):
     #print("table1 = ", table1[row_idx][col_idx])
     return table1[row_idx][col_idx]
 
-# NIST SP1065 page 41, Table 7
 def edf_totdev(N, m, alpha):
     """ Equivalent degrees of freedom for Total Deviation
         FIXME: what is the right behavior for alpha outside 0,-1,-2?
+        
+        NIST SP1065 page 41, Table 7
     """
     alpha = int(alpha)
     if alpha in [0, -1, -2]:
@@ -1816,9 +1843,10 @@ def edf_totdev(N, m, alpha):
     else:
         return edf_simple(N, m, alpha)
 
-# NIST SP1065 page 41, Table 8
 def edf_mtotdev(N, m, alpha):
     """ Equivalent degrees of freedom for Modified Total Deviation
+    
+        NIST SP1065 page 41, Table 8
     """
     assert(alpha in [2, 1, 0, -1, -2])
     NIST_SP1065_table8 = [(1.90, 2.1), (1.20, 1.40), (1.10, 1.2), (0.85, 0.50), (0.75, 0.31)]
@@ -2024,7 +2052,7 @@ def confidence_interval(dev, edf, ci=one_sigma_ci):
 
 def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", ci=one_sigma_ci):
     """ returns confidence interval (dev_min, dev_max) 
-        for a given deviation dev = Xdev( x, tau )
+        for a given deviation dev = Xdev( x, tau = af*(1/rate) )
         
         steps:
         1) identify noise type
@@ -2058,8 +2086,7 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", 
     if (dev_type is "hdev") or (dev_type is "ohdev"):
         dmax = 3
     alpha_int = autocorr_noise_id( x, int(af), data_type=data_type, dmin=0, dmax=dmax)[0]
-    #print("noise ID ", af, alpha_int)
-    
+
     # 2) EDF
     if dev_type is "adev":
         edf = edf_greenhall( alpha=alpha_int, d=2, m=af, N=len(x), overlapping = False, modified=False )
