@@ -107,5 +107,5 @@ class TestNBS14_10Point():
 if __name__ == "__main__":
     #t=TestNBS14_10Point()
     #t.test_htotdev()
-    pytest.main("test_nbs14_10point.py")
+    pytest.main(["test_nbs14_10point.py"])
 

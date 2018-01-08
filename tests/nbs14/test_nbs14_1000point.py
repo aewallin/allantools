@@ -135,4 +135,4 @@ class TestNBS14_1000Point():
 if __name__ == "__main__":
     t =TestNBS14_1000Point()
     t.test_theo1()
-    pytest.main("test_nbs14_1000point.py")
+    pytest.main(["test_nbs14_1000point.py"])
