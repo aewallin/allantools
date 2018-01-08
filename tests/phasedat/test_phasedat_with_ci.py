@@ -45,8 +45,8 @@ class TestPhaseDatCI():
             his.append(hi)
             try:
                 (lo2,hi2) = allan.confidence_interval_noiseID(phase, d, af=int(t), dev_type="adev", data_type="phase")
-                assert np.isclose( lo2, s32['dev_min'] , rtol=1e-1)
-                assert np.isclose( hi2, s32['dev_max'] , rtol=1e-1)
+                assert np.isclose( lo2, s32['dev_min'] , rtol=1e-2)
+                assert np.isclose( hi2, s32['dev_max'] , rtol=1e-2)
                 print(" CI OK! tau= ",t)
             except NotImplementedError:
                 print("can't do CI for tau= ",t)
@@ -54,10 +54,11 @@ class TestPhaseDatCI():
         
         # compare to Stable32
         print("adev()")
+        print("    n   tau dev_min  dev      dev_max ")
         for (s32, t2, d2, lo2, hi2, n2) in zip(s32_rows, taus, devs, los, his, ns):
             print("S32 %03d %03.1f %1.6f %1.6f %1.6f" % (s32['n'], s32['tau'], s32['dev_min'], s32['dev'], s32['dev_max']))
             print("AT  %03d %03.1f %1.6f %1.6f %1.6f" % (n2, t2, round(lo2,5), round(d2,5), round(hi2,5) ))
-            testutils.check_approx_equal(s32['n'], n2, tolerance=1e-3)
+            testutils.check_approx_equal(s32['n'], n2, tolerance=1e-9)
             testutils.check_approx_equal(s32['dev_min'], lo2, tolerance=1e-3)
             testutils.check_approx_equal(s32['dev'], d2, tolerance=1e-4)
             testutils.check_approx_equal(s32['dev_max'], hi2, tolerance=1e-3)
