@@ -1350,6 +1350,24 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
 
     if maximum_m == -1: # if no limit given
         maximum_m = len(data)
+    # FIXME: should we use a "stop-ratio" like Stable32
+    # found in Table III, page 9 of "Evolution of frequency stability analysis software"
+    # max(AF) = len(phase)/stop_ratio, where 
+    # function  stop_ratio
+    # adev      5
+    # oadev     4
+    # mdev      4
+    # tdev      4
+    # hdev      5
+    # ohdev     4
+    # totdev    2
+    # tierms    4
+    # htotdev   3
+    # mtie      2
+    # theo1     1
+    # theoH     1
+    # mtotdev   2
+    # ttotdev   2
 
     taus_valid1 = taus < (1 / float(rate)) * float(len(data))
     taus_valid2 = taus > 0
@@ -1368,10 +1386,10 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
 
     taus2 = m / float(rate)
 
-    if even:
-        m_even = ((m % 2) == 0)
-        m = m[m_even]
-        taus2 = taus2[m_even]
+    if even: # used by Theo1
+        m_even_mask = ((m % 2) == 0)
+        m = m[m_even_mask]
+        taus2 = taus2[m_even_mask]
 
     return data, m, taus2
 
@@ -1452,6 +1470,10 @@ def remove_small_ns(taus, devs, deverrs, ns):
         o_deverrs = [deverrs[0][ns_big_enough], deverrs[1][ns_big_enough]]
     else:
         o_deverrs = deverrs[ns_big_enough]
+    if len(o_devs)==0:
+        print("remove_small_ns() nothing remains!?")
+        raise UserWarning
+         
     return o_taus, o_devs, o_deverrs, o_ns
 
 
