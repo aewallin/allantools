@@ -88,13 +88,37 @@ def rn_noise_id(x, af, rate):
     
     """
     #print "len(x) ", len(x), "oadev",af*rate
-    (taus,devs,errs,ns) = at.oadev(x,taus=[af*rate], rate=rate) 
+    (taus,devs,errs,ns) = at.adev(x,taus=[af*rate], data_type='phase', rate=rate) 
     #print devs
     oadev_x = devs[0]
-    (mtaus,mdevs,errs,ns) = at.mdev(x,taus=[af*rate], rate=rate)
+    (mtaus,mdevs,errs,ns) = at.mdev(x,taus=[af*rate], data_type='phase', rate=rate)
     mdev_x = mdevs[0]
     rn = pow(mdev_x/oadev_x,2)
     return rn
+
+def rn( af , b ):
+    # From IEEE1139-2008
+    #   alpha   beta    ADEV_mu MDEV_mu Rn_mu
+    #   -2      -4       1       1       0      Random Walk FM
+    #   -1      -3       0       0       0      Flicker FM
+    #    0      -2      -1      -1       0      White FM
+    #    1      -1      -2      -2       0      Flicker PM
+    #    2      0       -2      -3      -1      White PM
+    
+    # (a=-3 flicker walk FM)
+    # (a=-4 random run FM)
+    if b==0:
+        return pow(af,-1)
+    elif b==-1:
+        # f_h = 0.5/tau0  (assumed!)
+        # af = tau/tau0
+        # so f_h*tau = 0.5/tau0 * af*tau0 = 0.5*af
+        avar = (1.038+3*np.log(2*np.pi*0.5*af)) / (4.0*pow(np.pi,2))
+        mvar = 3*np.log(256.0/27.0)/(8.0*pow(np.pi,2))
+        return mvar/avar
+    else:
+        return pow(af,0)
+    #return pow(af, mu)
 
 ng = at.Noise()
 nr=pow(2,14)
@@ -154,23 +178,43 @@ def b1_boundary(b_hi, N):
         return 0.5*(b1_lo+b1_hi)
 
 plt.figure()
-for b in [0,-1, -2, -3, -4, -5]: # -1,-2,-3,-4
-    #(taus, rs) = rn_vs_tau(20,b)
-    (btaus, bs) = b1_vs_tau(60,b)
+allr = []
+allt = []
+allrn = []
+brange = [0,-1, -2, -3, -4, -5]
+for b in brange: # -1,-2,-3,-4
+    (taus, rs) = rn_vs_tau(50,b)
+    rnv = [rn(af, b) for af in taus]
+    allrn.append(rnv)
+    allr.append(rs)
+    allt.append(taus)
+    (btaus, bs) = b1_vs_tau(10,b)
     print b
-    plt.loglog(btaus,bs,'o',label="Rn b=%d"%b)
-    b1v=[]
-    b1_bound=[]
+    plt.loglog(btaus,bs,'o',label="B1 b=%d"%b)
+    b1v = []
+    b1_bound = []
     for t in btaus:
         tmp = range(0,nr,int(t))
         print t, len(tmp)
         b1v.append( b1(len(tmp), b_to_mu(b)) )
         b1_bound.append( b1_boundary(b, len(tmp) ) )
-    plt.loglog(btaus,b1v,'-',label="b1() b=%d"%b)
+        
+    plt.loglog(btaus,b1v,'-',label="B1() b=%d"%b)
     plt.loglog(btaus,b1_bound,'--',label="boundary(%d, %d)"%(b, b-1))
     
     #plt.loglog(btaus,bs,'o',label="B1 b=%d"%b)
 
-plt.legend()
+plt.legend(loc='best')
 plt.grid()
+plt.figure()
+# boundary between b=0 and b=-1
+rnb = [np.sqrt(rn(af, 0)*rn(af, -1)) for af in allt[0]]
+
+for (taus,rs,rns,b) in zip(allt, allr, allrn, brange):
+    plt.loglog(taus,rs,'o',label="Rn b=%d"%b)
+    plt.loglog(taus,rns,'-',label="Rn() b=%d"%b)
+plt.loglog(taus,rnb,'--',label="Rn(0)-Rn(-1) boundary")
+
+plt.grid()
+plt.legend(loc='best')
 plt.show()
