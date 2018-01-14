@@ -8,6 +8,8 @@ Version history
 ---------------
 Unreleased development version
 - lag-1 autocorrelation noise identification function
+- B1 noise identification
+- R(n) noise identification
 - Noise() class using Kasdin & Walter algorithm
 - work on Greenhall's EDF and confidence intervals
 - tests for confidence intervals
@@ -88,6 +90,7 @@ import os
 import json
 import numpy as np
 import scipy.stats # used in confidence_intervals()
+import scipy.signal # decimation in lag-1 acf
 
 # Get version number from json metadata
 pkginfo_path = os.path.join(os.path.dirname(__file__),
@@ -1945,13 +1948,23 @@ def edf_simple(N, m, alpha):
         print("Noise type not recognized. Defaulting to N - 1 degrees of freedom.")
 
     return edf
-
-def lag1_acf(x):
+    
+def detrend(x, deg=1):
+    t=range(len(x))
+    p = np.polyfit(t, x, deg)
+    residual = x - np.polyval(p, t)
+    return residual
+    
+def lag1_acf(x, detrend_deg=1):
     """ Lag-1 autocorrelation function
     
         as defined in Riley 2004, Eqn (2)
         
         Note: a faster algorithm based on FFT might be better!?
+        
+        numpy.corrcoeff() gives similar but not identical results.
+        #c = np.corrcoef( np.array(x[:-lag]), np.array(x[lag:]) )
+        #r1 = c[0,1] # lag-1 autocorrelation of x
     """
     mu = np.mean(x)
     a=0
@@ -2000,13 +2013,18 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
     d = 0 # number of differentiations
     lag = 1
     if data_type is "phase":
-        x = x[0:len(x):af] # decimate by averaging factor
+        
+        if af>1:
+            #x = scipy.signal.decimate(x, af, n=1, ftype='fir')
+            x = x[0:len(x):af] # decimate by averaging factor
+        x = detrend(x, deg=2) # remove quadratic trend (frequency offset and drift)
     elif data_type is "freq":
         # average by averaging factor
-        y_cut = np.array( x[:len(x)-(len(x)%af)] ) # cut to length
+        y_cut = np.array(x[:len(x)-(len(x)%af)]) # cut to length
         assert len(y_cut)%af == 0
-        y_shaped = y_cut.reshape( ( int(len(y_cut)/af), af) )
-        x = np.average(y_shaped,axis=1) # average
+        y_shaped = y_cut.reshape((int(len(y_cut)/af), af))
+        x = np.average(y_shaped, axis=1) # average
+        x = detrend(x, deg=1) # remove frequency drift
     
     # require minimum length for time-series
     if len(x)<30:
@@ -2014,8 +2032,6 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
         raise NotImplementedError
     
     while True:
-        #c = np.corrcoef( np.array(x[:-lag]), np.array(x[lag:]) )
-        #r1 = c[0,1] # lag-1 autocorrelation of x
         r1 = lag1_acf(x)
         rho = r1/(1.0+r1)
         if d >= dmin and ( rho < 0.25 or d >= dmax ):
