@@ -14,8 +14,7 @@ def remove_duplicates(l):
        if i not in s:
           s.append(i)
     return s
-    
-    
+
 plt.figure(figsize=(12,10))
 #N_points = pow(2,6)
 #N_points = pow(2,10)
@@ -25,7 +24,6 @@ N_points = pow(2,13)
 
 nr = pow(2,14) # np.random.choice(nrrange)
 brange = [0,-1, -2, -3, -4, -5]
-#nrrange = [pow(2,10), pow(2,14), pow(2,16)]
 pts=[[], [], [], [], [], []] # 6 different b-values
 for n in range(N_points):
     b = np.random.choice(brange)
@@ -38,7 +36,6 @@ for n in range(N_points):
     ng.generateNoise()
     x = ng.time_series
     
-    #rate=1.0
     alpha_int, alpha, rho, d = at.autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2)
     pts[-1*b].append( ( af, alpha, alpha_int) )
 print "calc done"
@@ -50,7 +47,7 @@ for (series, idx) in zip(pts, range(len(pts))):
     alpha = [s[1] for s in series]
     alphai = [s[2] for s in series]
     plt.semilogx( af, alpha, "%s."%colors[b],label='b=%d'%b)
-    #plt.semilogx( af, alphai, "%so"%colors[b],label='b=%d'%b)
+    #plt.semilogx( af, alphai, "%so"%colors[b],label='b=%d'%b) # integer alpha
 print "plot done"
 
 plt.ylim((-4,3))

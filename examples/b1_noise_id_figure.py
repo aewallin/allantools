@@ -3,31 +3,24 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 def b1_noise_id(x, af, rate):
-    """ R(n) noise identification algorithm
+    """ B1 ratio for noise identification
     
-        based on expected ratio of MVAR/AVAR
+        ratio of Standard Variace to AVAR
     """
-    #print "len(x) ", len(x), "oadev",af*rate
     (taus,devs,errs,ns) = at.adev(x,taus=[af*rate],data_type="phase", rate=rate) 
-    #print devs
     oadev_x = devs[0]
     y = np.diff(x)
-    #y_dec = y[0:len(y):af]
     y_cut = np.array( y[:len(y)-(len(y)%af)] ) # cut to length
     assert len(y_cut)%af == 0
     y_shaped = y_cut.reshape( ( int(len(y_cut)/af), af) )
     y_averaged = np.average(y_shaped,axis=1) # average
         
-    #x_dec = x[0:len(x):af]
     var = np.var(y_averaged, ddof=1)
-    #print var, oadev_x, var/pow(oadev_x,2)
-    #(mtaus,mdevs,errs,ns) = at.mdev(x,taus=[af*rate], rate=rate)
-    #mdev_x = mdevs[0]
-    #rn = pow(mdev_x/oadev_x,2)
     return var/pow(oadev_x,2.0)
 
 def b1(N, mu):
-    """
+    """ Expected B1 ratio for given time-series length N and exponent mu
+        
         The exponents are defined as
         S_y(f) = h_a f^alpha
         S_x(f) = g_b f^b
@@ -48,8 +41,7 @@ def b1(N, mu):
         return float(N)*(float(N)+1.0)/6.0
         #up = N*(1.0-pow(N, mu))
         #down = 2*(N-1.0)*(1-pow(2.0, mu))
-        #return up/down
-        
+        #return up/down        
     elif mu == 1:
         return float(N)/2.0
     elif mu == 0:

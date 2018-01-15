@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 def rn_noise_id(x, af, rate):
-    """ B1(n) noise identification algorithm
+    """ R(n) ratio for noise identification
     
     """
     #print "len(x) ", len(x), "oadev",af*rate
@@ -15,7 +15,7 @@ def rn_noise_id(x, af, rate):
     rn = pow(mdev_x/oadev_x,2)
     return rn
 
-def rn( af , b ):
+def rn(af, b):
     # From IEEE1139-2008
     #   alpha   beta    ADEV_mu MDEV_mu Rn_mu
     #   -2      -4       1       1       0      Random Walk FM
@@ -37,26 +37,6 @@ def rn( af , b ):
         return mvar/avar
     else:
         return pow(af,0)
-    #return pow(af, mu)
-
-def b_to_mu(b):
-    a = b+2
-    if a==+2:
-        return -2
-    elif a==+1:
-        return -2
-    elif a==0:
-        return -1
-    elif a==-1:
-        return 0
-    elif a==-2:
-        return 1
-    elif a==-3:
-        return 2
-    elif a==-4:
-        return 3
-    assert False
-
 
 ng = at.Noise()
 nr=pow(2,14)
@@ -69,15 +49,6 @@ def remove_duplicates(l):
        if i not in s:
           s.append(i)
     return s
-    
-def b1_boundary(b_hi, N):
-    b_lo = b_hi-1
-    b1_lo = b1(N, b_to_mu(b_lo))
-    b1_hi = b1(N, b_to_mu(b_hi))
-    if b1_lo >= -4:
-        return np.sqrt(b1_lo*b1_hi) # geometric mean
-    else:
-        return 0.5*(b1_lo+b1_hi)
 
 plt.figure(figsize=(12,10))
 #N_points = pow(2,6)
@@ -87,7 +58,6 @@ N_points = pow(2,12)
 
 nr = pow(2,14) # np.random.choice(nrrange)
 brange = [0,-1, -2, -3, -4, -5]
-#nrrange = [pow(2,10), pow(2,14), pow(2,16)]
 pts=[]
 for n in range(N_points):
     b = np.random.choice(brange)

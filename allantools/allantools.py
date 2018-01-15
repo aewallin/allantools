@@ -1950,6 +1950,19 @@ def edf_simple(N, m, alpha):
     return edf
     
 def detrend(x, deg=1):
+    """
+    Parameters
+    ----------
+    x: numpy.array
+        time-series
+    deg: int
+        degree of polynomial to remove from x
+        
+    Returns
+    -------
+    x_detrended: numpy.array
+        detrended time-series
+    """
     t=range(len(x))
     p = np.polyfit(t, x, deg)
     residual = x - np.polyval(p, t)
@@ -1957,14 +1970,23 @@ def detrend(x, deg=1):
     
 def lag1_acf(x, detrend_deg=1):
     """ Lag-1 autocorrelation function
-    
         as defined in Riley 2004, Eqn (2)
         
-        Note: a faster algorithm based on FFT might be better!?
+        Parameters
+        ----------
+        x: numpy.array
+            time-series
+        Returns
+        -------
+        ACF: float
+            Lag-1 autocorrelation for input time-series x
         
-        numpy.corrcoeff() gives similar but not identical results.
-        #c = np.corrcoef( np.array(x[:-lag]), np.array(x[lag:]) )
-        #r1 = c[0,1] # lag-1 autocorrelation of x
+        Notes
+        -----
+        * a faster algorithm based on FFT might be better!?
+        * numpy.corrcoeff() gives similar but not identical results.
+            #c = np.corrcoef( np.array(x[:-lag]), np.array(x[lag:]) )
+            #r1 = c[0,1] # lag-1 autocorrelation of x
     """
     mu = np.mean(x)
     a=0
