@@ -1,8 +1,3 @@
-.. fits2hdf documentation master file, created by
-   sphinx-quickstart on Fri May 22 16:29:56 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Getting started
 ===============
 
@@ -44,13 +39,14 @@ from a time-interval-counter measuring the 1PPS output of two clocks.
 
 ::
 
-    import allantools
-    import pylab as plt
-    x = allantools.noise.white(10000)        # Generate some phase data, in seconds.
-    (taus, adevs, errors, ns) = allantools.oadev(x)
-    # when only one input parameter is given, phase data in seconds is assummed
-    # when no rate parameter is given, rate=1.0 is the default
-    # when no taus parameter is given, taus='octave' is the default
+    >>> import allantools
+    >>> import pylab as plt
+    >>> x = allantools.noise.white(10000)        # Generate some phase data, in seconds.
+    >>> (taus, adevs, errors, ns) = allantools.oadev(x)
+
+when only one input parameter is given, phase data in seconds is assummed
+when no rate parameter is given, rate=1.0 is the default
+when no taus parameter is given, taus='octave' is the default
 
 Frequency data example
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -61,14 +57,15 @@ frequency, is left to the user.
 
 ::
 
-    import allantools
-    import pylab as plt
-    t = numpy.logspace(0, 3, 50)             # tau values from 1 to 1000
-    y = allantools.noise.white(10000)        # Generate some frequency data
-    r = 12.3  # sample rate in Hz of the input data
-    (t2, ad, ade, adn) = allantools.oadev(freqyency=y, rate=r, taus=t)    # Compute the overlapping ADEV
-    plt.loglog(t2, ad)                                      # Plot the results
-    plt.show()
+    >>> import allantools
+    >>> import pylab as plt
+    >>> import numpy as np
+    >>> t = np.logspace(0, 3, 50)  # tau values from 1 to 1000
+    >>> y = allantools.noise.white(10000)  # Generate some frequency data
+    >>> r = 12.3  # sample rate in Hz of the input data
+    >>> (t2, ad, ade, adn) = allantools.oadev(y, rate=r, data_type="freq", taus=t)  # Compute the overlapping ADEV
+    >>> fig = plt.loglog(t2, ad) # Plot the results
+    >>> # plt.show()
 
 variations on taus parameter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -77,14 +74,14 @@ The taus parameter can be given in a number of ways:
 
 ::
 
-    (t, d, e, n) = allantools.adev(my_phase) # omitted, defaults to taus='octave'
-    (t, d, e, n) = allantools.adev(my_phase, taus=[]) # empty list, defaults to taus='octave'
-    (t, d, e, n) = allantools.adev(my_phase, taus='all') # 1, 2, 3, 4, 5, 6, 7, ...
-    (t, d, e, n) = allantools.adev(my_phase, taus='octave') # 1, 2, 4, 8, 16, ...
-    (t, d, e, n) = allantools.adev(my_phase, taus='decade') # 1, 2, 4, 10, 20, 40, 100, ...
-    my_taus=[1,5,15,28]
-    (t, d, e, n) = allantools.adev(my_phase, taus=my_taus) # python list
-    (t, d, e, n) = allantools.adev(my_phase, taus=numpy.array(my_taus)) # numpy array
+    >>> (t, d, e, n) = allantools.adev(x) # omitted, defaults to taus='octave'
+    >>> (t, d, e, n) = allantools.adev(x, taus=[]) # empty list, defaults to taus='octave'
+    >>> (t, d, e, n) = allantools.adev(x, taus='all') # 1, 2, 3, 4, 5, 6, 7, ...
+    >>> (t, d, e, n) = allantools.adev(x, taus='octave') # 1, 2, 4, 8, 16, ...
+    >>> (t, d, e, n) = allantools.adev(x, taus='decade') # 1, 2, 4, 10, 20, 40, 100, ...
+    >>> my_taus=[1,5,15,28]
+    >>> (t, d, e, n) = allantools.adev(x, taus=my_taus) # python list
+    >>> (t, d, e, n) = allantools.adev(x, taus=np.array(my_taus)) # numpy array
     
     
 Further examples are given in the ``examples`` directory of the package. For more exciting API musings you
