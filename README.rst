@@ -154,9 +154,9 @@ To exclude tests that run slowly::
 
     $ py.test -m "not slow" --durations=10
 
-To exclude both (note option change)::
+To exclude both (note option change) and also check docstrings is ReST files ::
 
-    $ py.test -k "not (slow or fails)" --durations=10
+    $ py.test -k "not (slow or fails)" --durations=10 --doctest-glob='*.rst'
 
 To run the above command without installing the package::
 
