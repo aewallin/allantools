@@ -1400,8 +1400,8 @@ def tau_reduction(ms, rate, n_per_decade):
     """Reduce the number of taus to maximum of n per decade (Helper function)
 
     takes in a tau list and reduces the number of taus to a maximum amount per
-    decade. This is only usefull if more that the "decade" and "octave" but
-    less than the "all" taus are wanted. E.g. in to show certain features of
+    decade. This is only useful if more than the "decade" and "octave" but
+    less than the "all" taus are wanted. E.g. to show certain features of
     the data one might want 100 points per decade.
 
     NOTE: The algorithm is slightly inaccurate for ms under n_per_decade, and
@@ -1431,10 +1431,8 @@ def tau_reduction(ms, rate, n_per_decade):
     ms = np.int64(ms)
     keep = np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) -
                     np.rint(n_per_decade*np.log10(ms[:-1])))
-    if len(keep)>len(ms):
-        keep = keep[:len(ms)] # ugly patch for issue..
-    elif len(keep)<len(ms):
-        ms = ms[:len(keep)]
+    # Adjust ms size to fit above-defined mask
+    ms = ms[:-1]
     assert len(ms) == len(keep) # this causes a test-error!
     ms = ms[keep]
     taus = ms/float(rate)
