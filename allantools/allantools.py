@@ -1171,7 +1171,9 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
     ----------
     data: np.array
         Input data. Provide either phase or frequency (fractional,
-        adimensional).
+        adimensional). Warning : phase data works better (frequency data is
+        first trantformed into phase using numpy.cumsum() function, which can
+        lead to poor results).
     rate: float
         The sampling rate for data, in Hz. Defaults to 1.0
     data_type: {'phase', 'freq'}
@@ -1206,6 +1208,8 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
         numper of terms n in the adev estimate.
 
     """
+    if (data_type == "freq"):
+        print("Warning : phase data is preferred as input to gradev()")
     phase = input_to_phase(data, rate, data_type)
     (data, m, taus_used) = tau_generator(phase, rate, taus)
 
@@ -1241,9 +1245,9 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
                   2*tau^2
     """
 
-    d2 = data[2 * mj::stride]
-    d1 = data[1 * mj::stride]
-    d0 = data[::stride]
+    d2 = data[2 * int(mj)::int(stride)]
+    d1 = data[1 * int(mj)::int(stride)]
+    d0 = data[::int(stride)]
 
     n = min(len(d0), len(d1), len(d2))
 
@@ -1260,12 +1264,18 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
 
     dev = np.sqrt(s / (2.0 * n)) / mj  * rate
     #deverr = dev / np.sqrt(n) # old simple errorbars
+    if (noisetype == 'wp'):
+        alpha = 2
+    elif (noisetype == 'wf'):
+        alpha = 0
+    elif (noisetype == 'fp'):
+        alpha = -2
+    else:
+        alpha = None
+
     if n > 1:
-        deverr = uncertainty_estimate(N,
-                                      mj,
-                                      dev,
-                                      ci,
-                                      noisetype)
+        edf = edf_simple(N, mj, alpha)
+        deverr = confidence_interval(dev, ci, edf)
     else:
         deverr = [0, 0]
 
@@ -1433,7 +1443,7 @@ def tau_reduction(ms, rate, n_per_decade):
                     np.rint(n_per_decade*np.log10(ms[:-1])))
     # Adjust ms size to fit above-defined mask
     ms = ms[:-1]
-    assert len(ms) == len(keep) # this causes a test-error!
+    assert len(ms) == len(keep)
     ms = ms[keep]
     taus = ms/float(rate)
 
@@ -2187,6 +2197,9 @@ def frequency2phase(freqdata, rate):
         For phase in units of radians, see phase2radians()
     """
     dt = 1.0 / float(rate)
+    # Protect against NaN values in input array (issue #60)
+    # Reintroduces data trimming as in commit 503cb82
+    freqdata = trim_data(freqdata)
     phasedata = np.cumsum(freqdata) * dt
     phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this?
     # so that phase starts at zero and len(phase)=len(freq)+1 ??
