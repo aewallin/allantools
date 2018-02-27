@@ -24,6 +24,7 @@ __all__ = [
     'three_cornered_hat_phase',
     'noise',
     'gradev',
+    'trim_data',
     'edf_simple',
     'edf_greenhall',
     'edf_totdev',
@@ -70,6 +71,7 @@ from .allantools import mtie_phase_fast
 from .allantools import tierms
 
 from .allantools import gradev
+from .allantools import trim_data
 
 from .allantools import edf_simple
 from .allantools import edf_greenhall

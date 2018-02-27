@@ -1171,7 +1171,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
     ----------
     data: np.array
         Input data. Provide either phase or frequency (fractional,
-        adimensional). Warning : phase data works better (frequency data is
+        adimensional). Warning : phase data works better (frequency data is
         first trantformed into phase using numpy.cumsum() function, which can
         lead to poor results).
     rate: float
@@ -1209,7 +1209,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
 
     """
     if (data_type == "freq"):
-        print("Warning : phase data is preferred as input to gradev()")
+        print("Warning : phase data is preferred as input to gradev()")
     phase = input_to_phase(data, rate, data_type)
     (data, m, taus_used) = tau_generator(phase, rate, taus)
 
@@ -1490,28 +1490,18 @@ def remove_small_ns(taus, devs, deverrs, ns):
 
 def trim_data(x):
     """
-    Trim leading and trailing NaNs from dataset:
-    This is done by creating a boolean mask that is False for all leading and
-    trailing NaN values. The mask is True for all values from the first non-NaN
-    to the last non-NaN. The mask is then applied to the data set and returned.
+    Trim leading and trailing NaNs from dataset
+    This is done by browsing the array from each end and store the index of the
+    first non-NaN in each case, the return the appropriate slice of the array
     """
-    # create boolean mask default True:
-    mask = np.ones(len(x), dtype=bool)
-    # Set indices of mask to False for leading NaNs
-    for i in range(0, len(x)):
-        if np.isnan(x[i]) == True:
-            mask[i] = False
-        else:
-            break
-
-    # Set indices of mask to False for trailing NaNs
-    for j in range(len(x)-1, 0, -1):
-        if np.isnan(x[j]) == True:
-            mask[j] = False
-        else:
-            break
-
-    return x[mask]
+    # Find indices for first and last valid data
+    first = 0
+    while np.isnan(x[first]):
+        first += 1
+    last = len(x)
+    while np.isnan(x[last - 1]):
+        last -= 1
+    return x[first:last]
 
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
                              phasedata_ca, rate, taus, function):
@@ -2198,7 +2188,7 @@ def frequency2phase(freqdata, rate):
     """
     dt = 1.0 / float(rate)
     # Protect against NaN values in input array (issue #60)
-    # Reintroduces data trimming as in commit 503cb82
+    # Reintroduces data trimming as in commit 503cb82
     freqdata = trim_data(freqdata)
     phasedata = np.cumsum(freqdata) * dt
     phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this?
