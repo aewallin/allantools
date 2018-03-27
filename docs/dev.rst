@@ -35,6 +35,7 @@ Creating a source distribution
 
     python setup.py sdist
 
+This creates a package in dist/
 Testing the source distribution. The install takes a long time while 
 compiling numpy and scipy.
 
@@ -45,19 +46,11 @@ compiling numpy and scipy.
     $ tmp/bin/python
     >>> import allantools
 
-Registering, uploading and testing  source distribution to PyPi test server
+Uploading to PyPi.
 (requries a ~/.pypirc with username and password)
 
 ::
 
-    $ python setup.py register -r test
-    $ python setup.py sdist upload -r test
-    $ pip install -i https://testpypi.python.org/pypi AllanTools
+    $ twine upload dist/*
 
-Registering and uploading to PyPi
-
-::
-
-    $ python setup.py register
-    $ python setup.py sdist upload
-
+Check result at https://pypi.python.org/pypi/AllanTools
