@@ -1,25 +1,25 @@
-#
-# Allan deviation tools
-# Anders Wallin (anders.e.e.wallin "at" gmail.com)
-# v1.0 2014 January
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+"""
+ Allan deviation tools
+ Anders Wallin (anders.e.e.wallin "at" gmail.com)
+ v1.0 2014 January
 
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-# Three-cornered-hat test
-#
-# See http://www.wriley.com/3-CornHat.htm
-# 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  Three-cornered-hat test
+ 
+  See http://www.wriley.com/3-CornHat.htm
+"""
 
 import numpy
 import matplotlib.pyplot as plt # only for plotting, not required for calculations
