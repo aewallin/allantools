@@ -6,7 +6,8 @@ Allan deviation tools
 
 Version history
 ---------------
-Unreleased development version
+**2018.03** 2018 March 27
+- change license to LGPL v3 or later
 - lag-1 autocorrelation noise identification function
 - B1 noise identification
 - R(n) noise identification
