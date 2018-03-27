@@ -12,7 +12,7 @@ AllanTools
     :target: https://coveralls.io/github/aewallin/allantools?branch=master 
 
 A python library for calculating Allan deviation and related 
-time & frequency statistics. GPL v3+ license.
+time & frequency statistics. LGPL v3+ license.
 
 Developed at https://github.com/aewallin/allantools and also available 
 on PyPi at https://pypi.python.org/pypi/AllanTools
