@@ -72,7 +72,7 @@ class Dataset():
             adimensional)
         rate: float
             The sampling rate for data, in Hz. Defaults to 1.0
-        data_typ: {'phase', 'freq'}
+        data_type: {'phase', 'freq'}
             Data type, i.e. phase or frequency. Defaults to "phase".
         taus: np.array
             Array of tau values, in seconds, for which to compute statistic.
@@ -101,7 +101,7 @@ class Dataset():
             adimensional)
         rate: float
             The sampling rate for data, in Hz. Defaults to 1.0
-        data_typ: {'phase', 'freq'}
+        data_type: {'phase', 'freq'}
             Data type, i.e. phase or frequency. Defaults to "phase".
         taus: np.array
             Array of tau values, in seconds, for which to compute statistic.
