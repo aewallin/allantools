@@ -59,7 +59,7 @@ if __name__ == "__main__":
     phaseBC = [b-c for (b,c) in zip(phaseB,phaseC)]
     phaseCA = [c-a for (c,a) in zip(phaseC,phaseA)]
 
-    (taus,devA) = allantools.three_cornered_hat_phase(phaseAB,phaseBC,phaseCA,rate,t, allantools.mdev)
+    (taus,devA,err_a,ns_ab) = allantools.three_cornered_hat_phase(phaseAB,phaseBC,phaseCA,rate,t, allantools.mdev)
     print("TCH devA")
     
     plotallan_phase(plt, phaseA, 1, t, 'ro', 'true A phase')
