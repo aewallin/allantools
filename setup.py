@@ -23,5 +23,5 @@ setup(name=pkginfo['name'],
       # include_dirs=[numpy.get_include()],
       setup_requires=['pytest-runner'],
       tests_require=['pytest', 'numpy'],
-      long_description=open('README.rst', 'r').read(),
+      long_description=open('README.rst', 'r', encoding='utf8').read(),
       )
