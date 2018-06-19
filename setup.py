@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from setuptools import setup
+from io import open
 import json
 import os
 
