@@ -3,6 +3,7 @@ python:
     - "2.7"
     - "3.4"
     - "3.5"
+    - "3.6"
 # removed 3.3 because scipy gives and error
 sudo: required
 install:
