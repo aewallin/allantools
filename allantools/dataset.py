@@ -48,19 +48,6 @@ class Dataset():
     object's ``out`` member.
 
     """
-    #: input data Dict, will be initialized by __init__()
-    inp = {"data": None,
-           "rate": None,
-           "data_type": None,
-           "taus": None}
-
-    #: output data Dict, to be populated by compute()
-    out = {"taus": None,
-           "stat": None,
-           "stat_err": None,
-           "stat_n": None,
-           "stat_unc": None,
-           "stat_id": None}
 
     def __init__(self, data=None, rate=1.0, data_type="phase", taus=None):
         """ Initialize object with input data
@@ -85,6 +72,19 @@ class Dataset():
             A Dataset() instance
 
         """
+        #: input data Dict, 
+        self.inp = {"data": None,
+                    "rate": None,
+                    "data_type": None,
+                    "taus": None}
+
+        #: output data Dict, to be populated by compute()
+        self.out = {"taus": None,
+                    "stat": None,
+                    "stat_err": None,
+                    "stat_n": None,
+                    "stat_unc": None,
+                    "stat_id": None}
         self.inp["data"] = data
         self.inp["rate"] = rate
         self.inp["data_type"] = data_type
