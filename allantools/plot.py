@@ -98,3 +98,7 @@ class Plot():
         rendering
         """
         self.plt.show()
+
+    def save(self, f):
+        self.plt.savefig(f)
+        
