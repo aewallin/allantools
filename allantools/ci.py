@@ -198,6 +198,8 @@ def b1(x, af, rate):
 
 def b1_theory(N, mu):
     """ Expected B1 ratio for given time-series length N and exponent mu
+    
+        FIXME: add reference (paper & link)
         
         The exponents are defined as
         S_y(f) = h_a f^alpha    (power spectrum of y)
