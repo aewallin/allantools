@@ -97,7 +97,7 @@ import numpy as np
 #import scipy.stats # used in confidence_intervals()
 #import scipy.signal # decimation in lag-1 acf
 
-import ci # edf, confidence intervals
+#import ci # edf, confidence intervals
 
 # Get version number from json metadata
 pkginfo_path = os.path.join(os.path.dirname(__file__),
@@ -1281,8 +1281,8 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
         alpha = None
 
     if n > 1:
-        edf = ci.edf_simple(N, mj, alpha)
-        deverr = ci.confidence_interval(dev, confidence, edf)
+        edf = edf_simple(N, mj, alpha)
+        deverr = confidence_interval(dev, confidence, edf)
     else:
         deverr = [0, 0]
 

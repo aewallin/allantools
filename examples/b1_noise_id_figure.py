@@ -95,7 +95,7 @@ def b1_boundary(b_hi, N):
     if b1_lo >= -4:
         return np.sqrt(b1_lo*b1_hi) # geometric mean
     else:
-        return 0.5*(b1_lo+b1_hi)
+        return 0.5*(b1_lo+b1_hi) # arithemtic mean
 
 plt.figure()
 N_points = pow(2,6)
