@@ -82,6 +82,7 @@ from .allantools import autocorr_noise_id
 from .allantools import confidence_interval_noiseID
 
 from . import noise
+from . import ci
 
 from .dataset import Dataset
 from .plot import Plot

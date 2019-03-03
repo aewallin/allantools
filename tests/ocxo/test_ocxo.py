@@ -68,11 +68,11 @@ class TestOCXO():
                 (lo2,hi2) = allan.confidence_interval_noiseID(data, dev, af=int(row['m']), dev_type="adev", data_type="freq")
                 assert np.isclose( lo2, row['dev_min'] , rtol=1e-2)
                 assert np.isclose( hi2, row['dev_max'] , rtol=1e-2)
-                print(" CI OK! tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']) )
+                print(" CI OK! tau= %.0f lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']) )
             except NotImplementedError:
                 print("can't do CI for tau= %f"%row['tau'])
                 pass
-
+            
     def test_oadev_ci(self):
         """ Overlapping ADEV with confidence intervals """
         s32rows = testutils.read_stable32(resultfile='oadev_octave.txt', datarate=1.0)
@@ -190,7 +190,7 @@ class TestOCXO():
                 assert alpha_int == s32_alpha      
             
             # noise-ID from phase
-            if len(phase)/s32_AF > 30:
+            if len(phase)/s32_AF > 20:
                 alpha_int, alpha, d, rho = allan.autocorr_noise_id( phase, data_type='phase', af=s32_AF )
                 print( "x: ",s32_tau, s32_alpha, alpha_int, alpha, rho, d )
                 assert alpha_int == s32_alpha
@@ -199,7 +199,8 @@ class TestOCXO():
 if __name__ == "__main__":
     #pytest.main()
     t =TestOCXO()
-    t.test_adev_ci_and_noiseID()
+    #t.test_adev_ci_and_noiseID()
+    t.test_noise_id()
 """
     t.test_adev_ci()
     t.test_oadev_ci()
