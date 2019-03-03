@@ -124,29 +124,154 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", 
 
 
 ########################################################################
-# Noise Identification
+# Noise Identification using R(n)
 
-def detrend(x, deg=1):
-    """
-    remove polynomial from data.
-    used by autocorr_noise_id()
+def rn(x, af, rate):
+    """ R(n) ratio for noise identification
     
-    Parameters
-    ----------
-    x: numpy.array
-        time-series
-    deg: int
-        degree of polynomial to remove from x
-        
-    Returns
-    -------
-    x_detrended: numpy.array
-        detrended time-series
+        ration of MVAR to AVAR
     """
-    t=range(len(x))
-    p = np.polyfit(t, x, deg)
-    residual = x - np.polyval(p, t)
-    return residual
+    (taus,devs,errs,ns) = at.adev(x,taus=[af*rate], data_type='phase', rate=rate) 
+    oadev_x = devs[0]
+    (mtaus,mdevs,errs,ns) = at.mdev(x,taus=[af*rate], data_type='phase', rate=rate)
+    mdev_x = mdevs[0]
+    rn = pow(mdev_x/oadev_x,2)
+    return rn
+
+def rn_theory(af, b):
+    """ R(n) ratio expected from theory for given noise type
+    
+        alpha = b + 2
+    """
+    # From IEEE1139-2008
+    #   alpha   beta    ADEV_mu MDEV_mu Rn_mu
+    #   -2      -4       1       1       0      Random Walk FM
+    #   -1      -3       0       0       0      Flicker FM
+    #    0      -2      -1      -1       0      White FM
+    #    1      -1      -2      -2       0      Flicker PM
+    #    2      0       -2      -3      -1      White PM
+    
+    # (a=-3 flicker walk FM)
+    # (a=-4 random run FM)
+    if b==0:
+        return pow(af,-1)
+    elif b==-1:
+        # f_h = 0.5/tau0  (assumed!)
+        # af = tau/tau0
+        # so f_h*tau = 0.5/tau0 * af*tau0 = 0.5*af
+        avar = (1.038+3*np.log(2*np.pi*0.5*af)) / (4.0*pow(np.pi,2))
+        mvar = 3*np.log(256.0/27.0)/(8.0*pow(np.pi,2))
+        return mvar/avar
+    else:
+        return pow(af,0)
+
+def rn_boundary(af, b_hi):
+    """
+    R(n) ratio boundary for selecting between [b_hi-1, b_hi]
+    alpha = b + 2
+    
+    """
+    return np.sqrt( rn_theory(af, b)*rn_theory(af, b-1) ) # geometric mean         
+
+########################################################################
+# Noise Identification using B1
+
+def b1(x, af, rate):
+    """ B1 ratio for noise identification
+        (and bias correction?)
+    
+        ratio of Standard Variace to AVAR
+    """
+    (taus,devs,errs,ns) = adev(x,taus=[af*rate],data_type="phase", rate=rate) 
+    oadev_x = devs[0]
+    avar = pow(oadev_x,2.0)
+    
+    # variance of y, at given af
+    y = np.diff(x)
+    y_cut = np.array( y[:len(y)-(len(y)%af)] ) # cut to length
+    assert len(y_cut)%af == 0
+    y_shaped = y_cut.reshape( ( int(len(y_cut)/af), af) )
+    y_averaged = np.average(y_shaped,axis=1) # average
+    var = np.var(y_averaged, ddof=1)
+    
+    return var/avar
+
+def b1_theory(N, mu):
+    """ Expected B1 ratio for given time-series length N and exponent mu
+        
+        The exponents are defined as
+        S_y(f) = h_a f^alpha    (power spectrum of y)
+        S_x(f) = g_b f^b        (power spectrum of x)
+        bias = const * tau^mu
+        
+        and (b, alpha, mu) relate to eachother by:
+        b    alpha   mu
+        0    +2      -2
+       -1    +1      -2   resolve between -2 cases with R(n)
+       -2     0      -1
+       -3    -1       0
+       -4    -2      +1
+       -5    -3      +2
+       -6    -4      +3 for HDEV, by applying B1 to frequency data, and add +2 to resulting mu
+    """
+    if mu == 2:
+        return float(N)*(float(N)+1.0)/6.0
+        #up = N*(1.0-pow(N, mu))
+        #down = 2*(N-1.0)*(1-pow(2.0, mu))
+        #return up/down        
+    elif mu == 1:
+        return float(N)/2.0
+    elif mu == 0:
+        return N*np.log(N)/(2.0*(N-1.0)*np.log(2))
+    elif mu == -1:
+        return 1
+    elif mu == -2:
+        return (pow(N,2)-1.0)/(1.5*N*(N-1.0))
+    else:
+        up = N*(1.0-pow(N, mu))
+        down = 2*(N-1.0)*(1-pow(2.0, mu))
+        return up/down
+        
+    assert False # we should never get here
+
+def b1_boundary(b_hi, N):
+    """
+    B1 ratio boundary for selecting between [b_hi-1, b_hi]
+    alpha = b + 2
+    
+    """
+    b_lo = b_hi-1
+    b1_lo = b1_theory(N, b_to_mu(b_lo))
+    b1_hi = b1_theory(N, b_to_mu(b_hi))
+    if b1_lo >= -4:
+        return np.sqrt(b1_lo*b1_hi) # geometric mean
+    else:
+        return 0.5*(b1_lo+b1_hi) # arithemtic mean
+
+def b_to_mu(b):
+    """
+    return mu, parameter needed for B1 ratio function b1()
+    alpha = b + 2
+    """
+    a = b + 2
+    if a==+2:
+        return -2
+    elif a==+1:
+        return -2
+    elif a==0:
+        return -1
+    elif a==-1:
+        return 0
+    elif a==-2:
+        return 1
+    elif a==-3:
+        return 2
+    elif a==-4:
+        return 3
+    assert False
+
+########################################################################
+# Noise Identification using ACF
     
 def lag1_acf(x, detrend_deg=1):
     """ Lag-1 autocorrelation function
@@ -254,6 +379,27 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
             d = d + 1
     assert False # we should not get here ever.
 
+def detrend(x, deg=1):
+    """
+    remove polynomial from data.
+    used by autocorr_noise_id()
+    
+    Parameters
+    ----------
+    x: numpy.array
+        time-series
+    deg: int
+        degree of polynomial to remove from x
+        
+    Returns
+    -------
+    x_detrended: numpy.array
+        detrended time-series
+    """
+    t=range(len(x))
+    p = np.polyfit(t, x, deg)
+    residual = x - np.polyval(p, t)
+    return residual
 
 ########################################################################
 # Equivalent Degrees of Freedom

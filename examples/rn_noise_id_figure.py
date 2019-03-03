@@ -73,6 +73,7 @@ for n in range(N_points):
     rate=1.0
     rn_val = rn_noise_id(x, af, rate)
     pts.append( (b, af, rn_val) )
+
 print "calc done"
 colors = { 0:'r', -1:'g', -2:'b', -3:'m', -4:'k', -5:'y'}
 for p in pts:
