@@ -73,16 +73,15 @@ from .allantools import tierms
 from .allantools import gradev
 from .allantools import trim_data
 
-from .allantools import edf_simple
-from .allantools import edf_greenhall
-from .allantools import edf_totdev
-from .allantools import edf_mtotdev
-from .allantools import confidence_interval
-from .allantools import autocorr_noise_id
-from .allantools import confidence_interval_noiseID
+from .ci import edf_simple
+from .ci import edf_greenhall
+from .ci import edf_totdev
+from .ci import edf_mtotdev
+from .ci import confidence_interval
+from .ci import autocorr_noise_id
+from .ci import confidence_interval_noiseID
 
 from . import noise
-from . import ci
 
 from .dataset import Dataset
 from .plot import Plot

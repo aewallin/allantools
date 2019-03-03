@@ -97,6 +97,8 @@ import numpy as np
 #import scipy.stats # used in confidence_intervals()
 #import scipy.signal # decimation in lag-1 acf
 
+import ci # edf, confidence intervals
+
 # Get version number from json metadata
 pkginfo_path = os.path.join(os.path.dirname(__file__),
                             'allantools_info.json')
@@ -1239,7 +1241,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
     # Note that errors are split in 2 arrays
     return remove_small_ns(taus_used, ad, [ade_l, ade_h], adn)
 
-def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
+def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
     """ see http://www.leapsecond.com/tools/adev_lib.c
         stride = mj for nonoverlapping allan deviation
         stride = 1 for overlapping allan deviation
@@ -1279,8 +1281,8 @@ def calc_gradev_phase(data, rate, mj, stride, ci, noisetype):
         alpha = None
 
     if n > 1:
-        edf = edf_simple(N, mj, alpha)
-        deverr = confidence_interval(dev, ci, edf)
+        edf = ci.edf_simple(N, mj, alpha)
+        deverr = ci.confidence_interval(dev, confidence, edf)
     else:
         deverr = [0, 0]
 
