@@ -37,19 +37,23 @@ class TestPhaseDatCI():
         # separate CI computation
         los=[]
         his=[]
-        for (d,t, n, s32) in zip(devs, taus, ns,s32_rows):
+        for (d,t, n, s32) in zip(devs, taus, ns, s32_rows):
             # Note FIXED alpha here 
             edf2 = allan.edf_greenhall( alpha=0, d=2, m=t, N=len(phase), overlapping = False, modified=False )
-            (lo,hi) = allan.confidence_interval( dev=d, edf=edf2 )           
+            (lo,hi) = allan.confidence_interval( dev=d, edf=edf2 )   
+            assert np.isclose( lo, s32['dev_min'] , rtol=1e-2)
+            assert np.isclose( hi, s32['dev_max'] , rtol=1e-2)
+            print(" alpha=0 FIXED, CI OK! tau = %f" % t)
+                        
             los.append(lo)
             his.append(hi)
             try:
                 (lo2,hi2) = allan.confidence_interval_noiseID(phase, d, af=int(t), dev_type="adev", data_type="phase")
                 assert np.isclose( lo2, s32['dev_min'] , rtol=1e-2)
                 assert np.isclose( hi2, s32['dev_max'] , rtol=1e-2)
-                print(" CI OK! tau= ",t)
+                print(" ACF_NID CI OK! tau = %f"%t)
             except NotImplementedError:
-                print("can't do CI for tau= ",t)
+                print("can't do CI for tau = %f"%t)
                 pass
         
         # compare to Stable32
@@ -251,10 +255,10 @@ class TestPhaseDatCI():
             try:
                 alpha_int = allan.autocorr_noise_id( phase , af=af)[0]
                 assert alpha_int == alpha
+                print("OK noise-ID for af = %d"%af)
             except:
-                print("can't do noise-ID for af= ",af)
-                pass
-            print( tau, alpha, alpha_int )
+                print("can't do noise-ID for af = %d"%af)
+            print("tau= %f, alpha= %f, alpha_int = %d"%(tau, alpha, alpha_int) )
     
     # FIXME: failing test that we don't run
     def slow_failing_phasedat_mtotdev(self):
