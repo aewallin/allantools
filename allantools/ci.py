@@ -181,6 +181,14 @@ def b1(x, af, rate):
         (and bias correction?)
     
         ratio of Standard Variace to AVAR
+        
+        Howe, Beard, Greenhall, Riley, 
+        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS 
+        32nd PTTI, 2000
+        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
+        
+        Barnes, 1974
+        https://tf.nist.gov/general/pdf/11.pdf
     """
     (taus,devs,errs,ns) = adev(x,taus=[af*rate],data_type="phase", rate=rate) 
     oadev_x = devs[0]
@@ -216,6 +224,8 @@ def b1_theory(N, mu):
        -5    -3      +2
        -6    -4      +3 for HDEV, by applying B1 to frequency data, and add +2 to resulting mu
     """
+    
+    # see Table 3 of Howe 2000
     if mu == 2:
         return float(N)*(float(N)+1.0)/6.0
         #up = N*(1.0-pow(N, mu))
@@ -339,6 +349,12 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
         http://www.stable32.com/Auto.pdf
         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.503.9864&rep=rep1&type=pdf
         
+            
+    Power law noise identification using the lag 1 autocorrelation
+    Riley,W.J. et al.
+    18th European Frequency and Time Forum (EFTF 2004)
+    https://ieeexplore.ieee.org/document/5075021
+        
     """
     d = 0 # number of differentiations
     lag = 1
@@ -441,6 +457,10 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
         -------
         edf: float
             Equivalent degrees of freedom
+        
+        Greenhall, Riley, 2004
+        https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
+        UNCERTAINTY OF STABILITY VARIANCES BASED ON FINITE DIFFERENCES
         
         Notes
         -----
