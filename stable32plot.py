@@ -140,9 +140,9 @@ def sigmaplot(tau1,sigma1,error1,legend1="",**arg):
     if sigmatext==True:
         if len(tau1)<=20:
             show_text(tlocx,tlocy,tau1,sigma1)
-        else:
-            disptau1=tau1[0:len(tau1)]
-            dispsigma1=sigma1[0:len(sigma1)]
+        else:# to be changed
+            disptau1=tau1[0:20]
+            dispsigma1=sigma1[0:20]
             show_text(tlocx,tlocy,disptau1,dispsigma1)
                       
     """#show xlabel,ylabel,title"""
