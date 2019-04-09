@@ -6,7 +6,7 @@
 
 """ 
 import allantools
-from pylab import figure,show
+from pylab import figure,show,plot
 from stable32plot import sigmaplot,dataplot#import 2 functions: sigmaplot,dataplot
 
 
@@ -14,6 +14,7 @@ from stable32plot import sigmaplot,dataplot#import 2 functions: sigmaplot,datapl
 x1 = allantools.noise.white(1000)
 (taus, adevs, errors, ns) = allantools.adev(x1)
 (taust, adevst, errorst, nst) = allantools.tdev(x1)
+
 adevs2=[]
 adevs3=[]
 adevs4=[]
@@ -39,7 +40,14 @@ for i in range(len(taus)):
     errors5.append(0.3*errors[i])
     errors6.append(0.2*errors[i])
     
-x2 = allantools.noise.white(500)
+x2 = allantools.noise.white(10000)
+for i in range(len(x2)):
+    x2[i]=x2[i]*1e-9
+
+x3 = allantools.noise.white(500)
+for i in range(len(x3)):
+    x3[i]=x3[i]*1e-9
+
 
 """#--------------eg1: plot single adev curve with text list----------------"""
 figure()
@@ -51,10 +59,9 @@ sigmaplot(taus,adevs,errors,"test 1",taun=taus,sigman=adevsn)
 
 """#--------------eg3: plot single tdev curve with text list----------------"""
 figure()
-sigmaplot(taust,adevst,errorst,sigmatype="tdev")
+sigmaplot(taust,adevst,errorst,sigmatype="tdev",taulist=[1,16,32])
 
 """#--------------eg4: plot multiple adev curve with noise floor of the test device"""
-"""# eg4 contains all the args """ 
 figure()
 sigmaplot(taus,adevs,errors,"test 1",
          tau2=taus,sigma2=adevs2,error2=errors2,legend2="test 2",
@@ -71,8 +78,8 @@ dataplot(range(len(x2)),x2)
 
 """#--------------eg6: plot multiple phase data----------------"""
 figure()
-dataplot(range(len(x1)),x1,"test 1",
-         sec2=range(len(x2)),data2=x2,legend2="test 2",
+dataplot(range(len(x2)),x2,"test 1",
+         sec2=range(len(x3)),data2=x3,legend2="test 2",
          datatype='phase')
 
 show()
