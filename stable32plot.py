@@ -22,7 +22,8 @@
                'totdev','ttotdev','mtotdev','htotdev' (default: 'adev')
     sigmatext: is a bool variable, show/hide tau1-sigma1 text list in the plot
                 (default: True)
-
+    taulist: set the taulist-sigma values displayed in the text box
+    
 2) function dataplot:
 --plot stable32 style frequency/phase data;
 --plot maximum 6 curves;
@@ -33,6 +34,7 @@
     sec5,data5,legend5: plot the 5th curve
     sec6,data6,legend6: plot the 6th curve
     datatype: supported data types includes 'freq' and 'phase'(default: 'freq')
+    
 
 """ 
 
@@ -133,17 +135,35 @@ def sigmaplot(tau1,sigma1,error1,legend1="",**arg):
     show_grid()
     
     """#show tau&sigma list text"""
+    tau_tmplist=list(tau1)
+    if 'taulist' in arg.keys():
+        taulist=arg['taulist']
+        sigmalist=[0]*len(taulist)
+        for i in range(len(taulist)):
+            if taulist[i] in tau1:             
+                sigmalist[i]=sigma1[tau_tmplist.index(taulist[i])]
+##            else:# to raise error...                
+    else:
+        taulist=tau1
+        sigmalist=sigma1
+        
     xlimval=ax.get_xlim()
     ylimval=ax.get_ylim()
     tlocx=xlimval[1]-0.12*(xlimval[1]-xlimval[0])#set text x-axis location
     tlocy=ylimval[1]-0.12*(ylimval[1]-ylimval[0])#set text y-axis location
-    if sigmatext==True:
-        if len(tau1)<=20:
-            show_text(tlocx,tlocy,tau1,sigma1)
-        else:# to be changed
-            disptau1=tau1[0:20]
-            dispsigma1=sigma1[0:20]
-            show_text(tlocx,tlocy,disptau1,dispsigma1)
+    if len(taulist)<=5:#set text font size
+        textftsize=12
+    elif len(taulist)<=10:
+        textftsize=10
+    else:
+        textftsize=9
+    if sigmatext==True:#show text box if sigmatext==True
+        if len(taulist)<=20:
+            show_text(tlocx,tlocy,taulist,sigmalist,textftsize)
+        else:#change....
+            disptau1=taulist[0:20]
+            dispsigma1=sigmalist[0:20]
+            show_text(tlocx,tlocy,disptau1,dispsigma1,textftsize)
                       
     """#show xlabel,ylabel,title"""
     show_label_title(sigmatype)
@@ -165,13 +185,13 @@ def show_grid():
     xticks(fontsize=12,fontweight='bold',family='Times New Roman')
     yticks(fontsize=12,fontweight='bold',family='Times New Roman',rotation=90)
 
-def show_text(lx,ly,tmptau,tmpsigma):
+def show_text(lx,ly,tmptau,tmpsigma,tmpftsize):
     disp_text="   Tau"+'{0:11}'.format(' ')+"Sigma \n"
     for i in range(len(tmptau)):
         disp_text+='{0:7.2e}'.format(tmptau[i])+'{0:4}'.format(' ')+'{0:7.2e}'.format(tmpsigma[i])
         if i<=(len(tmptau)-2):
             disp_text+='\n'   
-    text(lx,ly,disp_text,size=9,
+    text(lx,ly,disp_text,size=tmpftsize,
         va="top", ha="right", multialignment="center",
         family='Century Gothic',
         bbox=dict(fc='white',linewidth=0.5))
@@ -240,7 +260,6 @@ def dataplot(sec1,data1,legend1="",**arg):
     legendi_tuple=('legend2','legend3','legend4','legend5','legend6')
     colori_tuple=(color2,color3,color4,color5,color6)
 
-
     """#plot curves"""
     """#plot 1st curve"""
     leghandle1,=plot(sec1,data1,color=color1)
@@ -254,10 +273,10 @@ def dataplot(sec1,data1,legend1="",**arg):
         if (seci_tuple[i] in arg.keys()) and (datai_tuple[i] in arg.keys()):
             seci.append(arg[seci_tuple[i]])
             datai.append(arg[datai_tuple[i]])
-            tmphandle,=plot(seci[len(seci)-1],datai[len(datai)-1],                                   
-                             color=colori_tuple[i])
-            leghandlei.append(tmphandle)
-            if legendi_tuple[i] in arg.keys():
+            tmphandle,=plot(seci[len(seci)-1],datai[len(datai)-1],
+                            color=colori_tuple[i])
+            leghandlei.append(tmphandle)            
+            if legendi_tuple[i] in arg.keys():#set legend text
                 legendi.append(arg[legendi_tuple[i]])
             else:
                 legendi.append("")
@@ -272,20 +291,27 @@ def dataplot(sec1,data1,legend1="",**arg):
     minorticks_on()
     grid(which='major',linestyle='-')
     grid(which='minor',linestyle=':')
-    xticks(fontsize=12,family='Times New Roman',fontweight='bold')
-    yticks(fontsize=12,family='Times New Roman',fontweight='bold')
-    
+    locx,labelx=xticks(fontsize=12,family='Times New Roman',fontweight='bold')
+    locy,labely=yticks(fontsize=12,family='Times New Roman',fontweight='bold')
+    max_levely=float(str('{0:7.2e}'.format(locy[len(locy)-1])).split('e')[1])
+    min_levely=float(str('{0:7.2e}'.format(locy[0])).split('e')[1])
+    levely=max(max_levely,min_levely)  
+    str_levely=str(int(levely))
+    for i in range(len(labely)):
+        labely[i]=str('{0:4.2f}'.format(locy[i]*pow(10,-levely)))
+    yticks(locy,labely)
+
     """#display label & title"""
     xlabel("Data Point",fontsize=16,color='#00008B',
            family='Times New Roman',fontweight='bold')
     if datatype=='freq':
-        str_ylabel="Frequency"
+        str_ylabel="Frequency, \u00D71E"+str_levely
         str_title="FREQUENCY DATA"
     elif datatype=='phase':
-        str_ylabel="Phase, Seconds"
+        str_ylabel="Phase, \u00D71E"+str_levely+" Seconds"
         str_title="PHASE DATA"
     else:#change to an "error" report
-        str_ylabel="Frequency"
+        str_ylabel="Frequency, \u00D71E"+str_levely
         str_title="FREQUENCY DATA"   
     ylabel(str_ylabel,fontsize=16,color='#00008B',
            family='Times New Roman',fontweight='bold')
