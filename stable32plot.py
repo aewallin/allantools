@@ -23,6 +23,10 @@
     sigmatext: is a bool variable, show/hide tau1-sigma1 text list in the plot
                 (default: True)
     taulist: set the taulist-sigma values displayed in the text box
+    textloc: location of the text. 1:top right 2:top left 3: bottom left 4: bottom right
+            (default: textloc=1)
+    legendloc: location of the legend. 0: best 1:top right 2:top left 3: bottom left 4: bottom right
+            (default: legendloc=0)
     
 2) function dataplot:
 --plot stable32 style frequency/phase data;
@@ -65,8 +69,8 @@ def sigmaplot(tau1,sigma1,error1,legend1="",**arg):
     color1='#B30000' #dark red
     color2='#33A1C9'#blue
     color3='#CD2990'#maroon
-    color4='#32CD32'#green
-    color5='#FF8000'#orange
+    color4='#66CD00'#green
+    color5='#8B8B00'#yellow '#FF8000'#orange
     color6='#8E388E'#purple
     colorn='#C9C9C9' #gray
     
@@ -82,18 +86,21 @@ def sigmaplot(tau1,sigma1,error1,legend1="",**arg):
     ax.set_xscale("log")
     ax.set_yscale("log")
     fillstyle1=set_markerfillstyle(sigmatype)
+    
     """#plot 1st curve"""
+    for i in range(len(taui_tuple)):
+        if taui_tuple[i] in arg.keys():
+            color1='#FF8000'#orange
     leghandle1=ax.errorbar(tau1,sigma1,yerr=error1,capsize=3,color=color1,
                 marker='.',fillstyle=fillstyle1,markersize=12)
-    
+
+    """#plot ith curve"""
     """#set variable list for the ith curve"""
     taui=[]
     sigmai=[]
     errori=[]
     leghandlei=[]
     legendi=[]
-
-    """#plot ith curve"""
     for i in range(len(taui_tuple)):
         if (taui_tuple[i] in arg.keys()) and (sigmai_tuple[i] in arg.keys()) and (errori_tuple[i] in arg.keys()):
             taui.append(arg[taui_tuple[i]])
@@ -119,10 +126,15 @@ def sigmaplot(tau1,sigma1,error1,legend1="",**arg):
         legendn=""
 
     """#show legend"""
-    if sigmatext==True: #set legend location
-        loci=3
+    if 'legendloc'in arg.keys():#set legend location
+        if (arg['legendloc']==0 or arg['legendloc']==1 or arg['legendloc']==2 or
+            arg['legendloc']==3 or arg['legendloc']==4):
+            loci=arg['legendloc']
     else:
-        loci=0
+        if sigmatext==True: 
+            loci=3
+        else:
+            loci=0
     if legend1!="":
         legendi.insert(0,legend1)
         leghandlei.insert(0,leghandle1)
@@ -146,11 +158,16 @@ def sigmaplot(tau1,sigma1,error1,legend1="",**arg):
     else:
         taulist=tau1
         sigmalist=sigma1
-        
+    '''#show textbox '''   
     xlimval=ax.get_xlim()
     ylimval=ax.get_ylim()
-    tlocx=xlimval[1]-0.12*(xlimval[1]-xlimval[0])#set text x-axis location
-    tlocy=ylimval[1]-0.12*(ylimval[1]-ylimval[0])#set text y-axis location
+    if 'textloc' in arg.keys():
+        if arg['textloc']==2 or arg['textloc']==3 or arg['textloc']==4:
+            tloc=arg['textloc']
+        else:
+            tloc=1
+    else:
+        tloc=1         
     if len(taulist)<=5:#set text font size
         textftsize=12
     elif len(taulist)<=10:
@@ -159,11 +176,11 @@ def sigmaplot(tau1,sigma1,error1,legend1="",**arg):
         textftsize=9
     if sigmatext==True:#show text box if sigmatext==True
         if len(taulist)<=20:
-            show_text(tlocx,tlocy,taulist,sigmalist,textftsize)
+            show_text(xlimval,ylimval,tloc,taulist,sigmalist,textftsize)
         else:#change....
             disptau1=taulist[0:20]
             dispsigma1=sigmalist[0:20]
-            show_text(tlocx,tlocy,disptau1,dispsigma1,textftsize)
+            show_text(xlimval,ylimval,tloc,disptau1,dispsigma1,textftsize)
                       
     """#show xlabel,ylabel,title"""
     show_label_title(sigmatype)
@@ -185,14 +202,34 @@ def show_grid():
     xticks(fontsize=12,fontweight='bold',family='Times New Roman')
     yticks(fontsize=12,fontweight='bold',family='Times New Roman',rotation=90)
 
-def show_text(lx,ly,tmptau,tmpsigma,tmpftsize):
+def show_text(tmplimx,tmplimy,tmptloc,tmptau,tmpsigma,tmpftsize):
+    if tmptloc==2:
+        tlocx=tmplimx[0]*pow(10,0.03*log10(tmplimx[1]/tmplimx[0]))#set text x-axis location
+        tlocy=tmplimy[1]/pow(10,0.03*log10(tmplimy[1]/tmplimy[0]))#set text y-axis location
+    elif tmptloc==3:
+        tlocx=tmplimx[0]*pow(10,0.03*log10(tmplimx[1]/tmplimx[0]))
+        tlocy=tmplimy[0]*pow(10,0.03*log10(tmplimy[1]/tmplimy[0]))
+    elif tmptloc==4:
+        tlocx=tmplimx[1]/pow(10,0.03*log10(tmplimx[1]/tmplimx[0]))
+        tlocy=tmplimy[0]*pow(10,0.03*log10(tmplimy[1]/tmplimy[0]))
+    else:#default tloc=1
+        tlocx=tmplimx[1]/pow(10,0.03*log10(tmplimx[1]/tmplimx[0]))
+        tlocy=tmplimy[1]/pow(10,0.03*log10(tmplimy[1]/tmplimy[0]))
     disp_text="   Tau"+'{0:11}'.format(' ')+"Sigma \n"
     for i in range(len(tmptau)):
         disp_text+='{0:7.2e}'.format(tmptau[i])+'{0:4}'.format(' ')+'{0:7.2e}'.format(tmpsigma[i])
         if i<=(len(tmptau)-2):
-            disp_text+='\n'   
-    text(lx,ly,disp_text,size=tmpftsize,
-        va="top", ha="right", multialignment="center",
+            disp_text+='\n'
+    if tmptloc==1 or tmptloc==2:
+        vatmp="top"
+    else:
+        vatmp="baseline"
+    if tmptloc==1 or tmptloc==4:
+        hatmp="right"
+    else:
+        hatmp="left"
+    text(tlocx,tlocy,disp_text,size=tmpftsize,
+        va=vatmp, ha=hatmp, multialignment="center",
         family='Century Gothic',
         bbox=dict(fc='white',linewidth=0.5))
 
@@ -218,7 +255,7 @@ def show_label_title(tmpsigmatype):
         str_ylabel="Total Modified Deviation, Mod \u03C3"+'$_{total}$'+"(\u03C4)"
     elif tmpsigmatype=="htotdev":
         str_ylabel="Total Hadamard Deviation, H\u03C3"+'$_{total}$'+"(\u03C4)"
-    else:
+    else:#raise an error?
         str_ylabel="Allan Deviation, \u03C3"+'$_y$'+"(\u03C4)"
         
     """#set title """   
@@ -252,7 +289,7 @@ def dataplot(sec1,data1,legend1="",**arg):
     color2='#33A1C9'#blue
     color3='#CD2990'#maroon
     color4='#32CD32'#green
-    color5='#FF8000'#orange
+    color5='#8B8B00'#yellow
     color6='#8E388E'#purple
     """#set arg key tuple"""
     seci_tuple=('sec2','sec3','sec4','sec5','sec6')
@@ -262,6 +299,9 @@ def dataplot(sec1,data1,legend1="",**arg):
 
     """#plot curves"""
     """#plot 1st curve"""
+    for i in range(len(seci_tuple)):
+        if seci_tuple[i] in arg.keys():
+            color1='#FF8000'#orange
     leghandle1,=plot(sec1,data1,color=color1)
     """#set variable list for the ith curve"""
     seci=[]
