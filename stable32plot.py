@@ -204,17 +204,17 @@ def show_grid():
 
 def show_text(tmplimx,tmplimy,tmptloc,tmptau,tmpsigma,tmpftsize):
     if tmptloc==2:
-        tlocx=tmplimx[0]*pow(10,0.03*log10(tmplimx[1]/tmplimx[0]))#set text x-axis location
-        tlocy=tmplimy[1]/pow(10,0.03*log10(tmplimy[1]/tmplimy[0]))#set text y-axis location
+        tlocx=tmplimx[0]*pow((tmplimx[1]/tmplimx[0]),0.03)#set text x-axis location
+        tlocy=tmplimy[1]/pow((tmplimy[1]/tmplimy[0]),0.03)#set text y-axis location
     elif tmptloc==3:
-        tlocx=tmplimx[0]*pow(10,0.03*log10(tmplimx[1]/tmplimx[0]))
-        tlocy=tmplimy[0]*pow(10,0.03*log10(tmplimy[1]/tmplimy[0]))
+        tlocx=tmplimx[0]*pow((tmplimx[1]/tmplimx[0]),0.03)
+        tlocy=tmplimy[0]*pow((tmplimy[1]/tmplimy[0]),0.03)
     elif tmptloc==4:
-        tlocx=tmplimx[1]/pow(10,0.03*log10(tmplimx[1]/tmplimx[0]))
-        tlocy=tmplimy[0]*pow(10,0.03*log10(tmplimy[1]/tmplimy[0]))
+        tlocx=tmplimx[1]/pow((tmplimx[1]/tmplimx[0]),0.03)
+        tlocy=tmplimy[0]*pow((tmplimy[1]/tmplimy[0]),0.03)
     else:#default tloc=1
-        tlocx=tmplimx[1]/pow(10,0.03*log10(tmplimx[1]/tmplimx[0]))
-        tlocy=tmplimy[1]/pow(10,0.03*log10(tmplimy[1]/tmplimy[0]))
+        tlocx=tmplimx[1]/pow((tmplimx[1]/tmplimx[0]),0.03)
+        tlocy=tmplimy[1]/pow((tmplimy[1]/tmplimy[0]),0.03)
     disp_text="   Tau"+'{0:11}'.format(' ')+"Sigma \n"
     for i in range(len(tmptau)):
         disp_text+='{0:7.2e}'.format(tmptau[i])+'{0:4}'.format(' ')+'{0:7.2e}'.format(tmpsigma[i])
