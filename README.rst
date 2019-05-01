@@ -83,6 +83,7 @@ Authors
 * Danny Price, https://github.com/telegraphic 
 * Cantwell G. Carson, carsonc "at" gmail.com 
 * Frédéric Meynadier, https://github.com/fmeynadier
+* Yan Xie, https://github.com/yxie-git
 
 Installation 
 ============
