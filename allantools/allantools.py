@@ -1613,6 +1613,10 @@ def frequency2phase(freqdata, rate):
     # Protect against NaN values in input array (issue #60)
     # Reintroduces data trimming as in commit 503cb82
     freqdata = trim_data(freqdata)
+    # Erik Benkler (PTB): Subtract mean value before cumsum in order to 
+    # avoid precision issues when we have small frequency fluctuations on 
+    # a large average frequency
+    freqdata = freqdata - np.nanmean(freqdata)
     phasedata = np.cumsum(freqdata) * dt
     phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this?
     # so that phase starts at zero and len(phase)=len(freq)+1 ??
