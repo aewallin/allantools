@@ -1259,13 +1259,14 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
 
     n = min(len(d0), len(d1), len(d2))
 
+    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
+
+    n = len(np.where(np.isnan(v_arr) == False)[0]) # only average for non-nans
+    
     if n == 0:
         RuntimeWarning("Data array length is too small: %i" % len(data))
         n = 1
 
-    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
-
-    n = len(np.where(np.isnan(v_arr) == False)[0]) # only average for non-nans
     N = len(np.where(np.isnan(data) == False)[0])
 
     s = np.nansum(v_arr * v_arr)   #  a summation robust to nans
