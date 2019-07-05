@@ -102,7 +102,8 @@ from . import ci # edf, confidence intervals
 # Get version number from json metadata
 pkginfo_path = os.path.join(os.path.dirname(__file__),
                             'allantools_info.json')
-pkginfo = json.load(open(pkginfo_path))
+with open(pkginfo_path) as fp:
+    pkginfo = json.load(fp)
 __version__ = pkginfo["version"]
 
 
@@ -1355,7 +1356,7 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
     elif taus is "octave":
         maxn = np.floor(np.log2(len(data)))
-        taus = (1.0/rate)*np.logspace(0, maxn, maxn+1, base=2.0)
+        taus = (1.0/rate)*np.logspace(0, int(maxn), int(maxn+1), base=2.0)
     elif taus is "decade": # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
         maxn = np.floor(np.log10(len(data)))
         taus = []
