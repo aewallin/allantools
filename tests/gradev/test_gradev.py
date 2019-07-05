@@ -17,7 +17,7 @@ def test_gradev():
         y_gap, data_type='phase', rate=f, taus=x)
     for i in range(len(x_ax)):
         i_gap = np.where(x_ax_gap == x_ax[i])
-        if i_gap[0]:
+        if len(i_gap[0]) > 0:
             # Seems like a loose condition
             assert(np.log(y_ax[i]/y_ax_gap[i_gap[0][0]]) < 1)
 

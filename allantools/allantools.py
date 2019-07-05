@@ -102,7 +102,8 @@ from . import ci # edf, confidence intervals
 # Get version number from json metadata
 pkginfo_path = os.path.join(os.path.dirname(__file__),
                             'allantools_info.json')
-pkginfo = json.load(open(pkginfo_path))
+with open(pkginfo_path) as fp:
+    pkginfo = json.load(fp)
 __version__ = pkginfo["version"]
 
 
@@ -1258,13 +1259,14 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
 
     n = min(len(d0), len(d1), len(d2))
 
+    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
+
+    n = len(np.where(np.isnan(v_arr) == False)[0]) # only average for non-nans
+    
     if n == 0:
         RuntimeWarning("Data array length is too small: %i" % len(data))
         n = 1
 
-    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
-
-    n = len(np.where(np.isnan(v_arr) == False)[0]) # only average for non-nans
     N = len(np.where(np.isnan(data) == False)[0])
 
     s = np.nansum(v_arr * v_arr)   #  a summation robust to nans
@@ -1355,7 +1357,7 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
     elif taus is "octave":
         maxn = np.floor(np.log2(len(data)))
-        taus = (1.0/rate)*np.logspace(0, maxn, maxn+1, base=2.0)
+        taus = (1.0/rate)*np.logspace(0, int(maxn), int(maxn+1), base=2.0)
     elif taus is "decade": # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
         maxn = np.floor(np.log10(len(data)))
         taus = []
