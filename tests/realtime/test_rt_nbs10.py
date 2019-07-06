@@ -61,6 +61,42 @@ def test_ohdev_rt_nbs14():
     assert( numpy.isclose( ohdev_rt.dev[0], nbs14_devs[6][0] ))
     assert( numpy.isclose( ohdev_rt.dev[1], nbs14_devs[6][1] ))
 
+def test_tdev_rt_nbs14():
+    tdev_rt = at.realtime.tdev_realtime(afs=[1,2],tau0=1.0)
+    for x in nbs14_phase:
+        tdev_rt.add_phase(x)
+    print("tDEV rt ",tdev_rt.dev[0] ," == tDEV ", nbs14_devs[5][0])
+    print("tDEV rt ",tdev_rt.dev[1] ," == tDEV ", nbs14_devs[5][1])
+    assert( numpy.isclose( tdev_rt.dev[0], nbs14_devs[5][0] ))
+    assert( numpy.isclose( tdev_rt.dev[1], nbs14_devs[5][1] ))
+
+def test_tdev_rt_nbs14_freq():
+    tdev_rt = at.realtime.tdev_realtime(afs=[1,2],tau0=1.0)
+    for f in nbs14_f:
+        tdev_rt.add_frequency(f)
+    print("f tDEV rt ",tdev_rt.dev[0] ," == tDEV ", nbs14_devs[5][0])
+    print("f tDEV rt ",tdev_rt.dev[1] ," == tDEV ", nbs14_devs[5][1])
+    assert( numpy.isclose( tdev_rt.dev[0], nbs14_devs[5][0] ))
+    assert( numpy.isclose( tdev_rt.dev[1], nbs14_devs[5][1] ))
+
+def test_mdev_rt_nbs14():
+    tdev_rt = at.realtime.tdev_realtime(afs=[1,2],tau0=1.0)
+    for x in nbs14_phase:
+        tdev_rt.add_phase(x)
+    print("mDEV rt ",tdev_rt.mdev()[0] ," == mDEV ", nbs14_devs[2][0])
+    print("mDEV rt ",tdev_rt.mdev()[1] ," == mDEV ", nbs14_devs[2][1])
+    assert( numpy.isclose( tdev_rt.mdev()[0], nbs14_devs[2][0] ))
+    assert( numpy.isclose( tdev_rt.mdev()[1], nbs14_devs[2][1] ))
+
+def test_mdev_rt_nbs14_freq():
+    tdev_rt = at.realtime.tdev_realtime(afs=[1,2],tau0=1.0)
+    for f in nbs14_f:
+        tdev_rt.add_frequency(f)
+    print("f mDEV rt ",tdev_rt.mdev()[0] ," == mDEV ", nbs14_devs[2][0])
+    print("f mDEV rt ",tdev_rt.mdev()[1] ," == mDEV ", nbs14_devs[2][1])
+    assert( numpy.isclose( tdev_rt.mdev()[0], nbs14_devs[2][0] ))
+    assert( numpy.isclose( tdev_rt.mdev()[1], nbs14_devs[2][1] ))
+        
 def test_oadev_rt_nbs14_freq():
 
     oadev_rt = at.realtime.oadev_realtime(afs=[1,2],tau0=1.0)
@@ -85,6 +121,11 @@ if __name__ == "__main__":
     test_oadev_rt_nbs14_freq()
     test_ohdev_rt_nbs14()
     test_ohdev_rt_nbs14_freq()
+    test_tdev_rt_nbs14()
+    test_tdev_rt_nbs14_freq()
+    test_mdev_rt_nbs14()
+    test_mdev_rt_nbs14_freq()
+
     #x = numpy.cumsum(nbs14_f)
     #print x
     #print nbs14_phase

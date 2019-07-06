@@ -153,5 +153,82 @@ class ohdev_realtime(object):
         for idx, af in enumerate(self.afs):
             msg += "OHDEV(%d)=%f " %(af, self.dev[idx])
         return msg
+
+
+class tdev_realtime():
+    """
+    Time deviation and Modified Allan deviation in real-time from a stream of phase/frequency samples.
+    
+    Dobrogowski & Kasznia
+    https://doi.org/10.1109/FREQ.2007.4319204
+    """
+    def __init__(self, afs=[1], tau0=1.0):
+        self.x = []                         # phase
+        self.S = numpy.zeros(len(afs))      # sum-of-squares
+        self.So = numpy.zeros(len(afs))      # overall sum-of-squares
+        self.afs = afs                      # averaging factor
+        self.dev = numpy.zeros(len(afs))    # resulting xDEV
+        self.tau = tau0             # time-interval between points
+
+    def add_frequency(self, f):
+        """ add new frequency point, in units of Hz """
+        if len(self.x)==0:
+            self.add_phase(0) # initialize
+        self.add_phase(self.x[-1] + f) # integration
         
+    def add_phase(self, x):
+        """ add new phase point """
+        self.x.append(x)
+        for idx, af in enumerate(self.afs):
+            if len(self.x) >= 3*af+1:  # 3n+1 samples measured
+                self.update_S(idx)
+            elif len(self.x) >= 2*af+1: # 2n+1 samples measured
+                self.update_S3n(idx)
+
+    def update_S3n(self,idx):
+        """ eqn (13) of paper """
+        af = self.afs[idx]
+        j = len(self.x)-1 # last pt
+        
+        self.S[idx] = self.S[idx] + self.x[j] - 2*self.x[j-af] + self.x[j-2*af]
+        
+        if len(self.x) == 3*af:
+            # last call to this fctn
+            self.So[idx] = pow(self.S[idx],2)
+            self.update_dev(idx)
+
+    def update_dev(self, idx):
+        # Eqn (14)
+        num_pts=len(self.x)
+        af=self.afs[idx]
+        self.dev[idx] = numpy.sqrt( (1.0/6.0)*(1.0/(num_pts-3*af+1.0))*(1.0/pow(af,2))*( self.So[idx]  ) )
+        
+    def update_S(self, idx):
+        """ update S, sum-of-squares """
+        af = self.afs[idx]
+        assert( len(self.x) >= 3*af+1 )
+        i = len(self.x)-1 # last pt
+        # Eqn (12)
+        S_new =  -1*self.x[i-3*af] + 3*self.x[i-2*af] - 3*self.x[i-af] + self.x[i]
+        
+        self.S[idx] = self.S[idx] + S_new
+        # Eqn (11)
+        self.So[idx] = self.So[idx] + pow(self.S[idx], 2) #??? S_(i-1) in paper for TDEV-sqrt?
+        self.update_dev(idx)
+        
+    def taus(self):
+        return self.tau*self.afs
+    
+    def mdev(self):
+        mdev = self.dev.copy()
+        for idx, af in enumerate(self.afs):
+            mdev[idx]= mdev[idx]*numpy.sqrt(3)/(af*self.tau)
+        return mdev
+            
+    def __str__(self):
+        msg = "n_pts: %d " % len(self.x)
+        for idx, af in enumerate(self.afs):
+            msg += "TDEV(%d)=%f " %(af, self.dev[idx])
+        return msg
+
 # end of file realtime.py
