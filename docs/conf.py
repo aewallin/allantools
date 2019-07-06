@@ -60,7 +60,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.coverage',
-    'sphinx.ext.pngmath',
+    # 'sphinx.ext.pngmath', does not work as of 2019 July
+    'sphinx.ext.imgmath',
     'numpydoc'
 ]
 
