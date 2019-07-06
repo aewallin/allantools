@@ -1,6 +1,7 @@
 .. py:currentmodule:: allantools
 .. py:module: allantools
 .. py:module: allantools.noise
+.. py:module: allantools.realtime
 
 API
 ===
