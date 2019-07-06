@@ -43,7 +43,7 @@ nbs14_devs= [ (91.22945,115.8082),  # 0, ADEV(tau=1,tau=2)
               (45.704, 81.470)] # 10 HTOTDEV Stable32 (not sure what these are!??)
               # (100.9770, 102.6039)  # Standard Deviation (sample, not population)
 
-if __name__ == "__main__":
+def test_oadev_rt_nbs14():
     oadev_rt = at.realtime.oadev_realtime(afs=[1,2],tau0=1.0)
     for x in nbs14_phase:
         oadev_rt.add_phase(x)
@@ -51,7 +51,12 @@ if __name__ == "__main__":
     print "OADEV rt ",oadev_rt.dev[1] ," == OADEV ", nbs14_devs[1][1]
     assert( numpy.isclose( oadev_rt.dev[0], nbs14_devs[1][0] ))
     assert( numpy.isclose( oadev_rt.dev[1], nbs14_devs[1][1] ))
+
+if __name__ == "__main__":
+
     #t=TestNBS14_10Point()
     #t.test_htotdev()
-    pytest.main(["oadev_nbs10.py"])
+    pass
+    # doe we need this?
+    #pytest.main(["oadev_nbs10.py"])
 
