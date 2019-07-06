@@ -10,6 +10,11 @@ Code
 
 Papers
 ------
+.. [Dobrogowski2007] Dobrogowski & Kasznia
+    Real-time Assessment of Allan Deviation and Time Deviation
+    2007 IEEE International Frequency Control Symposium Joint with the 21st European Frequency and Time Forum
+    https://doi.org/10.1109/FREQ.2007.4319204
+    
 .. [Barnes1974] Barnes, 1974
     https://tf.nist.gov/general/pdf/11.pdf
 

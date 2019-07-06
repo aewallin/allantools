@@ -34,12 +34,12 @@ class oadev_realtime(object):
     https://doi.org/10.1109/FREQ.2007.4319204
     """
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
-        self.x = []                         # phase
-        self.afs = afs                      # averaging factor
+        self.x = []                         # phase time-series
+        self.afs = afs                      # averaging factor, tau = af*tau0
         self.auto_afs = auto_afs
         self.af_taus = numpy.logspace(0,1,pts_per_decade+1)[:-1] # will fail at >=6 (?), need to remove duplicates?
-        self.af_idx = 0
-        self.af_decade = 0
+        self.af_idx = 0       # logspace index, to keep track of afs in auto-af mode
+        self.af_decade = 0    # logspace decade
         if auto_afs:
             self.afs = numpy.array([1])
         self.S = numpy.zeros(len(afs))      # sum-of-squares
@@ -59,11 +59,10 @@ class oadev_realtime(object):
         
         next_af = int( numpy.round( pow(10.0, next_decade) * self.af_taus[ next_idx ] ) ) # next possible AF
         if len(self.x) >= (2*next_af+1): # can compute next AF
-            #print "new AF ", next_af
             self.afs = numpy.append( self.afs, next_af ) # new AF
-            self.S = numpy.append( self.S, 0 ) # new S
-            self.dev = numpy.append( self.dev, 0 ) # new tau
-            self.af_idx = next_idx #self.af_idx+1
+            self.S = numpy.append(self.S, 0) # new S
+            self.dev = numpy.append(self.dev, 0) # new dev
+            self.af_idx = next_idx
             self.af_decade = next_decade
         else:
             pass
@@ -72,7 +71,6 @@ class oadev_realtime(object):
     def add_phase(self, x):
         """ add new phase point, in units of seconds """
         self.x.append(x)
-        #print self.x
         for idx, af in enumerate(self.afs):
             if len(self.x) >= (2*af+1):
                 self.update_S(idx)
@@ -82,13 +80,10 @@ class oadev_realtime(object):
     def update_S(self, idx):
         """ update S, sum-of-squares """
         af = self.afs[idx]
-        
         i = len(self.x)-1 # last pt
-        S_new = pow( self.x[i] - 2*self.x[i-af] + self.x[i-2*af], 2)
-        #print "updateS af=",af," i=",i," Snew=",S_new
-        
+        S_new = pow(self.x[i] - 2*self.x[i-af] + self.x[i-2*af], 2)
         self.S[idx] = self.S[idx] + S_new
-        self.dev[idx] = math.sqrt( (1.0/(2*pow(af*self.tau,2)*(i+1-2*af))) * self.S[idx] )
+        self.dev[idx] = numpy.sqrt((1.0/(2*pow(af*self.tau, 2)*(i+1-2*af))) * self.S[idx])
         
     def taus(self):
         """ return taus, in unit of seconds """
