@@ -83,5 +83,6 @@ from .noise_kasdin import Noise
 # realtime statistics
 from .realtime import oadev_realtime
 from .realtime import ohdev_realtime
+from .realtime import tdev_realtime
 
 # end of file __init__.py

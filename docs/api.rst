@@ -95,6 +95,12 @@ Statistics
 .. autofunction:: mtie
 .. autofunction:: tierms
 
+Real-Time Statistics
+--------------------
+
+.. autoclass:: oadev_realtime
+
+
 Noise Generation
 ----------------
 
