@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
 
-class Noise:
+class Noise(object):
     """ Generate discrete colored noise
 
     Python / Numpy implementation of:
@@ -251,6 +251,7 @@ class Noise:
         return np.sqrt(coeff*g_b*pow(2.0*np.pi, 2))
 
     def mdev_from_qd(self, tau0=1.0, tau=1.0):
+        # FIXME: tau is unused here - can we remove it?
         """ prefactor for Modified Allan deviation for noise
             type defined by (qd, b, tau0)
 
@@ -280,7 +281,7 @@ class Noise:
 
         """
         g_b = self.phase_psd_from_qd(tau0)
-        f_h = 0.5/tau0 #unused!?
+        #f_h = 0.5/tau0 #unused!?
         if self.b == 0:
             coeff = 3.0/(8.0*pow(np.pi, 2)) # E, White PM, tau^-{3/2}
         elif self.b == -1:
@@ -294,4 +295,4 @@ class Noise:
 
         return np.sqrt(coeff*g_b*pow(2.0*np.pi, 2))
 
-# end of file.
+# end of file noise_kasdin.py
