@@ -27,11 +27,10 @@
 import numpy
 
 class oadev_realtime(object):
-    """
-    Overlapping Allan deviation in real-time from a stream of phase/frequency samples.
+    """ Overlapping Allan deviation in real-time from a stream of phase/frequency samples.
     
-    Dobrogowski & Kasznia
-    https://doi.org/10.1109/FREQ.2007.4319204
+        Dobrogowski & Kasznia
+        https://doi.org/10.1109/FREQ.2007.4319204
     """
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
         self.x = []                         # phase time-series
@@ -106,11 +105,10 @@ class oadev_realtime(object):
         return msg
 
 class ohdev_realtime(object):
-    """
-    Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.
+    """ Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.
     
-    Dobrogowski & Kasznia
-    https://doi.org/10.1109/FREQ.2007.4319204
+        Dobrogowski & Kasznia
+        https://doi.org/10.1109/FREQ.2007.4319204
     """
     def __init__(self, afs=[1], tau0=1.0):
         self.x = []                         # phase
@@ -156,11 +154,10 @@ class ohdev_realtime(object):
 
 
 class tdev_realtime():
-    """
-    Time deviation and Modified Allan deviation in real-time from a stream of phase/frequency samples.
+    """ Time deviation and Modified Allan deviation in real-time from a stream of phase/frequency samples.
     
-    Dobrogowski & Kasznia
-    https://doi.org/10.1109/FREQ.2007.4319204
+        Dobrogowski & Kasznia
+        https://doi.org/10.1109/FREQ.2007.4319204
     """
     def __init__(self, afs=[1], tau0=1.0):
         self.x = []                         # phase
