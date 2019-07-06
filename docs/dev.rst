@@ -16,8 +16,7 @@ Here follows an un-ordered to do list:
     * Faster algorithms for mtotdev() and htotdev() which are currently very slow
     
 * Improve documentation
-* Improve packaging for PyPi and/or other packaging systems (PPA for Ubuntu/Debian?)
-* Stable32-style plots using matplotlib 
+* Improve packaging for PyPi and/or other packaging systems: Conda?, PPA for Ubuntu/Debian?
 * Tests for different noise types according to IEEE 1139, include power-spectral-density calculations 
 * Conversion between phase noise and Allan variance 
 * Phase noise calculations and plots
