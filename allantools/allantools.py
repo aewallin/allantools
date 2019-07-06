@@ -117,6 +117,8 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
         \\sigma^2_{MDEV}( \\tau )
 
     Note that TDEV has a unit of seconds.
+    
+    NIST SP 1065 eqn (15), page 18.
 
     Parameters
     ----------
@@ -165,6 +167,10 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
         \\sum_{j=1}^{N-3m+1} \\lbrace
         \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
 
+    see http://www.leapsecond.com/tools/adev_lib.c
+
+    NIST SP 1065 eqn (14), page 17.
+
     Parameters
     ----------
     data: np.array
@@ -191,13 +197,6 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
         mdev errors
     ns: np.array
         Values of N used in each mdev calculation
-
-    Notes
-    -----
-
-    see http://www.leapsecond.com/tools/adev_lib.c
-
-    NIST SP 1065 eqn (14) and (15), page 17
 
     """
     phase = input_to_phase(data, rate, data_type)
@@ -269,7 +268,7 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
     where :math:`\\bar{y}_n` is the time-series of fractional frequency
     at averaging time :math:`\\tau`
 
-    NIST SP 1065 eqn (6) and (7), pages 14 and 15
+    NIST SP 1065 eqn (6) and (7), pages 14 and 15.
 
     Parameters
     ----------
@@ -378,6 +377,8 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
     deviation at an averaging time of :math:`\\tau=m\\tau_0`, and
     :math:`x_n` is the time-series of phase observations, spaced by the
     measurement interval :math:`\\tau_0`, with length :math:`N`.
+    
+    NIST SP 1065 eqn (11), page 16.
 
     Parameters
     ----------
@@ -568,7 +569,7 @@ def calc_hdev_phase(phase, rate, mj, stride):
 
 def totdev(data, rate=1.0, data_type="phase", taus=None):
     """ Total deviation.
-        Better confidence at long averages for Allan.
+        Better confidence at long averages for Allan deviation.
 
     .. math::
 
@@ -588,6 +589,7 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     x* has length 3N-4
     tau = m*tau0
 
+    NIST SP 1065 eqn (25) page 23
 
     FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
 
@@ -602,16 +604,6 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
         The sampling rate for phase or frequency, in Hz
     taus: np.array
         Array of tau values for which to compute measurement
-
-
-    References
-    ----------
-    David A. Howe,
-    *The total deviation approach to long-term characterization
-    of frequency stability*,
-    IEEE tr. UFFC vol 47 no 5 (2000)
-
-    NIST SP 1065 eqn (25) page 23
 
     """
     phase = input_to_phase(data, rate, data_type)
@@ -662,8 +654,10 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
 
 def ttotdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time Total Deviation
-        modified total variance scaled by tau^2 / 3
-        NIST SP 1065 eqn (28) page 26  <--- formula should have tau squared !?!
+    
+        Modified total variance scaled by tau^2 / 3
+
+        NIST SP 1065 eqn (28) page 26.  Note that SP1065 erroneously has tau-cubed here (!).
     """
 
     (taus, mtotdevs, mde, ns) = mtotdev(data, data_type=data_type,
