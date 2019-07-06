@@ -68,7 +68,8 @@ def brown(num_points=1024, b2=1.0, fs=1.0):
 
 def violet(num_points):
     """ violet noise with f^2 PSD """
-    return numpy.diff(numpy.random.randn(num_points))
+    # diff() reduces number of points by one.
+    return numpy.diff(numpy.random.randn(num_points+1))
 
 def pink(N, depth=80):
     """

@@ -11,7 +11,7 @@ import pytest
 def test_noise():
 
     N = 500
-    rate = 1.0
+    #rate = 1.0
     w = noise.white(N)
     b = noise.brown(N)
     v = noise.violet(N)
@@ -19,7 +19,7 @@ def test_noise():
     
     assert len(w) == N
     assert len(b) == N
-    assert len(v) == N-1 # why?
+    assert len(v) == N
     assert len(p) == N
     
 if __name__ == "__main__":
