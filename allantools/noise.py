@@ -77,7 +77,7 @@ def pink(N, depth=80):
     """
     a = []
     s = iterpink(depth)
-    for n in range(N):
+    for n in range(N): # FIXME: n is unused here.
         a.append(next(s))
     return a
 

@@ -117,7 +117,7 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
         \\sigma^2_{MDEV}( \\tau )
 
     Note that TDEV has a unit of seconds.
-    
+
     NIST SP 1065 eqn (15), page 18.
 
     Parameters
@@ -377,7 +377,7 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
     deviation at an averaging time of :math:`\\tau=m\\tau_0`, and
     :math:`x_n` is the time-series of phase observations, spaced by the
     measurement interval :math:`\\tau_0`, with length :math:`N`.
-    
+
     NIST SP 1065 eqn (11), page 16.
 
     Parameters
@@ -654,7 +654,7 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
 
 def ttotdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time Total Deviation
-    
+
         Modified total variance scaled by tau^2 / 3
 
         NIST SP 1065 eqn (28) page 26.  Note that SP1065 erroneously has tau-cubed here (!).
@@ -1112,13 +1112,13 @@ def mtie_phase_fast(phase, rate=1.0, data_type="phase", taus=None):
     phase = phase[0:pow(2, k_max)] # truncate data to 2**k_max datapoints
     assert len(phase) == pow(2, k_max)
     #k = 1
-    taus = [ pow(2,k) for k in range(k_max)]
+    taus = [pow(2, k) for k in range(k_max)]
     #while k <= k_max:
     #    tau = pow(2, k)
     #    taus.append(tau)
         #print tau
     #    k += 1
-    print("taus N=", len(taus), " ",taus)
+    print("taus N=", len(taus), " ", taus)
     devs = np.zeros(len(taus))
     deverrs = np.zeros(len(taus))
     ns = np.zeros(len(taus))
@@ -1131,7 +1131,7 @@ def mtie_phase_fast(phase, rate=1.0, data_type="phase", taus=None):
         imax = len(phase)-pow(2, k)+1
         #print k, imax
         tie = np.zeros(imax)
-        ns[kidx]=imax
+        ns[kidx] = imax
         #print np.max( tie )
         for i in range(imax):
             if k == 1:
@@ -1153,12 +1153,10 @@ def mtie_phase_fast(phase, rate=1.0, data_type="phase", taus=None):
     #for tau in taus:
     #for
     devs = np.array(devs)
-    print("devs N=",len(devs)," ",devs)
-    print("taus N=", len(taus_used), " ",taus_used)
+    print("devs N=", len(devs), " ", devs)
+    print("taus N=", len(taus_used), " ", taus_used)
     return remove_small_ns(taus_used, devs, deverrs, ns)
-    
-    #print k_max
-    #devs =
+
 
 ########################################################################
 #
@@ -1210,7 +1208,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
         numper of terms n in the adev estimate.
 
     """
-    if (data_type == "freq"):
+    if data_type == "freq":
         print("Warning : phase data is preferred as input to gradev()")
     phase = input_to_phase(data, rate, data_type)
     (data, m, taus_used) = tau_generator(phase, rate, taus)
@@ -1256,7 +1254,7 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
     v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
 
     n = len(np.where(np.isnan(v_arr) == False)[0]) # only average for non-nans
-    
+
     if n == 0:
         RuntimeWarning("Data array length is too small: %i" % len(data))
         n = 1
@@ -1267,11 +1265,11 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
 
     dev = np.sqrt(s / (2.0 * n)) / mj  * rate
     #deverr = dev / np.sqrt(n) # old simple errorbars
-    if (noisetype == 'wp'):
+    if noisetype == 'wp':
         alpha = 2
-    elif (noisetype == 'wf'):
+    elif noisetype == 'wf':
         alpha = 0
-    elif (noisetype == 'fp'):
+    elif noisetype == 'fp':
         alpha = -2
     else:
         alpha = None
@@ -1368,7 +1366,7 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         maximum_m = len(data)
     # FIXME: should we use a "stop-ratio" like Stable32
     # found in Table III, page 9 of "Evolution of frequency stability analysis software"
-    # max(AF) = len(phase)/stop_ratio, where 
+    # max(AF) = len(phase)/stop_ratio, where
     # function  stop_ratio
     # adev      5
     # oadev     4
@@ -1484,10 +1482,10 @@ def remove_small_ns(taus, devs, deverrs, ns):
         o_deverrs = [deverrs[0][ns_big_enough], deverrs[1][ns_big_enough]]
     else:
         o_deverrs = deverrs[ns_big_enough]
-    if len(o_devs)==0:
+    if len(o_devs) == 0:
         print("remove_small_ns() nothing remains!?")
         raise UserWarning
-         
+
     return o_taus, o_devs, o_deverrs, o_ns
 
 
@@ -1609,8 +1607,8 @@ def frequency2phase(freqdata, rate):
     # Protect against NaN values in input array (issue #60)
     # Reintroduces data trimming as in commit 503cb82
     freqdata = trim_data(freqdata)
-    # Erik Benkler (PTB): Subtract mean value before cumsum in order to 
-    # avoid precision issues when we have small frequency fluctuations on 
+    # Erik Benkler (PTB): Subtract mean value before cumsum in order to
+    # avoid precision issues when we have small frequency fluctuations on
     # a large average frequency
     freqdata = freqdata - np.nanmean(freqdata)
     phasedata = np.cumsum(freqdata) * dt
@@ -1677,4 +1675,4 @@ def frequency2fractional(frequency, mean_frequency=-1):
     y = [(x-mu)/mu for x in frequency]
     return y
 
-
+# end of file allantools.py
