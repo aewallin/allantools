@@ -98,7 +98,9 @@ Statistics
 Real-Time Statistics
 --------------------
 
-.. autoclass:: oadev_realtime
+.. autoclass:: allantools.realtime.oadev_realtime
+.. autoclass:: allantools.realtime.tdev_realtime
+.. autoclass:: allantools.realtime.ohdev_realtime
 
 
 Noise Generation
