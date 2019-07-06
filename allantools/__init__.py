@@ -44,19 +44,13 @@ from .allantools import phase2frequency
 from .allantools import phase2radians
 from .allantools import frequency2fractional
 from .allantools import three_cornered_hat_phase
-
 from .allantools import adev
-
 from .allantools import oadev
-
 from .allantools import mdev
-
 from .allantools import hdev
-
 from .allantools import ohdev
 from .allantools import calc_hdev_phase
 from .allantools import tdev
-
 from .allantools import totdev
 from .allantools import ttotdev
 from .allantools import mtotdev
@@ -64,15 +58,13 @@ from .allantools import calc_mtotdev_phase
 from .allantools import htotdev
 from .allantools import calc_htotdev_freq
 from .allantools import theo1
-
 from .allantools import mtie
 from .allantools import mtie_phase_fast
-
 from .allantools import tierms
-
 from .allantools import gradev
 from .allantools import trim_data
 
+# ci.py contains functions for confidence intervals
 from .ci import edf_simple
 from .ci import edf_greenhall
 from .ci import edf_totdev
@@ -81,8 +73,14 @@ from .ci import confidence_interval
 from .ci import autocorr_noise_id
 from .ci import confidence_interval_noiseID
 
+# noise generation
 from . import noise
 
 from .dataset import Dataset
 from .plot import Plot
 from .noise_kasdin import Noise
+
+# realtime statistics
+from .realtime import oadev_realtime
+
+# end of file __init__.py
