@@ -10,6 +10,20 @@ Code
 
 Papers
 ------
+.. [Barnes1974] Barnes, 1974
+    https://tf.nist.gov/general/pdf/11.pdf
+
+.. [Dawkins2007] S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
+    the measurement of the stability of oscillators with frequency
+    counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
+    Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
+    doi: 10.1109/TUFFC.2007.337
+            
+.. [Kasdin1992] Kasdin, N.J., Walter, T., "Discrete simulation of power law noise [for
+    oscillator stability evaluation]," Frequency Control Symposium, 1992.
+    46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
+    http://dx.doi.org/10.1109/FREQ.1992.270003
+    
 .. [Greenhall2004] Greenhall & Riley, "UNCERTAINTY OF STABILITY VARIANCES
     BASED ON FINITE DIFFERENCES" 35th Annual Precise Time and Time Interval (PTTI) Meeting
     https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
@@ -28,6 +42,14 @@ Papers
 .. [Riley_CI] Confidence Intervals and Bias Corrections  for the Stable32  Variance Functions
     W.J. Riley, Hamilton Technical Services
     http://www.wriley.com/CI2.pdf
+
+.. [Riley2004] Riley,W.J. et al., Power law noise identification using the lag 1 autocorrelation
+    18th European Frequency and Time Forum (EFTF 2004)
+    https://ieeexplore.ieee.org/document/5075021
+
+.. [Greenhall2004] Greenhall, Riley, 2004
+    https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
+    UNCERTAINTY OF STABILITY VARIANCES BASED ON FINITE DIFFERENCES
 
 .. [Vernotte2011] F. Vernotte, "Variance Measurements", 2011 IFCS & EFTF
     http://www.ieee-uffc.org/frequency-control/learning/pdf/Vernotte-Varience_Measurements.pdf
@@ -58,3 +80,8 @@ Papers
 .. [Howe_theo1] D.A. Howe and T.N. Tasset
     THEO1: CHARACTERIZATION OF VERY LONG-TERM FREQUENCY STABILITY
     http://tf.nist.gov/general/pdf/1990.pdf
+
+.. [Howe2000] Howe, Beard, Greenhall, Riley,
+    A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
+    32nd PTTI, 2000
+    https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf

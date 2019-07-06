@@ -134,7 +134,7 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", 
 def rn(x, af, rate):
     """ R(n) ratio for noise identification
 
-        ration of MVAR to AVAR
+        ratio of MVAR to AVAR
     """
     (taus, devs, errs, ns) = at.adev(x, taus=[af*rate], data_type='phase', rate=rate)
     oadev_x = devs[0]
