@@ -24,8 +24,8 @@ import allantools as at
 import numpy
 
 # 10-point dataset and deviations
-nbs14_phase = [ 0.00000, 103.11111, 123.22222, 157.33333, 166.44444, 48.55555,-96.33333,-2.22222, 111.88889, 0.00000 ]
-nbs14_f     = [892.0,809.0,823.0,798.0,671.0,644.0,883.0,903.0,677.0]
+nbs14_phase = [0.00000, 103.11111, 123.22222, 157.33333, 166.44444, 48.55555,-96.33333,-2.22222, 111.88889, 0.00000]
+nbs14_f     = [892.0, 809.0, 823.0, 798.0, 671.0, 644.0, 883.0, 903.0, 677.0]
 
 nbs14_devs= [ (91.22945,115.8082),  # 0, ADEV(tau=1,tau=2)
               (91.22945, 85.95287), # 1, OADEV 
@@ -52,8 +52,42 @@ def test_oadev_rt_nbs14():
     assert( numpy.isclose( oadev_rt.dev[0], nbs14_devs[1][0] ))
     assert( numpy.isclose( oadev_rt.dev[1], nbs14_devs[1][1] ))
 
-if __name__ == "__main__":
+def test_ohdev_rt_nbs14():
+    ohdev_rt = at.realtime.ohdev_realtime(afs=[1,2],tau0=1.0)
+    for x in nbs14_phase:
+        ohdev_rt.add_phase(x)
+    print("OHDEV rt ",ohdev_rt.dev[0] ," == OADEV ", nbs14_devs[6][0])
+    print("OHDEV rt ",ohdev_rt.dev[1] ," == OADEV ", nbs14_devs[6][1])
+    assert( numpy.isclose( ohdev_rt.dev[0], nbs14_devs[6][0] ))
+    assert( numpy.isclose( ohdev_rt.dev[1], nbs14_devs[6][1] ))
 
+def test_oadev_rt_nbs14_freq():
+
+    oadev_rt = at.realtime.oadev_realtime(afs=[1,2],tau0=1.0)
+    for f in nbs14_f:
+        oadev_rt.add_frequency(f)
+    print("freq OADEV rt ",oadev_rt.dev[0] ," == OADEV ", nbs14_devs[1][0])
+    print("freq OADEV rt ",oadev_rt.dev[1] ," == OADEV ", nbs14_devs[1][1])
+    assert( numpy.isclose( oadev_rt.dev[0], nbs14_devs[1][0] ))
+    assert( numpy.isclose( oadev_rt.dev[1], nbs14_devs[1][1] ))
+
+def test_ohdev_rt_nbs14_freq():
+    ohdev_rt = at.realtime.ohdev_realtime(afs=[1,2],tau0=1.0)
+    for f in nbs14_f:
+        ohdev_rt.add_frequency(f)
+    print("freq OHDEV rt ",ohdev_rt.dev[0] ," == OADEV ", nbs14_devs[6][0])
+    print("freq OHDEV rt ",ohdev_rt.dev[1] ," == OADEV ", nbs14_devs[6][1])
+    assert( numpy.isclose( ohdev_rt.dev[0], nbs14_devs[6][0] ))
+    assert( numpy.isclose( ohdev_rt.dev[1], nbs14_devs[6][1] ))
+    
+if __name__ == "__main__":
+    test_oadev_rt_nbs14()
+    test_oadev_rt_nbs14_freq()
+    test_ohdev_rt_nbs14()
+    test_ohdev_rt_nbs14_freq()
+    #x = numpy.cumsum(nbs14_f)
+    #print x
+    #print nbs14_phase
     #t=TestNBS14_10Point()
     #t.test_htotdev()
     pass

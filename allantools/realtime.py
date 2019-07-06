@@ -28,7 +28,7 @@ import numpy
 
 class oadev_realtime(object):
     """
-    Overlapping Allan deviation in real-time from a stream of phase samples.
+    Overlapping Allan deviation in real-time from a stream of phase/frequency samples.
     
     Dobrogowski & Kasznia
     https://doi.org/10.1109/FREQ.2007.4319204
@@ -68,6 +68,12 @@ class oadev_realtime(object):
             pass
             #print "no new AF "
 
+    def add_frequency(self, f):
+        """ add new frequency point, in units of Hz """
+        if len(self.x)==0:
+            self.add_phase(0) # initialize
+        self.add_phase(self.x[-1] + f) # integration
+        
     def add_phase(self, x):
         """ add new phase point, in units of seconds """
         self.x.append(x)
@@ -99,4 +105,53 @@ class oadev_realtime(object):
             msg += "ADEV(%d)=%f " %(af, self.dev[idx])
         return msg
 
+class ohdev_realtime(object):
+    """
+    Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.
+    
+    Dobrogowski & Kasznia
+    https://doi.org/10.1109/FREQ.2007.4319204
+    """
+    def __init__(self, afs=[1], tau0=1.0):
+        self.x = []                         # phase
+        self.S = numpy.zeros(len(afs))      # sum-of-squares
+        self.afs = afs                      # averaging factor
+        self.dev = numpy.zeros(len(afs))    # resulting xDEV
+        self.tau = tau0              # time-interval between points
+
+    def add_frequency(self, f):
+        """ add new frequency point, in units of Hz """
+        if len(self.x)==0:
+            self.add_phase(0) # initialize
+        self.add_phase(self.x[-1] + f) # integration
+
+    def add_phase(self, x):
+        """ add new phase point """
+        self.x.append(x)
+        for idx, af in enumerate(self.afs):
+            if len(self.x) > 3*af:
+                self.update_S(idx)
+            
+    def update_S(self, idx):
+        """ update S, sum-of-squares """
+        af = self.afs[idx]
+        i = len(self.x)-1 # last pt
+        #print i,self.x
+        S_new = pow( self.x[i] - 3*self.x[i-af] + 3*self.x[i-2*af] - self.x[i-3*af], 2)
+        self.S[idx] = self.S[idx] + S_new
+        self.dev[idx] = numpy.sqrt( (1.0/(6.0*pow(af*self.tau,2)*(i+1.0-3*af))) * self.S[idx] )
+        
+    def taus(self):
+        return self.tau*self.afs
+        
+    def devs(self):
+        """ return deviation """
+        return self.dev
+        
+    def __str__(self):
+        msg = "n_pts: %d " % len(self.x)
+        for idx, af in enumerate(self.afs):
+            msg += "OHDEV(%d)=%f " %(af, self.dev[idx])
+        return msg
+        
 # end of file realtime.py
