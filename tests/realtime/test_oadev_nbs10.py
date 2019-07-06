@@ -47,8 +47,8 @@ def test_oadev_rt_nbs14():
     oadev_rt = at.realtime.oadev_realtime(afs=[1,2],tau0=1.0)
     for x in nbs14_phase:
         oadev_rt.add_phase(x)
-    print "OADEV rt ",oadev_rt.dev[0] ," == OADEV ", nbs14_devs[1][0]
-    print "OADEV rt ",oadev_rt.dev[1] ," == OADEV ", nbs14_devs[1][1]
+    print("OADEV rt ",oadev_rt.dev[0] ," == OADEV ", nbs14_devs[1][0])
+    print("OADEV rt ",oadev_rt.dev[1] ," == OADEV ", nbs14_devs[1][1])
     assert( numpy.isclose( oadev_rt.dev[0], nbs14_devs[1][0] ))
     assert( numpy.isclose( oadev_rt.dev[1], nbs14_devs[1][1] ))
 
