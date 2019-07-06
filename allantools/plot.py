@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-class Plot():
+class Plot(object):
     """ A class for plotting data once computed by Allantools
 
     :Example:
@@ -81,11 +81,11 @@ class Plot():
             self.ax.errorbar(atDataset.out["taus"],
                              atDataset.out["stat"],
                              yerr=atDataset.out["stat_err"],
-                             )
+                            )
         else:
             self.ax.plot(atDataset.out["taus"],
                          atDataset.out["stat"],
-                         )
+                        )
         self.ax.set_xlabel("Tau")
         self.ax.set_ylabel(atDataset.out["stat_id"])
         self.ax.grid(grid, which="minor", ls="-", color='0.65')
@@ -100,5 +100,5 @@ class Plot():
         self.plt.show()
 
     def save(self, f):
+        """ save figure to file f """
         self.plt.savefig(f)
-        
