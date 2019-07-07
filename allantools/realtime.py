@@ -26,12 +26,8 @@
 
 import numpy
 
-class oadev_realtime(object):
-    """ Overlapping Allan deviation in real-time from a stream of phase/frequency samples.
-    
-        Dobrogowski & Kasznia
-        https://doi.org/10.1109/FREQ.2007.4319204
-    """
+class dev_realtime(object):
+    """ Base-class for real-time statistics """
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
         self.x = []                         # phase time-series
         self.afs = afs                      # averaging factor, tau = af*tau0
@@ -41,10 +37,9 @@ class oadev_realtime(object):
         self.af_decade = 0    # logspace decade
         if auto_afs:
             self.afs = numpy.array([1])
-        self.S = numpy.zeros(len(afs))      # sum-of-squares
         self.dev = numpy.zeros(len(afs))    # resulting xDEV
-        self.tau = tau0                     # time-interval between points
-
+        self.tau0 = tau0                     # time-interval between points
+        
     def update_af(self):
         """ used in auto-AF mode, 
             - check if we can add another AF
@@ -56,7 +51,7 @@ class oadev_realtime(object):
             next_idx = 0
             next_decade = self.af_decade + 1
         
-        next_af = int( numpy.round( pow(10.0, next_decade) * self.af_taus[ next_idx ] ) ) # next possible AF
+        next_af = int(numpy.round(pow(10.0, next_decade) * self.af_taus[ next_idx ] ) ) # next possible AF
         if len(self.x) >= (2*next_af+1): # can compute next AF
             self.afs = numpy.append( self.afs, next_af ) # new AF
             self.S = numpy.append(self.S, 0) # new S
@@ -66,13 +61,31 @@ class oadev_realtime(object):
         else:
             pass
             #print "no new AF "
-
+            
     def add_frequency(self, f):
         """ add new frequency point, in units of Hz """
         if len(self.x)==0:
             self.add_phase(0) # initialize
         self.add_phase(self.x[-1] + f) # integration
-        
+
+    def taus(self):
+        """ return taus, in unit of seconds """
+        return self.tau0*self.afs
+    
+    def devs(self):
+        """ return deviation """
+        return self.dev
+
+class oadev_realtime(dev_realtime):
+    """ Overlapping Allan deviation in real-time from a stream of phase/frequency samples.
+    
+        Dobrogowski & Kasznia
+        https://doi.org/10.1109/FREQ.2007.4319204
+    """
+    def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
+        super(oadev_realtime, self).__init__(afs=afs, tau0=tau0, auto_afs=auto_afs, pts_per_decade=pts_per_decade)
+        self.S = numpy.zeros(len(afs))      # sum-of-squares
+
     def add_phase(self, x):
         """ add new phase point, in units of seconds """
         self.x.append(x)
@@ -81,47 +94,30 @@ class oadev_realtime(object):
                 self.update_S(idx)
         if self.auto_afs:
             self.update_af()
-            
+
     def update_S(self, idx):
         """ update S, sum-of-squares """
         af = self.afs[idx]
         i = len(self.x)-1 # last pt
         S_new = pow(self.x[i] - 2*self.x[i-af] + self.x[i-2*af], 2)
         self.S[idx] = self.S[idx] + S_new
-        self.dev[idx] = numpy.sqrt((1.0/(2*pow(af*self.tau, 2)*(i+1-2*af))) * self.S[idx])
-        
-    def taus(self):
-        """ return taus, in unit of seconds """
-        return self.tau*self.afs
-    
-    def devs(self):
-        """ return deviation """
-        return self.dev
-        
+        self.dev[idx] = numpy.sqrt((1.0/(2*pow(af*self.tau0, 2)*(i+1-2*af))) * self.S[idx])
+
     def __str__(self):
         msg = "n_pts: %d " % len(self.x)
         for idx, af in enumerate(self.afs):
             msg += "ADEV(%d)=%f " %(af, self.dev[idx])
         return msg
 
-class ohdev_realtime(object):
+class ohdev_realtime(dev_realtime):
     """ Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.
     
         Dobrogowski & Kasznia
         https://doi.org/10.1109/FREQ.2007.4319204
     """
-    def __init__(self, afs=[1], tau0=1.0):
-        self.x = []                         # phase
+    def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
+        super(ohdev_realtime, self).__init__(afs=afs, tau0=tau0, auto_afs=auto_afs, pts_per_decade=pts_per_decade)
         self.S = numpy.zeros(len(afs))      # sum-of-squares
-        self.afs = afs                      # averaging factor
-        self.dev = numpy.zeros(len(afs))    # resulting xDEV
-        self.tau = tau0              # time-interval between points
-
-    def add_frequency(self, f):
-        """ add new frequency point, in units of Hz """
-        if len(self.x)==0:
-            self.add_phase(0) # initialize
-        self.add_phase(self.x[-1] + f) # integration
 
     def add_phase(self, x):
         """ add new phase point """
@@ -137,15 +133,8 @@ class ohdev_realtime(object):
         #print i,self.x
         S_new = pow( self.x[i] - 3*self.x[i-af] + 3*self.x[i-2*af] - self.x[i-3*af], 2)
         self.S[idx] = self.S[idx] + S_new
-        self.dev[idx] = numpy.sqrt( (1.0/(6.0*pow(af*self.tau,2)*(i+1.0-3*af))) * self.S[idx] )
-        
-    def taus(self):
-        return self.tau*self.afs
-        
-    def devs(self):
-        """ return deviation """
-        return self.dev
-        
+        self.dev[idx] = numpy.sqrt( (1.0/(6.0*pow(af*self.tau0,2)*(i+1.0-3*af))) * self.S[idx] )
+
     def __str__(self):
         msg = "n_pts: %d " % len(self.x)
         for idx, af in enumerate(self.afs):
@@ -153,25 +142,16 @@ class ohdev_realtime(object):
         return msg
 
 
-class tdev_realtime():
+class tdev_realtime(dev_realtime):
     """ Time deviation and Modified Allan deviation in real-time from a stream of phase/frequency samples.
     
         Dobrogowski & Kasznia
         https://doi.org/10.1109/FREQ.2007.4319204
     """
-    def __init__(self, afs=[1], tau0=1.0):
-        self.x = []                         # phase
+    def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
+        super(tdev_realtime, self).__init__(afs=afs, tau0=tau0, auto_afs=auto_afs, pts_per_decade=pts_per_decade)
         self.S = numpy.zeros(len(afs))      # sum-of-squares
         self.So = numpy.zeros(len(afs))      # overall sum-of-squares
-        self.afs = afs                      # averaging factor
-        self.dev = numpy.zeros(len(afs))    # resulting xDEV
-        self.tau = tau0             # time-interval between points
-
-    def add_frequency(self, f):
-        """ add new frequency point, in units of Hz """
-        if len(self.x)==0:
-            self.add_phase(0) # initialize
-        self.add_phase(self.x[-1] + f) # integration
         
     def add_phase(self, x):
         """ add new phase point """
@@ -186,9 +166,7 @@ class tdev_realtime():
         """ eqn (13) of paper """
         af = self.afs[idx]
         j = len(self.x)-1 # last pt
-        
         self.S[idx] = self.S[idx] + self.x[j] - 2*self.x[j-af] + self.x[j-2*af]
-        
         if len(self.x) == 3*af:
             # last call to this fctn
             self.So[idx] = pow(self.S[idx],2)
@@ -212,14 +190,11 @@ class tdev_realtime():
         # Eqn (11)
         self.So[idx] = self.So[idx] + pow(self.S[idx], 2) #??? S_(i-1) in paper for TDEV-sqrt?
         self.update_dev(idx)
-        
-    def taus(self):
-        return self.tau*self.afs
-    
+
     def mdev(self):
         mdev = self.dev.copy()
         for idx, af in enumerate(self.afs):
-            mdev[idx]= mdev[idx]*numpy.sqrt(3)/(af*self.tau)
+            mdev[idx]= mdev[idx]*numpy.sqrt(3)/(af*self.tau0)
         return mdev
             
     def __str__(self):
@@ -228,4 +203,48 @@ class tdev_realtime():
             msg += "TDEV(%d)=%f " %(af, self.dev[idx])
         return msg
 
+if __name__ == "__main__":
+    nbs14_phase = [ 0.00000, 103.11111, 123.22222, 157.33333, 166.44444, 48.55555,-96.33333,-2.22222, 111.88889, 0.00000 ]
+    nbs14_f     = [892.0,809.0,823.0,798.0,671.0,644.0,883.0,903.0,677.0]
+
+    nbs14_devs= [ (91.22945,115.8082),  # 0, ADEV(tau=1,tau=2)
+                  (91.22945, 85.95287), # 1, OADEV 
+                  (91.22945,74.78849),  # 2, MDEV
+                  #(91.22945,98.31100),  # TOTDEV, http://www.ieee-uffc.org/frequency-control/learning-riley.asp
+                  (91.22945, 93.90379), # 3, TOTDEV, http://tf.nist.gov/general/pdf/2220.pdf page 107
+                  (70.80608,116.7980),  # 4, HDEV
+                  (52.67135,86.35831),  # 5, TDEV 
+                  (70.80607, 85.61487), # 6, OHDEV
+                  #(75.50203, 75.83606),  # 7, MTOTDEV (published table, WFM bias correction)
+                  (6.4509e+01, 6.4794e+01), # MTOTDEV Stable32 v1.60, no bias-correction
+                  #(43.59112, 87.56794 ), # 8, TTOTDEV (published table, WFM bias correction)
+                  (3.7244e+01, 7.4818e+01), # TTOTDEV Stable32 v1.60, no bias-correction
+                  (70.80607, 91.16396 ), # 9 HTOTDEV (published table)
+                  (45.704, 81.470)] # 10 HTOTDEV Stable32 (not sure what these are!??)
+                  # (100.9770, 102.6039)  # Standard Deviation (sample, not population)
+    oadev_rt = oadev_realtime(afs=[1,2],tau0=1.0)
+    for x in nbs14_phase:
+        oadev_rt.add_phase(x)
+    print("OADEV rt ",oadev_rt.dev[0] ," == OADEV ", nbs14_devs[1][0])
+    print("OADEV rt ",oadev_rt.dev[1] ," == OADEV ", nbs14_devs[1][1])
+    assert( numpy.isclose( oadev_rt.dev[0], nbs14_devs[1][0] ))
+    assert( numpy.isclose( oadev_rt.dev[1], nbs14_devs[1][1] ))
+    
+
+    ohdev_rt = ohdev_realtime(afs=[1,2],tau0=1.0)
+    for x in nbs14_phase:
+        ohdev_rt.add_phase(x)
+    print("OHDEV rt ",ohdev_rt.dev[0] ," == OADEV ", nbs14_devs[6][0])
+    print("OHDEV rt ",ohdev_rt.dev[1] ," == OADEV ", nbs14_devs[6][1])
+    assert( numpy.isclose( ohdev_rt.dev[0], nbs14_devs[6][0] ))
+    assert( numpy.isclose( ohdev_rt.dev[1], nbs14_devs[6][1] ))
+
+    tdev_rt = tdev_realtime(afs=[1,2],tau0=1.0)
+    for x in nbs14_phase:
+        tdev_rt.add_phase(x)
+    print("mDEV rt ",tdev_rt.mdev()[0] ," == mDEV ", nbs14_devs[2][0])
+    print("mDEV rt ",tdev_rt.mdev()[1] ," == mDEV ", nbs14_devs[2][1])
+    assert( numpy.isclose( tdev_rt.mdev()[0], nbs14_devs[2][0] ))
+    assert( numpy.isclose( tdev_rt.mdev()[1], nbs14_devs[2][1] ))
+    
 # end of file realtime.py
