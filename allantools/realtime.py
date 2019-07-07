@@ -54,7 +54,8 @@ class dev_realtime(object):
         next_af = int(numpy.round(pow(10.0, next_decade) * self.af_taus[next_idx])) # next possible AF
         if len(self.x) >= (2*next_af+1): # can compute next AF
             self.afs = numpy.append(self.afs, next_af) # new AF
-            self.S = numpy.append(self.S, 0) # new S
+            self.add_af() # tell subclass to update internal variables
+            #self.S = numpy.append(self.S, 0) # new S, FIXME: S defined in subclass!
             self.dev = numpy.append(self.dev, 0) # new dev
             self.af_idx = next_idx
             self.af_decade = next_decade
@@ -71,6 +72,9 @@ class dev_realtime(object):
     def taus(self):
         """ return taus, in unit of seconds """
         return self.tau0*self.afs
+    
+    def add_af(self):
+        pass # define in subclass!
 
     def devs(self):
         """ return deviation """
@@ -103,6 +107,9 @@ class oadev_realtime(dev_realtime):
         self.S[idx] = self.S[idx] + S_new
         self.dev[idx] = numpy.sqrt((1.0/(2*pow(af*self.tau0, 2)*(i+1-2*af))) * self.S[idx])
 
+    def add_af(self):
+        self.S = numpy.append(self.S, 0)
+
     def __str__(self):
         msg = "n_pts: %d " % len(self.x)
         for idx, af in enumerate(self.afs):
@@ -118,6 +125,9 @@ class ohdev_realtime(dev_realtime):
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
         super(ohdev_realtime, self).__init__(afs=afs, tau0=tau0, auto_afs=auto_afs, pts_per_decade=pts_per_decade)
         self.S = numpy.zeros(len(afs))      # sum-of-squares
+
+    def add_af(self):
+        self.S = numpy.append(self.S, 0)
 
     def add_phase(self, xnew):
         """ add new phase point """
@@ -161,6 +171,10 @@ class tdev_realtime(dev_realtime):
                 self.update_S(idx)
             elif len(self.x) >= 2*af+1: # 2n+1 samples measured
                 self.update_S3n(idx)
+
+    def add_af(self):
+        self.S = numpy.append(self.S, 0)
+        self.So = numpy.append(self.So, 0)
 
     def update_S3n(self, idx):
         """ eqn (13) of paper """
