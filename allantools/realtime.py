@@ -135,6 +135,8 @@ class ohdev_realtime(dev_realtime):
         for idx, af in enumerate(self.afs):
             if len(self.x) > 3*af:
                 self.update_S(idx)
+        if self.auto_afs:
+            self.update_af()
 
     def update_S(self, idx):
         """ update S, sum-of-squares """
@@ -171,6 +173,9 @@ class tdev_realtime(dev_realtime):
                 self.update_S(idx)
             elif len(self.x) >= 2*af+1: # 2n+1 samples measured
                 self.update_S3n(idx)
+        
+        if self.auto_afs:
+            self.update_af()
 
     def add_af(self):
         self.S = numpy.append(self.S, 0)
