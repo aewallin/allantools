@@ -29,19 +29,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-class Plot(object):
+class Plot():
     """ A class for plotting data once computed by Allantools
 
     :Example:
         ::
 
-        import allantools
-        import numpy as np
-        a = allantools.Dataset(data=np.random.rand(1000))
-        a.compute("mdev")
-        b = allantools.Plot()
-        b.plot(a)
-        b.show()
+            import allantools
+            import numpy as np
+            a = allantools.Dataset(data=np.random.rand(1000))
+            a.compute("mdev")
+            b = allantools.Plot()
+            b.plot(a)
+            b.show()
 
     Uses matplotlib. self.fig and self.ax stores the return values of
     matplotlib.pyplot.subplots(). plot() sets various defaults, but you
@@ -65,8 +65,13 @@ class Plot(object):
 
     def plot(self, atDataset,
              errorbars=False,
-             grid=False):
-        """ use matplotlib methods for plotting
+             grid=False,
+             **kwargs
+             ):
+        """ Use matplotlib methods for plotting
+
+        Additional keywords arguments are passed to
+        :py:func:`matplotlib.pyplot.plot`.
 
         Parameters
         ----------
@@ -76,16 +81,19 @@ class Plot(object):
             Plot errorbars. Defaults to False
         grid : boolean
             Plot grid. Defaults to False
+
         """
         if errorbars:
             self.ax.errorbar(atDataset.out["taus"],
                              atDataset.out["stat"],
                              yerr=atDataset.out["stat_err"],
-                            )
+                             **kwargs
+                             )
         else:
             self.ax.plot(atDataset.out["taus"],
                          atDataset.out["stat"],
-                        )
+                         **kwargs
+                         )
         self.ax.set_xlabel("Tau")
         self.ax.set_ylabel(atDataset.out["stat_id"])
         self.ax.grid(grid, which="minor", ls="-", color='0.65')
@@ -100,5 +108,4 @@ class Plot(object):
         self.plt.show()
 
     def save(self, f):
-        """ save figure to file f """
         self.plt.savefig(f)

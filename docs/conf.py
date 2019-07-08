@@ -60,10 +60,14 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.coverage',
-    # 'sphinx.ext.pngmath', does not work as of 2019 July
-    'sphinx.ext.imgmath',
+    'sphinx.ext.intersphinx',
     'numpydoc'
 ]
+
+# Link to external doc
+intersphinx_mapping = {
+    'maplotlib': ('https://matplotlib.org', None),
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
