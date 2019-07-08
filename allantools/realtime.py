@@ -71,7 +71,7 @@ class dev_realtime(object):
 
     def taus(self):
         """ return taus, in unit of seconds """
-        return self.tau0*self.afs
+        return self.tau0*numpy.array(self.afs)
     
     def add_af(self):
         pass # define in subclass!
