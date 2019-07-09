@@ -774,14 +774,34 @@ def calc_mtotdev_phase(phase, rate, m):
         # one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2
         squaresum = 0.0
         #print('m=%d 9m=%d maxj+3*m=%d' %( m, len(xstar), 6*int(m)+3*int(m)) )
+        
+        
+        # below we want the following sums (averages, see squaresum where we divide by m)
+        # xmean1=np.sum(xstar[j     :   j+m])
+        # xmean2=np.sum(xstar[j+m   : j+2*m])
+        # xmean3=np.sum(xstar[j+2*m : j+3*m])
+        # for speed these are not computed with np.sum or np.mean
+        # instead they are initialized at m=0, and then just updated
+        
+        xmean1=0.0
+        xmean2=0.0
+        xmean3=0.0
         for j in range(0, 6*m): # summation of the 6m terms.
-            xmean1 = np.mean(xstar[j     :   j+m])
-            xmean2 = np.mean(xstar[j+m   : j+2*m])
-            xmean3 = np.mean(xstar[j+2*m : j+3*m])
-            assert len(xstar[j : j+m]) == m
-            assert len(xstar[j+m : j+2*m]) == m
-            assert len(xstar[j+2*m : j+3*m]) == m
-            squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)
+            
+            
+            # faster inner sum, based on Stable32 MTC.c code
+            if j == 0:
+                # intialize the sum
+                xmean1 = np.sum( xstar[0:m] )
+                xmean2 = np.sum( xstar[m:2*m] )
+                xmean3 = np.sum( xstar[2*m:3*m] )
+            else:
+                # j>=1, subtract old point, add new point
+                xmean1 = xmean1 - xstar[j-1] + xstar[j+m-1] #
+                xmean2 = xmean2 - xstar[m+j-1] + xstar[j+2*m-1] #
+                xmean3 = xmean3 - xstar[2*m+j-1] + xstar[j+3*m-1] #
+
+            squaresum += pow( (xmean1 - 2.0*xmean2 + xmean3)/float(m), 2)
 
         squaresum = (1.0/(6.0*m)) * squaresum
         dev += squaresum
