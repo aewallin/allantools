@@ -724,8 +724,8 @@ def calc_mtotdev_phase(phase, rate, m):
            by uninverted, even reflection.
 
 
-        D.A. Howe and F. Vernotte, “Generalization of the Total Variance 
-        Approach to the Modified Allan Variance,” Proc.
+        D.A. Howe and F. Vernotte, "Generalization of the Total Variance 
+        Approach to the Modified Allan Variance," Proc.
         31 st PTTI Meeting, pp. 267-276, Dec. 1999.
     """
     tau0 = 1.0/rate
