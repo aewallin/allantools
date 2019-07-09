@@ -714,7 +714,19 @@ def calc_mtotdev_phase(phase, rate, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of mtotdev for one averaging factor m
         tau = m*tau0
+        
+        NIST SP 1065 Eqn (27), page 25.
+        
+        Computed from a set of N - 3m + 1 subsequences of 3m points.
+        1. A linear trend (frequency offset) is removed from the subsequence 
+           by averaging the first and last halves of the subsequence and dividing by half the interval.
+        2. The offset-removed subsequence is extended at both ends
+           by uninverted, even reflection.
 
+
+        D.A. Howe and F. Vernotte, “Generalization of the Total Variance 
+        Approach to the Modified Allan Variance,” Proc.
+        31 st PTTI Meeting, pp. 267-276, Dec. 1999.
     """
     tau0 = 1.0/rate
     N = len(phase) # phase data, N points
@@ -724,10 +736,11 @@ def calc_mtotdev_phase(phase, rate, m):
     dev = 0.0 # the deviation we are computing
     err = 0.0 # the error in the deviation
     #print('calc_mtotdev N=%d m=%d' % (N,m) )
-    for i in range(0, N-3*int(m)+1):
+    for i in range(0, N-3*m+1):
         # subsequence of length 3m, from the original phase data
         xs = phase[i:i+3*m]
         assert len(xs) == 3*m
+        # Step 1.
         # remove linear trend. by averaging first/last half,
         # computing slope, and subtracting
         half1_idx = int(np.floor(3*m/2.0))
@@ -748,32 +761,35 @@ def calc_mtotdev_phase(phase, rate, m):
         # remove the linear trend
         x0 = [x - slope*idx*tau0 for (idx, x) in enumerate(xs)]
         x0_flip = x0[::-1] # left-right flipped version of array
-        # extended sequence of length 9m, by uninverted even reflection
+        
+        # Step 2.
+        # extend sequence, by uninverted even reflection
+        # extended sequence xstar, of length 9m, 
         xstar = np.concatenate((x0_flip, x0, x0_flip))
         assert len(xstar) == 9*m
 
-        # now compute totdev on these 9m points
+        # now compute mdev on these 9m points
         # 6m unique groups of m-point averages,
         # use all possible overlapping second differences
         # one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2
         squaresum = 0.0
         #print('m=%d 9m=%d maxj+3*m=%d' %( m, len(xstar), 6*int(m)+3*int(m)) )
-        for j in range(0, 6*int(m)): # summation of the 6m terms.
+        for j in range(0, 6*m): # summation of the 6m terms.
             xmean1 = np.mean(xstar[j     :   j+m])
             xmean2 = np.mean(xstar[j+m   : j+2*m])
             xmean3 = np.mean(xstar[j+2*m : j+3*m])
             assert len(xstar[j : j+m]) == m
             assert len(xstar[j+m : j+2*m]) == m
             assert len(xstar[j+2*m : j+3*m]) == m
-            squaresum += pow(xmean1-2.0*xmean2+xmean3, 2)
+            squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)
 
         squaresum = (1.0/(6.0*m)) * squaresum
         dev += squaresum
         n = n+1
 
     # scaling in front of double-sum
-    assert n == N-3*int(m)+1 # sanity check on the number of terms n
-    dev = dev* 1.0/ (2.0*pow(m*tau0, 2)*(N-3*m+1))
+    assert n == N-3*m+1 # sanity check on the number of terms n
+    dev = dev * 1.0/ (2.0*pow(m*tau0, 2)*(N-3*m+1))
     dev = np.sqrt(dev)
     error = dev / np.sqrt(n)
     return (dev, error, n)
@@ -783,6 +799,12 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Hadamard Total deviation.
         Better confidence at long averages for Hadamard deviation
+        
+        Computed for N fractional frequency points y_i with sampling
+        period tau0, analyzed at tau = m*tau0
+        1. remove linear trend by averaging first and last half and divide by interval
+        2. extend sequence by uninverted even reflection
+        3. compute Hadamard for extended, length 9m, sequence.
 
         FIXME: bias corrections from http://www.wriley.com/CI2.pdf
         W FM    0.995      alpha= 0
@@ -858,7 +880,7 @@ def calc_htotdev_freq(freq, m):
     m = int(m)
     n = 0    # number of terms in the sum, for error estimation
     dev = 0.0 # the deviation we are computing
-    for i in range(0, N-3*int(m)+1):
+    for i in range(0, N-3*m+1):
         # subsequence of length 3m, from the original phase data
         xs = freq[i:i+3*m]
         assert len(xs) == 3*m
@@ -882,7 +904,7 @@ def calc_htotdev_freq(freq, m):
         # remove the linear trend
         x0 = [x - slope*(idx-np.floor(3*m/2)) for (idx, x) in enumerate(xs)]
         x0_flip = x0[::-1] # left-right flipped version of array
-        # extended sequence of length 9m, by uninverted even reflection
+        # extended sequence, to length 9m, by uninverted even reflection
         xstar = np.concatenate((x0_flip, x0, x0_flip))
         assert len(xstar) == 9*m
 
@@ -896,17 +918,16 @@ def calc_htotdev_freq(freq, m):
             xmean1 = np.mean(xstar[j+0*m : j+1*m])
             xmean2 = np.mean(xstar[j+1*m : j+2*m])
             xmean3 = np.mean(xstar[j+2*m : j+3*m])
-            squaresum += pow(xmean1-2.0*xmean2+xmean3, 2)
+            squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)
             k = k+1
-        assert k == 6*int(m)
-
+        assert k == 6*m # check number of terms in the sum
         squaresum = (1.0/(6.0*k)) * squaresum
         dev += squaresum
         n = n+1
 
     # scaling in front of double-sum
-    assert n == N-3*int(m)+1 # sanity check on the number of terms n
-    dev = dev* 1.0/ (N-3*m+1)
+    assert n == N-3*m+1 # sanity check on the number of terms n
+    dev = dev * 1.0/(N-3*m+1)
     dev = np.sqrt(dev)
     error = dev / np.sqrt(n)
     return (dev, error, n)
