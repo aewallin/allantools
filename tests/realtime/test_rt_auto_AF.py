@@ -11,7 +11,7 @@ import pytest
 import allantools as at
 import numpy
 
-n_pts = pow(2,14)
+n_pts = pow(2,12)
 x_series = at.noise.white(n_pts)
 
 def test_oadev_rt_autoAF():
