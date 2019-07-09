@@ -67,12 +67,17 @@ class TestGPS():
     def test_adev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
         change_to_test_dir()
+        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+        
         s32rows = testutils.read_stable32(resultfile='stable32_ADEV_decade.txt', datarate=1.0)
-        for row in s32rows:
-            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
-            (taus, devs, errs, ns) = allan.adev(phase, rate=rate, data_type="phase",
-                                                taus=[row['tau']])
-            dev = devs[0]
+        s32taus = [row['tau'] for row in s32rows]
+        (taus, devs, errs, ns) = allan.adev(phase, rate=rate, data_type="phase",
+                                                 taus=s32taus)
+        for idx, row in enumerate(s32rows):
+            
+            #(taus, devs, errs, ns) = allan.adev(phase, rate=rate, data_type="phase",
+            #                                    taus=[row['tau']])
+            dev = devs[idx]
             try:
                 # CI including noise-ID
                 (lo2, hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="adev", data_type="phase")
@@ -86,14 +91,15 @@ class TestGPS():
     def test_oadev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
         change_to_test_dir()
+        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
         s32rows = testutils.read_stable32(resultfile='stable32_OADEV_octave.txt', datarate=1.0)
-        for row in s32rows:
-            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
-            (taus, devs, errs, ns) = allan.oadev(phase, rate=rate, data_type="phase",
-                                                 taus=[row['tau']])
-            dev = devs[0]
-            #print(dev/row['dev'])
-            assert np.isclose(dev, row['dev'], rtol=1e-2, atol=0)
+        s32taus = [row['tau'] for row in s32rows]
+        (taus, devs, errs, ns) = allan.oadev(phase, rate=rate, data_type="phase",
+                                                 taus=s32taus)
+        for idx, row in enumerate(s32rows):
+            dev = devs[idx]
+            assert np.isclose(dev, row['dev'], rtol=1e-2, atol=0) # check deviation            
+            # now check confidence interval
             try:
                 # CI including noise-ID
                 (lo2, hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="oadev", data_type="phase")
@@ -107,12 +113,16 @@ class TestGPS():
     def test_mdev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
         change_to_test_dir()
+        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
         s32rows = testutils.read_stable32(resultfile='stable32_MDEV_octave.txt', datarate=1.0)
-        for row in s32rows:
-            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
-            (taus, devs, errs, ns) = allan.mdev(phase, rate=rate, data_type="phase",
-                                                taus=[row['tau']])
-            dev = devs[0]
+        s32taus = [row['tau'] for row in s32rows]
+        (taus, devs, errs, ns) = allan.mdev(phase, rate=rate, data_type="phase",
+                                                 taus=s32taus)
+        for idx, row in enumerate(s32rows):
+            
+            #(taus, devs, errs, ns) = allan.mdev(phase, rate=rate, data_type="phase",
+            #                                    taus=[row['tau']])
+            dev = devs[idx]
             #print(dev/row['dev'])
             assert np.isclose(dev, row['dev'], rtol=1e-2, atol=0)
             try:
@@ -128,12 +138,16 @@ class TestGPS():
     def test_tdev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
         change_to_test_dir()
+        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
         s32rows = testutils.read_stable32(resultfile='stable32_TDEV_octave.txt', datarate=1.0)
-        for row in s32rows:
-            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
-            (taus, devs, errs, ns) = allan.tdev(phase, rate=rate, data_type="phase",
-                                                taus=[row['tau']])
-            dev = devs[0]
+        s32taus = [row['tau'] for row in s32rows]
+        (taus, devs, errs, ns) = allan.tdev(phase, rate=rate, data_type="phase",
+                                                 taus=s32taus)
+        for idx, row in enumerate(s32rows):
+            
+            #(taus, devs, errs, ns) = allan.tdev(phase, rate=rate, data_type="phase",
+            #                                    taus=[row['tau']])
+            dev = devs[idx]
             #print(dev/row['dev'])
             assert np.isclose(dev, row['dev'], rtol=1e-2, atol=0)
             try:
@@ -149,12 +163,16 @@ class TestGPS():
     def test_hdev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
         change_to_test_dir()
+        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
         s32rows = testutils.read_stable32(resultfile='stable32_HDEV_octave.txt', datarate=1.0)
-        for row in s32rows:
-            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
-            (taus, devs, errs, ns) = allan.hdev(phase, rate=rate, data_type="phase",
-                                                taus=[row['tau']])
-            dev = devs[0]
+        s32taus = [row['tau'] for row in s32rows]
+        (taus, devs, errs, ns) = allan.hdev(phase, rate=rate, data_type="phase",
+                                                 taus=s32taus)
+        for idx, row in enumerate(s32rows):
+            
+            #(taus, devs, errs, ns) = allan.hdev(phase, rate=rate, data_type="phase",
+            #                                    taus=[row['tau']])
+            dev = devs[idx]
             #print(dev/row['dev'])
             assert np.isclose(dev, row['dev'], rtol=1e-2, atol=0)
             try:
@@ -170,12 +188,16 @@ class TestGPS():
     def test_ohdev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
         change_to_test_dir()
+        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
         s32rows = testutils.read_stable32(resultfile='stable32_OHDEV_octave.txt', datarate=1.0)
-        for row in s32rows:
-            phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
-            (taus, devs, errs, ns) = allan.ohdev(phase, rate=rate, data_type="phase",
-                                                 taus=[row['tau']])
-            dev = devs[0]
+        s32taus = [row['tau'] for row in s32rows]
+        (taus, devs, errs, ns) = allan.ohdev(phase, rate=rate, data_type="phase",
+                                                 taus=s32taus)
+        for idx, row in enumerate(s32rows):
+            
+            #(taus, devs, errs, ns) = allan.ohdev(phase, rate=rate, data_type="phase",
+            #                                     taus=[row['tau']])
+            dev = devs[idx]
             #print(dev/row['dev'])
             assert np.isclose(dev, row['dev'], rtol=1e-2, atol=0)
             try:
@@ -194,8 +216,8 @@ class TestGPS():
 
 if __name__ == "__main__":
     t = TestGPS()
-    t.test_ohdev_ci_and_noiseID()
-    #t.test_oadev_ci_and_noiseID()
+    #t.test_ohdev_ci_and_noiseID()
+    t.test_oadev_ci_and_noiseID()
     #pytest.main()
 
 
