@@ -780,15 +780,9 @@ def calc_mtotdev_phase(phase, rate, m):
         # xmean1=np.sum(xstar[j     :   j+m])
         # xmean2=np.sum(xstar[j+m   : j+2*m])
         # xmean3=np.sum(xstar[j+2*m : j+3*m])
-        # for speed these are not computed with np.sum or np.mean
+        # for speed these are not computed with np.sum or np.mean in each loop
         # instead they are initialized at m=0, and then just updated
-        
-        xmean1=0.0
-        xmean2=0.0
-        xmean3=0.0
         for j in range(0, 6*m): # summation of the 6m terms.
-            
-            
             # faster inner sum, based on Stable32 MTC.c code
             if j == 0:
                 # intialize the sum
@@ -935,10 +929,25 @@ def calc_htotdev_freq(freq, m):
         squaresum = 0.0
         k = 0
         for j in range(0, 6*int(m)): # summation of the 6m terms.
-            xmean1 = np.mean(xstar[j+0*m : j+1*m])
-            xmean2 = np.mean(xstar[j+1*m : j+2*m])
-            xmean3 = np.mean(xstar[j+2*m : j+3*m])
-            squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)
+            # old naive code
+            # xmean1 = np.mean(xstar[j+0*m : j+1*m])
+            # xmean2 = np.mean(xstar[j+1*m : j+2*m])
+            # xmean3 = np.mean(xstar[j+2*m : j+3*m])
+            # squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)
+            # new faster way of doing the sums
+            if j == 0:
+                # intialize the sum
+                xmean1 = np.sum( xstar[0:m] )
+                xmean2 = np.sum( xstar[m:2*m] )
+                xmean3 = np.sum( xstar[2*m:3*m] )
+            else:
+                # j>=1, subtract old point, add new point
+                xmean1 = xmean1 - xstar[j-1] + xstar[j+m-1] #
+                xmean2 = xmean2 - xstar[m+j-1] + xstar[j+2*m-1] #
+                xmean3 = xmean3 - xstar[2*m+j-1] + xstar[j+3*m-1] #
+
+            squaresum += pow( (xmean1 - 2.0*xmean2 + xmean3)/float(m), 2)
+            
             k = k+1
         assert k == 6*m # check number of terms in the sum
         squaresum = (1.0/(6.0*k)) * squaresum
