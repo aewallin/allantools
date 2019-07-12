@@ -1093,6 +1093,12 @@ def mtie_rolling_window(a, window):
     -------
     Array that is a view of the original array with a added dimension
     of size window.
+    
+    Note
+    ----
+    This may consume large amounts of memory. See discussion:
+    https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html
+    https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html
 
     """
     if window < 1:
@@ -1166,10 +1172,10 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
                 if dev < currMax - currMin:
                     dev = currMax - currMin
 
-    ncount = phase.shape[0] - mj
-    devs[idx] = dev
-    deverrs[idx] = dev / np.sqrt(ncount)
-    ns[idx] = ncount
+        ncount = phase.shape[0] - mj
+        devs[idx] = dev
+        deverrs[idx] = dev / np.sqrt(ncount)
+        ns[idx] = ncount
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
