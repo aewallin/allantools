@@ -31,7 +31,7 @@ try:
 except ImportError:
     rtd_theme = False
 
-import numpydoc
+#import numpydoc
 
 
 sys.path.insert(0, os.path.abspath(os.getcwd()))
@@ -61,7 +61,10 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.coverage',
     'sphinx.ext.intersphinx',
-    'numpydoc'
+    'sphinx.ext.napoleon',
+    # Will be obsolete with sphinx version 1.8: 
+    'sphinx.ext.imgmath',
+#    'numpydoc'
 ]
 
 # Link to external doc
