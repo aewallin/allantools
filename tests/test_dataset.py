@@ -26,8 +26,8 @@ def test_compute_functions(dataset):
         result = dataset.compute(calc)
         assert isinstance(result, dict)
         # Also test output for all types
-        tmpfile = tempfile.NamedTemporaryFile()
-        result.write_results(tmpfile)
+        tmpfile = tempfile.NamedTemporaryFile(mode="w")
+        dataset.write_results(tmpfile.name)
 
 
 def test_dataset_parameters():
