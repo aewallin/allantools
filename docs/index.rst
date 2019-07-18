@@ -10,7 +10,7 @@ AllanTools documentation
     :maxdepth: 2
    
     readme_copy
-    getting_started
+    functions
     api
     dev
     references
