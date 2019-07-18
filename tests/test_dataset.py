@@ -1,5 +1,6 @@
 from allantools.dataset import Dataset
 from allantools import noise
+import tempfile
 import pytest
 
 
@@ -24,7 +25,12 @@ def test_compute_functions(dataset):
     for calc in types:
         result = dataset.compute(calc)
         assert isinstance(result, dict)
+        # Also test output for all types
+        tmpfile = tempfile.NamedTemporaryFile(mode="w")
+        dataset.write_results(tmpfile.name)
+
 
 def test_dataset_parameters():
     ds = Dataset()
-    ds.set_input( noise.white(10), rate=1.234, data_type = "frequency", taus = [1,3,4] )
+    ds.set_input(noise.white(10), rate=1.234, data_type="frequency",
+                 taus=[1, 3, 4])
