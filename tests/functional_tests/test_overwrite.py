@@ -13,7 +13,7 @@ def test_overwrite():
     https://github.com/aewallin/allantools/issues/76
     """
     x1 = at.noise.white(num_points=1024)
-    x2 = at.noise.pink(N=1024)
+    x2 = at.noise.pink(num_points=1024)
     ds1 = at.Dataset(x1)
     ds2 = at.Dataset(x2)
     r1 = ds1.compute('oadev')
