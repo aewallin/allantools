@@ -66,21 +66,21 @@ def brown(num_points=1024, b2=1.0, fs=1.0):
     """
     return (1.0/float(fs))*numpy.cumsum(white(num_points, b0=b2*(4.0*math.pi*math.pi), fs=fs))
 
-def violet(num_points):
+def violet(num_points=1024):
     """ violet noise with f^2 PSD """
     # diff() reduces number of points by one.
     return numpy.diff(numpy.random.randn(num_points+1))
 
-def pink(N, depth=80):
+def pink(num_points=1024, depth=80):
     """
     N-length vector with (approximate) pink noise
     pink noise has 1/f PSD
     """
     a = []
     s = iterpink(depth)
-    for n in range(N): # FIXME: n is unused here.
+    for n in range(num_points): # FIXME: num_points is unused here.
         a.append(next(s))
-    return a
+    return numpy.array(a)
 
 
 def iterpink(depth=20):

@@ -17,10 +17,14 @@ def test_noise():
     v = noise.violet(N)
     p = noise.pink(N)
     
+    # check output length
     assert len(w) == N
     assert len(b) == N
     assert len(v) == N
     assert len(p) == N
-    
+    # check output type
+    for x in [w, b, v, p]:
+        assert type(x) == numpy.ndarray, "%s is not numpy.ndarray" % (type(x))
+        
 if __name__ == "__main__":
     test_noise()
