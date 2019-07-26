@@ -14,10 +14,10 @@ AllanTools
 A python library for calculating Allan deviation and related 
 time & frequency statistics. `LGPL v3+ license <https://www.gnu.org/licenses/lgpl.html>`_.
 
-Developed at https://github.com/aewallin/allantools and also available 
-on PyPi at https://pypi.python.org/pypi/AllanTools
-Discussion group at https://groups.google.com/d/forum/allantools
-Documentation available at https://allantools.readthedocs.org
+* Development at https://github.com/aewallin/allantools
+* Installation package at https://pypi.python.org/pypi/AllanTools
+* Discussion group at https://groups.google.com/d/forum/allantools
+* Documentation available at https://allantools.readthedocs.org
  
 
 Input data should be evenly spaced observations of either fractional frequency,
