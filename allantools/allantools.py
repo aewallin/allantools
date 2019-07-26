@@ -7,8 +7,11 @@ Allan deviation tools
 Version history
 ---------------
 
-**2019.xx**
+**2019.07**
 - move edf-functions and noise-ID functions to ci.py
+- mtotdev() htotdev() speed improvements
+- save dataset results to file
+- real-time adev/mdev/hdev
 
 **2018.03** 2018 March 27
 - change license to LGPL v3 or later

@@ -10,6 +10,7 @@ pkginfo_path = os.path.join(os.path.dirname(__file__),
                             'allantools_info.json')
 pkginfo = json.load(open(pkginfo_path))
 
+# this info comes from allantools_info.json
 setup(name=pkginfo['name'],
       version=pkginfo['version'],
       description=pkginfo['description'],
