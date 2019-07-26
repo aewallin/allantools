@@ -147,7 +147,7 @@ class Dataset():
         self.out["stat_id"] = function
         return result
 
-    def write_results(self, filename):
+    def write_results(self, filename, digits=5, header_params={}):
         """ Output result to text
 
         Save calculation results to disk. Will overwrite any existing file.
@@ -156,6 +156,10 @@ class Dataset():
         ----------
         filename: str
             Path to the output file
+        digits: int
+            Number of significant digits in output
+        header_params: dict
+            Arbitrary dict of params to be included in header
 
         Returns
         -------
@@ -167,11 +171,38 @@ class Dataset():
                 allantools.__version__))
             fp.write("# Input data type: {}\n".format(self.inp["data_type"]))
             fp.write("# Input data rate: {}\n".format(self.inp["rate"]))
-            fp.write("# Tau {} n err\n".format(self.out["stat_id"]))
+            for key, val in header_params.items():
+                fp.write("# {}: {}\n".format(key, val))
+            # Fields
+            fp.write(("{af:>5s} {tau:>{width}s} {n:>10s} {alpha:>5s} "
+                      "{minsigma:>{width}} "
+                      "{sigma:>{width}} "
+                      "{maxsigma:>{width}} "
+                      "\n").format(
+                          af="AF",
+                          tau="Tau",
+                          n="N",
+                          alpha="alpha",
+                          minsigma="min_" + self.out["stat_id"],
+                          sigma=self.out["stat_id"],
+                          maxsigma="max_" + self.out["stat_id"],
+                          width=digits + 5
+                      )
+                     )
+            out_fmt = ("{af:5d} {tau:.{prec}e} {n:10d} {alpha:5s} "
+                       "{minsigma:.{prec}e} "
+                       "{sigma:.{prec}e} "
+                       "{maxsigma:.{prec}e} "
+                       "\n")
             for i in range(len(self.out["taus"])):
-                fp.write("{0:e} {1:e} {2:10d} {3:e}\n".format(
-                    self.out["taus"][i],
-                    self.out["stat"][i],
-                    int(self.out["stat_n"][i]),
-                    self.out["stat_err"][i],
+                fp.write(out_fmt.format(
+                    af=int(self.out["taus"][i] / self.out["taus"][0]),
+                    tau=self.out["taus"][i],
+                    n=int(self.out["stat_n"][i]),
+                    alpha="NaN",  # Not implemented yet
+                    minsigma=self.out["stat"][i] - self.out["stat_err"][i]/2,
+                    sigma=self.out["stat"][i],
+                    maxsigma=(self.out["stat"][i] +
+                              self.out["stat_err"][i]/2),
+                    prec=digits-1,
                 ))
