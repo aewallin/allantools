@@ -28,6 +28,11 @@ def test_compute_functions(dataset):
         # Also test output for all types
         tmpfile = tempfile.NamedTemporaryFile(mode="w")
         dataset.write_results(tmpfile.name)
+        dataset.write_results(tmpfile.name,
+                              digits=10,
+                              header_params={"test":1, "test2":"foo"}
+                             )
+
 
 
 def test_dataset_parameters():
