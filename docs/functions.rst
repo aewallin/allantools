@@ -49,13 +49,13 @@ Statistics
 Real-Time Statistics
 --------------------
 
-.. autoclass:: allantools.realtime.oadev_realtime
+.. autoclass:: oadev_realtime
     :members:
     
-.. autoclass:: allantools.realtime.tdev_realtime
+.. autoclass:: tdev_realtime
     :members:
     
-.. autoclass:: allantools.realtime.ohdev_realtime
+.. autoclass:: ohdev_realtime
     :members:
 
 
