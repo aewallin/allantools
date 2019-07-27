@@ -90,3 +90,7 @@ Papers
     A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
     32nd PTTI, 2000
     https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
+
+.. [Howe1999] D.A. Howe and F. Vernotte, "Generalization of the Total Variance 
+        Approach to the Modified Allan Variance," Proc.
+        31 st PTTI Meeting, pp. 267-276, Dec. 1999.

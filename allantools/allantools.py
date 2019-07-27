@@ -121,7 +121,7 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
 
     Note that TDEV has a unit of seconds.
 
-    NIST SP 1065 eqn (15), page 18.
+    NIST [SP1065]_ eqn (15), page 18.
 
     Parameters
     ----------
@@ -172,7 +172,7 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
 
     see http://www.leapsecond.com/tools/adev_lib.c
 
-    NIST SP 1065 eqn (14), page 17.
+    NIST [SP1065]_ eqn (14), page 17.
 
     Parameters
     ----------
@@ -271,7 +271,7 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
     where :math:`\\bar{y}_n` is the time-series of fractional frequency
     at averaging time :math:`\\tau`
 
-    NIST SP 1065 eqn (6) and (7), pages 14 and 15.
+    NIST [SP1065]_ eqn (6) and (7), pages 14 and 15.
 
     Parameters
     ----------
@@ -345,7 +345,7 @@ def calc_adev_phase(phase, rate, mj, stride):
     ----------
     * http://en.wikipedia.org/wiki/Allan_variance
     * http://www.leapsecond.com/tools/adev_lib.c
-    NIST SP 1065, eqn (7) and (11) page 16
+    NIST [SP1065]_ eqn (7) and (11) page 16
     """
     mj = int(mj)
     stride = int(stride)
@@ -381,7 +381,7 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
     :math:`x_n` is the time-series of phase observations, spaced by the
     measurement interval :math:`\\tau_0`, with length :math:`N`.
 
-    NIST SP 1065 eqn (11), page 16.
+    NIST [SP1065]_ eqn (11), page 16.
 
     Parameters
     ----------
@@ -487,7 +487,7 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
     where :math:`x_i` is the time-series of phase observations, spaced
     by the measurement interval :math:`\\tau`, and with length :math:`N`.
 
-    NIST SP 1065 eqn (17) and (18), page 20
+    NIST [SP1065]_ eqn (17) and (18), page 20
 
     Parameters
     ----------
@@ -546,7 +546,7 @@ def calc_hdev_phase(phase, rate, mj, stride):
         N=M+1 phase measurements
         m is averaging factor
 
-    NIST SP 1065 eqn (18) and (20) pages 20 and 21
+    NIST [SP1065]_ eqn (18) and (20) pages 20 and 21
     """
 
     tau0 = 1.0 / float(rate)
@@ -592,7 +592,7 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     x* has length 3N-4
     tau = m*tau0
 
-    NIST SP 1065 eqn (25) page 23
+    NIST [SP1065]_ eqn (25) page 23
 
     FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
 
@@ -660,7 +660,7 @@ def ttotdev(data, rate=1.0, data_type="phase", taus=None):
 
         Modified total variance scaled by tau^2 / 3
 
-        NIST SP 1065 eqn (28) page 26.  Note that SP1065 erroneously has tau-cubed here (!).
+        NIST [SP1065]_ eqn (28) page 26.  Note that [SP1065]_ erroneously has tau-cubed here (!).
     """
 
     (taus, mtotdevs, mde, ns) = mtotdev(data, data_type=data_type,
@@ -698,7 +698,7 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
-    NIST SP 1065 eqn (27) page 25
+    NIST [SP1065]_ eqn (27) page 25
 
     """
     phase = input_to_phase(data, rate, data_type)
@@ -718,7 +718,7 @@ def calc_mtotdev_phase(phase, rate, m):
         calculation of mtotdev for one averaging factor m
         tau = m*tau0
         
-        NIST SP 1065 Eqn (27), page 25.
+        NIST [SP1065]_ Eqn (27), page 25.
         
         Computed from a set of N - 3m + 1 subsequences of 3m points.
         1. A linear trend (frequency offset) is removed from the subsequence 
@@ -726,7 +726,7 @@ def calc_mtotdev_phase(phase, rate, m):
         2. The offset-removed subsequence is extended at both ends
            by uninverted, even reflection.
 
-
+        [Howe1999]_
         D.A. Howe and F. Vernotte, "Generalization of the Total Variance 
         Approach to the Modified Allan Variance," Proc.
         31 st PTTI Meeting, pp. 267-276, Dec. 1999.
@@ -982,7 +982,7 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
 
         FIXME: bias correction
 
-        NIST SP 1065 eq (30) page 29
+        NIST [SP1065]_ eq (30) page 29
 
     Parameters
     ----------
@@ -1190,7 +1190,7 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
 def mtie_phase_fast(phase, rate=1.0, data_type="phase", taus=None):
     """ fast binary decomposition algorithm for MTIE
 
-        See: STEFANO BREGNI "Fast Algorithms for TVAR and MTIE Computation in
+        See: [Bregni2001]_ STEFANO BREGNI "Fast Algorithms for TVAR and MTIE Computation in
         Characterization of Network Synchronization Performance"
     """
     rate = float(rate)
