@@ -113,6 +113,7 @@ class oadev_realtime(dev_realtime):
 class ohdev_realtime(dev_realtime):
     """ Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.
 
+        [Dobrogowski2007]_
         Dobrogowski & Kasznia
         https://doi.org/10.1109/FREQ.2007.4319204
     """
