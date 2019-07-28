@@ -10,28 +10,59 @@ Code
 
 Papers
 ------
-.. [Dobrogowski2007] Dobrogowski & Kasznia
-    Real-time Assessment of Allan Deviation and Time Deviation
-    2007 IEEE International Frequency Control Symposium Joint with the 21st European Frequency and Time Forum
-    https://doi.org/10.1109/FREQ.2007.4319204
+
     
 .. [Barnes1974] Barnes, 1974
     https://tf.nist.gov/general/pdf/11.pdf
-
+    
+.. [Benkler2015] Benkler, Lisdat, Sterr, On the relation between uncertainties of weighted frequency 
+    averages and the various types of Allan deviations.
+    Metrologia, Volume 52, Number 4, 2015.
+    https://doi.org/10.1088/0026-1394/52/4/565
+    https://arxiv.org/abs/1504.00466
+    
+.. [Bregni2001] S. BREGNI, Fast Algorithms for TVAR and MTIE Computation in Characterization of
+    Network Synchronization Performance. 
+    http://home.deib.polimi.it/bregni/papers/cscc2001_fastalgo.pdf
+    
 .. [Dawkins2007] S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
     the measurement of the stability of oscillators with frequency
     counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
     Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
     doi: 10.1109/TUFFC.2007.337
-            
+
+.. [Dobrogowski2007] Dobrogowski & Kasznia
+    Real-time Assessment of Allan Deviation and Time Deviation
+    2007 IEEE International Frequency Control Symposium Joint with the 21st European Frequency and Time Forum
+    https://doi.org/10.1109/FREQ.2007.4319204
+
+.. [Greenhall2004] Greenhall & Riley, "UNCERTAINTY OF STABILITY VARIANCES
+    BASED ON FINITE DIFFERENCES" 35th Annual Precise Time and Time Interval (PTTI) Meeting
+    https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
+
+.. [Howe_theo1] D.A. Howe and T.N. Tasset
+    THEO1: CHARACTERIZATION OF VERY LONG-TERM FREQUENCY STABILITY
+    http://tf.nist.gov/general/pdf/1990.pdf
+
+.. [Howe2000] Howe, Beard, Greenhall, Riley,
+    A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
+    32nd PTTI, 2000
+    https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
+
+.. [Howe1999] D.A. Howe and F. Vernotte, "Generalization of the Total Variance 
+        Approach to the Modified Allan Variance," Proc.
+        31 st PTTI Meeting, pp. 267-276, Dec. 1999.
+
+.. [Howe2000] David A. Howe, The total deviation approach to long-term characterization
+    of frequency stability, IEEE tr. UFFC vol 47 no 5 (2000)
+    http://dx.doi.org/10.1109/58.869040    
+
 .. [Kasdin1992] Kasdin, N.J., Walter, T., "Discrete simulation of power law noise [for
     oscillator stability evaluation]," Frequency Control Symposium, 1992.
     46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
     http://dx.doi.org/10.1109/FREQ.1992.270003
     
-.. [Greenhall2004] Greenhall & Riley, "UNCERTAINTY OF STABILITY VARIANCES
-    BASED ON FINITE DIFFERENCES" 35th Annual Precise Time and Time Interval (PTTI) Meeting
-    https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
+
 
 .. [wikipedia_adev] http://en.wikipedia.org/wiki/Allan_variance
 
@@ -52,45 +83,31 @@ Papers
     18th European Frequency and Time Forum (EFTF 2004)
     https://ieeexplore.ieee.org/document/5075021
 
-.. [Greenhall2004] Greenhall, Riley, 2004
-    https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
-    UNCERTAINTY OF STABILITY VARIANCES BASED ON FINITE DIFFERENCES
+.. [Riley_1] W.J.Riley, "THE CALCULATION OF TIME DOMAIN FREQUENCY STABILITY" 
+    http://www.wriley.com/paper1ht.htm
 
-.. [Vernotte2011] F. Vernotte, "Variance Measurements", 2011 IFCS & EFTF
-    http://www.ieee-uffc.org/frequency-control/learning/pdf/Vernotte-Varience_Measurements.pdf
+.. [Rubiola2015] The Omega Counter, a Frequency Counter Based on the Linear Regression
+    https://arxiv.org/abs/1506.05009    
+
 
 .. [Stein1985] S. Stein, Frequency and Time - Their Measurement and Characterization. 
     Precision Frequency Control Vol 2, 1985, pp 191-416. 
     http://tf.boulder.nist.gov/general/pdf/666.pdf
 
-.. [Riley_1] W.J.Riley, "THE CALCULATION OF TIME DOMAIN FREQUENCY STABILITY" 
-    http://www.wriley.com/paper1ht.htm
+
 
 .. [Sesia2011] SESIA I., GALLEANI L., TAVELLA P., Application of the Dynamic Allan Variance 
     for the Characterization of Space Clock Behavior, 
     http://dx.doi.org/10.1109/TAES.2011.5751232
 
-.. [Bregni2001] S. BREGNI, Fast Algorithms for TVAR and MTIE Computation in Characterization of
-    Network Synchronization Performance. 
-    http://home.deib.polimi.it/bregni/papers/cscc2001_fastalgo.pdf
-
-.. [Howe2000] David A. Howe, The total deviation approach to long-term characterization
-    of frequency stability, IEEE tr. UFFC vol 47 no 5 (2000)
-    http://dx.doi.org/10.1109/58.869040
 
 .. [Sesia2008] Ilaria Sesia and Patrizia Tavella, Estimating the Allan variance in the 
     presence of long periods of missing data and outliers.
     2008 Metrologia 45 S134 http://dx.doi.org/10.1088/0026-1394/45/6/S19
 
-.. [Howe_theo1] D.A. Howe and T.N. Tasset
-    THEO1: CHARACTERIZATION OF VERY LONG-TERM FREQUENCY STABILITY
-    http://tf.nist.gov/general/pdf/1990.pdf
+.. [Vernotte2011] F. Vernotte, "Variance Measurements", 2011 IFCS & EFTF
+    http://www.ieee-uffc.org/frequency-control/learning/pdf/Vernotte-Varience_Measurements.pdf
 
-.. [Howe2000] Howe, Beard, Greenhall, Riley,
-    A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
-    32nd PTTI, 2000
-    https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
-
-.. [Howe1999] D.A. Howe and F. Vernotte, "Generalization of the Total Variance 
-        Approach to the Modified Allan Variance," Proc.
-        31 st PTTI Meeting, pp. 267-276, Dec. 1999.
+.. [Vernotte2015] The Parabolic Variance (PVAR): A Wavelet Variance Based on the Least-Square Fit
+    https://ieeexplore.ieee.org/document/7323846
+    https://arxiv.org/abs/1506.00687
