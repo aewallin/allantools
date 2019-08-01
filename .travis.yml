@@ -30,10 +30,12 @@ matrix:
         install: 
             - pip3 install -v .
             - pip3 install -r requirements.txt
-        scrpit: py.test
+        script: 
+            - py.test
   - os: windows
         language: minimal
         before_install:
-        - choco install python3
-        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-        scrpit: py.test
+            - choco install python3
+            - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+        script: 
+            - py.test
