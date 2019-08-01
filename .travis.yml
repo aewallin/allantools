@@ -1,4 +1,4 @@
-dist: xenial   # required for Python >= 3.7
+
 language: python
 python:
     - "2.7"
@@ -13,10 +13,11 @@ python:
 matrix:
     include:
     - os: linux
+        dist: xenial   # required for Python >= 3.7
         sudo: required
         install:
             - sudo apt-get install liblapack-dev libblas-dev gfortran
-            - pip install -v .
+            - pip install -v .      # allantools itself, verbose output
             - pip install -r requirements.txt
             - pip install coveralls
         script:
@@ -25,6 +26,14 @@ matrix:
         after_success:
             coveralls
   - os: osx
-    language: minimal
-    install: pip3 install -r requirements.txt
-    scrpit: py.test
+        language: minimal
+        install: 
+            - pip3 install -v .
+            - pip3 install -r requirements.txt
+        scrpit: py.test
+  - os: windows
+        language: minimal
+        before_install:
+        - choco install python3
+        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+        scrpit: py.test
