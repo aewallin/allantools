@@ -10,6 +10,7 @@ python:
 
 # travis on linux, windows, and mac
 # following: https://www.scivision.dev/travis-ci-osx-python/
+# https://docs.travis-ci.com/user/languages/python/
 matrix:
     include:
     - os: linux
