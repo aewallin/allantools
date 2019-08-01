@@ -1,12 +1,6 @@
 
-language: python
-python:
-    - "2.7"
-    - "3.4"
-    - "3.5"
-    - "3.6"
-    - "3.7"
-# removed 3.3 because scipy gives and error
+
+
 
 # travis on linux, windows, and mac
 # following: https://www.scivision.dev/travis-ci-osx-python/
@@ -15,7 +9,14 @@ matrix:
     include:
     - os: linux
         dist: xenial   # required for Python >= 3.7
+        language: python
         sudo: required
+        python: # removed 3.3 because scipy gives and error
+            - "2.7"
+            - "3.4"
+            - "3.5"
+            - "3.6"
+            - "3.7"
         install:
             - sudo apt-get install liblapack-dev libblas-dev gfortran
             - pip install -v .      # allantools itself, verbose output
