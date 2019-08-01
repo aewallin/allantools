@@ -4,16 +4,12 @@
 # https://docs.travis-ci.com/user/languages/python/
 matrix:
     include:
-    - os: linux
+        - os: linux
         dist: xenial   # required for Python >= 3.7
         language: python
         sudo: required
         python: # removed 3.3 because scipy gives and error
             - "2.7"
-            - "3.4"
-            - "3.5"
-            - "3.6"
-            - "3.7"
         install:
             - sudo apt-get install liblapack-dev libblas-dev gfortran
             - pip install -v .      # allantools itself, verbose output
@@ -26,15 +22,16 @@ matrix:
             coveralls
   - os: osx
         language: minimal
-        install: 
+        install:
             - pip3 install -v .
             - pip3 install -r requirements.txt
-        script: 
+        script:
             - py.test
   - os: windows
         language: minimal
         before_install:
             - choco install python3
             - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-        script: 
+        script:
             - py.test
+#end
