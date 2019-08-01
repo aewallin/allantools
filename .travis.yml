@@ -7,14 +7,20 @@ python:
     - "3.6"
     - "3.7"
 # removed 3.3 because scipy gives and error
-sudo: required
-install:
-    - sudo apt-get install liblapack-dev libblas-dev gfortran
-    - pip install -v .
-    - pip install -r requirements.txt
-    - pip install coveralls
-script:
-    - py.test
-    - coverage run --source=allantools setup.py test
-after_success:
-    coveralls
+
+# travis on linux, windows, and mac
+# following: https://www.scivision.dev/travis-ci-osx-python/
+matrix:
+    include:
+    - os: linux
+        sudo: required
+        install:
+            - sudo apt-get install liblapack-dev libblas-dev gfortran
+            - pip install -v .
+            - pip install -r requirements.txt
+            - pip install coveralls
+        script:
+            - py.test
+            - coverage run --source=allantools setup.py test
+        after_success:
+            coveralls
