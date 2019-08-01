@@ -24,3 +24,7 @@ matrix:
             - coverage run --source=allantools setup.py test
         after_success:
             coveralls
+  - os: osx
+    language: minimal
+    install: pip3 install -r requirements.txt
+    scrpit: py.test
