@@ -35,8 +35,9 @@ matrix:
           script:
               - py.test
         - os: osx
-          name: "OSX - experimental"
-          language: minimal
+          name: "Python 3.7.2 on MacOS 10.14.3 - experimental"
+          osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
+          language: shell       # 'language: python' is an error on Travis CI macOS
           install:
               - pip3 install -v .
               - pip3 install -r requirements.txt
