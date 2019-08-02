@@ -1,8 +1,21 @@
 """
 Allan deviation tools, Functions for generating noise
-initial version Anders Wallin, 2014 January
+=====================================================
 
 See: http://en.wikipedia.org/wiki/Colors_of_noise
+
+**Author:** Anders Wallin (anders.e.e.wallin "at" gmail.com)
+
+Version history
+---------------
+
+**2019.07**
+- Homogeneized output types and parameter names
+- PEP8 + docstrings update
+
+**v1.00**
+- initial version Anders Wallin, 2014 January
+
 
 This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
@@ -20,7 +33,8 @@ This program is free software: you can redistribute it and/or modify
 
 import math
 import numpy
-import scipy.signal # for welch PSD
+import scipy.signal  # for welch PSD
+
 
 def numpy_psd(x, f_sample=1.0):
     """ calculate power spectral density of input signal x
@@ -30,55 +44,114 @@ def numpy_psd(x, f_sample=1.0):
         scale fft so that output corresponds to 1-sided PSD
         output has units of [X^2/Hz] where X is the unit of x
     """
-    psd_of_x = (2.0/ (float(len(x)) * f_sample)) * numpy.abs(numpy.fft.rfft(x))**2
-    f_axis = numpy.linspace(0, f_sample/2.0, len(psd_of_x)) # frequency axis
+    psd_of_x = ((2.0 / (float(len(x)) * f_sample))
+                * numpy.abs(numpy.fft.rfft(x))**2)
+    f_axis = numpy.linspace(0, f_sample/2.0, len(psd_of_x))  # frequency axis
     return f_axis, psd_of_x
+
 
 def scipy_psd(x, f_sample=1.0, nr_segments=4):
     """ PSD routine from scipy
         we can compare our own numpy result against this one
     """
-    f_axis, psd_of_x = scipy.signal.welch(x, f_sample, nperseg=len(x)/nr_segments)
+    f_axis, psd_of_x = scipy.signal.welch(x,
+                                          f_sample,
+                                          nperseg=len(x)/nr_segments)
     return f_axis, psd_of_x
 
-def white(num_points=1024, b0=1.0, fs=1.0):
-    """ generate time series with white noise that has constant PSD = b0,
-        up to the nyquist frequency fs/2
-        N = number of samples
-        b0 = desired power-spectral density in [X^2/Hz] where X is the unit of x
-        fs = sampling frequency, i.e. 1/fs is the time-interval between datapoints
 
-        the pre-factor corresponds to the area 'box' under the PSD-curve:
-        The PSD is at 'height' b0 and extends from 0 Hz up to the nyquist frequency fs/2
+def white(num_points=1024, b0=1.0, fs=1.0):
+    """ White noise generator
+
+        Generate time series with white noise that has constant PSD = b0,
+        up to the nyquist frequency fs/2.
+
+        The PSD is at 'height' b0 and extends from 0 Hz up to the nyquist
+        frequency fs/2 (prefactor math.sqrt(b0*fs/2.0))
+
+        Parameters
+        ----------
+        num_points: int, optional
+            number of samples
+        b0: float, optional
+            desired power-spectral density in [X^2/Hz] where X is the unit of x
+        fs: float, optional
+            sampling frequency, i.e. 1/fs is the time-interval between
+            datapoints
+
+        Returns
+        -------
+        White noise sample: numpy.array
     """
     return math.sqrt(b0*fs/2.0)*numpy.random.randn(num_points)
 
+
 def brown(num_points=1024, b2=1.0, fs=1.0):
     """ Brownian or random walk (diffusion) noise with 1/f^2 PSD
-        (not really a color... rather Brownian or random-walk)
 
-        N = number of samples
-        b2 = desired PSD is b2*f^-2
-        fs = sampling frequency
+        Not really a color... rather Brownian or random-walk.
+        Obtained by integrating white-noise.
 
-        we integrate white-noise to get Brownian noise.
+        Parameters
+        ----------
+        num_points: int, optional
+            number of samples
+        b2: float, optional
+            desired power-spectral density is b2*f^-2
+        fs: float, optional
+            sampling frequency, i.e. 1/fs is the time-interval between
+            datapoints
 
+        Returns
+        -------
+        Random walk sample: numpy.array
     """
-    return (1.0/float(fs))*numpy.cumsum(white(num_points, b0=b2*(4.0*math.pi*math.pi), fs=fs))
+    return (1.0/float(fs))*numpy.cumsum(white(num_points,
+                                              b0=b2*(4.0*math.pi*math.pi),
+                                              fs=fs))
+
 
 def violet(num_points=1024):
-    """ violet noise with f^2 PSD """
+    """ Violet noise with /f^2 PSD
+
+        Obtained by differentiating white noise
+
+        Parameters
+        ----------
+        num_points: int, optional
+            number of samples
+
+        Returns
+        -------
+        Violet noise sample: numpy.array
+    """
     # diff() reduces number of points by one.
     return numpy.diff(numpy.random.randn(num_points+1))
 
+
 def pink(num_points=1024, depth=80):
-    """
-    N-length vector with (approximate) pink noise
-    pink noise has 1/f PSD
+    """ Pink noise (approximation) with 1/f PSD
+
+        Fills a sample with results from a pink noise generator
+        from http://pydoc.net/Python/lmj.sound/0.1.1/lmj.sound.noise/,
+        based on the Voss-McCartney algorithm, discussion and code examples at
+        http://www.firstpr.com.au/dsp/pink-noise/
+
+        Parameters
+        ----------
+        num_points: int, optional
+            number of samples
+        depth: int, optional
+            number of iteration for each point. High numbers are slower but
+            generates a more correct spectrum on low-frequencies end.
+
+        Returns
+        -------
+        Pink noise sample: numpy.array
     """
     a = []
     s = iterpink(depth)
-    for n in range(num_points): # FIXME: num_points is unused here.
+    for n in range(num_points):  # FIXME: num_points is unused here.
         a.append(next(s))
     return numpy.array(a)
 
