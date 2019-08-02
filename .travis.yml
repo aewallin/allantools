@@ -6,7 +6,7 @@
 matrix:
     include:
         - os: linux
-          name: "py2.7 on xenial"
+          name: "Linux/xenial - Python 2.7, with coverage"
           dist: xenial   # required for Python >= 3.7
           language: python
           sudo: required
@@ -22,7 +22,7 @@ matrix:
               - coverage run --source=allantools setup.py test
           after_success: coveralls
         - os: linux
-          name: "py3.4 on xenial"
+          name: "Linux/xenial - Python 3.4"
           dist: xenial   # required for Python >= 3.7
           language: python
           sudo: required
@@ -34,8 +34,8 @@ matrix:
               - pip install -r requirements.txt
           script:
               - py.test
-        - os: osx
-          name: "Python 3.7.2 on MacOS 10.14.3 - experimental"
+        - os: osx           # https://docs.travis-ci.com/user/reference/osx/
+          name: "MacOS 10.14.3 - Python 3.7.2 - experimental"
           osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
           language: shell       # 'language: python' is an error on Travis CI macOS
           install:
@@ -44,7 +44,7 @@ matrix:
           script:
               - py.test
         - os: windows
-          name: "WIN - experimental"
+          name: "Windows - Python 3.7 - experimental"
           language: shell
           before_install:
               - choco install python3
