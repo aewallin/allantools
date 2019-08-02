@@ -2,6 +2,7 @@ from allantools.dataset import Dataset
 from allantools import noise
 import tempfile
 import pytest
+import os
 
 
 @pytest.fixture
@@ -26,13 +27,15 @@ def test_compute_functions(dataset):
         result = dataset.compute(calc)
         assert isinstance(result, dict)
         # Also test output for all types
-        tmpfile = tempfile.NamedTemporaryFile(mode="w")
-        dataset.write_results(tmpfile.name)
+        tmpfile = tempfile.NamedTemporaryFile(mode="w", delete=False)
+        # Windows needs the file to be closed but not deleted
+        tmpfile.close()
+        # dataset.write_results(tmpfile.name)
         dataset.write_results(tmpfile.name,
                               digits=10,
-                              header_params={"test":1, "test2":"foo"}
-                             )
-
+                              header_params={"test": 1, "test2": "foo"}
+                              )
+        os.unlink(tmpfile.name)
 
 
 def test_dataset_parameters():
