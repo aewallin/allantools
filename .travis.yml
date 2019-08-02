@@ -45,7 +45,7 @@ matrix:
               - py.test
         - os: windows
           name: "WIN - experimental"
-          language: minimal
+          language: shell
           before_install:
               - choco install python3
               - python -m pip install --upgrade pip
