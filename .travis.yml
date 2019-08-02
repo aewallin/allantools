@@ -1,20 +1,57 @@
-dist: xenial   # required for Python >= 3.7
-language: python
-python:
-    - "2.7"
-    - "3.4"
-    - "3.5"
-    - "3.6"
-    - "3.7"
-# removed 3.3 because scipy gives and error
-sudo: required
-install:
-    - sudo apt-get install liblapack-dev libblas-dev gfortran
-    - pip install -v .
-    - pip install -r requirements.txt
-    - pip install coveralls
-script:
-    - py.test
-    - coverage run --source=allantools setup.py test
-after_success:
-    coveralls
+---
+# check this file with: $ yamllint .travis.yml
+# travis on linux, windows, and mac
+# following: https://www.scivision.dev/travis-ci-osx-python/
+# https://docs.travis-ci.com/user/languages/python/
+matrix:
+    include:
+        - os: linux
+          name: "py2.7 on xenial"
+          dist: xenial   # required for Python >= 3.7
+          language: python
+          sudo: required
+          python:        # removed 3.3 because scipy gives and error
+              - "2.7"
+          install:
+              - sudo apt-get install liblapack-dev libblas-dev gfortran
+              - pip install -v .      # allantools itself, verbose output
+              - pip install -r requirements.txt
+              - pip install coveralls
+          script:
+              - py.test
+              - coverage run --source=allantools setup.py test
+          after_success: coveralls
+        - os: linux
+          name: "py3.4 on xenial"
+          dist: xenial   # required for Python >= 3.7
+          language: python
+          sudo: required
+          python:        # removed 3.3 because scipy gives and error
+              - "3.4"
+          install:
+              - sudo apt-get install liblapack-dev libblas-dev gfortran
+              - pip install -v .      # allantools itself, verbose output
+              - pip install -r requirements.txt
+          script:
+              - py.test
+        - os: osx
+          name: "Python 3.7.2 on MacOS 10.14.3 - experimental"
+          osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
+          language: shell       # 'language: python' is an error on Travis CI macOS
+          install:
+              - pip3 install -v .
+              - pip3 install -r requirements.txt
+          script:
+              - py.test
+        - os: windows
+          name: "WIN - experimental"
+          language: shell
+          before_install:
+              - choco install python3
+              - python -m pip install --upgrade pip
+              - pip3 install -v .
+              - pip3 install -r requirements.txt
+          env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+          script:
+              - py.test
+# end
