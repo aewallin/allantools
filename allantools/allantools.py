@@ -98,8 +98,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import json
 import numpy as np
-#import scipy.stats # used in confidence_intervals()
-#import scipy.signal # decimation in lag-1 acf
+# import scipy.stats # used in confidence_intervals()
+# import scipy.signal # decimation in lag-1 acf
 
 from . import ci # edf, confidence intervals
 
