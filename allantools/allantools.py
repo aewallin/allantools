@@ -7,12 +7,12 @@ Allan deviation tools
 Version history
 ---------------
 
-**2019.07**
+**2019.07** 2019 August 3
 - move edf-functions and noise-ID functions to ci.py
 - mtotdev() htotdev() speed improvements
 - save dataset results to text file
 - real-time adev/mdev/hdev
-- travis testing on Lniux, OSX, and Windows
+- travis testing on Linux, OSX, and Windows
 
 **2018.03** 2018 March 27
 - change license to LGPL v3 or later
@@ -718,17 +718,18 @@ def calc_mtotdev_phase(phase, rate, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of mtotdev for one averaging factor m
         tau = m*tau0
-        
+
         NIST [SP1065]_ Eqn (27), page 25.
-        
+
         Computed from a set of N - 3m + 1 subsequences of 3m points.
-        1. A linear trend (frequency offset) is removed from the subsequence 
-           by averaging the first and last halves of the subsequence and dividing by half the interval.
+        1. A linear trend (frequency offset) is removed from the subsequence
+           by averaging the first and last halves of the subsequence and
+           dividing by half the interval.
         2. The offset-removed subsequence is extended at both ends
            by uninverted, even reflection.
 
         [Howe1999]_
-        D.A. Howe and F. Vernotte, "Generalization of the Total Variance 
+        D.A. Howe and F. Vernotte, "Generalization of the Total Variance
         Approach to the Modified Allan Variance," Proc.
         31 st PTTI Meeting, pp. 267-276, Dec. 1999.
     """
@@ -765,10 +766,10 @@ def calc_mtotdev_phase(phase, rate, m):
         # remove the linear trend
         x0 = [x - slope*idx*tau0 for (idx, x) in enumerate(xs)]
         x0_flip = x0[::-1] # left-right flipped version of array
-        
+
         # Step 2.
         # extend sequence, by uninverted even reflection
-        # extended sequence xstar, of length 9m, 
+        # extended sequence xstar, of length 9m,
         xstar = np.concatenate((x0_flip, x0, x0_flip))
         assert len(xstar) == 9*m
 
@@ -778,8 +779,7 @@ def calc_mtotdev_phase(phase, rate, m):
         # one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2
         squaresum = 0.0
         #print('m=%d 9m=%d maxj+3*m=%d' %( m, len(xstar), 6*int(m)+3*int(m)) )
-        
-        
+
         # below we want the following sums (averages, see squaresum where we divide by m)
         # xmean1=np.sum(xstar[j     :   j+m])
         # xmean2=np.sum(xstar[j+m   : j+2*m])
@@ -790,16 +790,16 @@ def calc_mtotdev_phase(phase, rate, m):
             # faster inner sum, based on Stable32 MTC.c code
             if j == 0:
                 # intialize the sum
-                xmean1 = np.sum( xstar[0:m] )
-                xmean2 = np.sum( xstar[m:2*m] )
-                xmean3 = np.sum( xstar[2*m:3*m] )
+                xmean1 = np.sum(xstar[0:m])
+                xmean2 = np.sum(xstar[m:2*m])
+                xmean3 = np.sum(xstar[2*m:3*m])
             else:
                 # j>=1, subtract old point, add new point
                 xmean1 = xmean1 - xstar[j-1] + xstar[j+m-1] #
                 xmean2 = xmean2 - xstar[m+j-1] + xstar[j+2*m-1] #
                 xmean3 = xmean3 - xstar[2*m+j-1] + xstar[j+3*m-1] #
 
-            squaresum += pow( (xmean1 - 2.0*xmean2 + xmean3)/float(m), 2)
+            squaresum += pow((xmean1 - 2.0*xmean2 + xmean3)/float(m), 2)
 
         squaresum = (1.0/(6.0*m)) * squaresum
         dev += squaresum
@@ -817,7 +817,7 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Hadamard Total deviation.
         Better confidence at long averages for Hadamard deviation
-        
+
         Computed for N fractional frequency points y_i with sampling
         period tau0, analyzed at tau = m*tau0
         1. remove linear trend by averaging first and last half and divide by interval
@@ -941,17 +941,17 @@ def calc_htotdev_freq(freq, m):
             # new faster way of doing the sums
             if j == 0:
                 # intialize the sum
-                xmean1 = np.sum( xstar[0:m] )
-                xmean2 = np.sum( xstar[m:2*m] )
-                xmean3 = np.sum( xstar[2*m:3*m] )
+                xmean1 = np.sum(xstar[0:m])
+                xmean2 = np.sum(xstar[m:2*m])
+                xmean3 = np.sum(xstar[2*m:3*m])
             else:
                 # j>=1, subtract old point, add new point
                 xmean1 = xmean1 - xstar[j-1] + xstar[j+m-1] #
                 xmean2 = xmean2 - xstar[m+j-1] + xstar[j+2*m-1] #
                 xmean3 = xmean3 - xstar[2*m+j-1] + xstar[j+3*m-1] #
 
-            squaresum += pow( (xmean1 - 2.0*xmean2 + xmean3)/float(m), 2)
-            
+            squaresum += pow((xmean1 - 2.0*xmean2 + xmean3)/float(m), 2)
+
             k = k+1
         assert k == 6*m # check number of terms in the sum
         squaresum = (1.0/(6.0*k)) * squaresum
@@ -1097,7 +1097,7 @@ def mtie_rolling_window(a, window):
     -------
     Array that is a view of the original array with a added dimension
     of size window.
-    
+
     Note
     ----
     This may consume large amounts of memory. See discussion:

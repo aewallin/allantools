@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from . import allantools
 
 
-class Dataset():
+class Dataset(object):
     """ Dataset class for Allantools
 
     :Example:
