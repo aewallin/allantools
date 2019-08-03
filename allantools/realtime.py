@@ -9,6 +9,11 @@
 
     This file is part of allantools, see https://github.com/aewallin/allantools
 
+    Version history
+    ---------------
+
+    **2019.07**
+    - Initial release
 
     License
     -------

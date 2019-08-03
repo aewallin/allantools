@@ -7,8 +7,8 @@ Allantools Noise object
 Version history
 ---------------
 
-**unreleased**
-- Initial commit
+**2019.07**
+- Initial release, see also https://github.com/jleute/colorednoise
 
 License
 -------

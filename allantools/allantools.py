@@ -10,8 +10,9 @@ Version history
 **2019.07**
 - move edf-functions and noise-ID functions to ci.py
 - mtotdev() htotdev() speed improvements
-- save dataset results to file
+- save dataset results to text file
 - real-time adev/mdev/hdev
+- travis testing on Lniux, OSX, and Windows
 
 **2018.03** 2018 March 27
 - change license to LGPL v3 or later

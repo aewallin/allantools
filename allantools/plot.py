@@ -7,8 +7,8 @@ Allantools plotting utilities
 Version history
 ---------------
 
-**unreleased**
-- Initial commit
+**2019.07**
+- Initial release
 
 License
 -------
