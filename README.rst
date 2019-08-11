@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Faewallin%2Fallantools.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Faewallin%2Fallantools?ref=badge_shield)
+
 AllanTools
 ==========
 
@@ -160,3 +162,7 @@ Authors
 * Frédéric Meynadier, https://github.com/fmeynadier
 * Yan Xie, https://github.com/yxie-git
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Faewallin%2Fallantools.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Faewallin%2Fallantools?ref=badge_large)
