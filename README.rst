@@ -158,8 +158,9 @@ github formats the notebooks into nice web-pages, for example
 
 Authors 
 -------
-* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com 
+* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com , https://github.com/aewallin
 * Danny Price, https://github.com/telegraphic 
 * Cantwell G. Carson, carsonc "at" gmail.com 
 * Frédéric Meynadier, https://github.com/fmeynadier
 * Yan Xie, https://github.com/yxie-git
+* Erik Benkler, https://github.com/EBenkler
