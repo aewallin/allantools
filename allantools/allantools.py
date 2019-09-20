@@ -7,6 +7,9 @@ Allan deviation tools
 Version history
 ---------------
 
+**2019.09** 2019 September
+- packaging changes, for conda package
+
 **2019.07** 2019 August 3
 - move edf-functions and noise-ID functions to ci.py
 - mtotdev() htotdev() speed improvements
