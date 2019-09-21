@@ -12,8 +12,6 @@ AllanTools
     :alt: Documentation Status
 .. image:: https://coveralls.io/repos/github/aewallin/allantools/badge.svg?branch=master 
     :target: https://coveralls.io/github/aewallin/allantools?branch=master 
-.. image:: https://app.fossa.io/api/projects/git%2Bgithub.com%2Faewallin%2Fallantools.svg?type=shield
-    :target: https://app.fossa.io/projects/git%2Bgithub.com%2Faewallin%2Fallantools?ref=badge_shield
 
 A python library for calculating Allan deviation and related 
 time & frequency statistics. `LGPL v3+ license <https://www.gnu.org/licenses/lgpl.html>`_.
