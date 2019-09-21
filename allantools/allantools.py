@@ -1374,9 +1374,9 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
 
     return dev, deverr, n
 
-def psd2allan(f, S_y, kind= 'oadev', taus= None):
-    """ Convert a given power spectral density S_y(f) to Allan deviation or
-        modified Allan deviation
+def psd2allan(f, S_y, kind= 'adev', taus= None):
+    """ Convert a given (one-sided) power spectral density S_y(f) to Allan
+        deviation or modified Allan deviation
 
     For ergodic noise, the Allan variance or modified Allan variance
     is related to the power spectral density :math:`S_y` of the fractional
@@ -1399,7 +1399,8 @@ def psd2allan(f, S_y, kind= 'oadev', taus= None):
     Parameters
     ----------
     S_y: np.array
-        Input data power spectral density (PSD) in 1/Hz^2.
+        Single-sided power spectral density (PSD) of fractional frequency
+        deviation S_y in 1/Hz^2.
     f: np.array
         Spectral frequency vector in Hz
     kind: {'adev', 'mdev'}
