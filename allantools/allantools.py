@@ -102,6 +102,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import json
 import numpy as np
+from scipy import interpolate
+from scipy.integrate import simps
 #import scipy.stats # used in confidence_intervals()
 #import scipy.signal # decimation in lag-1 acf
 
@@ -1374,7 +1376,7 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
 
     return dev, deverr, n
 
-def psd2allan(f, S_y, kind= 'adev', taus= None):
+def psd2allan(S_y, f=1.0, kind= 'adev', base=2):
     """ Convert a given (one-sided) power spectral density S_y(f) to Allan
         deviation or modified Allan deviation
 
@@ -1400,15 +1402,16 @@ def psd2allan(f, S_y, kind= 'adev', taus= None):
     ----------
     S_y: np.array
         Single-sided power spectral density (PSD) of fractional frequency
-        deviation S_y in 1/Hz^2.
-    f: np.array
-        Spectral frequency vector in Hz
+        deviation S_y in 1/Hz^2. First element is S_y(f=0).
+    f: np.array or scalar numeric (float or int)
+        if np.array: Spectral frequency vector in Hz
+        if numeric scalar: Spectral frequency step in Hz
+        default: Spectral frequency step 1 Hz
     kind: {'adev', 'mdev'}
         Which kind of Allan deviation to compute. Defaults to 'adev'
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
+    base: float
+        Base for logarithmic spacing of tau values. E.g. base= 10: decade,
+        base= 2: octave, base <= 1: all
 
     Returns
     -------
@@ -1419,19 +1422,32 @@ def psd2allan(f, S_y, kind= 'adev', taus= None):
     ad: np.array
         Computed Allan deviation of requested kind for each tau value
     """
+    # determine taus from df
+    # first oversample S_y by a factor of 10 in order to avoid numerical problem
+    # at tau > 1/2df
+    if isinstance(S_y, np.ndarray):
+        if isinstance(f, np.ndarray): # f is frequency vector
+            df= f[1]-f[0]
+        elif np.isscalar(f): # assume that f is the frequency step, not frequency vector
+            df= f
+        else:
+            raise ValueError(np.ndarray, float, int)
+    else:
+        raise ValueError(np.ndarray) # raise error
+    oversamplingfactor= 4
+    df0= oversamplingfactor * df
+    f0= np.arange(S_y.size * df0, step=df0)
+    f= np.arange(df, (S_y.size -1) * df0 + df, df)
+    S_y= interpolate.interp1d(f0, S_y, kind='cubic')(f)
+    f= f / oversamplingfactor
 
-    # determine taus from f
-    # remove non-positive frequencies (to avoid division 0/0):
-    S_y=S_y[f>0] # remove S_y at non-positive frequencies (this does not
-    # change the numeric integration result, because the term under the
-    # sum is zero at f=0)
-    f=f[f>0] # remove non-positive frequencies
-
-    tau0=1/np.max(f)/2 # minimum tau derived from the given frequency vector
-    (_, m, taus_used) = tau_generator(S_y[:np.ceil(len(S_y)).astype(int)],
-                                         1/tau0, taus)
-
-    ad= np.zeros_like(taus_used)
+    tau0=1/np.max(f) # minimum tau derived from the given frequency vector
+    n=1/df/tau0/2
+    if base > 1:
+        m = np.unique(np.round(np.append(base**np.arange(np.floor(np.log(n)/np.log(base))), n)))
+    else:
+        m = np.arange(1, n)
+    taus_used= m*tau0
 
     # TODO: In principle, this approach can be extended to the other kinds of
     # Allan deviations, we just need to determine the respective transfer
@@ -1442,11 +1458,13 @@ def psd2allan(f, S_y, kind= 'adev', taus= None):
     elif kind[0].lower() == 'm': # for modADEV
         exponent=2.0
 
-    # for each tau, compute xxxADEV
-    for idx, mj in enumerate(m): # stride=1 for overlapping ADEV
-        ad[idx]= np.sqrt(2.0 * np.sum(S_y *
+    integrand= np.array([S_y *
           np.abs(np.sin(np.pi * f * taus_used[idx])**(exponent + 1.0)
-          / (np.pi * f * taus_used[idx])**exponent)**2.0) * (f[1] - f[0]))
+          / (np.pi * f * taus_used[idx])**exponent)**2.0
+          for idx, mj in enumerate(m)])
+    integrand= np.insert(integrand, 0, 0.0, axis=1)
+    f= np.insert(f, 0, 0.0)
+    ad = np.sqrt(2.0 *simps(integrand, f))
     return taus_used, ad
 
 
