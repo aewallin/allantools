@@ -7,7 +7,8 @@ AllanTools
     :target: https://badge.fury.io/py/AllanTools 
 .. image:: https://img.shields.io/conda/vn/conda-forge/allantools.svg
     :target: https://anaconda.org/conda-forge/allantools
-
+.. image:: https://img.shields.io/conda/dn/conda-forge/allantools.svg
+    :target: https://anaconda.org/conda-forge/allantools
 
 .. image:: https://travis-ci.org/aewallin/allantools.svg?branch=master
     :target: https://travis-ci.org/aewallin/allantools
