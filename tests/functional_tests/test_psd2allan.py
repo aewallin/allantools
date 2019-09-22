@@ -68,7 +68,7 @@ plt.loglog(tau, sigma_WPM_theo, '.C1')
 plt.loglog(tau, modsigma_WFM_theo, '.C2')
 plt.loglog(tau, modsigma_WPM_theo, '.C3')
 plt.xlabel(r'$\tau$ [s]')
-plt.ylabel('$\sigma_y$')
+plt.ylabel(r'$\sigma_y$')
 plt.legend(('psd2allan direct, ADEV, WFM', 'psd2allan direct, ADEV, WPM',
             'psd2allan direct, modADEV, WFM', 'psd2allan direct, modADEV, WPM',
             'psd2allan indirect, ADEV, WFM', 'psd2allan  indirect, ADEV, WPM',
