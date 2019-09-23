@@ -5,7 +5,10 @@ sys.path.append("..")
 
 from allantools import noise
 import numpy as np
+import matplotlib
+matplotlib.use('Agg') # automated tests run without a display
 import matplotlib.pyplot as plt
+
 import allantools as at
 from  scipy.signal import welch
 
