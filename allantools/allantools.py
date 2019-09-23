@@ -7,15 +7,18 @@ Allan deviation tools
 Version history
 ---------------
 
+**unreleased**
+- ITU PRC, PRTC, ePRTC masks for TDEV and MTIE in new file mask.py
+- psd2allan() - convert PSD to ADEV/MDEV
+
 **2019.09** 2019 September
-- packaging changes, for conda package
-- psd2allan()
+- packaging changes, for conda package (see https://anaconda.org/conda-forge/allantools)
 
 **2019.07** 2019 August 3
 - move edf-functions and noise-ID functions to ci.py
 - mtotdev() htotdev() speed improvements
 - save dataset results to text file
-- real-time adev/mdev/hdev
+- real-time adev/mdev/hdev, in new file realtime.py
 - travis testing on Linux, OSX, and Windows
 
 **2018.03** 2018 March 27
