@@ -9,6 +9,7 @@ Version history
 
 **unreleased**
 - ITU PRC, PRTC, ePRTC masks for TDEV and MTIE in new file mask.py
+- psd2allan() - convert PSD to ADEV/MDEV
 
 **2019.09** 2019 September
 - packaging changes, for conda package (see https://anaconda.org/conda-forge/allantools)
@@ -104,6 +105,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import json
 import numpy as np
+from scipy import interpolate
+from scipy.integrate import simps
 #import scipy.stats # used in confidence_intervals()
 #import scipy.signal # decimation in lag-1 acf
 
@@ -1375,6 +1378,97 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
         deverr = [0, 0]
 
     return dev, deverr, n
+
+def psd2allan(S_y, f=1.0, kind= 'adev', base=2):
+    """ Convert a given (one-sided) power spectral density S_y(f) to Allan
+        deviation or modified Allan deviation
+
+    For ergodic noise, the Allan variance or modified Allan variance
+    is related to the power spectral density :math:`S_y` of the fractional
+    frequency deviation:
+    .. math::
+
+        \\sigma^2_y) = 2 \\int_0^\\infty S_y(f)
+        \\left|sin(\\pi*f*\\tau).^(k+1)./(\\pi*f*tau).^k).^2\\right| df,
+
+
+    where :math:`f` is the Fourier frequency and :math:`\\tau` the averaging
+    time. The exponent :math:`k` is 1 for the Allan variance and 2 for the
+    modified Allan variance.
+
+    NIST [SP1065]_ eqs (65-66), page 73.
+
+    psd2allan() implements the integral by discrete numerical integration via
+    a sum.
+
+    Parameters
+    ----------
+    S_y: np.array
+        Single-sided power spectral density (PSD) of fractional frequency
+        deviation S_y in 1/Hz^2. First element is S_y(f=0).
+    f: np.array or scalar numeric (float or int)
+        if np.array: Spectral frequency vector in Hz
+        if numeric scalar: Spectral frequency step in Hz
+        default: Spectral frequency step 1 Hz
+    kind: {'adev', 'mdev'}
+        Which kind of Allan deviation to compute. Defaults to 'adev'
+    base: float
+        Base for logarithmic spacing of tau values. E.g. base= 10: decade,
+        base= 2: octave, base <= 1: all
+
+    Returns
+    -------
+    (taus_used, ad): tuple
+          Tuple of 2 values
+    taus_used: np.array
+        tau values for which ad computed
+    ad: np.array
+        Computed Allan deviation of requested kind for each tau value
+    """
+    # determine taus from df
+    # first oversample S_y by a factor of 10 in order to avoid numerical problem
+    # at tau > 1/2df
+    if isinstance(S_y, np.ndarray):
+        if isinstance(f, np.ndarray): # f is frequency vector
+            df= f[1]-f[0]
+        elif np.isscalar(f): # assume that f is the frequency step, not frequency vector
+            df= f
+        else:
+            raise ValueError(np.ndarray, float, int)
+    else:
+        raise ValueError(np.ndarray) # raise error
+    oversamplingfactor= 4
+    df0= oversamplingfactor * df
+    f0= np.arange(S_y.size * df0, step=df0)
+    f= np.arange(df, (S_y.size -1) * df0 + df, df)
+    S_y= interpolate.interp1d(f0, S_y, kind='cubic')(f)
+    f= f / oversamplingfactor
+
+    tau0=1/np.max(f) # minimum tau derived from the given frequency vector
+    n=1/df/tau0/2
+    if base > 1:
+        m = np.unique(np.round(np.append(base**np.arange(np.floor(np.log(n)/np.log(base))), n)))
+    else:
+        m = np.arange(1, n)
+    taus_used= m*tau0
+
+    # TODO: In principle, this approach can be extended to the other kinds of
+    # Allan deviations, we just need to determine the respective transfer
+    # function in the frequency domain.
+
+    if kind[0].lower() == 'a':   # for ADEV
+        exponent=1.0
+    elif kind[0].lower() == 'm': # for modADEV
+        exponent=2.0
+
+    integrand= np.array([S_y *
+          np.abs(np.sin(np.pi * f * taus_used[idx])**(exponent + 1.0)
+          / (np.pi * f * taus_used[idx])**exponent)**2.0
+          for idx, mj in enumerate(m)])
+    integrand= np.insert(integrand, 0, 0.0, axis=1)
+    f= np.insert(f, 0, 0.0)
+    ad = np.sqrt(2.0 *simps(integrand, f))
+    return taus_used, ad
 
 
 ########################################################################
