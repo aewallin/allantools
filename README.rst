@@ -132,7 +132,7 @@ frequency, is left to the user.
     a.compute("mdev")
 
     # New in 2019.7 : write results to file
-    a.write_result("output.dat")
+    a.write_results("output.dat")
 
     # Plot it using the Plot class
     b = allantools.Plot()
