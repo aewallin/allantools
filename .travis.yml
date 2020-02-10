@@ -47,7 +47,7 @@ matrix:
           name: "Windows - Python 3.7 - experimental"
           language: shell
           before_install:
-              - choco install python3
+              - choco install python --version 3.8.0
               - python -m pip install --user --upgrade pip
               - pip3 install -v .
               - pip3 install -r requirements.txt
