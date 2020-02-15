@@ -30,7 +30,7 @@ Papers
     the measurement of the stability of oscillators with frequency
     counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
     Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-    doi: 10.1109/TUFFC.2007.337
+    https://doi.org/10.1109/TUFFC.2007.337
 
 .. [Dobrogowski2007] Dobrogowski & Kasznia
     Real-time Assessment of Allan Deviation and Time Deviation
@@ -53,6 +53,7 @@ Papers
 .. [Howe1999] D.A. Howe and F. Vernotte, "Generalization of the Total Variance 
         Approach to the Modified Allan Variance," Proc.
         31 st PTTI Meeting, pp. 267-276, Dec. 1999.
+        https://tycho.usno.navy.mil/ptti/1999papers/paper22.pdf
 
 .. [Howe2000] David A. Howe, The total deviation approach to long-term characterization
     of frequency stability, IEEE tr. UFFC vol 47 no 5 (2000)
@@ -63,8 +64,6 @@ Papers
     46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
     http://dx.doi.org/10.1109/FREQ.1992.270003
     
-
-
 .. [wikipedia_adev] http://en.wikipedia.org/wiki/Allan_variance
 
 .. [SP1065] NIST Special Publication 1065
@@ -90,17 +89,13 @@ Papers
 .. [Rubiola2015] The Omega Counter, a Frequency Counter Based on the Linear Regression
     https://arxiv.org/abs/1506.05009    
 
-
 .. [Stein1985] S. Stein, Frequency and Time - Their Measurement and Characterization. 
     Precision Frequency Control Vol 2, 1985, pp 191-416. 
     http://tf.boulder.nist.gov/general/pdf/666.pdf
 
-
-
 .. [Sesia2011] SESIA I., GALLEANI L., TAVELLA P., Application of the Dynamic Allan Variance 
     for the Characterization of Space Clock Behavior, 
     http://dx.doi.org/10.1109/TAES.2011.5751232
-
 
 .. [Sesia2008] Ilaria Sesia and Patrizia Tavella, Estimating the Allan variance in the 
     presence of long periods of missing data and outliers.

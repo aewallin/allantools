@@ -1,8 +1,15 @@
+
+
 AllanTools
 ==========
 
 .. image:: https://badge.fury.io/py/AllanTools.svg
-    :target: https://badge.fury.io/py/AllanTools
+    :target: https://badge.fury.io/py/AllanTools 
+.. image:: https://img.shields.io/conda/vn/conda-forge/allantools.svg
+    :target: https://anaconda.org/conda-forge/allantools
+.. image:: https://img.shields.io/conda/dn/conda-forge/allantools.svg
+    :target: https://anaconda.org/conda-forge/allantools
+
 .. image:: https://travis-ci.org/aewallin/allantools.svg?branch=master
     :target: https://travis-ci.org/aewallin/allantools
 .. image:: http://readthedocs.org/projects/allantools/badge/?version=latest
@@ -125,7 +132,7 @@ frequency, is left to the user.
     a.compute("mdev")
 
     # New in 2019.7 : write results to file
-    a.write_result("output.dat")
+    a.write_results("output.dat")
 
     # Plot it using the Plot class
     b = allantools.Plot()
@@ -154,9 +161,9 @@ github formats the notebooks into nice web-pages, for example
 
 Authors 
 -------
-* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com 
+* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com , https://github.com/aewallin
 * Danny Price, https://github.com/telegraphic 
 * Cantwell G. Carson, carsonc "at" gmail.com 
 * Frédéric Meynadier, https://github.com/fmeynadier
 * Yan Xie, https://github.com/yxie-git
-
+* Erik Benkler, https://github.com/EBenkler

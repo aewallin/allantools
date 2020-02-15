@@ -35,7 +35,8 @@ __all__ = [
     'uncertainty_estimate',
     'Dataset',
     'Noise',
-    'Plot'
+    'Plot',
+    'psd2allan'
     ]
 
 from .allantools import __version__
@@ -63,6 +64,7 @@ from .allantools import mtie_phase_fast
 from .allantools import tierms
 from .allantools import gradev
 from .allantools import trim_data
+from .allantools import psd2allan
 
 # ci.py contains functions for confidence intervals
 from .ci import edf_simple

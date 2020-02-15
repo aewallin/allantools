@@ -86,7 +86,7 @@ def white(num_points=1024, b0=1.0, fs=1.0):
     return math.sqrt(b0*fs/2.0)*numpy.random.randn(num_points)
 
 
-def brown(num_points=1024, b2=1.0, fs=1.0):
+def brown(num_points=1024, b_minus2=1.0, fs=1.0):
     """ Brownian or random walk (diffusion) noise with 1/f^2 PSD
 
         Not really a color... rather Brownian or random-walk.
@@ -96,7 +96,7 @@ def brown(num_points=1024, b2=1.0, fs=1.0):
         ----------
         num_points: int, optional
             number of samples
-        b2: float, optional
+        b_minus2: float, optional
             desired power-spectral density is b2*f^-2
         fs: float, optional
             sampling frequency, i.e. 1/fs is the time-interval between
@@ -107,12 +107,12 @@ def brown(num_points=1024, b2=1.0, fs=1.0):
         Random walk sample: numpy.array
     """
     return (1.0/float(fs))*numpy.cumsum(white(num_points,
-                                              b0=b2*(4.0*math.pi*math.pi),
+                                              b0=b_minus2*(4.0*math.pi*math.pi),
                                               fs=fs))
 
 
-def violet(num_points=1024):
-    """ Violet noise with /f^2 PSD
+def violet(num_points=1024, b2=1, fs=1):
+    """ Violet noise with f^2 PSD
 
         Obtained by differentiating white noise
 
@@ -120,14 +120,18 @@ def violet(num_points=1024):
         ----------
         num_points: int, optional
             number of samples
+        b2: float, optional
+            desired power-spectral density is b2*f^2
+        fs: float, optional
+            sampling frequency, i.e. 1/fs is the time-interval between
+            datapoints
 
         Returns
         -------
         Violet noise sample: numpy.array
     """
     # diff() reduces number of points by one.
-    return numpy.diff(numpy.random.randn(num_points+1))
-
+    return (float(fs))*numpy.diff(white(num_points+1, b0=b2/(2.0*math.pi)**2, fs=fs))
 
 def pink(num_points=1024, depth=80):
     """ Pink noise (approximation) with 1/f PSD
@@ -149,6 +153,8 @@ def pink(num_points=1024, depth=80):
         -------
         Pink noise sample: numpy.array
     """
+    # FIXME: couldn't we implement here the normalization as for the other noise
+    # types using a noise power law coefficient b_minus1?
     a = []
     s = iterpink(depth)
     for n in range(num_points):  # FIXME: num_points is unused here.
