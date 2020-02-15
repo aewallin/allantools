@@ -4,7 +4,8 @@
 
     **Author:** Anders Wallin (anders.e.e.wallin "at" gmail.com)
 
-    Statistics are computed 'on-the-fly' from a stream of phase/frequency samples
+    Statistics are computed 'on-the-fly' from a stream of
+    phase/frequency samples
     Initial version 2019 July, Anders E. E. Wallin.
 
     This file is part of allantools, see https://github.com/aewallin/allantools
@@ -31,13 +32,15 @@
 
 import numpy
 
+
 class dev_realtime(object):
     """ Base-class for real-time statistics """
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
         self.x = []                         # phase time-series
         self.afs = afs                      # averaging factor, tau = af*tau0
         self.auto_afs = auto_afs
-        self.af_taus = numpy.logspace(0, 1, pts_per_decade+1)[:-1] # will fail at >=6 (?), need to remove duplicates?
+        # logscpace will fail at >=6 (?), need to remove duplicates?
+        self.af_taus = numpy.logspace(0, 1, pts_per_decade+1)[:-1]
         self.af_idx = 0       # logspace index, to keep track of afs in auto-af mode
         self.af_decade = 0    # logspace decade
         if auto_afs:
@@ -56,34 +59,35 @@ class dev_realtime(object):
             next_idx = 0
             next_decade = self.af_decade + 1
 
-        next_af = int(numpy.round(pow(10.0, next_decade) * self.af_taus[next_idx])) # next possible AF
-        if len(self.x) >= (2*next_af+1): # can compute next AF
-            self.afs = numpy.append(self.afs, next_af) # new AF
-            self.add_af() # tell subclass to update internal variables
-            #self.S = numpy.append(self.S, 0) # new S, FIXME: S defined in subclass!
-            self.dev = numpy.append(self.dev, 0) # new dev
+        next_af = int(numpy.round(pow(10.0, next_decade) * self.af_taus[next_idx]))  # next possible AF
+        if len(self.x) >= (2*next_af+1):  # can compute next AF
+            self.afs = numpy.append(self.afs, next_af)  # new AF
+            self.add_af()  # tell subclass to update internal variables
+            # self.S = numpy.append(self.S, 0) # new S, FIXME: S defined in subclass!
+            self.dev = numpy.append(self.dev, 0)  # new dev
             self.af_idx = next_idx
             self.af_decade = next_decade
         else:
             pass
-            #print "no new AF "
+            # print "no new AF "
 
     def add_frequency(self, f):
         """ add new frequency point, in units of Hz """
-        if not self.x: # empty sequence
-            self.add_phase(0) # initialize
-        self.add_phase(self.x[-1] + f) # integration
+        if not self.x:  # empty sequence
+            self.add_phase(0)  # initialize
+        self.add_phase(self.x[-1] + f)  # integration
 
     def taus(self):
         """ return taus, in unit of seconds """
         return self.tau0*numpy.array(self.afs)
-    
+
     def add_af(self):
-        pass # define in subclass!
+        pass  # define in subclass!
 
     def devs(self):
         """ return deviation """
         return self.dev
+
 
 class oadev_realtime(dev_realtime):
     """ Overlapping Allan deviation in real-time from a stream of phase/frequency samples.
@@ -107,13 +111,14 @@ class oadev_realtime(dev_realtime):
     def update_S(self, idx):
         """ update S, sum-of-squares """
         af = self.afs[idx]
-        i = len(self.x)-1 # last pt
+        i = len(self.x)-1  # last pt
         S_new = pow(self.x[i] - 2*self.x[i-af] + self.x[i-2*af], 2)
         self.S[idx] = self.S[idx] + S_new
         self.dev[idx] = numpy.sqrt((1.0/(2*pow(af*self.tau0, 2)*(i+1-2*af))) * self.S[idx])
 
     def add_af(self):
         self.S = numpy.append(self.S, 0)
+
 
 class ohdev_realtime(dev_realtime):
     """ Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.
@@ -141,11 +146,12 @@ class ohdev_realtime(dev_realtime):
     def update_S(self, idx):
         """ update S, sum-of-squares """
         af = self.afs[idx]
-        i = len(self.x)-1 # last pt
-        #print i,self.x
+        i = len(self.x)-1  # last pt
+        # print i,self.x
         S_new = pow(self.x[i] - 3*self.x[i-af] + 3*self.x[i-2*af] - self.x[i-3*af], 2)
         self.S[idx] = self.S[idx] + S_new
         self.dev[idx] = numpy.sqrt((1.0/(6.0*pow(af*self.tau0, 2)*(i+1.0-3*af))) * self.S[idx])
+
 
 class tdev_realtime(dev_realtime):
     """ Time deviation and Modified Allan deviation in real-time from a stream of phase/frequency samples.
@@ -164,9 +170,9 @@ class tdev_realtime(dev_realtime):
         for idx, af in enumerate(self.afs):
             if len(self.x) >= 3*af+1:  # 3n+1 samples measured
                 self.update_S(idx)
-            elif len(self.x) >= 2*af+1: # 2n+1 samples measured
+            elif len(self.x) >= 2*af+1:  # 2n+1 samples measured
                 self.update_S3n(idx)
-        
+
         if self.auto_afs:
             self.update_af()
 
@@ -177,7 +183,7 @@ class tdev_realtime(dev_realtime):
     def update_S3n(self, idx):
         """ eqn (13) of paper """
         af = self.afs[idx]
-        j = len(self.x)-1 # last pt
+        j = len(self.x)-1  # last pt
         self.S[idx] = self.S[idx] + self.x[j] - 2*self.x[j-af] + self.x[j-2*af]
         if len(self.x) == 3*af:
             # last call to this fctn
@@ -194,13 +200,13 @@ class tdev_realtime(dev_realtime):
         """ update S, sum-of-squares """
         af = self.afs[idx]
         assert(len(self.x) >= 3*af+1)
-        i = len(self.x)-1 # last pt
+        i = len(self.x)-1  # last pt
         # Eqn (12)
         S_new = -1*self.x[i-3*af] + 3*self.x[i-2*af] - 3*self.x[i-af] + self.x[i]
 
         self.S[idx] = self.S[idx] + S_new
         # Eqn (11)
-        self.So[idx] = self.So[idx] + pow(self.S[idx], 2) #??? S_(i-1) in paper for TDEV-sqrt?
+        self.So[idx] = self.So[idx] + pow(self.S[idx], 2)  # ??? S_(i-1) in paper for TDEV-sqrt?
         self.update_dev(idx)
 
     def mdev(self):
