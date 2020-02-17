@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import numpy as np
 import scipy.stats  # used in confidence_intervals()
 import scipy.signal  # decimation in lag-1 acf
+import allantools as at
 
 ########################################################################
 # Confidence Intervals
@@ -105,7 +106,8 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev",
     dmax = 2
     if (dev_type is "hdev") or (dev_type is "ohdev"):
         dmax = 3
-    alpha_int = autocorr_noise_id(x, int(af), data_type=data_type, dmin=0, dmax=dmax)[0]
+    alpha_int = autocorr_noise_id(
+        x, int(af), data_type=data_type, dmin=0, dmax=dmax)[0]
 
     # 2) EDF
     if dev_type is "adev":
@@ -140,9 +142,11 @@ def rn(x, af, rate):
 
         ratio of MVAR to AVAR
     """
-    (taus, devs, errs, ns) = at.adev(x, taus=[af*rate], data_type='phase', rate=rate)
+    (taus, devs, errs, ns) = at.adev(
+        x, taus=[af*rate], data_type='phase', rate=rate)
     oadev_x = devs[0]
-    (mtaus, mdevs, errs, ns) = at.mdev(x, taus=[af*rate], data_type='phase', rate=rate)
+    (mtaus, mdevs, errs, ns) = at.mdev(
+        x, taus=[af*rate], data_type='phase', rate=rate)
     mdev_x = mdevs[0]
     return pow(mdev_x/oadev_x, 2)
 
@@ -180,7 +184,7 @@ def rn_boundary(af, b_hi):
     R(n) ratio boundary for selecting between [b_hi-1, b_hi]
     alpha = b + 2
     """
-    return np.sqrt(rn_theory(af, b)*rn_theory(af, b-1))  # geometric mean
+    return np.sqrt(rn_theory(af, b_hi)*rn_theory(af, b_hi-1))  # geometric mean
 
 ########################################################################
 # Noise Identification using B1
@@ -200,7 +204,8 @@ def b1(x, af, rate):
         Barnes, 1974
         https://tf.nist.gov/general/pdf/11.pdf
     """
-    (taus, devs, errs, ns) = adev(x, taus=[af*rate], data_type="phase", rate=rate)
+    (taus, devs, errs, ns) = at.adev(
+        x, taus=[af*rate], data_type="phase", rate=rate)
     oadev_x = devs[0]
     avar = pow(oadev_x, 2.0)
 
@@ -233,7 +238,8 @@ def b1_theory(N, mu):
        -3    -1       0
        -4    -2      +1
        -5    -3      +2
-       -6    -4      +3 for HDEV, by applying B1 to frequency data, and add +2 to resulting mu
+       -6    -4      +3 for HDEV, by applying B1 to frequency data,
+                        and add +2 to resulting mu
     """
 
     # see Table 3 of Howe 2000
@@ -368,12 +374,11 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
 
     """
     d = 0  # number of differentiations
-    lag = 1
     if data_type is "phase":
         if af > 1:
             # x = scipy.signal.decimate(x, af, n=1, ftype='fir')
             x = x[0:len(x):af]  # decimate by averaging factor
-        x = detrend(x, deg=2)  # remove quadratic trend (frequency offset and drift)
+        x = detrend(x, deg=2)  # remove quadratic trend (freq offset and drift)
     elif data_type is "freq":
         # average by averaging factor
         y_cut = np.array(x[:len(x)-(len(x) % af)])  # cut to length
@@ -384,7 +389,8 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
 
     # require minimum length for time-series
     if len(x) < 30:
-        print("autocorr_noise_id() Don't know how to do noise-ID for time-series length= %d" % len(x))
+        print(("autocorr_noise_id() Don't know how to do noise-ID for"
+               " time-series length= %d") % len(x))
         raise NotImplementedError
 
     while True:
@@ -439,12 +445,13 @@ def edf_greenhall_simple(alpha, d, m, S, F, N):
     L = m/F+m*d  # length of filter applied to phase samples
     M = 1 + np.floor(S*(N-L) / m)
     J = min(M, (d+1)*S)
-    inv_edf = (1.0/(pow(greenhall_sz(0, F, alpha, d), 2)*M)) * \
-               greenhall_BasicSum(J, M, S, F, alpha, d)
+    inv_edf = ((1.0/(pow(greenhall_sz(0, F, alpha, d), 2)*M)) *
+               greenhall_BasicSum(J, M, S, F, alpha, d))
     return 1.0/inv_edf
 
 
-def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=False):
+def edf_greenhall(alpha, d, m, N,
+                  overlapping=False, modified=False, verbose=False):
     """ returns Equivalent degrees of freedom
 
         Parameters
@@ -477,7 +484,8 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
 
         Notes
         -----
-        Used for the following deviations (see http://www.wriley.com/CI2.pdf page 8)
+        Used for the following deviations
+        (see http://www.wriley.com/CI2.pdf page 8)
         adev()
         oadev()
         mdev()
@@ -515,8 +523,8 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
             return 1.0/inv_edf
         else:
             m_prime = J_max/r
-            inv_edf = (1.0/(pow(greenhall_sz(0, F, alpha, d), 2)*J_max)) * \
-                       greenhall_BasicSum(J_max, J_max, m_prime, 1, alpha, d)
+            inv_edf = ((1.0/(pow(greenhall_sz(0, F, alpha, d), 2)*J_max)) *
+                       greenhall_BasicSum(J_max, J_max, m_prime, 1, alpha, d))
             if verbose:
                 print("case 1.3 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
@@ -530,8 +538,8 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
                 m_prime = float('inf')
                 variant = "b"
 
-            inv_edf = (1.0/(pow(greenhall_sz(0, m_prime, alpha, d), 2)*M)) * \
-                       greenhall_BasicSum(J, M, S, m_prime, alpha, d)
+            inv_edf = ((1.0/(pow(greenhall_sz(0, m_prime, alpha, d), 2)*M)) *
+                       greenhall_BasicSum(J, M, S, m_prime, alpha, d))
             if verbose:
                 print("case 2.1%s edf= %3f" % (variant, float(1.0/inv_edf)))
             return 1.0/inv_edf
@@ -543,16 +551,19 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
             return 1.0/inv_edf
         else:
             m_prime = J_max/r
-            inv_edf = (1.0/(pow(greenhall_sz(0, float('inf'), alpha, d), 2)*J_max)) * \
-                       greenhall_BasicSum(J_max, J_max, m_prime, float('inf'), alpha, d)
+            inv_edf = (
+                (1.0/(pow(greenhall_sz(0, float('inf'), alpha, d), 2)*J_max)) *
+                greenhall_BasicSum(
+                    J_max, J_max, m_prime, float('inf'), alpha, d))
             if verbose:
                 print("case 2.3 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
     elif int(F) == int(m) and int(alpha) == 1 and not modified:
         # case 3, unmodified variances, alpha=1
         if J <= J_max:
-            inv_edf = (1.0/(pow(greenhall_sz(0, m, 1, d), 2)*M)) * \
-                       greenhall_BasicSum(J, M, S, m, 1, d)  # note: m<1e6 to avoid roundoff
+            # note: m<1e6 to avoid roundoff
+            inv_edf = ((1.0/(pow(greenhall_sz(0, m, 1, d), 2)*M)) *
+                       greenhall_BasicSum(J, M, S, m, 1, d))
             if verbose:
                 print("case 3.1 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
@@ -566,8 +577,9 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
         else:
             m_prime = J_max/r
             (b0, b1) = greenhall_table3(alpha, d)
-            inv_edf = (1.0/(pow(b0+b1*np.log(m), 2)*J_max)) * \
-                       greenhall_BasicSum(J_max, J_max, m_prime, m_prime, 1, d)
+            inv_edf = (
+                (1.0/(pow(b0+b1*np.log(m), 2)*J_max)) *
+                greenhall_BasicSum(J_max, J_max, m_prime, m_prime, 1, d))
             if verbose:
                 print("case 3.3 edf= %3f" % float(1.0/inv_edf))
             return 1.0/inv_edf
@@ -575,9 +587,11 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
         # case 4, unmodified variances, alpha=2
         K = np.ceil(r)
         if K <= d:
-            raise NotImplementedError  # FIXME: add formula from the paper here!
+            # FIXME: add formula from the paper here!
+            raise NotImplementedError
         else:
-            a0 = scipy.special.binom(4*d, 2*d) / pow(scipy.special.binom(2*d, d), 2)
+            a0 = (scipy.special.binom(4*d, 2*d) /
+                  pow(scipy.special.binom(2*d, d), 2))
             a1 = d/2.0
             inv_edf = (1.0/M)*(a0-a1/r)
             if verbose:
@@ -591,10 +605,12 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
 def greenhall_BasicSum(J, M, S, F, alpha, d):
     """ Eqn (10) from Greenhall2004 """
     first = pow(greenhall_sz(0, F, alpha, d), 2)
-    second = (1-float(J)/float(M))*pow(greenhall_sz(float(J)/float(S), F, alpha, d), 2)
+    second = ((1-float(J)/float(M)) *
+              pow(greenhall_sz(float(J)/float(S), F, alpha, d), 2))
     third = 0
     for j in range(1, int(J)):
-        third += 2*(1.0-float(j)/float(M))*pow(greenhall_sz(float(j)/float(S), F, alpha, d), 2)
+        third += (2 * (1.0-float(j)/float(M)) *
+                  pow(greenhall_sz(float(j) / float(S), F, alpha, d), 2))
     return first+second+third
 
 
@@ -681,14 +697,21 @@ def greenhall_table2(alpha, d):
     row_idx = int(-alpha+2)  # map 2-> row0 and -4-> row6
     assert(row_idx in [0, 1, 2, 3, 4, 5])
     col_idx = int(d-1)
-    table2 = [[(3.0/2.0, 1.0/2.0), (35.0/18.0, 1.0), (231.0/100.0, 3.0/2.0)],  # alpha=+2
-              [(78.6, 25.2), (790.0, 410.0), (9950.0, 6520.0)],
-              [(2.0/3.0, 1.0/6.0), (2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0)],  # alpha=0
-              [(-1, -1), (0.852, 0.375), (0.997, 0.617)],  # -1
-              [(-1, -1), (1.079, 0.368), (1.033, 0.607)],  # -2
-              [(-1, -1), (-1, -1), (1.053, 0.553)],  # -3
-              [(-1, -1), (-1, -1), (1.302, 0.535)],  # alpha=-4
-             ]
+    table2 = [
+        # alpha = +2:
+        [(3.0/2.0, 1.0/2.0), (35.0/18.0, 1.0), (231.0/100.0, 3.0/2.0)],
+        # alpha = +1:
+        [(78.6, 25.2), (790.0, 410.0), (9950.0, 6520.0)],
+        # alpha = 0:
+        [(2.0/3.0, 1.0/6.0), (2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0)],
+        # alpha = -1:
+        [(-1, -1), (0.852, 0.375), (0.997, 0.617)],
+        # alpha = -2
+        [(-1, -1), (1.079, 0.368), (1.033, 0.607)],
+        # alpha = -3
+        [(-1, -1), (-1, -1), (1.053, 0.553)],
+        # alpha = -4
+        [(-1, -1), (-1, -1), (1.302, 0.535)]]
     # print("table2 = ", table2[row_idx][col_idx])
     return table2[row_idx][col_idx]
 
@@ -697,14 +720,21 @@ def greenhall_table1(alpha, d):
     """ Table 1 from Greenhall 2004 """
     row_idx = int(-alpha+2)  # map 2-> row0 and -4-> row6
     col_idx = int(d-1)
-    table1 = [[(2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0), (22.0/25.0, 2.0/3.0)],  # alpha=+2
-              [(0.840, 0.345), (0.997, 0.616), (1.141, 0.843)],
-              [(1.079, 0.368), (1.033, 0.607), (1.184, 0.848)],
-              [(-1, -1), (1.048, 0.534), (1.180, 0.816)],  # -1
-              [(-1, -1), (1.302, 0.535), (1.175, 0.777)],  # -2
-              [(-1, -1), (-1, -1), (1.194, 0.703)],  # -3
-              [(-1, -1), (-1, -1), (1.489, 0.702)],  # alpha=-4
-             ]
+    table1 = [
+        # alpha = +2:
+        [(2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0), (22.0/25.0, 2.0/3.0)],
+        # alpha = +1:
+        [(0.840, 0.345), (0.997, 0.616), (1.141, 0.843)],
+        # alpha = 0:
+        [(1.079, 0.368), (1.033, 0.607), (1.184, 0.848)],
+        # alpha = -1:
+        [(-1, -1), (1.048, 0.534), (1.180, 0.816)],
+        # alpha = -2
+        [(-1, -1), (1.302, 0.535), (1.175, 0.777)],
+        # alpha = -3
+        [(-1, -1), (-1, -1), (1.194, 0.703)],
+        # alpha = -4
+        [(-1, -1), (-1, -1), (1.489, 0.702)]]
     # print("table1 = ", table1[row_idx][col_idx])
     return table1[row_idx][col_idx]
 
@@ -733,7 +763,11 @@ def edf_mtotdev(N, m, alpha):
         NIST SP1065 page 41, Table 8
     """
     assert(alpha in [2, 1, 0, -1, -2])
-    NIST_SP1065_table8 = [(1.90, 2.1), (1.20, 1.40), (1.10, 1.2), (0.85, 0.50), (0.75, 0.31)]
+    NIST_SP1065_table8 = [(1.90, 2.1),
+                          (1.20, 1.40),
+                          (1.10, 1.2),
+                          (0.85, 0.50),
+                          (0.75, 0.31)]
     # (b, c) = NIST_SP1065_table8[ abs(alpha-2) ]
     (b, c) = NIST_SP1065_table8[abs(alpha-2)]
     edf = b*(float(N)/float(m))-c
@@ -805,7 +839,8 @@ def edf_simple(N, m, alpha):
 
     else:
         edf = (N - 1)
-        print("Noise type not recognized. Defaulting to N - 1 degrees of freedom.")
+        print("Noise type not recognized."
+              " Defaulting to N - 1 degrees of freedom.")
 
     return edf
 

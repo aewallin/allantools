@@ -106,9 +106,10 @@ def brown(num_points=1024, b_minus2=1.0, fs=1.0):
         -------
         Random walk sample: numpy.array
     """
-    return (1.0/float(fs))*numpy.cumsum(white(num_points,
-                                              b0=b_minus2*(4.0*math.pi*math.pi),
-                                              fs=fs))
+    return (1.0/float(fs))*numpy.cumsum(
+        white(num_points,
+              b0=b_minus2*(4.0*math.pi*math.pi),
+              fs=fs))
 
 
 def violet(num_points=1024, b2=1, fs=1):
@@ -131,7 +132,9 @@ def violet(num_points=1024, b2=1, fs=1):
         Violet noise sample: numpy.array
     """
     # diff() reduces number of points by one.
-    return (float(fs))*numpy.diff(white(num_points+1, b0=b2/(2.0*math.pi)**2, fs=fs))
+    return (float(fs))*numpy.diff(
+        white(num_points+1, b0=b2/(2.0*math.pi)**2, fs=fs))
+
 
 def pink(num_points=1024, depth=80):
     """ Pink noise (approximation) with 1/f PSD
@@ -153,8 +156,8 @@ def pink(num_points=1024, depth=80):
         -------
         Pink noise sample: numpy.array
     """
-    # FIXME: couldn't we implement here the normalization as for the other noise
-    # types using a noise power law coefficient b_minus1?
+    # FIXME: couldn't we implement here the normalization as for the other
+    # noise types using a noise power law coefficient b_minus1?
     a = []
     s = iterpink(depth)
     for n in range(num_points):  # FIXME: num_points is unused here.

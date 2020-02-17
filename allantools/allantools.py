@@ -12,7 +12,8 @@ Version history
 - psd2allan() - convert PSD to ADEV/MDEV
 
 **2019.09** 2019 September
-- packaging changes, for conda package (see https://anaconda.org/conda-forge/allantools)
+- packaging changes, for conda package
+  (see https://anaconda.org/conda-forge/allantools)
 
 **2019.07** 2019 August 3
 - move edf-functions and noise-ID functions to ci.py
@@ -109,8 +110,8 @@ import numpy as np
 
 from scipy import interpolate
 from scipy.integrate import simps
-#import scipy.stats # used in confidence_intervals()
-#import scipy.signal # decimation in lag-1 acf
+# import scipy.stats # used in confidence_intervals()
+# import scipy.signal # decimation in lag-1 acf
 
 
 from . import ci  # edf, confidence intervals
@@ -761,7 +762,6 @@ def calc_mtotdev_phase(phase, rate, m):
 
     n = 0      # number of terms in the sum, for error estimation
     dev = 0.0  # the deviation we are computing
-    err = 0.0  # the error in the deviation
     # print('calc_mtotdev N=%d m=%d' % (N,m) )
     for i in range(0, N-3*m+1):
         # subsequence of length 3m, from the original phase data
@@ -1367,15 +1367,17 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
 
     v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
 
-    n = len(np.where(np.isnan(v_arr) == False)[0])  # only average for non-nans
+    # only average for non-nans
+    n = len(np.where(np.isnan(v_arr) == False)[0])  # noqa
 
     if n == 0:
         RuntimeWarning("Data array length is too small: %i" % len(data))
         n = 1
 
-    N = len(np.where(np.isnan(data) == False)[0])
+    N = len(np.where(np.isnan(data) == False)[0])  # noqa
 
-    s = np.nansum(v_arr * v_arr)   # a summation robust to nans
+    # a summation robust to nans
+    s = np.nansum(v_arr * v_arr)
 
     dev = np.sqrt(s / (2.0 * n)) / mj * rate
     # deverr = dev / np.sqrt(n) # old simple errorbars
@@ -1396,7 +1398,8 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
 
     return dev, deverr, n
 
-def psd2allan(S_y, f=1.0, kind= 'adev', base=2):
+
+def psd2allan(S_y, f=1.0, kind='adev', base=2):
     """ Convert a given (one-sided) power spectral density S_y(f) to Allan
         deviation or modified Allan deviation
 
@@ -1443,48 +1446,51 @@ def psd2allan(S_y, f=1.0, kind= 'adev', base=2):
         Computed Allan deviation of requested kind for each tau value
     """
     # determine taus from df
-    # first oversample S_y by a factor of 10 in order to avoid numerical problem
-    # at tau > 1/2df
+    # first oversample S_y by a factor of 10 in order to avoid numerical
+    # problem at tau > 1/2df
     if isinstance(S_y, np.ndarray):
-        if isinstance(f, np.ndarray): # f is frequency vector
-            df= f[1]-f[0]
-        elif np.isscalar(f): # assume that f is the frequency step, not frequency vector
-            df= f
+        if isinstance(f, np.ndarray):  # f is frequency vector
+            df = f[1]-f[0]
+        elif np.isscalar(f):
+            # assume that f is the frequency step, not frequency vector
+            df = f
         else:
             raise ValueError(np.ndarray, float, int)
     else:
-        raise ValueError(np.ndarray) # raise error
-    oversamplingfactor= 4
-    df0= oversamplingfactor * df
-    f0= np.arange(S_y.size * df0, step=df0)
-    f= np.arange(df, (S_y.size -1) * df0 + df, df)
-    S_y= interpolate.interp1d(f0, S_y, kind='cubic')(f)
-    f= f / oversamplingfactor
+        raise ValueError(np.ndarray)  # raise error
+    oversamplingfactor = 4
+    df0 = oversamplingfactor * df
+    f0 = np.arange(S_y.size * df0, step=df0)
+    f = np.arange(df, (S_y.size - 1) * df0 + df, df)
+    S_y = interpolate.interp1d(f0, S_y, kind='cubic')(f)
+    f = f / oversamplingfactor
 
-    tau0=1/np.max(f) # minimum tau derived from the given frequency vector
-    n=1/df/tau0/2
+    tau0 = 1/np.max(f)  # minimum tau derived from the given frequency vector
+    n = 1/df/tau0/2
     if base > 1:
-        m = np.unique(np.round(np.append(base**np.arange(np.floor(np.log(n)/np.log(base))), n)))
+        m = np.unique(np.round(np.append(base**np.arange(
+            np.floor(np.log(n)/np.log(base))), n)))
     else:
         m = np.arange(1, n)
-    taus_used= m*tau0
+    taus_used = m*tau0
 
     # TODO: In principle, this approach can be extended to the other kinds of
     # Allan deviations, we just need to determine the respective transfer
     # function in the frequency domain.
 
     if kind[0].lower() == 'a':   # for ADEV
-        exponent=1.0
-    elif kind[0].lower() == 'm': # for modADEV
-        exponent=2.0
+        exponent = 1.0
+    elif kind[0].lower() == 'm':  # for modADEV
+        exponent = 2.0
 
-    integrand= np.array([S_y *
-          np.abs(np.sin(np.pi * f * taus_used[idx])**(exponent + 1.0)
-          / (np.pi * f * taus_used[idx])**exponent)**2.0
-          for idx, mj in enumerate(m)])
-    integrand= np.insert(integrand, 0, 0.0, axis=1)
-    f= np.insert(f, 0, 0.0)
-    ad = np.sqrt(2.0 *simps(integrand, f))
+    integrand = np.array([
+        S_y *
+        np.abs(np.sin(np.pi * f * taus_used[idx])**(exponent + 1.0)
+               / (np.pi * f * taus_used[idx])**exponent)**2.0
+        for idx, mj in enumerate(m)])
+    integrand = np.insert(integrand, 0, 0.0, axis=1)
+    f = np.insert(f, 0, 0.0)
+    ad = np.sqrt(2.0 * simps(integrand, f))
     return taus_used, ad
 
 

@@ -41,7 +41,8 @@ class dev_realtime(object):
         self.auto_afs = auto_afs
         # logscpace will fail at >=6 (?), need to remove duplicates?
         self.af_taus = numpy.logspace(0, 1, pts_per_decade+1)[:-1]
-        self.af_idx = 0       # logspace index, to keep track of afs in auto-af mode
+        # logspace index, to keep track of afs in auto-af mode
+        self.af_idx = 0
         self.af_decade = 0    # logspace decade
         if auto_afs:
             self.afs = numpy.array([1])
@@ -59,11 +60,14 @@ class dev_realtime(object):
             next_idx = 0
             next_decade = self.af_decade + 1
 
-        next_af = int(numpy.round(pow(10.0, next_decade) * self.af_taus[next_idx]))  # next possible AF
+        # next possible AF:
+        next_af = int(numpy.round(
+            pow(10.0, next_decade) * self.af_taus[next_idx]))
         if len(self.x) >= (2*next_af+1):  # can compute next AF
             self.afs = numpy.append(self.afs, next_af)  # new AF
             self.add_af()  # tell subclass to update internal variables
-            # self.S = numpy.append(self.S, 0) # new S, FIXME: S defined in subclass!
+            # FIXME: S defined in subclass!
+            # self.S = numpy.append(self.S, 0) # new S
             self.dev = numpy.append(self.dev, 0)  # new dev
             self.af_idx = next_idx
             self.af_decade = next_decade
@@ -90,13 +94,16 @@ class dev_realtime(object):
 
 
 class oadev_realtime(dev_realtime):
-    """ Overlapping Allan deviation in real-time from a stream of phase/frequency samples.
+    """ Overlapping Allan deviation in real-time from a stream of
+    phase/frequency samples.
 
-        Dobrogowski & Kasznia
-        https://doi.org/10.1109/FREQ.2007.4319204
+    Dobrogowski & Kasznia
+    https://doi.org/10.1109/FREQ.2007.4319204
     """
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
-        super(oadev_realtime, self).__init__(afs=afs, tau0=tau0, auto_afs=auto_afs, pts_per_decade=pts_per_decade)
+        super(oadev_realtime, self).__init__(afs=afs, tau0=tau0,
+                                             auto_afs=auto_afs,
+                                             pts_per_decade=pts_per_decade)
         self.S = numpy.zeros(len(afs))      # sum-of-squares
 
     def add_phase(self, xnew):
@@ -114,21 +121,25 @@ class oadev_realtime(dev_realtime):
         i = len(self.x)-1  # last pt
         S_new = pow(self.x[i] - 2*self.x[i-af] + self.x[i-2*af], 2)
         self.S[idx] = self.S[idx] + S_new
-        self.dev[idx] = numpy.sqrt((1.0/(2*pow(af*self.tau0, 2)*(i+1-2*af))) * self.S[idx])
+        self.dev[idx] = numpy.sqrt(
+            (1.0/(2*pow(af*self.tau0, 2)*(i+1-2*af))) * self.S[idx])
 
     def add_af(self):
         self.S = numpy.append(self.S, 0)
 
 
 class ohdev_realtime(dev_realtime):
-    """ Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.
+    """ Overlapping Hadamard deviation in real-time from a stream of
+    phase/frequency samples.
 
-        [Dobrogowski2007]_
-        Dobrogowski & Kasznia
-        https://doi.org/10.1109/FREQ.2007.4319204
+    [Dobrogowski2007]_
+    Dobrogowski & Kasznia
+    https://doi.org/10.1109/FREQ.2007.4319204
     """
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
-        super(ohdev_realtime, self).__init__(afs=afs, tau0=tau0, auto_afs=auto_afs, pts_per_decade=pts_per_decade)
+        super(ohdev_realtime, self).__init__(afs=afs, tau0=tau0,
+                                             auto_afs=auto_afs,
+                                             pts_per_decade=pts_per_decade)
         self.S = numpy.zeros(len(afs))      # sum-of-squares
 
     def add_af(self):
@@ -148,19 +159,26 @@ class ohdev_realtime(dev_realtime):
         af = self.afs[idx]
         i = len(self.x)-1  # last pt
         # print i,self.x
-        S_new = pow(self.x[i] - 3*self.x[i-af] + 3*self.x[i-2*af] - self.x[i-3*af], 2)
+        S_new = pow(self.x[i] -
+                    3*self.x[i-af] +
+                    3*self.x[i-2*af] -
+                    self.x[i-3*af], 2)
         self.S[idx] = self.S[idx] + S_new
-        self.dev[idx] = numpy.sqrt((1.0/(6.0*pow(af*self.tau0, 2)*(i+1.0-3*af))) * self.S[idx])
+        self.dev[idx] = numpy.sqrt(
+            (1.0/(6.0*pow(af*self.tau0, 2)*(i+1.0-3*af))) * self.S[idx])
 
 
 class tdev_realtime(dev_realtime):
-    """ Time deviation and Modified Allan deviation in real-time from a stream of phase/frequency samples.
+    """ Time deviation and Modified Allan deviation in real-time from a stream
+    of phase/frequency samples.
 
-        Dobrogowski & Kasznia
-        https://doi.org/10.1109/FREQ.2007.4319204
+    Dobrogowski & Kasznia
+    https://doi.org/10.1109/FREQ.2007.4319204
     """
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
-        super(tdev_realtime, self).__init__(afs=afs, tau0=tau0, auto_afs=auto_afs, pts_per_decade=pts_per_decade)
+        super(tdev_realtime, self).__init__(afs=afs, tau0=tau0,
+                                            auto_afs=auto_afs,
+                                            pts_per_decade=pts_per_decade)
         self.S = numpy.zeros(len(afs))      # sum-of-squares
         self.So = numpy.zeros(len(afs))      # overall sum-of-squares
 
@@ -194,7 +212,8 @@ class tdev_realtime(dev_realtime):
         # Eqn (14)
         num_pts = len(self.x)
         af = self.afs[idx]
-        self.dev[idx] = numpy.sqrt((1.0/6.0)*(1.0/(num_pts-3*af+1.0))*(1.0/pow(af, 2))*(self.So[idx]))
+        self.dev[idx] = numpy.sqrt(
+            (1.0/6.0)*(1.0/(num_pts-3*af+1.0))*(1.0/pow(af, 2))*(self.So[idx]))
 
     def update_S(self, idx):
         """ update S, sum-of-squares """
@@ -202,11 +221,13 @@ class tdev_realtime(dev_realtime):
         assert(len(self.x) >= 3*af+1)
         i = len(self.x)-1  # last pt
         # Eqn (12)
-        S_new = -1*self.x[i-3*af] + 3*self.x[i-2*af] - 3*self.x[i-af] + self.x[i]
+        S_new = (-1*self.x[i-3*af] + 3*self.x[i-2*af] -
+                 3*self.x[i-af] + self.x[i])
 
         self.S[idx] = self.S[idx] + S_new
         # Eqn (11)
-        self.So[idx] = self.So[idx] + pow(self.S[idx], 2)  # ??? S_(i-1) in paper for TDEV-sqrt?
+        self.So[idx] = self.So[idx] + pow(self.S[idx], 2)
+        # ??? S_(i-1) in paper for TDEV-sqrt?
         self.update_dev(idx)
 
     def mdev(self):
