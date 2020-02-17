@@ -46,11 +46,12 @@ matrix:
         - os: windows
           name: "Windows - Python 3.8 - experimental"
           language: shell
+          env: PATH=/c/Python:/c/Python/Scripts:$PATH
           before_install:
-              - choco install python --version 3.8.0
+              - choco install python3 --version 3.8.0
+              - python -m ensurepip
               - pip install -v .
               - pip install -r requirements.txt
-          env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
           script:
               - py.test
 # end
