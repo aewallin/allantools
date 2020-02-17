@@ -8,12 +8,12 @@
 import sys
 import pytest
 import allantools as allan
-import testutils
 import os
 
 sys.path.append("..")
 sys.path.append("../..")  # hack to import from parent directory
 # remove if you have allantools installed in your python path
+import testutils
 
 
 data_file = 'PHASE.DAT'
@@ -75,6 +75,11 @@ class TestPhaseDat():
     def test_phasedat_mtie(self):
         self.generic_test(result='phase_dat_mtie.txt',
                           fct=allan.mtie)
+
+    @pytest.mark.xfail(reason="mtie_phase_fast not finished")
+    def test_phasedat_mtie_phase_fast(self):
+        self.generic_test(result='phase_dat_mtie.txt',
+                          fct=allan.mtie_phase_fast)
 
     def test_phasedat_tierms(self):
         self.generic_test(result='phase_dat_tierms.txt',
