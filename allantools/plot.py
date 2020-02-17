@@ -66,8 +66,7 @@ class Plot(object):
     def plot(self, atDataset,
              errorbars=False,
              grid=False,
-             **kwargs
-            ):
+             **kwargs):
         """ Use matplotlib methods for plotting
 
         Additional keywords arguments are passed to
@@ -87,13 +86,11 @@ class Plot(object):
             self.ax.errorbar(atDataset.out["taus"],
                              atDataset.out["stat"],
                              yerr=atDataset.out["stat_err"],
-                             **kwargs
-                            )
+                             **kwargs)
         else:
             self.ax.plot(atDataset.out["taus"],
                          atDataset.out["stat"],
-                         **kwargs
-                        )
+                         **kwargs)
         self.ax.set_xlabel("Tau")
         self.ax.set_ylabel(atDataset.out["stat_id"])
         self.ax.grid(grid, which="minor", ls="-", color='0.65')

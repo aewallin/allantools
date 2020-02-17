@@ -241,7 +241,8 @@ class Noise(object):
         if self.b == 0:
             coeff = 3.0*f_h / (4.0*pow(np.pi, 2))  # E, White PM, tau^-1
         elif self.b == -1:
-            coeff = (1.038+3*np.log(2.0*np.pi*f_h*tau))/(4.0*pow(np.pi, 2))  # D, Flicker PM, tau^-1
+            # D, Flicker PM, tau^-1
+            coeff = (1.038+3*np.log(2.0*np.pi*f_h*tau))/(4.0*pow(np.pi, 2))
         elif self.b == -2:
             coeff = 0.5  # C, white FM,  1/sqrt(tau)
         elif self.b == -3:
@@ -286,13 +287,17 @@ class Noise(object):
         if self.b == 0:
             coeff = 3.0/(8.0*pow(np.pi, 2))  # E, White PM, tau^-{3/2}
         elif self.b == -1:
-            coeff = (24.0*np.log(2)-9.0*np.log(3))/8.0/pow(np.pi, 2)  # D, Flicker PM, tau^-1
+            # D, Flicker PM, tau^-1
+            coeff = (24.0*np.log(2)-9.0*np.log(3))/8.0/pow(np.pi, 2)
         elif self.b == -2:
-            coeff = 0.25  # C, white FM,  1/sqrt(tau)
+            # C, white FM,  1/sqrt(tau)
+            coeff = 0.25
         elif self.b == -3:
-            coeff = 2.0*np.log(3.0*pow(3.0, 11.0/16.0)/4.0)  # B, flicker FM,  constant MDEV
+            # B, flicker FM,  constant MDEV
+            coeff = 2.0*np.log(3.0*pow(3.0, 11.0/16.0)/4.0)
         elif self.b == -4:
-            coeff = 11.0/20.0*pow(np.pi, 2)  # A, RW FM, sqrt(tau)
+            # A, RW FM, sqrt(tau)
+            coeff = 11.0/20.0*pow(np.pi, 2)
 
         return np.sqrt(coeff*g_b*pow(2.0*np.pi, 2))
 
