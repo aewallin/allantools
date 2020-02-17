@@ -6,12 +6,25 @@
 matrix:
     include:
         - os: linux
-          name: "Linux/xenial - Python 2.7, with coverage"
+          name: "Linux/xenial - Python 2.7"
           dist: xenial   # required for Python >= 3.7
           language: python
           sudo: required
           python:        # removed 3.3 because scipy gives and error
-              - "2.7"
+              - 2.7
+          install:
+              - sudo apt-get install liblapack-dev libblas-dev gfortran
+              - pip install -v .      # allantools itself, verbose output
+              - pip install -r requirements.txt
+          script:
+              - py.test
+        - os: linux
+          name: "Linux/xenial - Python 3.4, with coverage"
+          dist: xenial   # required for Python >= 3.7
+          language: python
+          sudo: required
+          python:        # removed 3.3 because scipy gives and error
+              - 3.4
           install:
               - sudo apt-get install liblapack-dev libblas-dev gfortran
               - pip install -v .      # allantools itself, verbose output
@@ -21,19 +34,6 @@ matrix:
               - py.test
               - coverage run --source=allantools setup.py test
           after_success: coveralls
-        - os: linux
-          name: "Linux/xenial - Python 3.4"
-          dist: xenial   # required for Python >= 3.7
-          language: python
-          sudo: required
-          python:        # removed 3.3 because scipy gives and error
-              - "3.4"
-          install:
-              - sudo apt-get install liblapack-dev libblas-dev gfortran
-              - pip install -v .      # allantools itself, verbose output
-              - pip install -r requirements.txt
-          script:
-              - py.test
         - os: osx           # https://docs.travis-ci.com/user/reference/osx/
           name: "MacOS 10.14.3 - Python 3.7.2 - experimental"
           osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
@@ -46,12 +46,14 @@ matrix:
         - os: windows
           name: "Windows - Python 3.8 - experimental"
           language: shell
-          env: PATH=/c/Python:/c/Python/Scripts:$PATH
+          env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
           before_install:
-              - choco install python3 --version 3.8.0
+              - choco install python --version 3.8.0
+              - python --version
               - python -m ensurepip
-              - pip install -v .
-              - pip install -r requirements.txt
+          install:
+              - python -m pip install -v .
+              - python -m pip install -r requirements.txt
           script:
               - py.test
 # end
