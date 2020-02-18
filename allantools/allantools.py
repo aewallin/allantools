@@ -1180,7 +1180,7 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
             win_min = np.min(rw, axis=1)
             tie = win_max - win_min
             dev = np.max(tie)
-        except:
+        except ValueError:
             if int(mj + 1) < 1:
                 raise ValueError("`window` must be at least 1.")
             if int(mj + 1) > phase.shape[-1]:
