@@ -6,12 +6,12 @@
 matrix:
     include:
         - os: linux
-          name: "Linux/xenial - Python 2.7"
+          name: "Linux/xenial - Python 3.5 (oldest supported version)"
           dist: xenial   # required for Python >= 3.7
           language: python
           sudo: required
-          python:        # removed 3.3 because scipy gives and error
-              - 2.7
+          python:
+              - 3.5
           install:
               - sudo apt-get install liblapack-dev libblas-dev gfortran
               - pip install -v .      # allantools itself, verbose output
@@ -19,12 +19,12 @@ matrix:
           script:
               - py.test
         - os: linux
-          name: "Linux/xenial - Python 3.4, with coverage"
+          name: "Linux/xenial - Python 3.8, (latest supported version) with coverage"
           dist: xenial   # required for Python >= 3.7
           language: python
           sudo: required
-          python:        # removed 3.3 because scipy gives and error
-              - 3.4
+          python:
+              - 3.8
           install:
               - sudo apt-get install liblapack-dev libblas-dev gfortran
               - pip install -v .      # allantools itself, verbose output
