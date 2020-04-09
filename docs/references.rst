@@ -13,7 +13,7 @@ Papers
 ------
 
     
-.. [Barnes1974] Barnes, 1974
+.. [Barnes1974] Barnes, 1974, Tables of bias functions
     https://tf.nist.gov/general/pdf/11.pdf
     
 .. [Benkler2015] Benkler, Lisdat, Sterr, On the relation between uncertainties of weighted frequency 
@@ -105,5 +105,11 @@ Papers
     http://www.ieee-uffc.org/frequency-control/learning/pdf/Vernotte-Varience_Measurements.pdf
 
 .. [Vernotte2015] The Parabolic Variance (PVAR): A Wavelet Variance Based on the Least-Square Fit
-    https://ieeexplore.ieee.org/document/7323846
+    https://ieeexplore.ieee.org/document/7323846 or
     https://arxiv.org/abs/1506.00687
+
+.. [Vernotte2016] Three-Cornered Hat versus Allan Covariance
+    http://rubiola.org/pdf-articles/conference/2016-IFCS-Three-cornered.pdf
+
+.. [Vernotte2018] Three-Cornered Hat and Groslambert Covariance: A first attempt to assess the uncertainty domains
+    https://arxiv.org/abs/1810.01530
