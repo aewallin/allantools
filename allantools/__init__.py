@@ -36,7 +36,9 @@ __all__ = [
     'Dataset',
     'Noise',
     'Plot',
-    'psd2allan'
+    'psd2allan',
+    'tau_generator',
+    'tau_reduction'
     ]
 
 from .allantools import __version__
@@ -65,6 +67,8 @@ from .allantools import tierms
 from .allantools import gradev
 from .allantools import trim_data
 from .allantools import psd2allan
+from .allantools import tau_generator
+from .allantools import tau_reduction
 
 # ci.py contains functions for confidence intervals
 from .ci import edf_simple
