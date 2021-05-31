@@ -45,6 +45,7 @@ Statistics
 .. autofunction:: theo1
 .. autofunction:: mtie
 .. autofunction:: tierms
+.. autofunction:: gcodev
 
 Real-Time Statistics
 --------------------
