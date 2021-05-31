@@ -10,6 +10,7 @@ Version history
 **unreleased**
 - ITU PRC, PRTC, ePRTC masks for TDEV and MTIE in new file mask.py
 - psd2allan() - convert PSD to ADEV/MDEV
+- GCODEV
 
 **2019.09** 2019 September
 - packaging changes, for conda package
@@ -383,6 +384,7 @@ def calc_adev_phase(phase, rate, mj, stride):
 
     return dev, deverr, n
 
+
 def calc_gcodev_phase(phase_1, phase_2, rate, mj, stride):
     """
     Main algorithm for the Groslambert codeviation (see arXiv:1904.05849)
@@ -402,7 +404,7 @@ def calc_gcodev_phase(phase_1, phase_2, rate, mj, stride):
     -------
     (dev, deverr, n): tuple
         Array of computed values.
-        
+
     stride = mj for nonoverlapping Allan deviation
     stride = 1 for overlapping Allan deviation (used for GCODEV by default)
 
@@ -413,44 +415,46 @@ def calc_gcodev_phase(phase_1, phase_2, rate, mj, stride):
     d2_1 = phase_1[2 * mj::stride]
     d1_1 = phase_1[1 * mj::stride]
     d0_1 = phase_1[::stride]
-    
+
     d2_2 = phase_2[2 * mj::stride]
     d1_2 = phase_2[1 * mj::stride]
     d0_2 = phase_2[::stride]
 
     n_1 = min(len(d0_1), len(d1_1), len(d2_1))
     n_2 = min(len(d0_2), len(d1_2), len(d2_2))
-    
+
     if n_1 == 0:
         RuntimeWarning("Data array length is too small: %i" % len(phase_1))
         n_1 = 1
         n_2 = 1
-    
+
     v_arr_1 = d2_1[:n_1] - 2 * d1_1[:n_1] + d0_1[:n_1]
     v_arr_2 = d2_2[:n_2] - 2 * d1_2[:n_2] + d0_2[:n_2]
     s = np.sum(v_arr_1 * v_arr_2)
-    
+
     # Result can be negative
     if(s >= 0):
         dev = np.sqrt(s / (2.0*n_1)) / mj*rate
     else:
-        #print(s, n_1, mj, rate)
+        # print(s, n_1, mj, rate)
         dev = -np.sqrt(np.abs(s) / (2.0*n_1)) / mj*rate
 
     deverr = dev / np.sqrt(n_1)
 
     return dev, deverr, n_1
 
+
 def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
     """ Groslambert codeviation  a.k.a. Allan Covariance
 
-    Ref: (arXiv:1904.05849)
+    Ref: (arXiv:1904.05849, https://arxiv.org/abs/1904.05849)
 
     Parameters
     ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
+    data_1: np.array
+        Oscillator 1 input data. Provide either phase or frequency
+    data_2: np.array
+        Oscillator 2 input data. Provide either phase or frequency
     rate: float
         The sampling rate for data, in Hz. Defaults to 1.0
     data_type: {'phase', 'freq'}
@@ -469,22 +473,26 @@ def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
     gd: np.array
         Computed gcodev for each tau value
 
-
     """
-    
+
     phase_1 = input_to_phase(data_1, rate, data_type)
     phase_2 = input_to_phase(data_2, rate, data_type)
     (phase_1, m, taus_used) = tau_generator(phase_1, rate, taus)
     (phase_2, m, taus_used) = tau_generator(phase_2, rate, taus)
-    
+
     gd = np.zeros_like(taus_used)
     gde = np.zeros_like(taus_used)
     gdn = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(m):  # stride=1 for overlapping ADEV
-        (gd[idx], gde[idx], gdn[idx]) = calc_gcodev_phase(phase_1, phase_2, rate, mj, 1)
+        (gd[idx], gde[idx], gdn[idx]) = calc_gcodev_phase(phase_1,
+                                                          phase_2,
+                                                          rate,
+                                                          mj,
+                                                          stride=1)
 
     return remove_small_ns(taus_used, gd, gde, gdn)
+
 
 def oadev(data, rate=1.0, data_type="phase", taus=None):
     """ overlapping Allan deviation.
