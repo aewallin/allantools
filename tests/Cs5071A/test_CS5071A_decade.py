@@ -53,17 +53,32 @@ class TestCS():
     
     def test_adev_ci(self):
         s32rows = testutils.read_stable32(resultfile='adev_decade.txt', datarate=1.0)
+        edfs=[]
+        err_lo=[]
+        err_hi=[]
+        err_dev=[]
         for row in s32rows:
             data = testutils.read_datafile(data_file)
             (taus, devs, errs, ns) = allan.adev(data, rate=rate,
                                                   taus=[ row['tau'] ])
+            # here allantools does not identify the noise type
+            # instead the noise type alpha from Stable 32 is used
             edf = allan.edf_greenhall(alpha=row['alpha'],d=2,m=row['m'],N=len(data),overlapping=False, modified = False, verbose=True)
-            (lo,hi) =allan.confidence_interval(devs[0],ci=0.68268949213708585, edf=edf)
+            #(lo,hi) =allan.confidence_interval(devs[0],ci=0.68268949213708585, edf=edf)
+            (lo,hi) =allan.confidence_interval(devs[0], edf)
             print("n check: ", testutils.check_equal( ns[0], row['n'] ) )
             print("dev check: ", testutils.check_approx_equal( devs[0], row['dev'] ) )
             print("min dev check: ",  lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=1e-3 ) )
             print("max dev check: ", hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=1e-3 ) )
-        
+            # store relative errors for later printout
+            edfs.append(edf)
+            err_dev.append( row['dev']/devs[0] - 1.0 )
+            err_hi.append( row['dev_max']/hi - 1.0 )
+            err_lo.append( row['dev_min']/lo - 1.0 )
+        # print table with relative errors
+        for (e, lo, err, hi) in zip(edfs, err_lo, err_dev, err_hi):
+            print('%d %.6f %.6f %.6f'%(e, lo, err, hi))
+            
     def test_oadev(self):
         self.generic_test( result='oadev_decade.txt' , fct= allan.oadev )
     
@@ -162,5 +177,5 @@ if __name__ == "__main__":
     #pytest.main()
     t=TestCS()
     #t.test_adev()
-    t.test_totdev_ci()
-
+    #t.test_totdev_ci()
+    t.test_adev_ci()

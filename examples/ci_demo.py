@@ -23,6 +23,55 @@ import matplotlib.pyplot as plt  # only for plotting, not required for calculati
 
 import allantools as at
 
+# read a result-file, produced by copy/paste from Stable32
+# note: header-lines need to be manually commented-out with "#"
+def read_resultfile(filename):
+    rows = []
+    row = []
+    with open(filename) as f:
+        for line in f:
+            if not line.startswith("#"): # skip comments
+                row = []
+                l2 = line.split(" ")
+                l2 = [_f for _f in l2 if _f]
+                for n in range(len(l2)):
+                    row.append(float(l2[n]))
+                rows.append(row)
+    return rows
+    
+# parse numbers from a Stable32 result-file
+# the columns are:
+# AF          Tau        #     Alpha  Min Sigma     Mod Totdev      Max Sigma
+# AF = m, averaging factor i.e. tau=m*tau0
+# # = n, number of pairs in the dev calculation
+# alpha = noise PSD coefficient
+def read_stable32(resultfile, datarate):
+    devresults = read_resultfile(resultfile)
+    print("Read ", len(devresults), " rows from ", resultfile)
+    rows=[] 
+    # parse textfile produced by Stable32
+    for row in devresults:
+        if len(row) == 7:  # typical ADEV result file has 7 columns of data
+            d={}
+            d['m']= row[0]
+            d['tau']= row[0] * (1 / float(datarate))
+            d['n']=row[2]
+            d['alpha']=row[3]
+            d['dev_min']=row[4]
+            d['dev']=row[5]
+            d['dev_max']=row[6]
+
+            rows.append(d)
+        elif len(row) == 4:  # the MTIE/TIErms results are formatted slightly differently
+            d={}
+            d['m']= row[0]
+            d['tau']= row[0] * (1 / float(datarate))
+            d['n']=row[2]
+            d['dev']=row[3]
+            rows.append(d)
+    return rows
+    
+
 # this demonstrates how to calculate confidence intervals for ADEV
 # using the algorithms from Greenhall2004
 data_file = '../tests/phasedat/PHASE.DAT'
@@ -42,6 +91,7 @@ phase = read_datafile(data_file)
 
 # Confidence-intervals for each (tau,adev) pair separately.
 cis=[]
+edfs=[]
 for (t,dev) in zip(taus,devs):
     # Greenhalls EDF (Equivalent Degrees of Freedom)
     # alpha     +2,...,-4   noise type, either estimated or known
@@ -50,6 +100,7 @@ for (t,dev) in zip(taus,devs):
     # m         tau/tau0 averaging factor
     # N         number of phase observations
     edf = at.edf_greenhall( alpha=0, d=2, m=t, N=len(phase), overlapping = False, modified=False )
+    edfs.append(edf)
     # with the known EDF we get CIs 
     (lo,hi) = at.confidence_interval( dev=dev,  edf=edf )
     cis.append( (lo,hi) )
@@ -70,6 +121,16 @@ Tau	min Dev		Dev		Max Dev
 128	0.026481	0.033855	0.055737
 256	0.007838	0.010799	0.031075
 """
+
+# now compare to Stable32 results
+rows = read_stable32('../tests/phasedat/phase_dat_adev_octave.txt', 1.0)
+#print rows
+print "Relative error, against Stable32 results"
+print "Tau\tEDF\tmin Dev\t\tDev\t\tMax Dev"
+for (tau,edf, dev,ci,s32) in zip(taus,edfs, devs,cis, rows):
+    print "%d\t%d\t%f\t%f\t%f" % (tau, edf,s32['dev_min']/ci[0]-1.0, s32['dev']/dev-1.0, s32['dev_max']/ci[1]-1.0 )
+    
+
 plt.figure(figsize=(12,8))
 #fig, ax = plt.subplots(111)
 plt.gca().set_yscale('log')
