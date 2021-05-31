@@ -482,12 +482,12 @@ def edf_greenhall(alpha, d, m, N,
         edf: float
             Equivalent degrees of freedom
 
+        Notes
+        -----
         Greenhall, Riley, 2004
         https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
         UNCERTAINTY OF STABILITY VARIANCES BASED ON FINITE DIFFERENCES
-
-        Notes
-        -----
+        
         Used for the following deviations
         (see http://www.wriley.com/CI2.pdf page 8)
         adev()
