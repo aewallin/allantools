@@ -24,6 +24,7 @@ __all__ = [
     'three_cornered_hat_phase',
     'noise',
     'gradev',
+    'gcodev',
     'trim_data',
     'edf_simple',
     'edf_greenhall',
@@ -65,6 +66,7 @@ from .allantools import mtie
 from .allantools import mtie_phase_fast
 from .allantools import tierms
 from .allantools import gradev
+from .allantools import gcodev
 from .allantools import trim_data
 from .allantools import psd2allan
 from .allantools import tau_generator

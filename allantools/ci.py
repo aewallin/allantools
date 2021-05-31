@@ -378,10 +378,10 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
         if af > 1:
             # x = scipy.signal.decimate(x, af, n=1, ftype='fir')
             x = x[0:len(x):af]  # decimate by averaging factor
-            #x = scipy.signal.decimate(x, af, ftype='fir',)
-            #resampled_len = int(len(x)/af)
-            #x = scipy.signal.resample(x, resampled_len)
-            
+            # x = scipy.signal.decimate(x, af, ftype='fir',)
+            # resampled_len = int(len(x)/af)
+            # x = scipy.signal.resample(x, resampled_len)
+
         x = detrend(x, deg=2)  # remove quadratic trend (freq offset and drift)
     elif data_type is "freq":
         # average by averaging factor
@@ -487,7 +487,7 @@ def edf_greenhall(alpha, d, m, N,
         Greenhall, Riley, 2004
         https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
         UNCERTAINTY OF STABILITY VARIANCES BASED ON FINITE DIFFERENCES
-        
+
         Used for the following deviations
         (see http://www.wriley.com/CI2.pdf page 8)
         adev()

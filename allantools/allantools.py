@@ -108,8 +108,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import json
 import numpy as np
-from scipy import interpolate # used in psd2allan()
-from scipy.integrate import simps # used in psd2allan()
+from scipy import interpolate      # used in psd2allan()
+from scipy.integrate import simps  # used in psd2allan()
 
 from . import ci  # edf, confidence intervals
 
@@ -1512,6 +1512,7 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
     For ergodic noise, the Allan variance or modified Allan variance
     is related to the power spectral density :math:`S_y` of the fractional
     frequency deviation:
+
     .. math::
 
         \\sigma^2_y) = 2 \\int_0^\\infty S_y(f)
