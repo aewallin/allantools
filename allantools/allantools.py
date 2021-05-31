@@ -949,7 +949,7 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
         Computed for N fractional frequency points y_i with sampling
         period tau0, analyzed at tau = m*tau0
         1. remove linear trend by averaging first and last half,
-           and dividing by interval
+        and dividing by interval
         2. extend sequence by uninverted even reflection
         3. compute Hadamard for extended, length 9m, sequence.
 
@@ -960,19 +960,19 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
         FW FM   0.717      alpha=-3
         RR FM   0.679      alpha=-4
 
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
+        Parameters
+        ----------
+        data: np.array
+            Input data. Provide either phase or frequency (fractional,
+            adimensional).
+        rate: float
+            The sampling rate for data, in Hz. Defaults to 1.0
+        data_type: {'phase', 'freq'}
+            Data type, i.e. phase or frequency. Defaults to "phase".
+        taus: np.array
+            Array of tau values, in seconds, for which to compute statistic.
+            Optionally set taus=["all"|"octave"|"decade"] for automatic
+            tau-list generation.
 
     """
     if data_type == "phase":
@@ -1515,7 +1515,7 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
 
     .. math::
 
-        \\sigma^2_y) = 2 \\int_0^\\infty S_y(f)
+        \\sigma^2_y(\\tau) = 2 \\int_0^\\infty S_y(f)
         \\left|sin(\\pi*f*\\tau).^(k+1)./(\\pi*f*tau).^k).^2\\right| df,
 
 

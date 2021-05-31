@@ -45,17 +45,17 @@ Papers
     THEO1: CHARACTERIZATION OF VERY LONG-TERM FREQUENCY STABILITY
     http://tf.nist.gov/general/pdf/1990.pdf
 
-.. [Howe2000] Howe, Beard, Greenhall, Riley,
+.. [Howe2000a] Howe, Beard, Greenhall, Riley,
     A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
     32nd PTTI, 2000
     https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
 
 .. [Howe1999] D.A. Howe and F. Vernotte, "Generalization of the Total Variance 
-        Approach to the Modified Allan Variance," Proc.
-        31 st PTTI Meeting, pp. 267-276, Dec. 1999.
-        https://tycho.usno.navy.mil/ptti/1999papers/paper22.pdf
+    Approach to the Modified Allan Variance," Proc.
+    31 st PTTI Meeting, pp. 267-276, Dec. 1999.
+    https://tycho.usno.navy.mil/ptti/1999papers/paper22.pdf
 
-.. [Howe2000] David A. Howe, The total deviation approach to long-term characterization
+.. [Howe2000b] David A. Howe, The total deviation approach to long-term characterization
     of frequency stability, IEEE tr. UFFC vol 47 no 5 (2000)
     http://dx.doi.org/10.1109/58.869040    
 
@@ -69,7 +69,7 @@ Papers
 .. [SP1065] NIST Special Publication 1065
     http://tf.nist.gov/timefreq/general/pdf/2220.pdf
 
-.. [IEEE1139] 1139-2008 - IEEE Standard Definitions of Physical Quantities for 
+.. [IEEE1139-2008] 1139-2008 - IEEE Standard Definitions of Physical Quantities for 
     Fundamental Frequency and Time Metrology - Random Instabilities 
     http://dx.doi.org/10.1109/IEEESTD.2008.4797525
 
