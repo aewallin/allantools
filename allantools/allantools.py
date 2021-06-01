@@ -1664,7 +1664,7 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     elif isinstance(taus, list) and taus == []:
         taus = "octave"
 
-    if taus == "all": # was is
+    if taus == "all":  # was 'is'
         taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
     elif taus == "octave":
         maxn = np.floor(np.log2(len(data)))
