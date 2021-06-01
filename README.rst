@@ -47,6 +47,7 @@ Function                                Description
 ``mtie()``                              Maximum Time Interval Error
 ``tierms()``                            Time Interval Error RMS
 ``gradev()``                            Gap resistant overlapping Allan deviation
+``gcodev()``                            Groslambert Covariance
 =====================================   ====================================================
 
 Noise generators for creating synthetic datasets are also included:
