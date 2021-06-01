@@ -54,7 +54,7 @@ plt.xlabel('Phase / ns')
 plt.ylabel('Count')
 plt.title('Phase histogram')
 rmsphase = 1e12*np.std(x)
-print "RMS phase = ", rmsphase, " ps"
+print("RMS phase = ", rmsphase, " ps")
 plt.text(0,0.01,'RMS = %f ps' % rmsphase )
 
 #plt.show()
@@ -66,7 +66,7 @@ f_x, psd_x = noise.numpy_psd(x,fs)
 fxx, Pxx_den = noise.scipy_psd(y, fs)
 f_fi2, psd_fi2 = noise.scipy_psd(fi, fs)
 f_x2, psd_x2 = noise.scipy_psd(x, fs)
-print "PSD calc done."
+print("PSD calc done.")
 
 # S_y
 plt.figure()
@@ -120,8 +120,8 @@ taus=[tt for tt in np.logspace(-7,4,100)]
 plt.loglog(taus_y,devs_y,'o',label='ADEV from y')
 plt.loglog(taus_x,devs_x,'*',label='ADEV from x')
 
-print devs_y
-print devs_x
+print(devs_y)
+print(devs_x)
 fh = 0.5*fs # this restricts the noise power to below fh
 adev_y = [math.sqrt( 3*fh/(4*math.pi**2) * h2*(1.0/tt**2) ) for tt in taus]
 plt.loglog(taus,adev_y,label='sqrt( 3*fh/(4*pi^2) * h2*tau^-2 )')
@@ -132,5 +132,5 @@ plt.xlabel('Tau / s')
 plt.ylabel('Allan deviation')
 plt.grid()
 
-print "plotting done"
+print("plotting done")
 plt.show()
