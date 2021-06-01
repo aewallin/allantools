@@ -106,9 +106,9 @@ for (t,dev) in zip(taus,devs):
     cis.append( (lo,hi) )
 
 # now we are ready to print and plot the results
-print "Tau\tmin Dev\t\tDev\t\tMax Dev"
+print("Tau\tmin Dev\t\tDev\t\tMax Dev")
 for (tau,dev,ci) in zip(taus,devs,cis):
-    print "%d\t%f\t%f\t%f" % (tau, ci[0], dev, ci[1] )
+    print("%d\t%f\t%f\t%f" % (tau, ci[0], dev, ci[1] ))
 """ output is
 Tau	min Dev		Dev		Max Dev
 1	0.285114	0.292232	0.299910

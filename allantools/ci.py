@@ -406,7 +406,7 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
             # assert r1 < 0
             # assert r1 > -1.0/2.0
             phase_add2 = 0
-            if data_type is "phase":
+            if data_type == "phase":
                 phase_add2 = 2
             alpha = p+phase_add2
             alpha_int = int(-1.0*np.round(2*rho) - 2.0*d) + phase_add2
