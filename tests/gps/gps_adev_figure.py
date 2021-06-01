@@ -29,28 +29,28 @@ def to_fractional(flist,f0):
 
 fname = "gps_1pps_phase_data.txt.gz"
 phase = read_datafile(fname,column=0)
-print len(phase), " values read: ", len(phase)/3600.0 , " hours"
+print(  "%d values read: %.3f hours" % (len(phase), len(phase)/3600.0 ) )
 
 #f = to_fractional(f10MHz, 10e6 ) # convert to fractional frequency
 my_taus = numpy.logspace(1,6,60) # log-spaced tau values from 10s and upwards
 rate = 1/float(1.0)
 
-(adev_taus,adev_devs,adev_errs,ns)  = allan.adev(phase=phase, rate=rate, taus=my_taus)
+(adev_taus,adev_devs,adev_errs,ns)  = allan.adev(phase, rate=rate, taus=my_taus)
  
-(oadev_taus,oadev_devs,oadev_errs,ns)  = allan.oadev(phase=phase, rate=rate, taus=my_taus)
+(oadev_taus,oadev_devs,oadev_errs,ns)  = allan.oadev(phase, rate=rate, taus=my_taus)
 
-(hdev_taus,hdev_devs,hdev_errs,ns)  = allan.hdev(phase=phase, rate=rate, taus=my_taus)
-(ohdev_taus,ohdev_devs,ohdev_errs,ns)  = allan.ohdev(phase=phase, rate=rate, taus=my_taus)
+(hdev_taus,hdev_devs,hdev_errs,ns)  = allan.hdev(phase, rate=rate, taus=my_taus)
+(ohdev_taus,ohdev_devs,ohdev_errs,ns)  = allan.ohdev(phase, rate=rate, taus=my_taus)
 
-(mdev_taus,mdev_devs,mdev_errs,ns)  = allan.mdev(phase=phase, rate=rate, taus=my_taus)
+(mdev_taus,mdev_devs,mdev_errs,ns)  = allan.mdev(phase, rate=rate, taus=my_taus)
 
-(totdev_taus,totdev_devs,totdev_errs,ns)  = allan.totdev(phase=phase, rate=rate, taus=my_taus)
+(totdev_taus,totdev_devs,totdev_errs,ns)  = allan.totdev(phase, rate=rate, taus=my_taus)
 
-(tie_taus,tie_devs,tie_errs,ns)  = allan.tierms(phase=phase, rate=rate, taus=my_taus)
+(tie_taus,tie_devs,tie_errs,ns)  = allan.tierms(phase, rate=rate, taus=my_taus)
 #(mtie_taus,mtie_devs,mtie_errs,ns)  = allan.mtie(phase=phase, rate=rate, taus=my_taus)
 
-(tdev_taus,tdev_devs,tdev_errs,ns)  = allan.tdev(phase=phase, rate=rate, taus=my_taus)
-(tdev2_taus,tdev2_devs,tdev2_errs,ns2)  = allan.tdev(frequency=allan.phase2frequency(phase,1.0), rate=rate, taus=my_taus)
+(tdev_taus,tdev_devs,tdev_errs,ns)  = allan.tdev(phase, rate=rate, taus=my_taus)
+(tdev2_taus,tdev2_devs,tdev2_errs,ns2)  = allan.tdev(allan.phase2frequency(phase,1.0), data_type='freq', rate=rate, taus=my_taus)
 
 plt.subplot(111, xscale="log", yscale="log") 
 
