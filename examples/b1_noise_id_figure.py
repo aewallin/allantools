@@ -121,11 +121,11 @@ for n in range(N_points):
     rate=1.0
     b1_val = b1_noise_id(x, af, rate)
     pts.append( (b, af, b1_val) )
-print "calc done"
+print("calc done")
 colors = { 0:'r', -1:'g', -2:'b', -3:'m', -4:'k', -5:'y'}
 for p in pts:
     plt.loglog( p[1], p[2], "%s."%colors[p[0]])
-print "plot done"
+print("plot done")
 # theory lines
 taus=np.logspace(0,np.log10( nr/4.0 ),20)
 taus = [int(t) for t in taus]
