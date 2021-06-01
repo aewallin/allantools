@@ -1664,12 +1664,12 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     elif isinstance(taus, list) and taus == []:
         taus = "octave"
 
-    if taus is "all":
+    if taus == "all": # was is
         taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
-    elif taus is "octave":
+    elif taus == "octave":
         maxn = np.floor(np.log2(len(data)))
         taus = (1.0/rate)*np.logspace(0, int(maxn), int(maxn+1), base=2.0)
-    elif taus is "decade":  # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
+    elif taus == "decade":  # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
         maxn = np.floor(np.log10(len(data)))
         taus = []
         for k in range(int(maxn+1)):

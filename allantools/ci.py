@@ -104,25 +104,25 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev",
     """
     # 1) noise ID
     dmax = 2
-    if (dev_type is "hdev") or (dev_type is "ohdev"):
+    if (dev_type == "hdev") or (dev_type == "ohdev"):
         dmax = 3
     alpha_int = autocorr_noise_id(
         x, int(af), data_type=data_type, dmin=0, dmax=dmax)[0]
 
-    # 2) EDF
-    if dev_type is "adev":
+    # 2) EDF (tes was 'is')
+    if dev_type == "adev":
         edf = edf_greenhall(alpha=alpha_int, d=2, m=af, N=len(x),
                             overlapping=False, modified=False)
-    elif dev_type is "oadev":
+    elif dev_type == "oadev":
         edf = edf_greenhall(alpha=alpha_int, d=2, m=af, N=len(x),
                             overlapping=True, modified=False)
-    elif (dev_type is "mdev") or (dev_type is "tdev"):
+    elif (dev_type == "mdev") or (dev_type == "tdev"):
         edf = edf_greenhall(alpha=alpha_int, d=2, m=af, N=len(x),
                             overlapping=True, modified=True)
-    elif dev_type is "hdev":
+    elif dev_type == "hdev":
         edf = edf_greenhall(alpha=alpha_int, d=3, m=af, N=len(x),
                             overlapping=False, modified=False)
-    elif dev_type is "ohdev":
+    elif dev_type == "ohdev":
         edf = edf_greenhall(alpha=alpha_int, d=3, m=af, N=len(x),
                             overlapping=True, modified=False)
     else:
@@ -374,7 +374,7 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
 
     """
     d = 0  # number of differentiations
-    if data_type is "phase":
+    if data_type == "phase":
         if af > 1:
             # x = scipy.signal.decimate(x, af, n=1, ftype='fir')
             x = x[0:len(x):af]  # decimate by averaging factor
@@ -383,7 +383,7 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
             # x = scipy.signal.resample(x, resampled_len)
 
         x = detrend(x, deg=2)  # remove quadratic trend (freq offset and drift)
-    elif data_type is "freq":
+    elif data_type == "freq":
         # average by averaging factor
         y_cut = np.array(x[:len(x)-(len(x) % af)])  # cut to length
         assert len(y_cut) % af == 0
