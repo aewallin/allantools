@@ -125,10 +125,10 @@ Tau	min Dev		Dev		Max Dev
 # now compare to Stable32 results
 rows = read_stable32('../tests/phasedat/phase_dat_adev_octave.txt', 1.0)
 #print rows
-print "Relative error, against Stable32 results"
-print "Tau\tEDF\tmin Dev\t\tDev\t\tMax Dev"
+print("Relative error, against Stable32 results")
+print("Tau\tEDF\tmin Dev\t\tDev\t\tMax Dev")
 for (tau,edf, dev,ci,s32) in zip(taus,edfs, devs,cis, rows):
-    print "%d\t%d\t%f\t%f\t%f" % (tau, edf,s32['dev_min']/ci[0]-1.0, s32['dev']/dev-1.0, s32['dev_max']/ci[1]-1.0 )
+    print("%d\t%d\t%f\t%f\t%f" % (tau, edf,s32['dev_min']/ci[0]-1.0, s32['dev']/dev-1.0, s32['dev_max']/ci[1]-1.0 ))
     
 
 plt.figure(figsize=(12,8))
