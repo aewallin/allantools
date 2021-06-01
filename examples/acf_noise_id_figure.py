@@ -38,9 +38,9 @@ for n in range(N_points):
     
     alpha_int, alpha, rho, d = at.autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2)
     pts[-1*b].append( ( af, alpha, alpha_int) )
-    print "%d / %d, a=%03d, alpha_id=%03d correct = %d ?"%(n, N_points, b+2, alpha_int, b+2==alpha_int)
+    print("%d / %d, a=%03d, alpha_id=%03d correct = %d ?"%(n, N_points, b+2, alpha_int, b+2==alpha_int))
     
-print "calc done"
+print("calc done")
 
 colors = { 0:'r', -1:'g', -2:'b', -3:'m', -4:'k', -5:'y'}
 for (series, idx) in zip(pts, range(len(pts))):
@@ -50,7 +50,7 @@ for (series, idx) in zip(pts, range(len(pts))):
     alphai = [s[2] for s in series]
     plt.semilogx( af, alpha, "%s."%colors[b],label='b=%d'%b)
     #plt.semilogx( af, alphai, "%so"%colors[b],label='b=%d'%b) # integer alpha
-print "plot done"
+print("plot done")
 
 plt.ylim((-4,3))
 plt.xlim((.8,1e3))
