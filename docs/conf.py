@@ -62,9 +62,9 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
-    # Will be obsolete with sphinx version 1.8: 
+    # Will be obsolete with sphinx version 1.8:
     'sphinx.ext.imgmath',
-#    'numpydoc'
+    #    'numpydoc'
 ]
 
 # Link to external doc
@@ -152,7 +152,7 @@ todo_include_todos = False
 html_theme = 'default'
 html_theme_path = []
 
-## READ THE DOCS THEME
+# READ THE DOCS THEME
 if rtd_theme:
     html_theme = "sphinx_rtd_theme"
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
@@ -252,25 +252,25 @@ htmlhelp_basename = 'allantoolsdoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 
-# Latex figure (float) alignment
-#'figure_align': 'htbp',
+    # Latex figure (float) alignment
+    #'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'allantools.tex', u'allantools Documentation',
-   u'by the allantools team', 'manual'),
+    (master_doc, 'allantools.tex', u'allantools Documentation',
+     u'by the allantools team', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -313,9 +313,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'allantools', u'allantools Documentation',
-   author, 'allantools', 'One line description of project.',
-   'Miscellaneous'),
+    (master_doc, 'allantools', u'allantools Documentation',
+     author, 'allantools', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.
