@@ -1,5 +1,5 @@
 numpy
+scipy
 numpydoc
-allantools
 matplotlib
 pytest
