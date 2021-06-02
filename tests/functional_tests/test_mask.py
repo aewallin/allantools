@@ -1,4 +1,5 @@
-from allantools import mask
+# from allantools import mask
+import allantools.mask as mask
 import numpy as np
 import pytest  # noqa
 
