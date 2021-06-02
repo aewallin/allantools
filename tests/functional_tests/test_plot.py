@@ -11,7 +11,7 @@ def test_plot():
     ds.compute("adev")
     p = at.Plot(no_display=True)
     p.plot(ds, errorbars=True)
-    p.show()
+    # p.show()  # can't show() in test
 
 if __name__ == "__main__":
     test_plot()
