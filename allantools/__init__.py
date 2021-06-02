@@ -94,14 +94,7 @@ from .realtime import ohdev_realtime
 from .realtime import tdev_realtime
 
 # ITU masks for TDEV and MTIE
-from .mask import eprtc_mtie
-from .mask import eprtc_tdev
-from .mask import prc_mtie
-from .mask import prc_tdev
-from .mask import prtcA_mtie
-from .mask import prtcA_tdev
-from .mask import prtcB_mtie
-from .mask import prtcB_tdev
+from . import mask
 
 
 # end of file __init__.py
