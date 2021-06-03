@@ -67,7 +67,7 @@ Papers
 .. [wikipedia_adev] http://en.wikipedia.org/wiki/Allan_variance
 
 .. [SP1065] NIST Special Publication 1065
-    http://tf.nist.gov/timefreq/general/pdf/2220.pdf
+    https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=50505
 
 .. [IEEE1139-2008] 1139-2008 - IEEE Standard Definitions of Physical Quantities for 
     Fundamental Frequency and Time Metrology - Random Instabilities 
