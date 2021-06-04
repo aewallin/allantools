@@ -19,13 +19,13 @@
 
 import time
 import os
-import testutils
 import allantools as allan
 # import math
 import sys
 import pytest
 sys.path.append("..")
 sys.path.append("../..")  # hack to import from parent directory
+import testutils
 # remove if you have allantools installed in your python path
 
 
