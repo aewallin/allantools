@@ -1661,10 +1661,13 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
 
     if taus is None:  # empty or no tau-list supplied
         taus = "octave"  # default to octave
-    elif isinstance(taus, list) and taus == []:
+    elif isinstance(taus, list) and taus == []:  # empty list
         taus = "octave"
 
-    if taus == "all":  # was 'is'
+    # numpy array or non-empty list detected first
+    if isinstance(taus, np.ndarray) or isinstance(taus, list) and len(taus):
+        pass
+    elif taus == "all":  # was 'is'
         taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
     elif taus == "octave":
         maxn = np.floor(np.log2(len(data)))

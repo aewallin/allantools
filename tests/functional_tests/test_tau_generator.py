@@ -79,6 +79,7 @@ if __name__ == "__main__":
     test_tau_generator_octave()
     test_tau_generator_decade()
     test_tau_generator_1234()
+    test_tau_generator_numpy1234()
     test_tau_reduction_10()
     test_tau_reduction_2()
     test_zero_rate()
