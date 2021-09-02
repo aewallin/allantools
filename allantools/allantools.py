@@ -373,7 +373,7 @@ def calc_adev_phase(phase, rate, mj, stride):
         n = 1
 
     v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
-    s = np.sum(v_arr * v_arr)
+    s = np.sum(abs(v_arr)**2)
 
     dev = np.sqrt(s / (2.0*n)) / mj*rate
     deverr = dev / np.sqrt(n)
