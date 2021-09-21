@@ -105,7 +105,7 @@ def prtcB_tdev(tau):
     """
     if tau < 100:
         return 1e-9
-    if tau < 1000:
+    if tau < 500:
         return 0.01e-9*tau
     else:
         return 5e-9
