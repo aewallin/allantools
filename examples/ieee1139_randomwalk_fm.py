@@ -24,20 +24,23 @@ h2 = 2e-20  # PSD f^-2 coefficient
 N = 10*4096  # number of samples
 v0 = 1.2345e6  # nominal oscillator frequency
 
-y = noise.brown(num_points=N, b2=h2, fs=fs)  # fractional frequency
+y = noise.brown(num_points=N, b_minus2=h2, fs=fs)  # fractional frequency
 x = allantools.frequency2phase(y, fs)  # phase in seconds
 fi = [2*math.pi*v0*xx for xx in x]  # phase in radians
 t = np.linspace(0, (1.0/fs)*N, len(y))  # time-series time axis
 
 # time-series figure
-plt.figure()
+#plt.figure()
 fig, ax1 = plt.subplots()
-ax1.plot(t, y, label='y')
+ax1.plot(t, y, 'b', label='y')
+ax1.set_ylabel('Fractional frequency y', color='b')
 ax2 = ax1.twinx()
-ax2.plot(t, x[1:], label='x')
+ax2.plot(t, x[1:], 'r', label='x')
+ax2.set_ylabel('Phase x / s', color='r')
 plt.legend()
+plt.title('Time-series of y and x')
 plt.xlabel('Time / s')
-plt.ylabel('Fractional frequency')
+#plt.ylabel('Fractional frequency')
 
 # note: calculating the PSD of an 1/f^4 signal using fft seems to be difficult
 # the welch method returns a correct 1/f^4 shaped PSD, but fft often does not
@@ -48,8 +51,8 @@ plt.ylabel('Fractional frequency')
 #   (this is done in the Welch method)
 # - read the Welch code to see what is going on
 f_y,  psd_y = noise.numpy_psd(y, fs)
-f_fi, psd_fi = noise.numpy_psd(signal.detrend(fi[:len(fi)/20]), fs)
-f_x,  psd_x = noise.numpy_psd(x[:len(x)/20], fs)
+f_fi, psd_fi = noise.numpy_psd(signal.detrend(fi[:int(len(fi)/20)]), fs)
+f_x,  psd_x = noise.numpy_psd(x[:int(len(x)/20)], fs)
 
 fxx, Pxx_den = noise.scipy_psd(y,  fs)
 f_fi2, psd_fi2 = noise.scipy_psd(fi, fs)
