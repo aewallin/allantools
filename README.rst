@@ -57,7 +57,7 @@ Noise generators for creating synthetic datasets are also included:
 * pink noise with f^-1 PSD
 * Brownian or random walk noise with f^-2 PSD 
 
-More details on available statistics and noise generators : `full list of available functions <functions.html>`_  
+More details on available statistics and noise generators : `full list of available functions <https://allantools.readthedocs.io/en/latest/functions.html>`_  
 
 see /tests for tests that compare allantools output to other 
 (e.g. Stable32) programs. More test data, benchmarks, ipython notebooks, 
