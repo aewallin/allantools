@@ -13,7 +13,9 @@ AllanTools
     :target: https://github.com/aewallin/allantools/actions/workflows/python-pytest.yml
 .. image:: https://github.com/aewallin/allantools/actions/workflows/python-flake8.yml/badge.svg
     :target: https://github.com/aewallin/allantools/actions/workflows/python-flake8.yml
-    :alt: Documentation Status
+    :alt: flake8 Status
+.. image:: https://readthedocs.org/projects/allantools/badge/?version=latest
+    :target: https://allantools.readthedocs.io/en/latest/
 .. image:: https://coveralls.io/repos/github/aewallin/allantools/badge.svg?branch=master 
     :target: https://coveralls.io/github/aewallin/allantools?branch=master 
 
