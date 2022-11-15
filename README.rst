@@ -9,11 +9,10 @@ AllanTools
     :target: https://anaconda.org/conda-forge/allantools
 .. image:: https://img.shields.io/conda/dn/conda-forge/allantools.svg
     :target: https://anaconda.org/conda-forge/allantools
-
-.. image:: https://travis-ci.org/aewallin/allantools.svg?branch=master
-    :target: https://travis-ci.org/aewallin/allantools
-.. image:: http://readthedocs.org/projects/allantools/badge/?version=latest
-    :target: http://allantools.readthedocs.io/en/latest/?badge=latest
+.. image:: https://github.com/aewallin/allantools/actions/workflows/python-pytest.yml/badge.svg
+    :target: https://github.com/aewallin/allantools/actions/workflows/python-pytest.yml
+.. image:: https://github.com/aewallin/allantools/actions/workflows/python-flake8.yml/badge.svg
+    :target: https://github.com/aewallin/allantools/actions/workflows/python-flake8.yml
     :alt: Documentation Status
 .. image:: https://coveralls.io/repos/github/aewallin/allantools/badge.svg?branch=master 
     :target: https://coveralls.io/github/aewallin/allantools?branch=master 
