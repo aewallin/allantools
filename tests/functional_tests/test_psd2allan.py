@@ -27,8 +27,8 @@ def test_psd2allan_figure():
 
     y_WFM_ind= noise.white(num_points= int(2e4), b0=S_y0, fs=2e4)
     y_WPM_ind= noise.violet(num_points= int(2e4), b2=S_y0, fs=2e4)
-    f, S_y_WFM_ind= welch(y_WFM_ind,fs=2e4, nperseg=y_WFM_ind.size, window='hanning')
-    f, S_y_WPM_ind= welch(y_WPM_ind,fs=2e4, nperseg=y_WPM_ind.size, window='hanning')
+    f, S_y_WFM_ind= welch(y_WFM_ind,fs=2e4, nperseg=y_WFM_ind.size, window='hamming')
+    f, S_y_WPM_ind= welch(y_WPM_ind,fs=2e4, nperseg=y_WPM_ind.size, window='hamming')
 
     plt.loglog(f,S_y_WFM_ind)
     plt.loglog(f,S_y_WPM_ind)
