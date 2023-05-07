@@ -1706,11 +1706,12 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     # mtotdev   2
     # ttotdev   2
 
-    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
-    taus_valid2 = taus > 0
-    taus_valid3 = taus <= (1 / float(rate)) * float(maximum_m)
+    m = np.round(taus * rate)
+    taus_valid1 = m < len(data)
+    taus_valid2 = m > 0
+    taus_valid3 = m <= maximum_m
     taus_valid = taus_valid1 & taus_valid2 & taus_valid3
-    m = np.floor(taus[taus_valid] * rate)
+    m = m[taus_valid]
     m = m[m != 0]       # m is tau in units of datapoints
     m = np.unique(m)    # remove duplicates and sort
 
