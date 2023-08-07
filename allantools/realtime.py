@@ -97,8 +97,7 @@ class oadev_realtime(dev_realtime):
     """ Overlapping Allan deviation in real-time from a stream of
     phase/frequency samples.
 
-    Dobrogowski & Kasznia
-    https://doi.org/10.1109/FREQ.2007.4319204
+    Reference [Dobrogowski2007].
     """
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
         super(oadev_realtime, self).__init__(afs=afs, tau0=tau0,
@@ -132,9 +131,7 @@ class ohdev_realtime(dev_realtime):
     """ Overlapping Hadamard deviation in real-time from a stream of
     phase/frequency samples.
 
-    [Dobrogowski2007]_
-    Dobrogowski & Kasznia
-    https://doi.org/10.1109/FREQ.2007.4319204
+    Reference [Dobrogowski2007].
     """
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
         super(ohdev_realtime, self).__init__(afs=afs, tau0=tau0,
@@ -172,8 +169,7 @@ class tdev_realtime(dev_realtime):
     """ Time deviation and Modified Allan deviation in real-time from a stream
     of phase/frequency samples.
 
-    Dobrogowski & Kasznia
-    https://doi.org/10.1109/FREQ.2007.4319204
+    Reference [Dobrogowski2007].
     """
     def __init__(self, afs=[1], tau0=1.0, auto_afs=False, pts_per_decade=4):
         super(tdev_realtime, self).__init__(afs=afs, tau0=tau0,
