@@ -34,7 +34,7 @@ import numpy as np
 class Noise(object):
     """ Generate discrete colored noise
 
-    Python / Numpy implementation of:
+    Python / Numpy implementation of [Kasdin1992] 
     Kasdin, N.J., Walter, T., "Discrete simulation of power law noise [for
     oscillator stability evaluation]," Frequency Control Symposium, 1992.
     46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
@@ -139,7 +139,7 @@ class Noise(object):
             show a phase power spectral density of
             S_x(f) = Phase_PSD(f) = g_b * f^b
 
-            Kasdin & Walter eqn (39)
+            [Kasdin1992] eqn (39)
         """
         return self.qd*2.0*pow(2.0*np.pi, self.b)*pow(tau0, self.b+1.0)
 
@@ -154,7 +154,7 @@ class Noise(object):
             where the slope a comes from the phase PSD slope b:
             a = b + 2
 
-            Kasdin & Walter eqn (39)
+            [Kasdin1992] eqn (39)
         """
         a = self.b + 2.0
         return self.qd*2.0*pow(2.0*np.pi, a)*pow(tau0, a-1.0)
@@ -228,12 +228,7 @@ class Noise(object):
             +1  -1  -2      -2
             +2   0  -2      -3
 
-            Coefficients from:
-            S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
-            the measurement of the stability of oscillators with frequency
-            counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
-            Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-            doi: 10.1109/TUFFC.2007.337
+            Coefficients from [Dawkins2007].
 
         """
         g_b = self.phase_psd_from_qd(tau0)
@@ -274,12 +269,7 @@ class Noise(object):
             +1  -1  -2      -2
             +2   0  -2      -3
 
-            Coefficients from:
-            S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
-            the measurement of the stability of oscillators with frequency
-            counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
-            Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-            doi: 10.1109/TUFFC.2007.337
+            Coefficients from [Dawkins2007].
 
         """
         g_b = self.phase_psd_from_qd(tau0)
