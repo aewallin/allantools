@@ -191,18 +191,11 @@ def rn_boundary(af, b_hi):
 
 
 def b1(x, af, rate):
-    """ B1 ratio for noise identification
+    """ B1 ratio for noise identification, [Barnes1974]_ and [Howe2000a]_
         (and bias correction?)
 
         ratio of Standard Variace to AVAR
 
-        Howe, Beard, Greenhall, Riley,
-        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
-        32nd PTTI, 2000
-        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
-
-        Barnes, 1974
-        https://tf.nist.gov/general/pdf/11.pdf
     """
     (taus, devs, errs, ns) = at.adev(
         x, taus=[af*rate], data_type="phase", rate=rate)
@@ -303,7 +296,7 @@ def b_to_mu(b):
 
 def lag1_acf(x, detrend_deg=1):
     """ Lag-1 autocorrelation function
-        as defined in Riley 2004, Eqn (2)
+        as defined in [Riley2004]_ eqn (2)
         used by autocorr_noise_id()
 
         Parameters
@@ -367,11 +360,8 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
         http://www.stable32.com/Auto.pdf
         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.503.9864&rep=rep1&type=pdf
 
-    Power law noise identification using the lag 1 autocorrelation
-    Riley,W.J. et al.
-    18th European Frequency and Time Forum (EFTF 2004)
-    https://ieeexplore.ieee.org/document/5075021
-
+    Reference [Riley2004]_.
+    
     """
     d = 0  # number of differentiations
     if data_type == "phase":
@@ -445,7 +435,7 @@ def detrend(x, deg=1):
 
 
 def edf_greenhall_simple(alpha, d, m, S, F, N):
-    """ Eqn (13) from Greenhall2004 """
+    """ Eqn (13) from [Greenhall2004]_ """
     L = m/F+m*d  # length of filter applied to phase samples
     M = 1 + np.floor(S*(N-L) / m)
     J = min(M, (d+1)*S)
@@ -484,12 +474,10 @@ def edf_greenhall(alpha, d, m, N,
 
         Notes
         -----
-        Greenhall, Riley, 2004
-        https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
-        UNCERTAINTY OF STABILITY VARIANCES BASED ON FINITE DIFFERENCES
+        Reference [Greenhall2004]_.
 
         Used for the following deviations
-        (see http://www.wriley.com/CI2.pdf page 8)
+        (see [Riley_CI]_ page 8)
         adev()
         oadev()
         mdev()
@@ -607,7 +595,7 @@ def edf_greenhall(alpha, d, m, N,
 
 
 def greenhall_BasicSum(J, M, S, F, alpha, d):
-    """ Eqn (10) from Greenhall2004 """
+    """ Eqn (10) from [Greenhall2004]_ """
     first = pow(greenhall_sz(0, F, alpha, d), 2)
     second = ((1-float(J)/float(M)) *
               pow(greenhall_sz(float(J)/float(S), F, alpha, d), 2))
@@ -619,7 +607,7 @@ def greenhall_BasicSum(J, M, S, F, alpha, d):
 
 
 def greenhall_sz(t, F, alpha, d):
-    """ Eqn (9) from Greenhall2004 """
+    """ Eqn (9) from [Greenhall2004]_ """
     if d == 1:
         a = 2*greenhall_sx(t, F, alpha)
         b = greenhall_sx(t-1.0, F, alpha)
@@ -646,7 +634,7 @@ def greenhall_sz(t, F, alpha, d):
 
 
 def greenhall_sx(t, F, alpha):
-    """ Eqn (8) from Greenhall2004
+    """ Eqn (8) from [Greenhall2004]_
     """
     if F == float('inf'):
         return greenhall_sw(t, alpha+2)
@@ -658,7 +646,7 @@ def greenhall_sx(t, F, alpha):
 
 
 def greenhall_sw(t, alpha):
-    """ Eqn (7) from Greenhall2004
+    """ Eqn (7) from [Greenhall2004]_
     """
     alpha = int(alpha)
     if alpha == 2:
@@ -689,7 +677,7 @@ def greenhall_sw(t, alpha):
 
 
 def greenhall_table3(alpha, d):
-    """ Table 3 from Greenhall 2004 """
+    """ Table 3 from [Greenhall2004]_ """
     assert(alpha == 1)
     idx = d-1
     table3 = [(6.0, 4.0), (15.23, 12.0), (47.8, 40.0)]
@@ -697,7 +685,7 @@ def greenhall_table3(alpha, d):
 
 
 def greenhall_table2(alpha, d):
-    """ Table 2 from Greenhall 2004 """
+    """ Table 2 from [Greenhall2004]_ """
     row_idx = int(-alpha+2)  # map 2-> row0 and -4-> row6
     assert(row_idx in [0, 1, 2, 3, 4, 5])
     col_idx = int(d-1)
@@ -721,7 +709,7 @@ def greenhall_table2(alpha, d):
 
 
 def greenhall_table1(alpha, d):
-    """ Table 1 from Greenhall 2004 """
+    """ Table 1 from [Greenhall2004]_ """
     row_idx = int(-alpha+2)  # map 2-> row0 and -4-> row6
     col_idx = int(d-1)
     table1 = [
@@ -747,7 +735,7 @@ def edf_totdev(N, m, alpha):
     """ Equivalent degrees of freedom for Total Deviation
         FIXME: what is the right behavior for alpha outside 0,-1,-2?
 
-        NIST SP1065 page 41, Table 7
+        NIST [SP1065]_ page 41, Table 7
     """
     alpha = int(alpha)
     if alpha in [0, -1, -2]:
@@ -764,7 +752,7 @@ def edf_totdev(N, m, alpha):
 def edf_mtotdev(N, m, alpha):
     """ Equivalent degrees of freedom for Modified Total Deviation
 
-        NIST SP1065 page 41, Table 8
+        NIST [SP1065]_ page 41, Table 8
     """
     assert(alpha in [2, 1, 0, -1, -2])
     NIST_SP1065_table8 = [(1.90, 2.1),
@@ -801,10 +789,8 @@ def edf_simple(N, m, alpha):
 
     Notes
     -----
-       S. Stein, Frequency and Time - Their Measurement and
-       Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
-       http://tf.boulder.nist.gov/general/pdf/666.pdf
-
+       See [Stein1985]_.
+       
     Returns
     -------
     edf : float
