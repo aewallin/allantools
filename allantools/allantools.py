@@ -1506,7 +1506,7 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
 
 
 def psd2allan(S_y, f=1.0, kind='adev', base=2):
-    """ Convert a given (one-sided) power spectral density S_y(f) to Allan
+    """ Convert a given (one-sided) power spectral density :math:`S_y(f)` to Allan
         deviation or modified Allan deviation
 
     For ergodic noise, the Allan variance or modified Allan variance
@@ -1516,14 +1516,14 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
     .. math::
 
         \\sigma^2_y(\\tau) = 2 \\int_0^\\infty S_y(f)
-        \\left|sin(\\pi*f*\\tau).^(k+1)./(\\pi*f*tau).^k).^2\\right| df,
+        \\left| \\sin(\\pi f \\tau)^{(k+1)} \\over (\\pi f \\tau)^k \\right|^2 df,
 
 
     where :math:`f` is the Fourier frequency and :math:`\\tau` the averaging
     time. The exponent :math:`k` is 1 for the Allan variance and 2 for the
     modified Allan variance.
 
-    NIST [SP1065]_ eqs (65-66), page 73.
+    NIST [SP1065]_ eqs (65-66), page 73. See also [Benkler2015]_ eqn (23).
 
     psd2allan() implements the integral by discrete numerical integration via
     a sum.

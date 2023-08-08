@@ -19,7 +19,7 @@ Papers
 .. [Benkler2015] Benkler, Lisdat, Sterr, On the relation between uncertainties of weighted frequency 
     averages and the various types of Allan deviations.
     Metrologia, Volume 52, Number 4, 2015.
-    https://doi.org/10.1088/0026-1394/52/4/565
+    https://doi.org/10.1088/0026-1394/52/4/565 or
     https://arxiv.org/abs/1504.00466
     
 .. [Bregni2001] S. BREGNI, Fast Algorithms for TVAR and MTIE Computation in Characterization of
