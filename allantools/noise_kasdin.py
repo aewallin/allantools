@@ -259,23 +259,28 @@ class Noise(object):
         +---+---+---------+----------+
 
         Coefficients from [Dawkins2007]_.
+        
+        Vernotte2015 Table I
 
         """
-        g_b = self.phase_psd_from_qd(tau0)
+        #g_b = self.phase_psd_from_qd(tau0)
+        h_b = self.frequency_psd_from_qd(tau0)
         f_h = 0.5/tau0
-        if self.b == 0:
+        if self.b == 0: # WPM
             coeff = 3.0*f_h / (4.0*pow(np.pi, 2))  # E, White PM, tau^-1
         elif self.b == -1:
             # D, Flicker PM, tau^-1
-            coeff = (1.038+3*np.log(2.0*np.pi*f_h*tau))/(4.0*pow(np.pi, 2))
-        elif self.b == -2:
-            coeff = 0.5  # C, white FM,  1/sqrt(tau)
+            gamma = 0.57721566490153286060651209 # https://en.wikipedia.org/wiki/Euler%27s_constant
+            coeff = (3*gamma-np.log(2)+3*np.log(2.0*np.pi*f_h*tau))/(4.0*pow(np.pi, 2))
+        elif self.b == -2: # # C, white FM,  1/sqrt(tau)
+            coeff = 0.5  
         elif self.b == -3:
             coeff = 2*np.log(2)  # B, flicker FM,  constant ADEV
         elif self.b == -4:
             coeff = 2.0*pow(np.pi, 2)/3.0  # A, RW FM, sqrt(tau)
 
-        return np.sqrt(coeff*g_b*pow(2.0*np.pi, 2))
+        #return np.sqrt(coeff*g_b*pow(2.0*np.pi, 2))
+        return np.sqrt(coeff*h_b)
 
     def mdev_from_qd(self, tau0=1.0, tau=1.0):
         # FIXME: tau is unused here - can we remove it?
@@ -294,6 +299,7 @@ class Noise(object):
 
         """
         g_b = self.phase_psd_from_qd(tau0)
+        h_b = self.frequency_psd_from_qd(tau0)
         # f_h = 0.5/tau0 #unused!?
         if self.b == 0:
             coeff = 3.0/(8.0*pow(np.pi, 2))  # E, White PM, tau^-{3/2}
@@ -305,11 +311,48 @@ class Noise(object):
             coeff = 0.25
         elif self.b == -3:
             # B, flicker FM,  constant MDEV
-            coeff = 2.0*np.log(3.0*pow(3.0, 11.0/16.0)/4.0)
+            #coeff = 2.0*np.log(3.0*pow(3.0, 11.0/16.0)/4.0)
+            coeff = (27.0*np.log(3)-32.0*np.log(2))/8.0/pow(np.pi, 2)  # Vernotte Table I
+            coeff = (27.0/20.0)*np.log(2) # Benkler2015 Table 1
         elif self.b == -4:
             # A, RW FM, sqrt(tau)
             coeff = 11.0/20.0*pow(np.pi, 2)
 
+        return np.sqrt(coeff*h_b)
+
+    def pdev_from_qd(self, tau0=1.0, tau=1.0):
+        # FIXME: tau is unused here - can we remove it?
+        """ prefactor for Parabolic Allan deviation for noise
+            type defined by (qd, b, tau0)
+
+            Colored noise generated with (qd, b, tau0) parameters will
+            show an Parabolic Allan variance of:
+            
+            .. math::
+            
+                PVAR = prefactor \\cdot h_a \\cdot \\tau^c
+
+            where :math:`a = b + 2` is the slope of the frequency PSD.
+            and :math:`h_a` is the frequency PSD prefactor :math:`S_y(f) = h_a  f^a`
+
+        """
+        g_b = self.phase_psd_from_qd(tau0)
+        # f_h = 0.5/tau0 #unused!?
+        if self.b == 0: # WPM, tau^(-3/2)
+            coeff = 3.0/(2.0*pow(np.pi, 2))  # Vernotte Table I
+        elif self.b == -1:
+            # D, Flicker PM, tau^-1
+            coeff = (3.0*np.log(16)-1.0)/2.0/pow(np.pi, 2)
+        elif self.b == -2: # C, white FM,  1/sqrt(tau)
+            coeff = 3.0/5.0
+        elif self.b == -3:
+            # B, flicker FM,  constant xDEV
+            coeff = 2.0*(7.0-np.log(16.0) )/5.0
+        elif self.b == -4:
+            # A, RW FM, sqrt(tau)
+            coeff = 26.0/35.0*pow(np.pi, 2)
+
         return np.sqrt(coeff*g_b*pow(2.0*np.pi, 2))
+
 
 # end of file noise_kasdin.py

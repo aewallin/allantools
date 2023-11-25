@@ -380,6 +380,121 @@ def calc_adev_phase(phase, rate, mj, stride):
 
     return dev, deverr, n
 
+def pdev(data, rate=1.0, data_type="phase", taus=None):
+    """ Parabolic deviation.
+
+    Parameters
+    ----------
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
+    rate: float
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
+    taus: np.array
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
+        tau-list generation.
+
+    Returns
+    -------
+    (taus2, ad, ade, ns): tuple
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    ad: np.array
+        Computed adev for each tau value
+    ade: np.array
+        adev errors
+    ns: np.array
+        Values of N used in each adev calculation
+
+    """
+    phase = input_to_phase(data, rate, data_type)
+    (phase, m, taus_used) = tau_generator(phase, rate, taus)
+
+    ad = np.zeros_like(taus_used)
+    ade = np.zeros_like(taus_used)
+    adn = np.zeros_like(taus_used)
+
+    for idx, mj in enumerate(m):  # loop through each tau value m(j)
+        (ad[idx], ade[idx], adn[idx]) = calc_pdev_phase(phase, rate, mj)
+
+    return remove_small_ns(taus_used, ad, ade, adn)
+
+
+def calc_pdev_phase(phase, rate, mj):
+    """  Parabolic deviation
+    
+    Parameters
+    ----------
+    phase: np.array
+        Phase data in seconds.
+    rate: float
+        The sampling rate for phase or frequency, in Hz
+    mj: int
+        M index value for stride
+
+    Returns
+    -------
+    (dev, deverr, n): tuple
+        Array of computed values.
+
+
+    References
+    ----------
+    * https://arxiv.org/pdf/1506.00687.pdf
+
+    """
+    mj = int(mj)
+    stride = int(1)
+    tau0 = 1.0/rate
+    if mj == 1: # same as OADEV
+        d2 = phase[2 * mj::stride]
+        d1 = phase[1 * mj::stride]
+        d0 = phase[::stride]
+        n = min(len(d0), len(d1), len(d2))
+
+        if n == 0:
+            RuntimeWarning("Data array length is too small: %i" % len(phase))
+            n = 1
+
+        v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
+        s = np.sum(v_arr * v_arr)
+
+        dev = np.sqrt(s / (2.0*n)) / mj*rate
+        deverr = dev / np.sqrt(n)
+    else:
+        N = len(phase) # number of frequency samples
+        M = N-2*mj  # Vernotte2020 has the correct(?) M = N - 2m
+        # Vernotte2015 has M = N-2m+2 which seems wrong, we get index out-of-bounds in the sum
+        
+        if M<1:
+            return 0, 0, 0
+        Msum=0
+        Mi=0
+        for i in range(0,M): # 0..M-1
+            asum=0
+            """
+            # this naive for-loop is very slow
+            # using sum( vector[range] )  below is much faster
+            for k in range(0,mj): # 0..mj-1
+                prefactor = (mj-1.0)/2.0 - k
+                p1 = phase[i+k]
+                p2 = phase[i+mj+k]
+                asum = asum + prefactor*(p1-p2)
+            """
+            krange = np.linspace(0,mj-1,mj)
+            asum = sum( ((mj-1.0)/2.0 - krange ) * (phase[i:i+mj] - phase[i+mj:i+2*mj]) )
+            Msum=Msum + pow(asum, 2)
+            Mi=Mi+1
+        dev = np.sqrt( 72*Msum / ((M)*pow(mj,4)*pow(mj*tau0,2 )) )
+        #print('N ',N,' M ', M,' Mi', Mi, 'mj ',mj,' dev', dev)
+        deverr = dev / np.sqrt(M)
+        n=M
+        
+    return dev, deverr, n
 
 def calc_gcodev_phase(phase_1, phase_2, rate, mj, stride):
     """

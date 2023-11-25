@@ -113,3 +113,6 @@ Papers
 
 .. [Vernotte2018] Three-Cornered Hat and Groslambert Covariance: A first attempt to assess the uncertainty domains
     https://arxiv.org/abs/1810.01530
+
+.. [Vernotte2020] Response and Uncertainty of the Parabolic Variance PVAR to Non-Integer Exponents of the Power Law
+    https://arxiv.org/pdf/2005.13631.pdf

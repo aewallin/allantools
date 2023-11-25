@@ -3,6 +3,7 @@ __all__ = [
     'adev',
     'oadev',
     'mdev',
+    'pdev',
     'hdev',
     'ohdev',
     'calc_hdev_phase',
@@ -51,6 +52,7 @@ from .allantools import three_cornered_hat_phase
 from .allantools import adev
 from .allantools import oadev
 from .allantools import mdev
+from .allantools import pdev
 from .allantools import hdev
 from .allantools import ohdev
 from .allantools import calc_hdev_phase
