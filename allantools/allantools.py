@@ -1636,6 +1636,12 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         Array of tau values for which to compute measurement.
         Alternatively one of the keywords: "all", "octave", "decade".
         Defaults to "octave" if omitted.
+        
+        keyword    averaging-factors
+        "all"      1, 2, 3, 4, ..., len(data)
+        "octave"   1, 2, 4, 8, 16, ...
+        "decade"   1, 2, 4, 10, 20, 40, 100, ...
+        "log10"    approx. 10 points per decade
     v:
         verbose output if True
     even:
@@ -1672,6 +1678,12 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     elif taus == "octave":
         maxn = np.floor(np.log2(len(data)))
         taus = (1.0/rate)*np.logspace(0, int(maxn), int(maxn+1), base=2.0)
+    elif taus == "log10":
+        maxn = np.log10(len(data))
+        taus = (1.0/rate)*np.logspace(0, maxn, int(10*maxn), base=10.0)
+        if v:
+            print("tau_generator: maxn %.1f"%maxn)
+            print("tau_generator: taus="%taus)
     elif taus == "decade":  # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
         maxn = np.floor(np.log10(len(data)))
         taus = []
