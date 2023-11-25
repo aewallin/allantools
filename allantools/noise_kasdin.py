@@ -40,6 +40,34 @@ class Noise(object):
     46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
     http://dx.doi.org/10.1109/FREQ.1992.270003
 
+    Parameters
+    ----------
+    nr: integer
+        length of generated time-series
+        must be power of two
+    qd: float
+        discrete variance
+    b: float
+    
+        +----+--------------------------------------------+
+        | b  |  noise type                                |
+        +====+============================================+
+        | 0  | White Phase Modulation (WPM)               |
+        +----+--------------------------------------------+
+        | -1 | Flicker Phase Modulation (FPM)             |
+        +----+--------------------------------------------+
+        | -2 | White Frequency Modulation (WFM)           |
+        +----+--------------------------------------------+
+        | -3 | Flicker Frequency Modulation (FFM)         |
+        +----+--------------------------------------------+
+        | -4 | Random Walk Frequency Modulation (RWFM)    |
+        +----+--------------------------------------------+
+
+    Returns
+    -------
+    Noise()
+        A Noise() instance
+            
     :Example:
         ::
 
@@ -53,25 +81,7 @@ class Noise(object):
     def __init__(self, nr=2, qd=1, b=0):
         """ Initialize object with input data
 
-        Parameters
-        -------
-        nr: integer
-            length of generated time-series
-            must be power of two
-        qd: float
-            discrete variance
-        b: float
-            noise type:
-                0 : White Phase Modulation (WPM)
-               -1 : Flicker Phase Modulation (FPM)
-               -2 : White Frequency Modulation (WFM)
-               -3 : Flicker Frequency Modulation (FFM)
-               -4 : Random Walk Frequency Modulation (RWFM)
 
-        Returns
-        -------
-        Noise()
-            A Noise() instance
 
         """
         self.nr = nr
@@ -90,13 +100,22 @@ class Noise(object):
         qd: float
             discrete variance
         b: float
-            noise type:
-                0 : White Phase Modulation (WPM)
-               -1 : Flicker Phase Modulation (FPM)
-               -2 : White Frequency Modulation (WFM)
-               -3 : Flicker Frequency Modulation (FFM)
-               -4 : Random Walk Frequency Modulation (RWFM)
-
+            noise type
+            
+            +----+--------------------------------------------+
+            | b  |  noise type                                |
+            +====+============================================+
+            | 0  | White Phase Modulation (WPM)               |
+            +----+--------------------------------------------+
+            | -1 | Flicker Phase Modulation (FPM)             |
+            +----+--------------------------------------------+
+            | -2 | White Frequency Modulation (WFM)           |
+            +----+--------------------------------------------+
+            | -3 | Flicker Frequency Modulation (FFM)         |
+            +----+--------------------------------------------+
+            | -4 | Random Walk Frequency Modulation (RWFM)    |
+            +----+--------------------------------------------+
+            
         """
         self.nr = nr
         self.qd = qd
@@ -131,28 +150,31 @@ class Noise(object):
         self.time_series = time_series
 
     def phase_psd_from_qd(self, tau0=1.0):
-        """ return phase power spectral density coefficient g_b
+        """ return phase power spectral density coefficient :math:`g_b`
             for noise-type defined by (qd, b, tau0)
             where tau0 is the interval between data points
 
             Colored noise generated with (qd, b, tau0) parameters will
             show a phase power spectral density of
-            S_x(f) = Phase_PSD(f) = g_b * f^b
+            :math:`S_x(f) = Phase_{PSD}(f) = g_b  f^b`
 
             [Kasdin1992]_ eqn (39)
         """
         return self.qd*2.0*pow(2.0*np.pi, self.b)*pow(tau0, self.b+1.0)
 
     def frequency_psd_from_qd(self, tau0=1.0):
-        """ return frequency power spectral density coefficient h_a
+        """ return frequency power spectral density coefficient :math:`h_a`
             for the noise type defined by (qd, b, tau0)
 
             Colored noise generated with (qd, b, tau0) parameters will
             show a frequency power spectral density of
 
-            S_y(f) = Frequency_PSD(f) = h_a * f^a
-            where the slope a comes from the phase PSD slope b:
-            a = b + 2
+            .. math::
+            
+                S_y(f) = Frequency_{PSD}(f) = h_a  f^a
+            
+            where the slope :math:`a` comes from the phase PSD slope :math:`b`:
+            :math:`a = b + 2`
 
             [Kasdin1992]_ eqn (39)
         """
@@ -213,19 +235,28 @@ class Noise(object):
         Colored noise generated with (qd, b, tau0) parameters will
         show an Allan variance of:
 
-        AVAR = prefactor * h_a * tau^c
+        .. math::
+        
+            AVAR = prefactor \\cdot h_a \\cdot \\tau^c
 
-        where a = b + 2 is the slope of the frequency PSD.
-        and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
+        where :math:`a = b + 2` is the slope of the frequency PSD.
+        and :math:`h_a` is the frequency PSD prefactor :math:`S_y(f) = h_a  f^a`
 
         The relation between a, b, c is:
-        a   b   c(AVAR) c(MVAR)
-        -----------------------
-        -2  -4   1       1
-        -1  -3   0       0
-         0  -2  -1      -1
-        +1  -1  -2      -2
-        +2   0  -2      -3
+        
+        +---+---+---------+----------+
+        | a | b | c(AVAR) | c(MVAR)  |
+        +===+===+=========+==========+
+        |-2 |-4 |  1      | 1        |
+        +---+---+---------+----------+
+        |-1 |-3 |  0      | 0        |
+        +---+---+---------+----------+
+        | 0 |-2 | -1      | -1       |
+        +---+---+---------+----------+
+        |+1 |-1 | -2      | -2       |
+        +---+---+---------+----------+
+        |+2 | 0 | -2      | -3       |
+        +---+---+---------+----------+
 
         Coefficients from [Dawkins2007]_.
 
@@ -253,22 +284,13 @@ class Noise(object):
 
             Colored noise generated with (qd, b, tau0) parameters will
             show an Modified Allan variance of:
+            
+            .. math::
+            
+                MVAR = prefactor \\cdot h_a \\cdot \\tau^c
 
-            MVAR = prefactor * h_a * tau^c
-
-            where a = b + 2 is the slope of the frequency PSD.
-            and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
-
-            The relation between a, b, c is:
-            a   b   c(AVAR) c(MVAR)
-            -----------------------
-            -2  -4   1       1
-            -1  -3   0       0
-             0  -2  -1      -1
-            +1  -1  -2      -2
-            +2   0  -2      -3
-
-            Coefficients from [Dawkins2007]_.
+            where :math:`a = b + 2` is the slope of the frequency PSD.
+            and :math:`h_a` is the frequency PSD prefactor :math:`S_y(f) = h_a  f^a`
 
         """
         g_b = self.phase_psd_from_qd(tau0)

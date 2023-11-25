@@ -1637,11 +1637,17 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         Alternatively one of the keywords: "all", "octave", "decade".
         Defaults to "octave" if omitted.
         
-        keyword    averaging-factors
-        "all"      1, 2, 3, 4, ..., len(data)
-        "octave"   1, 2, 4, 8, 16, ...
-        "decade"   1, 2, 4, 10, 20, 40, 100, ...
-        "log10"    approx. 10 points per decade
+        +----------+--------------------------------+
+        | keyword  |   averaging-factors            |
+        +==========+================================+
+        | "all"    |  1, 2, 3, 4, ..., len(data)    |
+        +----------+--------------------------------+
+        | "octave" |  1, 2, 4, 8, 16, 32, ...       |
+        +----------+--------------------------------+
+        | "decade" |  1, 2, 4, 10, 20, 40, 100, ... |
+        +----------+--------------------------------+
+        | "log10"  |  approx. 10 points per decade  |
+        +----------+--------------------------------+
     v:
         verbose output if True
     even:
