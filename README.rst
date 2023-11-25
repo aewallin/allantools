@@ -31,25 +31,25 @@ time & frequency statistics. `LGPL v3+ license <https://www.gnu.org/licenses/lgp
 Input data should be evenly spaced observations of either fractional frequency,
 or phase in seconds. Deviations are calculated for given tau values in seconds.
 
-=====================================   ====================================================
-Function                                Description
-=====================================   ====================================================
-``adev()``                              Allan deviation
-``oadev()``                             Overlapping Allan deviation
-``mdev()``                              Modified Allan deviation
-``tdev()``                              Time deviation
-``hdev()``                              Hadamard deviation
-``ohdev()``                             Overlapping Hadamard deviation
-``totdev()``                            Total deviation
-``mtotdev()``                           Modified total deviation
+=====================================   ====================================================   ====================================================
+Function                                Description                                            Comment
+=====================================   ====================================================   ====================================================
+``adev()``                              Allan deviation                                        Classic - use only if required - relatively poor confidence.
+``oadev()``                             Overlapping Allan deviation                            General purpose - most widely used - first choice
+``mdev()``                              Modified Allan deviation                               Used to distinguish between White and Flicker Phase Modulation.
+``tdev()``                              Time deviation                                         Based on modified Allan variance.
+``hdev()``                              Hadamard deviation                                     Rejects frequency drift, and handles divergent noise.
+``ohdev()``                             Overlapping Hadamard deviation                         Better confidence than normal Hadamard.
+``totdev()``                            Total deviation                                        Better confidence at long averages for Allan deviation.
+``mtotdev()``                           Modified total deviation                               Modified Total deviation. Better confidence at long averages for modified Allan
 ``ttotdev()``                           Time total deviation
 ``htotdev()``                           Hadamard total deviation
-``theo1()``                             Theo1 deviation
+``theo1()``                             Theo1 deviation                                        Theo1 is a two-sample variance with improved confidence and extended averaging factor range.
 ``mtie()``                              Maximum Time Interval Error
 ``tierms()``                            Time Interval Error RMS
 ``gradev()``                            Gap resistant overlapping Allan deviation
 ``gcodev()``                            Groslambert Covariance
-=====================================   ====================================================
+=====================================   ====================================================   ====================================================
 
 Noise generators for creating synthetic datasets are also included:
 

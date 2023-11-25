@@ -93,7 +93,7 @@ class Noise(object):
         """ Set inputs after initialization
 
         Parameters
-        -------
+        ----------
         nr: integer
             length of generated time-series
             number must be power of two
