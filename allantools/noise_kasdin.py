@@ -208,27 +208,26 @@ class Noise(object):
             return -3.0
 
     def adev_from_qd(self, tau0=1.0, tau=1.0):
-        """ prefactor for Allan deviation for noise
-            type defined by (qd, b, tau0)
+        """ prefactor for Allan deviation for noise type defined by (qd, b, tau0)
 
-            Colored noise generated with (qd, b, tau0) parameters will
-            show an Allan variance of:
+        Colored noise generated with (qd, b, tau0) parameters will
+        show an Allan variance of:
 
-            AVAR = prefactor * h_a * tau^c
+        AVAR = prefactor * h_a * tau^c
 
-            where a = b + 2 is the slope of the frequency PSD.
-            and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
+        where a = b + 2 is the slope of the frequency PSD.
+        and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
 
-            The relation between a, b, c is:
-            a   b   c(AVAR) c(MVAR)
-            -----------------------
-            -2  -4   1       1
-            -1  -3   0       0
-             0  -2  -1      -1
-            +1  -1  -2      -2
-            +2   0  -2      -3
+        The relation between a, b, c is:
+        a   b   c(AVAR) c(MVAR)
+        -----------------------
+        -2  -4   1       1
+        -1  -3   0       0
+         0  -2  -1      -1
+        +1  -1  -2      -2
+        +2   0  -2      -3
 
-            Coefficients from [Dawkins2007]_.
+        Coefficients from [Dawkins2007]_.
 
         """
         g_b = self.phase_psd_from_qd(tau0)
