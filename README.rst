@@ -40,6 +40,7 @@ Function                                Description                             
 ``tdev()``                              Time deviation                                         Based on modified Allan variance.
 ``hdev()``                              Hadamard deviation                                     Rejects frequency drift, and handles divergent noise.
 ``ohdev()``                             Overlapping Hadamard deviation                         Better confidence than normal Hadamard.
+``pdev()``                              Parabolic deviation                                    
 ``totdev()``                            Total deviation                                        Better confidence at long averages for Allan deviation.
 ``mtotdev()``                           Modified total deviation                               Modified Total deviation. Better confidence at long averages for modified Allan
 ``ttotdev()``                           Time total deviation
