@@ -33,3 +33,5 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@v2.2.3
