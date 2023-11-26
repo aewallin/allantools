@@ -53,7 +53,9 @@ nbs14_1000_devs = [[2.922319e-01, 9.965736e-02, 3.897804e-02],  # 0 ADEV 1, 10, 
                    [1.1930e-01, 3.2060e-01, 1.1285e+00],    # 10 TTOTDEV (from Stable 32 v1.60 decade run, NO bias correction)
                    [1.0757e-01, 3.1789e-02, 5.0524e-03], ]  # 11 THEO1 (tau= 10,100,1000, from Stable32, NO bias correction
 
-
+# computed with 'Pdev' from
+# SigmaTheta v3.0-29-g053a Wed Oct 11 12:59:22 2023 +0000 
+# available at https://gitlab.com/fm-ltfb/SigmaTheta.git
 pdev_taus = [1,2,4,8,16,32,64,128,256]
 pdev_devs = [ 2.9223187810675200e-01,   2.1445233564252639e-01,  1.5618112158618463e-01,
               1.1709745745448434e-01,   6.9029585189839343e-02,  4.9749707730398392e-02,
