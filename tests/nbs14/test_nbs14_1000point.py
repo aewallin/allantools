@@ -20,7 +20,7 @@
 # import time
 # import sys
 import pytest
-
+import numpy as np
 import allantools as allan
 
 # 1000 point deviations from:
@@ -40,24 +40,25 @@ nbs14_1000_devs = [[2.922319e-01, 9.965736e-02, 3.897804e-02],  # 0 ADEV 1, 10, 
                    [2.943883e-01, 1.052754e-01, 3.910860e-02],   # 4 HDEV
                    [1.687202e-01, 3.563623e-01, 1.253382e-00],   # 5 TDEV
                    [2.943883e-01, 9.581083e-02, 3.237638e-02],   # 6 OHDEV
-                   # 7 standard deviation,  sample (not population)
-                   [2.884664e-01, 9.296352e-02, 3.206656e-02],
+                   [2.884664e-01, 9.296352e-02, 3.206656e-02],   # 7 standard deviation,  sample (not population)
                    [2.943883e-01, 9.614787e-02, 3.058103e-02],   # 8 HTOTDEV
-                   # [2.418528e-01, 6.499161e-02, 2.287774e-02],   # 9 MTOTDEV (from published table, WITH bias correction)
+                   # [2.418528e-01, 6.499161e-02, 2.287774e-02], # 9 MTOTDEV (from published table, WITH bias correction)
                    # MTOTDEV (from Stable32 v1.60 decade run, NO bias correction)
                    [2.0664e-01, 5.5529e-02, 1.9547e-02],
                    # [1.396338e-01, 3.752293e-01, 1.320847e-00],    # 10 TTOTDEV (from published table, WITH bias correction)
-                   # 10 TTOTDEV (from Stable 32 v1.60 decade run, NO bias correction)
-                   [1.1930e-01, 3.2060e-01, 1.1285e+00],
+                   [1.1930e-01, 3.2060e-01, 1.1285e+00],    # 10 TTOTDEV (from Stable 32 v1.60 decade run, NO bias correction)
                    [1.0757e-01, 3.1789e-02, 5.0524e-03], ]  # 11 THEO1 (tau= 10,100,1000, from Stable32, NO bias correction
-# this generates the nbs14 1000 point frequency dataset.
-# random number generator described in
-# http://www.ieee-uffc.org/frequency-control/learning-riley.asp
-# http://tf.nist.gov/general/pdf/2220.pdf   page 107
-# http://www.wriley.com/tst_suit.dat
+
 
 
 def nbs14_1000():
+    """
+    this generates the nbs14 1000 point frequency dataset.
+    random number generator described in
+    http://www.ieee-uffc.org/frequency-control/learning-riley.asp
+    http://tf.nist.gov/general/pdf/2220.pdf   page 107
+    http://www.wriley.com/tst_suit.dat
+    """
     n = [0]*1000
     n[0] = 1234567890
     for i in range(999):
@@ -102,6 +103,14 @@ class TestNBS14_1000Point():
     def test_ohdev(self):
         self.nbs14_tester(allan.ohdev, None, fdata, nbs14_1000_devs[6])
         self.nbs14_tester(allan.ohdev, pdata, None, nbs14_1000_devs[6])
+
+    def test_pdev(self):
+        d = np.loadtxt('pdev_nbs14.txt')
+        mytaus = d[:-1,0]
+        pdevs = d[:-1,1]
+        print(mytaus,pdevs)
+        self.nbs14_tester(allan.pdev, None, fdata, pdevs, taus = mytaus)
+        self.nbs14_tester(allan.pdev, pdata, None, pdevs, taus = mytaus)
 
     def notest_mtotdev(self):  # very slow, disable for now
         self.nbs14_tester(allan.mtotdev, None, fdata,
@@ -161,5 +170,5 @@ class TestNBS14_1000Point():
 
 if __name__ == "__main__":
     t = TestNBS14_1000Point()
-    t.test_theo1()
+    t.test_pdev()
     pytest.main(["test_nbs14_1000point.py"])
