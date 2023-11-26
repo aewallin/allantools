@@ -25,7 +25,10 @@ Papers
 .. [Bregni2001] S. BREGNI, Fast Algorithms for TVAR and MTIE Computation in Characterization of
     Network Synchronization Performance. 
     http://home.deib.polimi.it/bregni/papers/cscc2001_fastalgo.pdf
-    
+
+.. [Danielson2016] Least square estimation of phase, frequency and PDEV
+    https://arxiv.org/abs/1604.01004
+
 .. [Dawkins2007] S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
     the measurement of the stability of oscillators with frequency
     counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
