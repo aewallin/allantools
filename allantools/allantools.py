@@ -125,7 +125,8 @@ __version__ = pkginfo["version"]
 
 def tdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time deviation.
-        Based on modified Allan variance.
+    
+    Based on modified Allan variance.
 
     .. math::
 
@@ -176,7 +177,8 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
 
 def mdev(data, rate=1.0, data_type="phase", taus=None):
     """  Modified Allan deviation.
-         Used to distinguish between White and Flicker Phase Modulation.
+         
+    Used to distinguish between White and Flicker Phase Modulation.
 
     .. math::
 
@@ -598,8 +600,9 @@ def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
 
 
 def oadev(data, rate=1.0, data_type="phase", taus=None):
-    """ overlapping Allan deviation.
-        General purpose - most widely used - first choice
+    """ Overlapping Allan deviation.
+        
+    General purpose - most widely used - first choice.
 
     .. math::
 
@@ -1205,24 +1208,25 @@ def calc_htotdev_freq(freq, m):
 
 
 def theo1(data, rate=1.0, data_type="phase", taus=None):
-    """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        Theo1 is a two-sample variance with improved confidence and
+    """ Theo1 is a two-sample variance with improved confidence and
         extended averaging factor range.
 
-        .. math::
+    PRELIMINARY - REQUIRES FURTHER TESTING.
 
-            \\sigma^2_{THEO1}(m\\tau_0) = { 1 \\over  (m \\tau_0 )^2 (N-m) }
-                \\sum_{i=1}^{N-m}   \\sum_{\\delta=0}^{m/2-1}
-                {1\\over m/2-\\delta}\\lbrace
-                    ({x}_{i} - x_{i-\\delta +m/2}) +
-                    (x_{i+m}- x_{i+\\delta +m/2}) \\rbrace^2
+    .. math::
+
+        \\sigma^2_{THEO1}(m\\tau_0) = { 1 \\over  (m \\tau_0 )^2 (N-m) }
+            \\sum_{i=1}^{N-m}   \\sum_{\\delta=0}^{m/2-1}
+            {1\\over m/2-\\delta}\\lbrace
+                ({x}_{i} - x_{i-\\delta +m/2}) +
+                (x_{i+m}- x_{i+\\delta +m/2}) \\rbrace^2
 
 
-        Where :math:`10<=m<=N-1` is even.
+    Where :math:`10<=m<=N-1` is even.
 
-        FIXME: bias correction
+    FIXME: bias correction
 
-        NIST [SP1065]_ eq (30) page 29
+    NIST [SP1065]_ eq (30) page 29
 
     Parameters
     ----------
@@ -1489,9 +1493,8 @@ def mtie_phase_fast(phase, rate=1.0, data_type="phase", taus=None):
 #
 
 
-def gradev(data, rate=1.0, data_type="phase", taus=None,
-           ci=0.9, noisetype='wp'):
-    """ gap resistant overlapping Allan deviation
+def gradev(data, rate=1.0, data_type="phase", taus=None, ci=0.9, noisetype='wp'):
+    """ Gap resistant overlapping Allan deviation
 
     Parameters
     ----------
@@ -1941,8 +1944,8 @@ def remove_small_ns(taus, devs, deverrs, ns):
 
 
 def trim_data(x):
-    """
-    Trim leading and trailing NaNs from dataset
+    """Trim leading and trailing NaNs from dataset
+    
     This is done by browsing the array from each end and store the index of the
     first non-NaN in each case, the return the appropriate slice of the array
     """
@@ -1956,10 +1959,8 @@ def trim_data(x):
     return x[first:last]
 
 
-def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
-                             phasedata_ca, rate, taus, function):
-    """
-    Three Cornered Hat Method
+def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, taus, function):
+    """Three Cornered Hat Method
 
     Given three clocks A, B, C, we seek to find their variances
     :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`.
@@ -2010,7 +2011,6 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
     ----------
     http://www.wriley.com/3-CornHat.htm
     """
-
     (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab,
                                                data_type='phase',
                                                rate=rate, taus=taus)
