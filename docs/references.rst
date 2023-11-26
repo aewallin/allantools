@@ -1,10 +1,11 @@
 References 
 ========== 
 
-Code
-----
+Code, Programs
+--------------
 
-* SigmaTheta, https://theta.obs-besancon.fr/spip.php?article103&lang=fr and https://sourcesup.renater.fr/projects/sigmatheta/
+* Stable32, https://ieee-uffc.org/software
+* SigmaTheta, https://gitlab.com/fm-ltfb/SigmaTheta
 * http://www.mathworks.com/matlabcentral/fileexchange/26659-allan-v3-0
 * http://www.mathworks.com/matlabcentral/fileexchange/26637-allanmodified
 * http://www.leapsecond.com/tools/adev_lib.c
