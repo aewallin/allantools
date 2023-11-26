@@ -50,7 +50,8 @@ if __name__ == "__main__":
     N = 10000
     rate = 1.0
     # white phase noise => 1/tau ADEV
-
+    # these are the 'true' phases of the oscillators, which are not observable.
+    # we can only measure phases between two oscillators.
     ampl_A = 1.0
     phaseA = ampl_A*numpy.random.randn(N)
     ampl_B = 5.0
@@ -96,6 +97,14 @@ if __name__ == "__main__":
     (taus, devC, err_C, ns_ac) = allantools.three_cornered_hat_phase(
                    phaseCA, phaseAB, phaseBC, rate, t, allantools.oadev)
     plt.loglog(taus, devC, 'bv', label='3-C-H estimate for C')
+
+    # GCODEV estimates
+    (taus, devA, err_a, ns_ab) = allantools.gcodev(phaseAB, phaseCA, rate=rate, taus='log10')
+    plt.loglog(taus, devA, 'r*', label='Gcodev estimate for A')
+    (taus, devB, err_b, ns_b) = allantools.gcodev(phaseAB, phaseBC, rate=rate, taus='log10')
+    plt.loglog(taus, devB, 'g*', label='Gcodev estimate for B')
+    (taus, devC, err_c, ns_c) = allantools.gcodev(phaseCA, phaseBC, rate=rate, taus='log10')
+    plt.loglog(taus, devC, 'b*', label='Gcodev estimate for C')
 
     print("TCH done.")
     plt.title('AllanTools three-cornered-hat example')

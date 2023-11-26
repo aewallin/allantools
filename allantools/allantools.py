@@ -552,7 +552,17 @@ def calc_gcodev_phase(phase_1, phase_2, rate, mj, stride):
 def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
     """ Groslambert codeviation  a.k.a. Allan Covariance
 
-    Ref: (arXiv:1904.05849, https://arxiv.org/abs/1904.05849)
+    Similarly to the three-cornered hat method, we consider three uncorrelated
+    oscillators A, B, C. The Groslambert codeviation estimates the noise of
+    one oscillator (e.g. B), given two synchronous measurements AB and BC.
+    Unlike three-cordenred hat, Gcodev is not affected by the (uncorrelated) noise of 
+    the measurement devices (time-interval or frequency counter) used for
+    the measurements AB and BC.
+    
+    References 
+    ----------
+    * arXiv:1904.05849, https://arxiv.org/abs/1904.05849
+    * https://rubiola.org/pdf-articles/conference/2016-IFCS-Three-cornered.pdf
 
     Parameters
     ----------
@@ -572,14 +582,13 @@ def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
     Returns
     -------
     (taus, gd): tuple
-          Tuple of values
+        Tuple of values
     taus: np.array
-        Tau values for which td computed
+        Tau values for which gcodev computed
     gd: np.array
         Computed gcodev for each tau value
 
     """
-
     phase_1 = input_to_phase(data_1, rate, data_type)
     phase_2 = input_to_phase(data_2, rate, data_type)
     (phase_1, m, taus_used) = tau_generator(phase_1, rate, taus)

@@ -77,6 +77,9 @@ Papers
     Fundamental Frequency and Time Metrology - Random Instabilities 
     http://dx.doi.org/10.1109/IEEESTD.2008.4797525
 
+.. [Lantz2019] KLTS: A rigorous method to compute the confidence intervals for the Three-Cornered Hat and for Groslambert Covariance
+    https://arxiv.org/abs/1904.05849
+
 .. [Riley_Stable32] http://www.stable32.com/Handbook.pdf
 
 .. [Riley_CI] Confidence Intervals and Bias Corrections  for the Stable32  Variance Functions
