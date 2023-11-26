@@ -18,9 +18,9 @@ import pytest
 
 if __name__ == "__main__":
     print("running all AllanTools tests. May take up to 200 seconds.")
-    start = time.clock()
+    start = time.time()
     pytest.main()
-    end = time.clock()
+    end = time.time()
     print("-------------------------")
     print("All tests done in %2.3f s" % (end-start)) 
     # 2014-08-31 running time without MTIE on laptop with i7-3537U CPU @ 2.00GHz

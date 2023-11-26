@@ -18,10 +18,14 @@
 """
 # import math
 # import time
-# import sys
+import sys
 import pytest
 import numpy as np
 import allantools as allan
+
+sys.path.append("..")
+sys.path.append("../..")  # hack to import from parent directory
+# remove if you have allantools installed in your python path
 
 # 1000 point deviations from:
 # http://www.ieee-uffc.org/frequency-control/learning-riley.asp    Table III
@@ -50,7 +54,11 @@ nbs14_1000_devs = [[2.922319e-01, 9.965736e-02, 3.897804e-02],  # 0 ADEV 1, 10, 
                    [1.0757e-01, 3.1789e-02, 5.0524e-03], ]  # 11 THEO1 (tau= 10,100,1000, from Stable32, NO bias correction
 
 
-
+pdev_taus = [1,2,4,8,16,32,64,128,256]
+pdev_devs = [ 2.9223187810675200e-01,   2.1445233564252639e-01,  1.5618112158618463e-01,
+              1.1709745745448434e-01,   6.9029585189839343e-02,  4.9749707730398392e-02,
+              3.8947417330713739e-02,   3.0862392741372108e-02,  1.2447414341332683e-02]
+              
 def nbs14_1000():
     """
     this generates the nbs14 1000 point frequency dataset.
@@ -105,12 +113,12 @@ class TestNBS14_1000Point():
         self.nbs14_tester(allan.ohdev, pdata, None, nbs14_1000_devs[6])
 
     def test_pdev(self):
-        d = np.loadtxt('pdev_nbs14.txt')
-        mytaus = d[:-1,0]
-        pdevs = d[:-1,1]
-        print(mytaus,pdevs)
-        self.nbs14_tester(allan.pdev, None, fdata, pdevs, taus = mytaus)
-        self.nbs14_tester(allan.pdev, pdata, None, pdevs, taus = mytaus)
+        #d = np.loadtxt('pdev_nbs14.txt')
+        #mytaus = d[:-1,0]
+        #pdevs = d[:-1,1]
+        #print(mytaus,pdevs)
+        self.nbs14_tester(allan.pdev, None, fdata, pdev_devs, taus = pdev_taus)
+        self.nbs14_tester(allan.pdev, pdata, None, pdev_devs, taus = pdev_taus)
 
     def notest_mtotdev(self):  # very slow, disable for now
         self.nbs14_tester(allan.mtotdev, None, fdata,
