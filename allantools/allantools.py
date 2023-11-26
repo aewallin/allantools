@@ -10,7 +10,9 @@ Version history
 **unreleased**
 - ITU PRC, PRTC, ePRTC masks for TDEV and MTIE in new file mask.py
 - psd2allan() - convert PSD to ADEV/MDEV
-- GCODEV
+- GCODEV, Grosslambert deviation, an improved three-cornered-hat analysis
+- PDEV, Parabolic deviation
+
 
 **2019.09** 2019 September
 - packaging changes, for conda package
@@ -476,21 +478,11 @@ def calc_pdev_phase(phase, rate, mj):
         Mi=0
         for i in range(0,M): # 0..M-1
             asum=0
-            """
-            # this naive for-loop is very slow
-            # using sum( vector[range] )  below is much faster
-            for k in range(0,mj): # 0..mj-1
-                prefactor = (mj-1.0)/2.0 - k
-                p1 = phase[i+k]
-                p2 = phase[i+mj+k]
-                asum = asum + prefactor*(p1-p2)
-            """
             krange = np.linspace(0,mj-1,mj)
             asum = sum( ((mj-1.0)/2.0 - krange ) * (phase[i:i+mj] - phase[i+mj:i+2*mj]) )
             Msum=Msum + pow(asum, 2)
             Mi=Mi+1
         dev = np.sqrt( 72*Msum / ((M)*pow(mj,4)*pow(mj*tau0,2 )) )
-        #print('N ',N,' M ', M,' Mi', Mi, 'mj ',mj,' dev', dev)
         deverr = dev / np.sqrt(M)
         n=M
         
