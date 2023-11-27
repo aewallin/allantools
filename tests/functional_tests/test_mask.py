@@ -1,4 +1,3 @@
-# from allantools import mask
 import allantools
 import numpy as np
 import pytest  # noqa
@@ -24,6 +23,8 @@ def test_prc_mtie():
 def test_eprtc_tdev():
     assert np.isclose(allantools.mask.eprtc_tdev(5), 1e-9)
     assert np.isclose(allantools.mask.eprtc_tdev(50), .001666665e-9)
+    assert np.isclose(allantools.mask.eprtc_tdev(100e3), 3.33333e-5*1.0e-9*100e3)
+    assert np.isclose(allantools.mask.eprtc_tdev(301e3), 10e-9)
 
 
 def test_eprtc_mtie():
