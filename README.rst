@@ -16,8 +16,8 @@ AllanTools
     :alt: flake8 Status
 .. image:: https://readthedocs.org/projects/allantools/badge/?version=latest
     :target: https://allantools.readthedocs.io/en/latest/
-.. image:: https://coveralls.io/repos/github/aewallin/allantools/badge.svg?branch=master 
-    :target: https://coveralls.io/github/aewallin/allantools?branch=master 
+.. image:: https://coveralls.io/repos/github/aewallin/allantools/badge.svg
+    :target: https://coveralls.io/github/aewallin/allantools
 
 A python library for calculating Allan deviation and related 
 time & frequency statistics. `LGPL v3+ license <https://www.gnu.org/licenses/lgpl.html>`_.

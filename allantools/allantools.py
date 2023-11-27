@@ -185,10 +185,6 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
         \\sum_{j=1}^{N-3m+1} \\lbrace
         \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
 
-    see http://www.leapsecond.com/tools/adev_lib.c
-
-    NIST [SP1065]_ eqn (14), page 17.
-
     Parameters
     ----------
     data: np.array
@@ -216,6 +212,10 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
     ns: np.array
         Values of N used in each mdev calculation
 
+    References
+    ----------
+    * NIST [SP1065]_ eqn (14), page 17.
+    * http://www.leapsecond.com/tools/adev_lib.c
     """
     phase = input_to_phase(data, rate, data_type)
     (phase, ms, taus_used) = tau_generator(phase, rate, taus=taus)
@@ -287,7 +287,6 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
     where :math:`\\bar{y}_n` is the time-series of fractional frequency
     at averaging time :math:`\\tau`
 
-    NIST [SP1065]_ eqn (6) and (7), pages 14 and 15.
 
     Parameters
     ----------
@@ -316,6 +315,10 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
     ns: np.array
         Values of N used in each adev calculation
 
+    References
+    ----------
+    * NIST [SP1065]_ eqn (6) and (7), pages 14 and 15.
+    * [wikipedia_adev]_
     """
     phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
@@ -333,9 +336,6 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
 def calc_adev_phase(phase, rate, mj, stride):
     """  Main algorithm for adev() (stride=mj) and oadev() (stride=1)
 
-        see http://www.leapsecond.com/tools/adev_lib.c
-        stride = mj for nonoverlapping allan deviation
-
     Parameters
     ----------
     phase: np.array
@@ -343,7 +343,7 @@ def calc_adev_phase(phase, rate, mj, stride):
     rate: float
         The sampling rate for phase or frequency, in Hz
     mj: int
-        M index value for stride
+        averaging factor, we evaluate at tau = m*tau0
     stride: int
         Size of stride
 
@@ -361,7 +361,7 @@ def calc_adev_phase(phase, rate, mj, stride):
     ----------
     * http://en.wikipedia.org/wiki/Allan_variance
     * http://www.leapsecond.com/tools/adev_lib.c
-    NIST [SP1065]_ eqn (7) and (11) page 16
+    * NIST [SP1065]_ eqn (7) and (11) page 16
     """
     mj = int(mj)
     stride = int(stride)
@@ -413,6 +413,10 @@ def pdev(data, rate=1.0, data_type="phase", taus=None):
     ns: np.array
         Values of N used in each adev calculation
 
+    References
+    ----------
+    * [Vernotte2020]_
+    * [Vernotte2015]_
     """
     phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
@@ -447,8 +451,8 @@ def calc_pdev_phase(phase, rate, mj):
 
     References
     ----------
-    * https://arxiv.org/pdf/1506.00687.pdf
-
+    * [Vernotte2020]_
+    * [Vernotte2015]_
     """
     mj = int(mj)
     stride = int(1)
@@ -556,11 +560,6 @@ def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
     Unlike three-cordenred hat, Gcodev is not affected by the (uncorrelated) noise of 
     the measurement devices (time-interval or frequency counter) used for
     the measurements AB and BC.
-    
-    References 
-    ----------
-    * arXiv:1904.05849, https://arxiv.org/abs/1904.05849
-    * https://rubiola.org/pdf-articles/conference/2016-IFCS-Three-cornered.pdf
 
     Parameters
     ----------
@@ -586,6 +585,10 @@ def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
     gd: np.array
         Computed gcodev for each tau value
 
+    References 
+    ----------
+    * [Vernotte2016]_ 
+    * [Lantz2019]_
     """
     phase_1 = input_to_phase(data_1, rate, data_type)
     phase_2 = input_to_phase(data_2, rate, data_type)
@@ -621,8 +624,6 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
     :math:`x_n` is the time-series of phase observations, spaced by the
     measurement interval :math:`\\tau_0`, with length :math:`N`.
 
-    NIST [SP1065]_ eqn (11), page 16.
-
     Parameters
     ----------
     data: np.array
@@ -650,6 +651,9 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
     ns: np.array
         Values of N used in each oadev calculation
 
+    References
+    ----------
+    * NIST [SP1065]_ eqn (11), page 16.
     """
     phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
@@ -702,6 +706,9 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
     ns: np.array
         Values of N used in each hdev calculation
 
+    References
+    ----------
+    * NIST [SP1065]_ eqn (20), page 21
     """
     phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
@@ -729,8 +736,6 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
     where :math:`x_i` is the time-series of phase observations, spaced
     by the measurement interval :math:`\\tau`, and with length :math:`N`.
 
-    NIST [SP1065]_ eqn (17) and (18), page 20
-
     Parameters
     ----------
     data: np.array
@@ -744,6 +749,10 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
         Array of tau values, in seconds, for which to compute statistic.
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
+    
+    References
+    ----------
+    * NIST [SP1065]_ eqn (17) and (18), page 20
     """
     phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
@@ -760,7 +769,15 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
 
 
 def calc_hdev_phase(phase, rate, mj, stride):
-    """ main calculation fungtion for HDEV and OHDEV
+    """ main calculation function for HDEV and OHDEV
+
+                         1        N-3
+         s2y(t) = --------------- sum [x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2
+                  6*tau^2 (N-3m)  i=1
+
+        N=M+1 phase measurements
+        m is averaging factor
+
 
     Parameters
     ----------
@@ -778,19 +795,11 @@ def calc_hdev_phase(phase, rate, mj, stride):
     (dev, deverr, n): tuple
         Array of computed values.
 
-    Notes
-    -----
-    http://www.leapsecond.com/tools/adev_lib.c
-                         1        N-3
-         s2y(t) = --------------- sum [x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2
-                  6*tau^2 (N-3m)  i=1
-
-        N=M+1 phase measurements
-        m is averaging factor
-
-    NIST [SP1065]_ eqn (18) and (20) pages 20 and 21
+    References
+    ----------
+    * http://www.leapsecond.com/tools/adev_lib.c
+    * NIST [SP1065]_ eqn (18) and (20) pages 20 and 21
     """
-
     tau0 = 1.0 / float(rate)
     mj = int(mj)
     stride = int(stride)
@@ -835,8 +844,6 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     x* has length 3N-4
     tau = m*tau0
 
-    NIST [SP1065]_ eqn (25) page 23
-
     FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
 
     Parameters
@@ -851,6 +858,9 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     taus: np.array
         Array of tau values for which to compute measurement
 
+    References
+    ----------
+    * NIST [SP1065]_ eqn (25) page 23
     """
     phase = input_to_phase(data, rate, data_type)
     (phase, m, taus_used) = tau_generator(phase, rate, taus)
@@ -902,10 +912,13 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
 def ttotdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time Total Deviation
 
-        Modified total variance scaled by tau^2 / 3
-
-        NIST [SP1065]_ eqn (28) page 26.
-        Note that [SP1065]_ erroneously has tau-cubed here (!).
+    Modified total variance scaled by :math:`\\tau^2 / 3`
+      
+    Note that [SP1065]_ erroneously has tau-cubed here (!).
+    
+    References
+    ----------
+    * NIST [SP1065]_ eqn (28) page 26.
     """
 
     (taus, mtotdevs, mde, ns) = mtotdev(data, data_type=data_type,
@@ -944,8 +957,9 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
-    NIST [SP1065]_ eqn (27) page 25
-
+    References
+    ----------
+    * NIST [SP1065]_ eqn (27) page 25
     """
     phase = input_to_phase(data, rate, data_type)
     (phase, ms, taus_used) = tau_generator(phase, rate, taus,
@@ -965,19 +979,19 @@ def calc_mtotdev_phase(phase, rate, m):
         calculation of mtotdev for one averaging factor m
         tau = m*tau0
 
-        NIST [SP1065]_ Eqn (27), page 25.
+        
 
-        Computed from a set of N - 3m + 1 subsequences of 3m points.
-        1. A linear trend (frequency offset) is removed from the subsequence
-           by averaging the first and last halves of the subsequence and
-           dividing by half the interval.
-        2. The offset-removed subsequence is extended at both ends
-           by uninverted, even reflection.
+    Computed from a set of N - 3m + 1 subsequences of 3m points.
+    1. A linear trend (frequency offset) is removed from the subsequence
+       by averaging the first and last halves of the subsequence and
+       dividing by half the interval.
+    2. The offset-removed subsequence is extended at both ends
+       by uninverted, even reflection.
 
-        [Howe1999]_
-        D.A. Howe and F. Vernotte, "Generalization of the Total Variance
-        Approach to the Modified Allan Variance," Proc.
-        31 st PTTI Meeting, pp. 267-276, Dec. 1999.
+    References
+    ----------
+    * [Howe1999]_
+    * NIST [SP1065]_ Eqn (27), page 25.
     """
     tau0 = 1.0/rate
     N = len(phase)  # phase data, N points
@@ -1059,37 +1073,40 @@ def calc_mtotdev_phase(phase, rate, m):
 
 
 def htotdev(data, rate=1.0, data_type="phase", taus=None):
-    """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        Hadamard Total deviation.
-        Better confidence at long averages for Hadamard deviation
+    """ Hadamard Total deviation.
+    
+    Better confidence at long averages for Hadamard deviation
 
-        Computed for N fractional frequency points y_i with sampling
-        period tau0, analyzed at tau = m*tau0
-        1. remove linear trend by averaging first and last half,
-        and dividing by interval
-        2. extend sequence by uninverted even reflection
-        3. compute Hadamard for extended, length 9m, sequence.
+    PRELIMINARY - REQUIRES FURTHER TESTING.
+        
+    
+    Computed for N fractional frequency points y_i with sampling
+    period tau0, analyzed at tau = m*tau0
+    1. remove linear trend by averaging first and last half,
+    and dividing by interval
+    2. extend sequence by uninverted even reflection
+    3. compute Hadamard for extended, length 9m, sequence.
 
-        FIXME: bias corrections from http://www.wriley.com/CI2.pdf
-        W FM    0.995      alpha= 0
-        F FM    0.851      alpha=-1
-        RW FM   0.771      alpha=-2
-        FW FM   0.717      alpha=-3
-        RR FM   0.679      alpha=-4
+    FIXME: bias corrections from http://www.wriley.com/CI2.pdf
+    W FM    0.995      alpha= 0
+    F FM    0.851      alpha=-1
+    RW FM   0.771      alpha=-2
+    FW FM   0.717      alpha=-3
+    RR FM   0.679      alpha=-4
 
-        Parameters
-        ----------
-        data: np.array
-            Input data. Provide either phase or frequency (fractional,
-            adimensional).
-        rate: float
-            The sampling rate for data, in Hz. Defaults to 1.0
-        data_type: {'phase', 'freq'}
-            Data type, i.e. phase or frequency. Defaults to "phase".
-        taus: np.array
-            Array of tau values, in seconds, for which to compute statistic.
-            Optionally set taus=["all"|"octave"|"decade"] for automatic
-            tau-list generation.
+    Parameters
+    ----------
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
+    rate: float
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
+    taus: np.array
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
+        tau-list generation.
 
     """
     if data_type == "phase":
@@ -1130,16 +1147,17 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
 
 
 def calc_htotdev_freq(freq, m):
-    """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        calculation of htotdev for one averaging factor m
+    """ calculation of htotdev for one averaging factor m
         tau = m*tau0
 
-        Parameters
-        ----------
-        frequency: np.array
-            Fractional frequency data (nondimensional).
-        m: int
-            Averaging factor. tau = m*tau0, where tau0=1/rate.
+    PRELIMINARY - REQUIRES FURTHER TESTING.
+
+    Parameters
+    ----------
+    frequency: np.array
+        Fractional frequency data (nondimensional).
+    m: int
+        Averaging factor. tau = m*tau0, where tau0=1/rate.
     """
 
     N = int(len(freq))  # frequency data, N points
@@ -1233,8 +1251,6 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
 
     FIXME: bias correction
 
-    NIST [SP1065]_ eq (30) page 29
-
     Parameters
     ----------
     data: np.array
@@ -1249,6 +1265,9 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
 
+    References
+    ----------
+    * NIST [SP1065]_ eq (30) page 29
     """
     phase = input_to_phase(data, rate, data_type)
 
@@ -1436,20 +1455,18 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
-#
-# !!!!!!!
-# FIXME: mtie_phase_fast() is incomplete.
-# !!!!!!!
-#
-
-
 def mtie_phase_fast(phase, rate=1.0, data_type="phase", taus=None):
     """ fast binary decomposition algorithm for MTIE
 
-        See: [Bregni2001]_ STEFANO BREGNI
-        "Fast Algorithms for TVAR and MTIE Computation in
-        Characterization of Network Synchronization Performance"
+    References
+    ----------
+    * [Bregni2001]_ 
     """
+    #
+    # !!!!!!!
+    # FIXME: mtie_phase_fast() is incomplete.
+    # !!!!!!!
+    #
     rate = float(rate)
     phase = np.asarray(phase)
     k_max = int(np.floor(np.log2(len(phase))))
@@ -1640,8 +1657,6 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
     time. The exponent :math:`k` is 1 for the Allan variance and 2 for the
     modified Allan variance.
 
-    NIST [SP1065]_ eqs (65-66), page 73. See also [Benkler2015]_ eqn (23).
-
     psd2allan() implements the integral by discrete numerical integration via
     a sum.
 
@@ -1668,6 +1683,11 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
         tau values for which ad computed
     ad: np.array
         Computed Allan deviation of requested kind for each tau value
+        
+    References
+    ----------
+    * NIST [SP1065]_ eqs (65-66), page 73.
+    * [Benkler2015]_ eqn (23).
     """
     # determine taus from df
     # first oversample S_y by a factor of 10 in order to avoid numerical
@@ -1879,8 +1899,11 @@ def tau_reduction(ms, rate, n_per_decade):
     will also remove some points in this range, which is usually fine.
 
     Typical use would be something like:
-    (data,m,taus)=tau_generator(data,rate,taus="all")
-    (m,taus)=tau_reduction(m,rate,n_per_decade)
+    
+    .. code-block:: python
+
+        (data, m, taus) = tau_generator(data, rate, taus="all")
+        (m, taus) = tau_reduction(m, rate, n_per_decade)
 
     Parameters
     ----------
@@ -2016,7 +2039,7 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
 
     References
     ----------
-    http://www.wriley.com/3-CornHat.htm
+    * http://www.wriley.com/3-CornHat.htm
     """
     (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab,
                                                data_type='phase',
@@ -2089,11 +2112,11 @@ def phase2radians(phasedata, v0):
 
     Returns
     -------
-    fi:
+    fi: np.array
         phase data in radians
     """
     fi = [2*np.pi*v0*xx for xx in phasedata]
-    return fi
+    return np.array(fi)
 
 
 def phase2frequency(phase, rate):
@@ -2102,14 +2125,14 @@ def phase2frequency(phase, rate):
     Parameters
     ----------
     phase: np.array
-        Data array of phase in seconds
+        Data array of phase in seconds, length N
     rate: float
         The sampling rate for phase, in Hz
 
     Returns
     -------
-    y:
-        Data array of fractional frequency
+    y: np.array
+        Data array of fractional frequency, length N-1
     """
     y = rate*np.diff(phase)
     return y
@@ -2128,7 +2151,7 @@ def frequency2fractional(frequency, mean_frequency=-1):
 
     Returns
     -------
-    y:
+    y: np.array
         Data array of fractional frequency
     """
     if mean_frequency == -1:
