@@ -96,6 +96,12 @@ Papers
 .. [Rubiola2015] The Omega Counter, a Frequency Counter Based on the Linear Regression
     https://arxiv.org/abs/1506.05009    
 
+.. [Rubiola2022] The Companion of Enrico's Chart for Phase Noise and Two-Sample Variances
+    https://arxiv.org/abs/2201.07109
+
+.. [Rubiola_chart] The Enrico's Chart for Phase Noise and Two-Sample Variances
+    https://zenodo.org/records/7691686
+
 .. [Stein1985] S. Stein, Frequency and Time - Their Measurement and Characterization. 
     Precision Frequency Control Vol 2, 1985, pp 191-416. 
     http://tf.boulder.nist.gov/general/pdf/666.pdf
