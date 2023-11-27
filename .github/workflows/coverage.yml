@@ -33,8 +33,8 @@ jobs:
     - name: Test with coverage
       run: |
         coverage run --branch --source allantools setup.py test
-        coverage html
         coverage report
+        coverage lcov
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v2.2.3
             
