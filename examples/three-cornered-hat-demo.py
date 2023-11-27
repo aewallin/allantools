@@ -40,14 +40,15 @@ def plotline(plt, alpha, amplitude, taus, style, labeltext):
 
 
 if __name__ == "__main__":
-    print("allatools three-cornered-hat demo")
+    print("allantools %s, three-cornered-hat demo"%allantools.__version__)
     # we test ADEV etc. by calculations on synthetic data
     # with known slopes of ADEV
 
     t = numpy.logspace(0, 4, 50)  # tau values from 1 to 1000
+    plt.figure()
     plt.subplot(111, xscale="log", yscale="log")
 
-    N = 10000
+    N = 100000
     rate = 1.0
     # white phase noise => 1/tau ADEV
     # these are the 'true' phases of the oscillators, which are not observable.
@@ -97,16 +98,20 @@ if __name__ == "__main__":
     (taus, devC, err_C, ns_ac) = allantools.three_cornered_hat_phase(
                    phaseCA, phaseAB, phaseBC, rate, t, allantools.oadev)
     plt.loglog(taus, devC, 'bv', label='3-C-H estimate for C')
+    print("TCH done.")
 
     # GCODEV estimates
     (taus, devA, err_a, ns_ab) = allantools.gcodev(phaseAB, phaseCA, rate=rate, taus='log10')
-    plt.loglog(taus, devA, 'r*', label='Gcodev estimate for A')
+    print('Gcodev A', devA)
+    plt.loglog(taus, abs(devA), 'r*', label='Gcodev estimate for A')
     (taus, devB, err_b, ns_b) = allantools.gcodev(phaseAB, phaseBC, rate=rate, taus='log10')
-    plt.loglog(taus, devB, 'g*', label='Gcodev estimate for B')
+    print('Gcodev B', devB)
+    plt.loglog(taus, abs(devB), 'g*', label='Gcodev estimate for B')
     (taus, devC, err_c, ns_c) = allantools.gcodev(phaseCA, phaseBC, rate=rate, taus='log10')
-    plt.loglog(taus, devC, 'b*', label='Gcodev estimate for C')
-
-    print("TCH done.")
+    print('Gcodev C', devC)
+    plt.loglog(taus, abs(devC), 'b*', label='Gcodev estimate for C')
+    print("Gcodev done.")
+    
     plt.title('AllanTools three-cornered-hat example')
     plt.xlabel('Tau / s')
     plt.ylabel('OADEV')

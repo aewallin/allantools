@@ -541,8 +541,7 @@ def calc_gcodev_phase(phase_1, phase_2, rate, mj, stride):
     if(s >= 0):
         dev = np.sqrt(s / (2.0*n_1)) / mj*rate
     else:
-        # print(s, n_1, mj, rate)
-        dev = -np.sqrt(np.abs(s) / (2.0*n_1)) / mj*rate
+        dev = np.sqrt(np.abs(s) / (2.0*n_1)) / mj*rate
 
     deverr = dev / np.sqrt(n_1)
 
