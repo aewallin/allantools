@@ -22,6 +22,7 @@
 """
 
 import numpy
+import datetime
 # only for plotting, not required for calculations
 import matplotlib.pyplot as plt
 import allantools
@@ -53,18 +54,42 @@ if __name__ == "__main__":
     # white phase noise => 1/tau ADEV
     # these are the 'true' phases of the oscillators, which are not observable.
     # we can only measure phases between two oscillators.
+    numpy.random.seed(42)
     ampl_A = 1.0
     phaseA = ampl_A*numpy.random.randn(N)
     ampl_B = 5.0
     phaseB = ampl_B*numpy.random.randn(N)
     ampl_C = 10.0
     phaseC = ampl_C*numpy.random.randn(N)
-
+    print(phaseA[-1],phaseB[-1],phaseC[-1])
+    # seed = 42 output:
+    # 0.12006294082414522 -5.324739839420351 -3.578461741191343
+    
     # measurements clk_I - clk_J
     phaseAB = phaseA - phaseB  # [a-b for (a,b) in zip(phaseA,phaseB)]
     phaseBC = phaseB - phaseC  # [b-c for (b,c) in zip(phaseB,phaseC)]
     phaseCA = phaseC - phaseA  # [c-a for (c,a) in zip(phaseC,phaseA)]
 
+    # write measurements to file, for offline analysis with e.g. SigmaTheta
+    with open('freqAB.txt','w') as f:
+        f.write('# three-cornered-hat-demo.py\n')
+        f.write('# phaseAB generated %s\n'%(datetime.datetime.utcnow()))
+        f.write('# num_rows %d\n'%(len(numpy.diff(phaseAB))))
+        for (i,p) in enumerate(numpy.diff(phaseAB)):
+            f.write('%d %.12f\n'%(i,p))
+    with open('freqBC.txt','w') as f:
+        f.write('# three-cornered-hat-demo.py\n')
+        f.write('# phaseBC generated %s\n'%(datetime.datetime.utcnow()))
+        f.write('# num_rows %d\n'%(len(numpy.diff(phaseBC))))
+        for (i,p) in enumerate(numpy.diff(phaseBC)):
+            f.write('%d %.12f\n'%(i,p))
+    with open('freqCA.txt','w') as f:
+        f.write('# three-cornered-hat-demo.py\n')
+        f.write('# phaseCA generated %s\n'%(datetime.datetime.utcnow()))
+        f.write('# num_rows %d\n'%(len(numpy.diff(phaseCA))))
+        for (i,p) in enumerate(numpy.diff(phaseCA)):
+            f.write('%d %.12f\n'%(i,p))
+            
     # theoretical ADEVs
     plotline(plt, -1.0, numpy.sqrt(3)*ampl_A, t, 'r--', 'A model')
     plotline(plt, -1.0, numpy.sqrt(3)*ampl_B, t, 'g--', 'B model')
@@ -101,15 +126,15 @@ if __name__ == "__main__":
     print("TCH done.")
 
     # GCODEV estimates
-    (taus, devA, err_a, ns_ab) = allantools.gcodev(phaseAB, phaseCA, rate=rate, taus='log10')
+    (taus, devA, err_a, ns_ab) = allantools.gcodev(phaseAB, phaseCA, rate=rate, taus='octave')
     print('Gcodev A', devA)
-    plt.loglog(taus, abs(devA), 'r*', label='Gcodev estimate for A')
-    (taus, devB, err_b, ns_b) = allantools.gcodev(phaseAB, phaseBC, rate=rate, taus='log10')
+    plt.loglog(taus, devA, 'r*', label='Gcodev estimate for A')
+    (taus, devB, err_b, ns_b) = allantools.gcodev(phaseAB, phaseBC, rate=rate, taus='octave')
     print('Gcodev B', devB)
-    plt.loglog(taus, abs(devB), 'g*', label='Gcodev estimate for B')
-    (taus, devC, err_c, ns_c) = allantools.gcodev(phaseCA, phaseBC, rate=rate, taus='log10')
+    plt.loglog(taus, devB, 'g*', label='Gcodev estimate for B')
+    (taus, devC, err_c, ns_c) = allantools.gcodev(phaseCA, phaseBC, rate=rate, taus='octave')
     print('Gcodev C', devC)
-    plt.loglog(taus, abs(devC), 'b*', label='Gcodev estimate for C')
+    plt.loglog(taus, devC, 'b*', label='Gcodev estimate for C')
     print("Gcodev done.")
     
     plt.title('AllanTools three-cornered-hat example')
