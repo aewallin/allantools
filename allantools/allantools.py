@@ -135,8 +135,6 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
 
     Note that TDEV has a unit of seconds.
 
-    NIST [SP1065]_ eqn (15), page 18.
-
     Parameters
     ----------
     data: np.array
@@ -164,9 +162,10 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
     ns: np.array
         Values of N used in mdev_phase()
 
-    Notes
-    -----
-    http://en.wikipedia.org/wiki/Time_deviation
+    References
+    ----------
+    * http://en.wikipedia.org/wiki/Time_deviation
+    * NIST [SP1065]_ eqn (15), page 18.
     """
     phase = input_to_phase(data, rate, data_type)
     (taus, md, mde, ns) = mdev(phase, rate=rate, taus=taus)

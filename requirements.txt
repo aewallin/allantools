@@ -3,3 +3,4 @@ scipy
 numpydoc
 matplotlib
 pytest
+sphinx_rtd_theme
