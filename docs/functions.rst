@@ -35,6 +35,7 @@ Statistics
 .. autofunction:: adev
 .. autofunction:: oadev
 .. autofunction:: mdev
+.. autofunction:: pdev
 .. autofunction:: hdev
 .. autofunction:: ohdev
 .. autofunction:: tdev

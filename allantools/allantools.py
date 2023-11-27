@@ -176,7 +176,6 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
 
 def mdev(data, rate=1.0, data_type="phase", taus=None):
     """  Modified Allan deviation.
-         
     Used to distinguish between White and Flicker Phase Modulation.
 
     .. math::
@@ -611,7 +610,6 @@ def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
 
 def oadev(data, rate=1.0, data_type="phase", taus=None):
     """ Overlapping Allan deviation.
-        
     General purpose - most widely used - first choice.
 
     .. math::
@@ -619,7 +617,7 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
         \\sigma^2_{OADEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-2m) }
         \\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2
 
-    where :math:`\\sigma^2_x(m\\tau_0)` is the overlapping Allan
+    where :math:`\\sigma_{OADEV}(m\\tau_0)` is the overlapping Allan
     deviation at an averaging time of :math:`\\tau=m\\tau_0`, and
     :math:`x_n` is the time-series of phase observations, spaced by the
     measurement interval :math:`\\tau_0`, with length :math:`N`.
@@ -738,14 +736,14 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
 
     Parameters
     ----------
-    data: np.array
+    data : np.array
         Input data. Provide either phase or frequency (fractional,
         adimensional).
-    rate: float
+    rate : float
         The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
+    data_type : string, {'phase', 'freq'}
         Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
+    taus : np.array
         Array of tau values, in seconds, for which to compute statistic.
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
@@ -1233,8 +1231,7 @@ def calc_htotdev_freq(freq, m):
 
 
 def theo1(data, rate=1.0, data_type="phase", taus=None):
-    """ Theo1 is a two-sample variance with improved confidence and
-        extended averaging factor range.
+    """ Theo1 is a two-sample variance with improved confidence and extended averaging factor range.
 
     PRELIMINARY - REQUIRES FURTHER TESTING.
 
