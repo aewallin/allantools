@@ -1782,11 +1782,11 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         +----------+--------------------------------+
         | "log10"  |  approx. 10 points per decade  |
         +----------+--------------------------------+
-    v:
+    v: bool
         verbose output if True
-    even:
+    even: bool
         require even m, where tau=m*tau0, for Theo1 statistic
-    maximum_m:
+    maximum_m: int
         limit m, where tau=m*tau0, to this value.
         used by mtotdev() and htotdev() to limit maximum tau.
 
@@ -1918,6 +1918,7 @@ def tau_reduction(ms, rate, n_per_decade):
         Reduced list of m values
     taus: np.array
         Reduced list of tau values
+        
     """
     ms = np.int64(ms)
     keep = np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) -
@@ -1933,7 +1934,8 @@ def tau_reduction(ms, rate, n_per_decade):
 
 def remove_small_ns(taus, devs, deverrs, ns):
     """ Remove results with small number of samples.
-        If n is small (==1), reject the result
+    
+    If n is small (==1), reject the result
 
     Parameters
     ----------
@@ -2037,6 +2039,7 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
     References
     ----------
     * http://www.wriley.com/3-CornHat.htm
+    
     """
     (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab,
                                                data_type='phase',
