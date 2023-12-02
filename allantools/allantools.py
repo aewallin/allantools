@@ -390,10 +390,10 @@ def pdev(data, rate=1.0, data_type="phase", taus=None):
     .. math::
 
         \\sigma^2_{PDEV}(m\\tau_0) = { 72 \\over (N-2m) (m \\tau_0 )^2  }
-        \\sum_{i=0}^{N-2m-1} \\lbrace
-        \\sum_{k=0}^{m-1} \\lbrace { m-1 \\over 2} - k \\rbrace {x}_{i+k} - x_{i+k+m}  \\rbrace^2
+        \\sum_{i=0}^{N-2m-1} \\left[
+        \\sum_{k=0}^{m-1} \\left( { m-1 \\over 2} - k \\right) {x}_{i+k} - x_{i+k+m}  \\right]^2
 
-    for `m>1` and for an averaging-factor of `m=1` PDEV equals ADEV/MDEV: `\\sigma_{PDEV}(\\tau_0)=\\sigma_{ADEV}(\\tau_0)`.
+    for :math:`m>1` and for an averaging-factor of :math:`m=1` PDEV equals ADEV/MDEV: :math:`\\sigma_{PDEV}(\\tau_0)=\\sigma_{ADEV}(\\tau_0)`.
 
     Parameters
     ----------
