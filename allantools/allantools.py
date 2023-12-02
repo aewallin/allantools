@@ -385,6 +385,16 @@ def calc_adev_phase(phase, rate, mj, stride):
 def pdev(data, rate=1.0, data_type="phase", taus=None):
     """ Parabolic deviation.
 
+    Use for evaluating uncertainty of omega-average of frequency.
+
+    .. math::
+
+        \\sigma^2_{PDEV}(m\\tau_0) = { 72 \\over (N-2m) (m \\tau_0 )^2  }
+        \\sum_{i=0}^{N-2m-1} \\lbrace
+        \\sum_{k=0}^{m-1} \\lbrace { m-1 \\over 2} - k \\rbrace {x}_{i+k} - x_{i+k+m}  \\rbrace^2
+
+    for `m>1` and for an averaging-factor of `m=1` PDEV equals ADEV/MDEV: `\\sigma_{PDEV}(\\tau_0)=\\sigma_{ADEV}(\\tau_0)`.
+
     Parameters
     ----------
     data: np.array
