@@ -847,11 +847,11 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     
     .. math::
 
-        x^*_{1-j} = 2x_1 - x_{1+j}  \\quad \\text{for} j=1..N-2
+        x^*_{1-j} = 2x_1 - x_{1+j}  \\quad \\text{for} \\quad  j=1..N-2
         
-        x^*_i   = x_i        \\quad    \\text{for} i=1..N
+        x^*_i   = x_i        \\quad    \\text{for} \\quad  i=1..N
         
-        x^*_{N+j} = 2x_N - x_{N-j}  \\quad \\text{for} j=1..N-2
+        x^*_{N+j} = 2x_N - x_{N-j}  \\quad \\text{for} \\quad  j=1..N-2
 
     FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
 

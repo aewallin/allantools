@@ -75,7 +75,7 @@ def Homega(f, tau):
 #%%
         
 t = numpy.linspace(-5,8,50000)
-f = numpy.linspace(0,3,500)
+f = numpy.linspace(0,5,500)
 
 dt = min( numpy.diff(t) )
 tau = 1.0
@@ -83,7 +83,7 @@ W_pi = [Wpi(x,tau) for x in t]
 W_lam = [Wlambda(x,tau) for x in t]
 W_om = [Womega(x,tau) for x in t]
 WX_om = [WXomega(x,tau) for x in t]
-W_tri = [WT(x,tau) for x in t]
+#W_tri = [WT(x,tau) for x in t]
 plt.figure()
 plt.subplot(3,3,1)
 plt.plot(t, W_pi,'b',label='$w_{\Pi}$')
