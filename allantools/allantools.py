@@ -936,20 +936,29 @@ def ttotdev(data, rate=1.0, data_type="phase", taus=None):
 
 
 def mtotdev(data, rate=1.0, data_type="phase", taus=None):
-    """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        Modified Total deviation.
-        Better confidence at long averages for modified Allan
+    """ Modified Total deviation.
+    
+    Better confidence at long averages for modified Allan
 
-        FIXME: bias-correction http://www.wriley.com/CI2.pdf page 6
+    FIXME: bias-correction http://www.wriley.com/CI2.pdf page 6
 
-        The variance is scaled up (divided by this number) based on the
-        noise-type identified.
-        WPM 0.94
-        FPM 0.83
-        WFM 0.73
-        FFM 0.70
-        RWFM 0.69
-
+    The variance is scaled up (divided by this number) based on the
+    noise-type identified.
+    
+    +------------+------------------+
+    | noise type | bias correction  |
+    +============+==================+
+    | WPM        |  0.94            |
+    +------------+------------------+
+    | FPM        | 0.83             |
+    +------------+------------------+
+    | WFM        |   0.73           |
+    +------------+------------------+
+    | FFM        |  0.70            |
+    +------------+------------------+
+    | RWFM       |    0.69          |
+    +------------+------------------+
+ 
     Parameters
     ----------
     data: np.array
