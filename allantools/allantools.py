@@ -847,9 +847,11 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     
     .. math::
 
-        x^*_{1-j} = 2x_1 - x_{1+j}  for j=1..N-2
-        x^*_i   = x_i            for i=1..N
-        x^*_{N+j} = 2x_N - x_{N-j}  for j=1..N-2
+        x^*_{1-j} = 2x_1 - x_{1+j}  \quad \textrm{for} j=1..N-2
+        
+        x^*_i   = x_i        \quad    \textrm{for} i=1..N
+        
+        x^*_{N+j} = 2x_N - x_{N-j}  \quad \textrm{for} j=1..N-2
 
     FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
 
@@ -920,6 +922,11 @@ def ttotdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time Total Deviation
 
     Modified total variance scaled by :math:`\\tau^2 / 3`
+    
+    .. math::
+
+        \\sigma^2_{TTOTDEV}( \\tau ) = { \\tau^2 \\over 3 }
+        \\sigma^2_{TOTDEV}( \\tau )
       
     Note that [SP1065]_ erroneously has tau-cubed here (!).
     
