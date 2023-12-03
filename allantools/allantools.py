@@ -181,8 +181,8 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
     .. math::
 
         \\sigma^2_{MDEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-3m+1) }
-        \\sum_{j=1}^{N-3m+1} \\lbrace
-        \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
+        \\sum_{j=1}^{N-3m+1} \\left[
+        \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]^2
 
     Parameters
     ----------
@@ -843,14 +843,13 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     Where :math:`x^*_i` is a new time-series of length :math:`3N-4`
     derived from the original phase time-series :math:`x_n` of
     length :math:`N` by reflection at both ends.
+    The original data :math:`x_n` is in the center of :math:`x^*`:
+    
+    .. math::
 
-    FIXME: better description of reflection operation.
-    the original data x is in the center of x*:
-    x*(1-j) = 2x(1) - x(1+j)  for j=1..N-2
-    x*(i)   = x(i)            for i=1..N
-    x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
-    x* has length 3N-4
-    tau = m*tau0
+        x^*_{1-j} = 2x_1 - x_{1+j}  for j=1..N-2
+        x^*_i   = x_i            for i=1..N
+        x^*_{N+j} = 2x_N - x_{N-j}  for j=1..N-2
 
     FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
 
