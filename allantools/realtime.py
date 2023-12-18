@@ -115,7 +115,9 @@ class oadev_realtime(dev_realtime):
             self.update_af()
 
     def update_S(self, idx):
-        """ update S, sum-of-squares """
+        """ update S, sum-of-squares.
+            Eqn (9) in Dobrogowski2007
+        """
         af = self.afs[idx]
         i = len(self.x)-1  # last pt
         S_new = pow(self.x[i] - 2*self.x[i-af] + self.x[i-2*af], 2)
@@ -195,7 +197,7 @@ class tdev_realtime(dev_realtime):
         self.So = numpy.append(self.So, 0)
 
     def update_S3n(self, idx):
-        """ eqn (13) of paper """
+        """ Eqn (13) in Dobrogowski2007 """
         af = self.afs[idx]
         j = len(self.x)-1  # last pt
         self.S[idx] = self.S[idx] + self.x[j] - 2*self.x[j-af] + self.x[j-2*af]
@@ -205,14 +207,16 @@ class tdev_realtime(dev_realtime):
             self.update_dev(idx)
 
     def update_dev(self, idx):
-        # Eqn (14)
+        """ Eqn (14) in Dobrogowski2007 """
         num_pts = len(self.x)
         af = self.afs[idx]
         self.dev[idx] = numpy.sqrt(
             (1.0/6.0)*(1.0/(num_pts-3*af+1.0))*(1.0/pow(af, 2))*(self.So[idx]))
 
     def update_S(self, idx):
-        """ update S, sum-of-squares """
+        """ update S, sum-of-squares 
+            Eqn (12) in Dobrogowski2007
+        """
         af = self.afs[idx]
         assert(len(self.x) >= 3*af+1)
         i = len(self.x)-1  # last pt
