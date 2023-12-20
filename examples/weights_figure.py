@@ -157,3 +157,4 @@ plt.ylim((0,1.05))
 #plt.ylabel('Weight / 1/$\\tau$')
 plt.xlabel(' Normalized frequency / $f$ $\\tau$')
 
+plt.show()
