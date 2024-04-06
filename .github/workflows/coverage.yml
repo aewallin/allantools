@@ -32,7 +32,7 @@ jobs:
         pip install -e .
     - name: Test with coverage
       run: |
-        coverage run --branch --source allantools setup.py test
+        coverage run -m pytest
         coverage report
         coverage lcov
     - name: Coveralls GitHub Action
