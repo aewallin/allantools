@@ -7,7 +7,7 @@ Allan deviation tools
 Version history
 ---------------
 
-**unreleased**
+**2024.04**
 - ITU PRC, PRTC, ePRTC masks for TDEV and MTIE in new file mask.py
 - psd2allan() - convert PSD to ADEV/MDEV
 - GCODEV, Grosslambert deviation, an improved three-cornered-hat analysis
