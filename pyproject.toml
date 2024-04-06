@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "AllanTools"
+version = "2024.04"
+dependencies = [
+  "numpy",
+  "scipy",
+  "numpydoc",
+  "matplotlib",
+  "pytest",
+]
+requires-python = ">=3.8"
+authors = [
+  {name = "Anders E. E. Wallin", email = "anders.e.e.wallin@gmail.com"},
+]
+maintainers = [
+  {name = "Anders E. E. Wallin", email = "anders.e.e.wallin@gmail.com"},
+]
+description = "A python library for calculating Allan deviation and related time & frequency statistics"
+readme = "README.rst"
+license = {file = "LICENSE.txt"}
+keywords = ["time", "frequency", "statistics", "ADEV",]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Programming Language :: Python"
+]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "refs/*",
+  "experimental/*",
+]
+
+[project.optional-dependencies]
+
+[project.urls]
+Homepage = "https://github.com/aewallin/allantools"
+Documentation = "https://allantools.readthedocs.io/en/latest/index.html"
+Repository = "https://github.com/aewallin/allantools"
+"Test Coverage" = "https://coveralls.io/github/aewallin/allantools"
+
