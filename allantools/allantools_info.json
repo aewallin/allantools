@@ -1,8 +1,8 @@
 {
     "name": "AllanTools",
-    "version": "2023.12",
+    "version": "2024.04",
     "description": "Allan deviation and related time/frequency statistics",
-    "copyright": "2014-2023, Anders E. E. Wallin",
+    "copyright": "2014-2024, Anders E. E. Wallin",
     "main_author": "Anders E. E. Wallin",
     "main_author_email" : "anders.e.e.wallin@gmail.com",
     "url": "https://github.com/aewallin/allantools",
