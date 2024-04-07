@@ -361,7 +361,7 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.503.9864&rep=rep1&type=pdf
 
     Reference [Riley2004]_.
-    
+
     """
     d = 0  # number of differentiations
     if data_type == "phase":
@@ -789,8 +789,8 @@ def edf_simple(N, m, alpha):
 
     Notes
     -----
-       See [Stein1985]_.
-       
+       See [Stein1985]
+
     Returns
     -------
     edf : float

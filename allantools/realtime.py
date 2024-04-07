@@ -214,7 +214,7 @@ class tdev_realtime(dev_realtime):
             (1.0/6.0)*(1.0/(num_pts-3*af+1.0))*(1.0/pow(af, 2))*(self.So[idx]))
 
     def update_S(self, idx):
-        """ update S, sum-of-squares 
+        """ update S, sum-of-squares
             Eqn (12) in Dobrogowski2007
         """
         af = self.afs[idx]

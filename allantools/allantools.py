@@ -125,7 +125,7 @@ __version__ = pkginfo["version"]
 
 def tdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time deviation.
-    
+
     Based on modified Allan variance.
 
     .. math::
@@ -382,6 +382,7 @@ def calc_adev_phase(phase, rate, mj, stride):
 
     return dev, deverr, n
 
+
 def pdev(data, rate=1.0, data_type="phase", taus=None):
     """ Parabolic deviation.
 
@@ -442,7 +443,7 @@ def pdev(data, rate=1.0, data_type="phase", taus=None):
 
 def calc_pdev_phase(phase, rate, mj):
     """  Parabolic deviation
-    
+
     Parameters
     ----------
     phase: np.array
@@ -466,7 +467,7 @@ def calc_pdev_phase(phase, rate, mj):
     mj = int(mj)
     stride = int(1)
     tau0 = 1.0/rate
-    if mj == 1: # same as OADEV
+    if mj == 1:  # same as OADEV
         d2 = phase[2 * mj::stride]
         d1 = phase[1 * mj::stride]
         d0 = phase[::stride]
@@ -482,25 +483,26 @@ def calc_pdev_phase(phase, rate, mj):
         dev = np.sqrt(s / (2.0*n)) / mj*rate
         deverr = dev / np.sqrt(n)
     else:
-        N = len(phase) # number of frequency samples
+        N = len(phase)  # number of frequency samples
         M = N-2*mj  # Vernotte2020 has the correct(?) M = N - 2m
         # Vernotte2015 has M = N-2m+2 which seems wrong, we get index out-of-bounds in the sum
-        
-        if M<1:
+
+        if M < 1:
             return 0, 0, 0
-        Msum=0
-        Mi=0
-        for i in range(0,M): # 0..M-1
-            asum=0
-            krange = np.linspace(0,mj-1,mj)
-            asum = sum( ((mj-1.0)/2.0 - krange ) * (phase[i:i+mj] - phase[i+mj:i+2*mj]) )
-            Msum=Msum + pow(asum, 2)
-            Mi=Mi+1
-        dev = np.sqrt( 72*Msum / ((M)*pow(mj,4)*pow(mj*tau0,2 )) )
+        Msum = 0
+        Mi = 0
+        for i in range(0, M):  # 0..M-1
+            asum = 0
+            krange = np.linspace(0, mj-1, mj)
+            asum = sum(((mj-1.0)/2.0 - krange) * (phase[i:i+mj] - phase[i+mj:i+2*mj]))
+            Msum = Msum + pow(asum, 2)
+            Mi = Mi + 1
+        dev = np.sqrt(72*Msum / ((M)*pow(mj, 4)*pow(mj*tau0, 2)))
         deverr = dev / np.sqrt(M)
-        n=M
-        
+        n = M
+
     return dev, deverr, n
+
 
 def calc_gcodev_phase(phase_1, phase_2, rate, mj, stride):
     """
@@ -566,7 +568,7 @@ def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
     Similarly to the three-cornered hat method, we consider three uncorrelated
     oscillators A, B, C. The Groslambert codeviation estimates the noise of
     one oscillator (e.g. B), given two synchronous measurements AB and BC.
-    Unlike three-cordenred hat, Gcodev is not affected by the (uncorrelated) noise of 
+    Unlike three-cordenred hat, Gcodev is not affected by the (uncorrelated) noise of
     the measurement devices (time-interval or frequency counter) used for
     the measurements AB and BC.
 
@@ -594,10 +596,10 @@ def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
     gd: np.array
         Computed gcodev for each tau value
 
-    References 
+    References
     ----------
-    * [Vernotte2016]_ 
-    * [Lantz2019]_
+    * [Vernotte2016]
+    * [Lantz2019]
     """
     phase_1 = input_to_phase(data_1, rate, data_type)
     phase_2 = input_to_phase(data_2, rate, data_type)
@@ -757,7 +759,7 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
         Array of tau values, in seconds, for which to compute statistic.
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
-    
+
     References
     ----------
     * NIST [SP1065]_ eqn (17) and (18), page 20
@@ -844,13 +846,13 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
     derived from the original phase time-series :math:`x_n` of
     length :math:`N` by reflection at both ends.
     The original data :math:`x_n` is in the center of :math:`x^*`:
-    
+
     .. math::
 
         x^*_{1-j} = 2x_1 - x_{1+j}  \\quad \\text{for} \\quad  j=1..N-2
-        
+
         x^*_i   = x_i        \\quad    \\text{for} \\quad  i=1..N
-        
+
         x^*_{N+j} = 2x_N - x_{N-j}  \\quad \\text{for} \\quad  j=1..N-2
 
     FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
@@ -922,14 +924,14 @@ def ttotdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time Total Deviation
 
     Modified total variance scaled by :math:`\\tau^2 / 3`
-    
+
     .. math::
 
         \\sigma^2_{TTOTDEV}( \\tau ) = { \\tau^2 \\over 3 }
         \\sigma^2_{MTOTDEV}( \\tau )
-      
+
     Note that [SP1065]_ erroneously has tau-cubed here (!).
-    
+
     References
     ----------
     * NIST [SP1065]_ eqn (28) page 26.
@@ -944,14 +946,14 @@ def ttotdev(data, rate=1.0, data_type="phase", taus=None):
 
 def mtotdev(data, rate=1.0, data_type="phase", taus=None):
     """ Modified Total deviation.
-    
+
     Better confidence at long averages for modified Allan
 
     FIXME: bias-correction http://www.wriley.com/CI2.pdf page 6
 
     The variance is scaled up (divided by this number) based on the
     noise-type identified.
-    
+
     +------------+------------------+
     | noise type | bias correction  |
     +============+==================+
@@ -965,7 +967,7 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
     +------------+------------------+
     | RWFM       |    0.69          |
     +------------+------------------+
- 
+
     Parameters
     ----------
     data: np.array
@@ -1001,8 +1003,6 @@ def calc_mtotdev_phase(phase, rate, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of mtotdev for one averaging factor m
         tau = m*tau0
-
-        
 
     Computed from a set of N - 3m + 1 subsequences of 3m points.
     1. A linear trend (frequency offset) is removed from the subsequence
@@ -1097,12 +1097,11 @@ def calc_mtotdev_phase(phase, rate, m):
 
 def htotdev(data, rate=1.0, data_type="phase", taus=None):
     """ Hadamard Total deviation.
-    
+
     Better confidence at long averages for Hadamard deviation
 
     PRELIMINARY - REQUIRES FURTHER TESTING.
-        
-    
+
     Computed for N fractional frequency points y_i with sampling
     period tau0, analyzed at tau = m*tau0
     1. remove linear trend by averaging first and last half,
@@ -1477,12 +1476,13 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
+
 def mtie_phase_fast(phase, rate=1.0, data_type="phase", taus=None):
     """ fast binary decomposition algorithm for MTIE
 
     References
     ----------
-    * [Bregni2001]_ 
+    * [Bregni2001]
     """
     #
     # !!!!!!!
@@ -1705,7 +1705,7 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
         tau values for which ad computed
     ad: np.array
         Computed Allan deviation of requested kind for each tau value
-        
+
     References
     ----------
     * NIST [SP1065]_ eqs (65-66), page 73.
@@ -1795,7 +1795,7 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         Array of tau values for which to compute measurement.
         Alternatively one of the keywords: "all", "octave", "decade".
         Defaults to "octave" if omitted.
-        
+
         +----------+--------------------------------+
         | keyword  |   averaging-factors            |
         +==========+================================+
@@ -1847,8 +1847,8 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         maxn = np.log10(len(data))
         taus = (1.0/rate)*np.logspace(0, maxn, int(10*maxn), base=10.0)
         if v:
-            print("tau_generator: maxn %.1f"%maxn)
-            print("tau_generator: taus="%taus)
+            print("tau_generator: maxn %.1f" % maxn)
+            print("tau_generator: taus=" % taus)
     elif taus == "decade":  # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
         maxn = np.floor(np.log10(len(data)))
         taus = []
@@ -1921,7 +1921,7 @@ def tau_reduction(ms, rate, n_per_decade):
     will also remove some points in this range, which is usually fine.
 
     Typical use would be something like:
-    
+
     .. code-block:: python
 
         (data, m, taus) = tau_generator(data, rate, taus="all")
@@ -1943,7 +1943,7 @@ def tau_reduction(ms, rate, n_per_decade):
         Reduced list of m values
     taus: np.array
         Reduced list of tau values
-        
+
     """
     ms = np.int64(ms)
     keep = np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) -
@@ -1959,7 +1959,7 @@ def tau_reduction(ms, rate, n_per_decade):
 
 def remove_small_ns(taus, devs, deverrs, ns):
     """ Remove results with small number of samples.
-    
+
     If n is small (==1), reject the result
 
     Parameters
@@ -1999,7 +1999,7 @@ def remove_small_ns(taus, devs, deverrs, ns):
 
 def trim_data(x):
     """Trim leading and trailing NaNs from dataset
-    
+
     This is done by browsing the array from each end and store the index of the
     first non-NaN in each case, the return the appropriate slice of the array
     """
@@ -2064,7 +2064,7 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc, phasedata_ca, rate, tau
     References
     ----------
     * http://www.wriley.com/3-CornHat.htm
-    
+
     """
     (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab,
                                                data_type='phase',
