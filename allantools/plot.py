@@ -93,8 +93,12 @@ class Plot(object):
                          **kwargs)
         self.ax.set_xlabel("Tau")
         self.ax.set_ylabel(atDataset.out["stat_id"])
-        self.ax.grid(grid, which="minor", ls="-", color='0.65')
-        self.ax.grid(grid, which="major", ls="-", color='0.25')
+
+        if grid:
+            self.ax.grid(True, which="minor", ls="-", color='0.65')
+            self.ax.grid(True, which="major", ls="-", color='0.25')
+        else:
+            self.ax.grid(False)
 
     def show(self):
         """Calls matplotlib.pyplot.show()
