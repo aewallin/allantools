@@ -34,7 +34,6 @@ __all__ = [
     'confidence_interval',
     'confidence_interval_noiseID',
     'autocorr_noise_id',
-    'uncertainty_estimate',
     'Dataset',
     'Noise',
     'Plot',
