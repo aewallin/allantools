@@ -7,7 +7,7 @@ name = "AllanTools"
 version = "2024.04"
 dependencies = [
   "numpy",
-  "scipy",
+  "scipy>=1.6.0",
   "numpydoc",
   "matplotlib",
   "pytest",
