@@ -789,7 +789,7 @@ def edf_simple(N, m, alpha):
 
     Notes
     -----
-       See [Stein1985]
+       See [Stein1985]_
 
     Returns
     -------

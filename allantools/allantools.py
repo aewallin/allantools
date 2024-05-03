@@ -598,8 +598,8 @@ def gcodev(data_1, data_2, rate=1.0, data_type="phase", taus=None):
 
     References
     ----------
-    * [Vernotte2016]
-    * [Lantz2019]
+    * [Vernotte2016]_
+    * [Lantz2019]_
     """
     phase_1 = input_to_phase(data_1, rate, data_type)
     phase_2 = input_to_phase(data_2, rate, data_type)
