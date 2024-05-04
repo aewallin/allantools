@@ -258,7 +258,7 @@ class Noise(object):
 
         Coefficients from [Dawkins2007]_.
 
-        Vernotte2015 Table I
+        [Vernotte2015]_ Table I
 
         """
         # g_b = self.phase_psd_from_qd(tau0)
