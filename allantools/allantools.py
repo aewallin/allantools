@@ -1946,7 +1946,7 @@ def tau_reduction(ms, rate, n_per_decade):
 
     """
     ms = np.int64(ms)
-    keep = np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) -
+    keep = np.bool_(np.rint(n_per_decade*np.log10(ms[1:])) -
                     np.rint(n_per_decade*np.log10(ms[:-1])))
     # Adjust ms size to fit above-defined mask
     ms = ms[:-1]
