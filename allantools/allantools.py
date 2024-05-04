@@ -111,7 +111,7 @@ import os
 import json
 import numpy as np
 from scipy import interpolate      # used in psd2allan()
-from scipy.integrate import simps  # used in psd2allan()
+from scipy.integrate import simpson  # used in psd2allan()
 
 from . import ci  # edf, confidence intervals
 
@@ -1756,7 +1756,7 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
         for idx, mj in enumerate(m)])
     integrand = np.insert(integrand, 0, 0.0, axis=1)
     f = np.insert(f, 0, 0.0)
-    ad = np.sqrt(2.0 * simps(integrand, f))
+    ad = np.sqrt(2.0 * simpson(integrand, f))
     return taus_used, ad
 
 
