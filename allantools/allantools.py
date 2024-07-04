@@ -1759,7 +1759,7 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
         for idx, mj in enumerate(m)])
     integrand = np.insert(integrand, 0, 0.0, axis=1)
     f = np.insert(f, 0, 0.0)
-    ad = np.sqrt(2.0 * simpson(integrand, f))
+    ad = np.sqrt(2.0 * simpson(integrand, x=f))
     return taus_used, ad
 
 
