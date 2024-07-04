@@ -1,6 +1,6 @@
 {
     "name": "AllanTools",
-    "version": "2024.04",
+    "version": "2024.06",
     "description": "Allan deviation and related time/frequency statistics",
     "copyright": "2014-2024, Anders E. E. Wallin",
     "main_author": "Anders E. E. Wallin",
@@ -8,9 +8,10 @@
     "url": "https://github.com/aewallin/allantools",
     "license" : "LGPLv3+",
     "authors": [
-        "Anders E. E. Wallin (anders.e.e.wallin \"at\" gmail.com)", 
-        "Danny C. Price (https://github.com/telegraphic)", 
-        "Cantwell G. Carson (carsonc \"at\" gmail.com)", 
+        "Anders E. E. Wallin (anders.e.e.wallin \"at\" gmail.com)",
+        "Danny C. Price (https://github.com/telegraphic)",
+        "Cantwell G. Carson (carsonc \"at\" gmail.com)",
         "F. Meynadier (https://github.com/fmeynadier)"
     ]
 }
+

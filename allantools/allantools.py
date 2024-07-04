@@ -7,6 +7,9 @@ Allan deviation tools
 Version history
 ---------------
 
+**2024.06**
+- fix import scipy.integrate.simpson
+
 **2024.04**
 - ITU PRC, PRTC, ePRTC masks for TDEV and MTIE in new file mask.py
 - psd2allan() - convert PSD to ADEV/MDEV

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "AllanTools"
-version = "2024.04"
+version = "2024.06"
 dependencies = [
   "numpy",
   "scipy>=1.6.0",
