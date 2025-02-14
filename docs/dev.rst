@@ -108,7 +108,7 @@ compiling numpy and scipy.
     >>> import allantools
 
 Uploading to PyPi.
-(requries a ~/.pypirc with username and password)
+(requires a ~/.pypirc with username and password)
 
 ::
 

@@ -49,7 +49,7 @@ class TestOCXO():
             data = allan.frequency2fractional(data, mean_frequency=1.0e7)
             (taus, devs, errs, ns) = allan.adev(data, rate=rate, data_type="freq",
                                                 taus=[row['tau']])
-            # NOTE! Here we use alhpa from Stable32-results for the allantools edf computation!
+            # NOTE! Here we use alpha from Stable32-results for the allantools edf computation!
             edf = allan.edf_greenhall(alpha=row['alpha'], d=2, m=row['m'], N=len(
                 data), overlapping=False, modified=False, verbose=True)
             print("alpha=", row['alpha'])
@@ -94,7 +94,7 @@ class TestOCXO():
             data = allan.frequency2fractional(data, mean_frequency=1.0e7)
             (taus, devs, errs, ns) = allan.oadev(data, rate=rate, data_type="freq",
                                                  taus=[row['tau']])
-            # NOTE! Here we use alhpa from Stable32-results for the allantools edf computation!
+            # NOTE! Here we use alpha from Stable32-results for the allantools edf computation!
             edf = allan.edf_greenhall(alpha=row['alpha'], d=2, m=row['m'], N=len(
                 data), overlapping=True, modified=False, verbose=True)
             (lo, hi) = allan.confidence_interval(devs[0], edf=edf)
@@ -115,7 +115,7 @@ class TestOCXO():
             data = allan.frequency2fractional(data, mean_frequency=1.0e7)
             (taus, devs, errs, ns) = allan.mdev(data, rate=rate, data_type="freq",
                                                 taus=[row['tau']])
-            # NOTE! Here we use alhpa from Stable32-results for the allantools edf computation!
+            # NOTE! Here we use alpha from Stable32-results for the allantools edf computation!
             edf = allan.edf_greenhall(alpha=row['alpha'], d=2, m=row['m'], N=len(
                 data), overlapping=True, modified=True, verbose=True)
             (lo, hi) = allan.confidence_interval(devs[0], edf=edf)
@@ -136,7 +136,7 @@ class TestOCXO():
             data = allan.frequency2fractional(data, mean_frequency=1.0e7)
             (taus, devs, errs, ns) = allan.tdev(data, rate=rate, data_type="freq",
                                                 taus=[row['tau']])
-            # NOTE! Here we use alhpa from Stable32-results for the allantools edf computation!
+            # NOTE! Here we use alpha from Stable32-results for the allantools edf computation!
             edf = allan.edf_greenhall(alpha=row['alpha'], d=2, m=row['m'], N=len(
                 data), overlapping=True, modified=True, verbose=True)
             (lo, hi) = allan.confidence_interval(devs[0], edf=edf)
@@ -157,7 +157,7 @@ class TestOCXO():
             data = allan.frequency2fractional(data, mean_frequency=1.0e7)
             (taus, devs, errs, ns) = allan.hdev(data, rate=rate, data_type="freq",
                                                 taus=[row['tau']])
-            # NOTE! Here we use alhpa from Stable32-results for the allantools edf computation!
+            # NOTE! Here we use alpha from Stable32-results for the allantools edf computation!
             edf = allan.edf_greenhall(alpha=row['alpha'], d=3, m=row['m'], N=len(
                 data), overlapping=False, modified=False, verbose=True)
             (lo, hi) = allan.confidence_interval(devs[0], edf=edf)
@@ -178,7 +178,7 @@ class TestOCXO():
             data = allan.frequency2fractional(data, mean_frequency=1.0e7)
             (taus, devs, errs, ns) = allan.ohdev(data, rate=rate, data_type="freq",
                                                  taus=[row['tau']])
-            # NOTE! Here we use alhpa from Stable32-results for the allantools edf computation!
+            # NOTE! Here we use alpha from Stable32-results for the allantools edf computation!
             edf = allan.edf_greenhall(alpha=row['alpha'], d=3, m=row['m'], N=len(
                 data), overlapping=True, modified=False, verbose=True)
             (lo, hi) = allan.confidence_interval(devs[0], edf=edf)

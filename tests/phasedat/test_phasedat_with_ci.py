@@ -81,7 +81,7 @@ class TestPhaseDatCI():
             phase, taus=[s32['tau'] for s32 in s32_rows])
 
         # CI computation
-        # alhpa     +2,...,-4   noise power
+        # alpha     +2,...,-4   noise power
         # d         1 first-difference variance, 2 allan variance, 3 hadamard variance
         #           alpha+2*d >1
         # m         tau/tau0 averaging factor
@@ -115,7 +115,7 @@ class TestPhaseDatCI():
             phase, taus=[s32['tau'] for s32 in s32_rows])
 
         # CI computation
-        # alhpa= +2,...,-4   noise power
+        # alpha= +2,...,-4   noise power
         # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
         # alpha+2*d >1
         # m = tau/tau0 averaging factor
@@ -149,7 +149,7 @@ class TestPhaseDatCI():
             phase, taus=[s32['tau'] for s32 in s32_rows])
 
         # CI computation
-        # alhpa= +2,...,-4   noise power
+        # alpha= +2,...,-4   noise power
         # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
         # alpha+2*d >1
         # m = tau/tau0 averaging factor
@@ -182,7 +182,7 @@ class TestPhaseDatCI():
             phase, taus=[s32['tau'] for s32 in s32_rows])
 
         # CI computation
-        # alhpa= +2,...,-4   noise power
+        # alpha= +2,...,-4   noise power
         # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
         # alpha+2*d >1
         # m = tau/tau0 averaging factor
@@ -217,7 +217,7 @@ class TestPhaseDatCI():
             phase, taus=[s32['tau'] for s32 in s32_rows])
 
         # CI computation
-        # alhpa= +2,...,-4   noise power
+        # alpha= +2,...,-4   noise power
         # d= 1 first-difference variance, 2 allan variance, 3 hadamard variance
         # alpha+2*d >1
         # m = tau/tau0 averaging factor
@@ -227,7 +227,7 @@ class TestPhaseDatCI():
         for (d, t, n) in zip(devs, taus, ns):
             edf2 = allan.edf_greenhall(alpha=0, d=2, m=int(
                 t), N=len(phase), overlapping=True, modified=True)
-            # covert to mdev
+            # convert to mdev
             # tdev = taus * mdev / np.sqrt(3.0)
             mdev = d/t*np.sqrt(3.0)
             (lo, hi) = allan.confidence_interval(dev=mdev, edf=edf2)

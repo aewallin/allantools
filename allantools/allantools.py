@@ -1074,7 +1074,7 @@ def calc_mtotdev_phase(phase, rate, m):
         for j in range(0, 6*m):  # summation of the 6m terms.
             # faster inner sum, based on Stable32 MTC.c code
             if j == 0:
-                # intialize the sum
+                # initialize the sum
                 xmean1 = np.sum(xstar[0:m])
                 xmean2 = np.sum(xstar[m:2*m])
                 xmean3 = np.sum(xstar[2*m:3*m])
@@ -1231,7 +1231,7 @@ def calc_htotdev_freq(freq, m):
             # squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)
             # new faster way of doing the sums
             if j == 0:
-                # intialize the sum
+                # initialize the sum
                 xmean1 = np.sum(xstar[0:m])
                 xmean2 = np.sum(xstar[m:2*m])
                 xmean3 = np.sum(xstar[2*m:3*m])

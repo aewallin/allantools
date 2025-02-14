@@ -9,7 +9,7 @@
   last datapoint           1391731199 2014-02-06 23:59:59 UTC
   556990 datapoints in total
 
-  This test is quite slow, for a fater test see Cs5071A_test_decade.py
+  This test is quite slow, for a faster test see Cs5071A_test_decade.py
 
   AW2014-02-07
 """

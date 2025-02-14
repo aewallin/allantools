@@ -46,7 +46,7 @@ def confidence_interval(dev, edf, ci=ONE_SIGMA_CI):
     dev: float
         Mean value (e.g. adev) around which we produce the confidence interval
     edf: float
-        Equivalent degrees of freedon
+        Equivalent degrees of freedom
     ci: float, defaults to scipy.special.erf(1/math.sqrt(2))
         for 1-sigma standard error set
         ci = scipy.special.erf(1/math.sqrt(2))
@@ -223,7 +223,7 @@ def b1_theory(N, mu):
         S_x(f) = g_b f^b        (power spectrum of x)
         bias = const * tau^mu
 
-        and (b, alpha, mu) relate to eachother by:
+        and (b, alpha, mu) relate to each other by:
         b    alpha   mu
         0    +2      -2
        -1    +1      -2   resolve between -2 cases with R(n)
@@ -265,7 +265,7 @@ def b1_boundary(b_hi, N):
     if b1_lo >= -4:
         return np.sqrt(b1_lo*b1_hi)  # geometric mean
     else:
-        return 0.5*(b1_lo+b1_hi)  # arithemtic mean
+        return 0.5*(b1_lo+b1_hi)  # arithmetic mean
 
 
 def b_to_mu(b):

@@ -10,7 +10,7 @@ Version history
 ---------------
 
 **2019.07**
-- Homogeneized output types and parameter names
+- Homogenized output types and parameter names
 - PEP8 + docstrings update
 
 **v1.00**

@@ -92,7 +92,7 @@ class Dataset(object):
 
     def set_input(self, data,
                   rate=1.0, data_type="phase", taus=None):
-        """ Optionnal method if you chose not to set inputs on init
+        """ Optional method if you chose not to set inputs on init
 
         Parameters
         ----------
