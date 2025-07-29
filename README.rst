@@ -18,6 +18,8 @@ AllanTools
     :target: https://allantools.readthedocs.io/en/latest/
 .. image:: https://coveralls.io/repos/github/aewallin/allantools/badge.svg
     :target: https://coveralls.io/github/aewallin/allantools
+.. image:: https://img.shields.io/badge/ascl-1804.021-blue.svg?colorB=262255
+    :target: https://ascl.net/1804.021
 
 A python library for calculating Allan deviation and related 
 time & frequency statistics. `LGPL v3+ license <https://www.gnu.org/licenses/lgpl.html>`_.
