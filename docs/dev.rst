@@ -25,10 +25,17 @@ Here follows an un-ordered to do list:
 Make sure your patch does not break any of the tests, and does not 
 significantly reduce the readability of the code.
 
+
+Hatch environment
+-----------------
+
+Current version of pyproject.toml supposes the use of `hatch` for developping the package.
+Optional dependencies needed for development (e.g. `numpydoc`, `pytest`) are only installed if the `dev` environment is invoked, e.g. `hatch -e dev shell`.
+
 Documentation generation
 ------------------------
-See /docs for documentation in sphinx format. On Ubuntu this requires 
-the **python-sphinx** and **python-numpydoc** packages.
+See /docs for documentation in sphinx format. This requires 
+the **sphinx**, **sphinx-rtd-theme** and **numpydoc** packages (they should be installed automatically if you are using the `dev` environment from `hatch`, but can also be installed by your distribution manager if you prefer, e.g `apt install python3-sphinx sphinx-rtd-theme-common python3-numpydoc` on Ubuntu).
 html/pdf documentation using sphinx can be built locally with::
 
     /docs$ make html
@@ -54,6 +61,8 @@ Slow tests are marked 'slow' and tests failing because of a known
 reason are marked 'fails'. To run all tests::
     
     $ py.test
+
+You can also use `hatch test`.
 
 To exclude known failing tests::
 
@@ -94,7 +103,7 @@ Creating a source distribution
 
 ::
 
-    python setup.py sdist
+    hatch build sdist
 
 This creates a package in dist/
 Testing the source distribution. The install takes a long time while 

@@ -8,9 +8,7 @@ version = "2024.06"
 dependencies = [
   "numpy",
   "scipy>=1.6.0",
-  "numpydoc",
   "matplotlib",
-  "pytest",
 ]
 requires-python = ">=3.8"
 authors = [
@@ -34,7 +32,14 @@ exclude = [
   "experimental/*",
 ]
 
-[project.optional-dependencies]
+[tool.hatch.envs.dev]
+extra-dependencies = [
+    "sphinx",
+    "sphinx-rtd-theme",
+    "numpydoc",
+    "pytest",
+    "coverage",
+]
 
 [project.urls]
 Homepage = "https://github.com/aewallin/allantools"

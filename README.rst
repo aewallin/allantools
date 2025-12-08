@@ -75,15 +75,15 @@ Install from pypi::
     
     pip install allantools
 
-Latest version + examples, tests, test data, iPython notebooks : clone from github, then install ::  
+Latest version + examples, tests, test data, iPython notebooks : clone from github, then from the cloned repository install ::  
 
-    python setup.py install
+    pip install .
 
-(see `python setup.py --help install` for install options)
+(see `pip install -h` for install options)
 
 These commands should be run as root for system-wide installation, or 
 you can use the `--user` option to install for your account only. 
-Exact command names may vary depending on your OS / package manager / target python version.
+Exact command names may vary depending on your OS / package manager / target python version. If command `pip` is not available or does not install the package in the expected python version, `python -m pip install .` is equivalent.
 
 Basic usage 
 -----------
