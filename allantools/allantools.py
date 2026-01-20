@@ -1763,6 +1763,217 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
     return taus_used, ad
 
 
+def adev2psd_piecewise_approx(adev, taus, vartype="adev", mu_tol=1e-5):
+    """
+    Approximate inverse mapping from deviation (ADEV/HDEV) to a piecewise
+    power-law one-sided fractional-frequency PSD Sy(f). This algorithm replaces
+    an ill-posed inverse problem (ADEV → PSD) with a well-posed constrained reconstruction,
+    by assuming local power-law behavior, enforcing continuity, and using the exact Allan 
+    integral to map time-domain slopes into frequency-domain energy.
+
+    Between consecutive tau nodes, the deviation is approximated as a power law.
+    Define the local slope
+
+        mu_i = 2 * (log(adev_{i+1}) - log(adev_i)) / (log(tau_{i+1}) - log(tau_i))
+
+    which corresponds to sigma_y^2(tau) ∝ tau^{mu_i}.
+
+    Each mu_i maps to a PSD exponent
+
+        alpha_i = -mu_i - 1
+
+    and the PSD is modeled as piecewise
+
+        Sy(f) = h_i * f^{alpha_i}
+
+    The coefficients h_i are obtained from the exact Allan/Hadamard integral
+    (De Marchi et al. 2024) through
+
+        J(mu) = ∫_0^∞ q(z) * sin^4(z) / z^{3+mu} dz
+
+    with q(z)=1 (ADEV) and q(z)=(4/3)sin^2(z) (HDEV).
+
+    Convergence conditions:
+        ADEV: -2 <= mu <= 2
+        HDEV: -2 <= mu <= 4
+
+    Parameters
+    ----------
+    adev : array_like
+        Deviation values (ADEV or HDEV), same length as `taus`.
+    taus : array_like
+        Averaging times tau in seconds (strictly increasing).
+    vartype : {'adev', 'hdev'}, optional
+        Deviation type. Default is 'adev'.
+    mu_tol : float, optional
+        Threshold for merging consecutive log-log slopes mu. Default 1e-5.
+
+    Returns
+    -------
+    f_nodes : ndarray
+        Break frequencies (Hz), ascending. Length is nseg-1 in the general case.
+    Sy_nodes : ndarray
+        Sy(f) evaluated at f_nodes (for convenience/plotting).
+    h : ndarray
+        PSD coefficients for each interval, length nseg.
+    alpha : ndarray
+        PSD exponents for each interval, length nseg.
+
+    References
+    ----------
+    F. De Marchi, M. K. Plumaris, E. A. Burt, and L. Iess,
+    "An Algorithm to Estimate the Power Spectral Density From Allan Deviation,"
+    IEEE Trans. UFFC, vol. 71, no. 4, pp. 506–515, 2024.
+    """
+    adev = np.asarray(adev, dtype=float)
+    taus = np.asarray(taus, dtype=float)
+
+    if adev.ndim != 1 or taus.ndim != 1 or adev.size != taus.size:
+        raise ValueError("adev and taus must be 1D arrays of equal length.")
+    if adev.size < 2:
+        raise ValueError("Need at least two points.")
+    if np.any(adev <= 0) or np.any(taus <= 0):
+        raise ValueError("adev and taus must be positive.")
+    if not np.all(np.diff(taus) > 0):
+        raise ValueError("taus must be strictly increasing.")
+
+    vt = vartype.lower()
+    if vt not in ("adev", "hdev"):
+        raise ValueError("vartype must be 'adev' or 'hdev'.")
+
+    def q(z):
+        return 1.0 if vt == "adev" else (4.0 / 3.0) * (np.sin(z) ** 2)
+
+    # --- match your original filtering of mu segments ---
+    mus = []
+    filtered_adev = [float(adev[0])]
+    filtered_tau = [float(taus[0])]
+
+    for i in range(1, adev.size):
+        mu = 2.0 * (np.log(adev[i]) - np.log(adev[i - 1])) / (np.log(taus[i]) - np.log(taus[i - 1]))
+        if (not mus) or (abs(mu - mus[-1]) > mu_tol):
+            mus.append(mu)
+            filtered_adev.append(float(adev[i]))
+            filtered_tau.append(float(taus[i]))
+
+    mus = np.asarray(mus, dtype=float)
+    filtered_adev = np.asarray(filtered_adev, dtype=float)
+    filtered_tau = np.asarray(filtered_tau, dtype=float)
+
+    # Convergence checks (exactly like your original)
+    for i, mu in enumerate(mus):
+        if vt == "adev" and not (-2.0 <= mu <= 2.0):
+            raise ValueError(
+                "Input ADEV cannot be converted to PSD: integral not convergent "
+                f"between nodes {filtered_tau[i]} [s] and {filtered_tau[i+1]} [s]."
+            )
+        if vt == "hdev" and not (-2.0 <= mu <= 4.0):
+            raise ValueError(
+                "Input HDEV cannot be converted to PSD: integral not convergent "
+                f"between nodes {filtered_tau[i]} [s] and {filtered_tau[i+1]} [s]."
+            )
+
+    # Bi coefficients (same indexing as your original)
+    Bi = np.array(
+        [filtered_adev[i] ** 2 * filtered_tau[i] ** (-mus[i - 1]) for i in range(1, mus.size + 1)],
+        dtype=float,
+    )
+
+    # hi coefficients (time-order), plus integral_values
+    hi = []
+    integral_values = []
+    for i in range(Bi.size):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=IntegrationWarning)
+            I, _ = quad(lambda z: q(z) * (np.sin(z) ** 4) / (z ** (3.0 + mus[i])), 0.0, np.inf)
+        integral_values.append(I)
+        hi.append(Bi[i] / (2.0 * I * (np.pi ** mus[i])))
+
+    integral_values = np.asarray(integral_values, dtype=float)
+    hi = np.asarray(hi, dtype=float)
+
+    # reverse hi for frequency ordering (exactly like your original)
+    hi = hi[::-1].copy()
+
+    # alphas derived from reversed mus (exactly like your original)
+    alphas = np.array([-mus[-(i + 1)] - 1.0 for i in range(mus.size)], dtype=float)
+
+    # frequency nodes and Sy(f_nodes) values (exactly like your original)
+    if filtered_adev.size == 2:
+        f_nodes = np.array([1.0 / t for t in filtered_tau], dtype=float)[::-1]
+        Sy_nodes = np.array([hi[0] * (f_nodes[i] ** alphas[0]) for i in range(f_nodes.size)], dtype=float)
+    else:
+        f_nodes = np.array(
+            [
+                1.0 / (10.0 * np.pi * filtered_tau[i]) *
+                (integral_values[i] / integral_values[i + 1]) ** (1.0 / (mus[i + 1] - mus[i]))
+                for i in range(mus.size - 1)
+            ],
+            dtype=float,
+        )[::-1]
+        Sy_nodes = np.array([hi[i] * (f_nodes[i] ** alphas[i]) for i in range(f_nodes.size)], dtype=float)
+
+    return f_nodes, Sy_nodes, hi, alphas
+
+def psd_piecewise_to_adev(h, alpha, f_nodes, taus):
+    """
+    Compute Allan deviation from a piecewise power-law one-sided PSD Sy(f).
+    Allan variance is related to Sy(f) by (NIST SP 1065):
+
+        sigma_y^2(tau) = 2 * ∫_0^∞ Sy(f) * sin^4(pi f tau) / (pi f tau)^2 df
+
+    For piecewise Sy(f)=h_i f^{alpha_i}, split the integral over
+    [0,f1), [f1,f2), ..., [f_last, +inf) and use z = pi*tau*f:
+
+        sigma_y^2(tau) = 2 * Σ_i h_i / (pi*tau)^{alpha_i+1}
+                         * ∫_{pi*tau*f_{i-1}}^{pi*tau*f_i}
+                           sin^4(z) / z^{2-alpha_i} dz
+
+    Parameters
+    ----------
+    h : array_like
+        PSD coefficients for each frequency interval, length nseg.
+    alpha : array_like
+        PSD exponents for each frequency interval, length nseg.
+    f_nodes : array_like
+        Frequency break nodes (Hz), ascending. Length nseg-1.
+    taus : array_like
+        Averaging times tau (seconds) at which to compute ADEV.
+
+
+    Returns
+    -------
+    adev : ndarray
+        Allan deviation values at each tau (same shape as taus).
+
+    References
+    ----------
+    NIST SP 1065, "Handbook of Frequency Stability Analysis", Eq. (65).
+    """
+    from scipy.integrate import quad, IntegrationWarning
+    h = np.asarray(h, dtype=float)
+    alpha = np.asarray(alpha, dtype=float)
+    f_nodes = np.asarray(f_nodes, dtype=float)
+    taus = np.asarray(taus, dtype=float)
+
+    def integrand(z, a):
+        return (np.sin(z) ** 4) / (z ** (2.0 - a))
+
+    edges = np.concatenate(([0.0], f_nodes, [np.inf]))
+    adev = np.empty_like(taus, dtype=float)
+
+    for k, tau in enumerate(taus):
+        sigma_y2 = 0.0
+        for i in range(h.size):
+            factor = h[i] / ((np.pi * tau) ** (alpha[i] + 1.0))
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=IntegrationWarning)
+                I, _ = quad(integrand, np.pi * tau * edges[i], np.pi * tau * edges[i + 1], args=(alpha[i],))
+            sigma_y2 += factor * I
+        adev[k] = np.sqrt(2.0 * sigma_y2)
+
+    return adev
+    
 ########################################################################
 #
 #  Various helper functions and utilities

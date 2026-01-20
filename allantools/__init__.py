@@ -72,6 +72,8 @@ from .allantools import trim_data
 from .allantools import psd2allan
 from .allantools import tau_generator
 from .allantools import tau_reduction
+from .allantools import adev2psd_piecewise_approx
+from .allantools import psd_piecewise_to_adev
 
 # ci.py contains functions for confidence intervals
 from .ci import edf_simple
@@ -84,6 +86,8 @@ from .ci import confidence_interval_noiseID
 
 # noise generation
 from . import noise
+
+from noise import timmer_koenig_from_psd
 
 from .dataset import Dataset
 from .plot import Plot
