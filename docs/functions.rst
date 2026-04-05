@@ -66,7 +66,8 @@ Noise Generation
 
 .. autoclass:: allantools.noise_kasdin.Noise
     :members:
-    
+
+.. autofunction:: allantools.noise.timmer_koenig_from_psd
 .. autofunction:: allantools.noise.white
 .. autofunction:: allantools.noise.brown
 .. autofunction:: allantools.noise.violet
@@ -80,6 +81,7 @@ Utilities
 .. autofunction:: phase2radians
 .. autofunction:: psd2allan
 .. autofunction:: psd_piecewise_to_adev
+.. autofunction:: adev2psd_piecewise_approx
 .. autofunction:: tau_generator
 .. autofunction:: edf_simple
 .. autofunction:: edf_greenhall
