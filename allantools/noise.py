@@ -206,3 +206,125 @@ def iterpink(depth=20):
         # replace value c with a new source element
         sumvals += source[i] - values[c]
         values[c] = source[i]
+
+from numpy.fft import ifft
+
+def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase', seed=None):
+    """
+    Generate time-domain clock noise from a piecewise power-law one-sided PSD Sy(f)
+    using a Timmer–Koenig-style Fourier synthesis.
+
+     Frequency grid (old convention used in your validated script):
+        n  = int(duration/dt)
+        f1 = 1 / ((n - 1) * dt)
+        fn = 1 / (2 * dt)
+        f_k = linspace(f1, fn, n/2 + 1)
+
+    Sample one-sided fractional-frequency PSD:
+        Sy(f) = h_i f^{alpha_i}
+
+    Convert to phase/time PSD:
+        Sx(f) = Sy(f) / (2*pi*f)^2
+
+    Generate complex spectrum coefficients (Timmer–Koenig style):
+        X_k = sqrt(Sx(f_k))/2 * (N(0,1) + i N(0,1))
+
+    Impose Hermitian symmetry and inverse FFT:
+        x = ifft(X) * sqrt((n-1)/dt)
+
+    Parameters
+    ----------
+    f_nodes : array_like
+        Break frequencies (Hz) defining PSD intervals, ascending.
+        Length is typically nseg-1.
+    h : array_like
+        PSD coefficients for each interval, length nseg.
+        Defines Sy(f) = h_i * f**alpha_i in each interval.
+    alpha : array_like
+        PSD slopes for each interval, length nseg.
+    duration : float
+        Total duration of generated time series (seconds).
+    timestep : float
+        Sampling interval dt (seconds). Sampling rate is fs = 1/dt.
+    output : {'phase', 'freq'}, optional
+        'phase' returns phase/time fluctuation x(t) [s].
+        'freq' returns fractional frequency y(t) = dx/dt [-].
+    seed : int or None, optional
+        Random seed for reproducible synthesis.
+
+    Returns
+    -------
+    x_or_y : ndarray
+        Time series of length n. If output='phase', returns x(t) [s].
+        If output='freq', returns y(t) [-].
+
+    References
+    ----------
+    J. Timmer and M. Koenig, "On generating power law noise",
+    Astronomy and Astrophysics, vol. 300, pp. 707–710, 1995.
+    """
+    f_nodes = np.asarray(f_nodes, dtype=float)
+    h = np.asarray(h, dtype=float)
+    alpha = np.asarray(alpha, dtype=float)
+
+    if duration <= 0 or timestep <= 0:
+        raise ValueError("duration and timestep must be positive.")
+    if h.size != alpha.size:
+        raise ValueError("h and alpha must have the same length.")
+    if f_nodes.size not in (0, h.size - 1):
+        # Typical output of your reconstruction: len(f_nodes)=len(h)-1
+        raise ValueError("Expected len(f_nodes) == len(h)-1 (or 0 for single segment).")
+
+    # Seed behavior: match numpy global RNG behavior used in your original code
+    if seed is not None:
+        np.random.seed(int(seed))
+
+    # Extrapolate behavior beyond the last node (matches your original)
+    h_ext = np.concatenate([h, [h[-1]]])
+    alpha_ext = np.concatenate([alpha, [alpha[-1]]])
+
+    n = int(duration / timestep)
+    if n < 4:
+        raise ValueError("duration/timestep too small; need at least 4 samples.")
+
+    f1 = 1.0 / ((n - 1) * timestep)
+    fn = 1.0 / (2.0 * timestep)
+    frequencies = np.linspace(f1, fn, n // 2 + 1)
+
+    # Sample Sy on this grid using the same interval logic as your original
+    Sy = np.zeros_like(frequencies)
+    for i, f in enumerate(frequencies):
+        if f_nodes.size > 0 and f < f_nodes[0]:
+            Sy[i] = h_ext[0] * f ** alpha_ext[0]
+        elif f_nodes.size > 0 and f > f_nodes[-1]:
+            Sy[i] = h_ext[-1] * f ** alpha_ext[-1]
+        else:
+            if f_nodes.size == 0:
+                Sy[i] = h_ext[0] * f ** alpha_ext[0]
+            else:
+                for j in range(1, f_nodes.size):
+                    if f_nodes[j - 1] <= f < f_nodes[j]:
+                        Sy[i] = h_ext[j] * f ** alpha_ext[j]
+                        break
+
+    # Convert Sy -> Sx
+    Sx = Sy / (2.0 * np.pi * frequencies) ** 2
+    Sx[0] = 0.0
+
+    # Build full complex spectrum and enforce Hermitian symmetry
+    X = np.zeros(n, dtype=complex)
+    for j in range(1, n // 2 + 1):
+        X[j] = (np.sqrt(Sx[j]) / 2.0) * (np.random.normal(0, 1) + 1j * np.random.normal(0, 1))
+
+    X[n // 2 + 1:] = np.conj(X[1:n // 2][::-1])
+
+    x = ifft(X) * np.sqrt((n - 1) / timestep)
+    x = x.real
+
+    if output == 'phase':
+        return x
+    elif output == 'freq':
+        return np.concatenate(([0.0], np.diff(x) / timestep))
+    else:
+        raise ValueError("output must be 'phase' or 'freq'.")
+        
