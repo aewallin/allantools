@@ -115,7 +115,7 @@ import json
 import warnings
 import numpy as np
 from scipy import interpolate      # used in psd2allan()
-from scipy.integrate import simpson, quad  # used in psd2allan()
+from scipy.integrate import simpson, quad, IntegrationWarning  # used in psd2allan()
 
 from . import ci  # edf, confidence intervals
 
@@ -1951,7 +1951,7 @@ def psd_piecewise_to_adev(h, alpha, f_nodes, taus):
     ----------
     NIST SP 1065, "Handbook of Frequency Stability Analysis", Eq. (65).
     """
-    from scipy.integrate import quad, IntegrationWarning
+    #from scipy.integrate import quad, IntegrationWarning
     h = np.asarray(h, dtype=float)
     alpha = np.asarray(alpha, dtype=float)
     f_nodes = np.asarray(f_nodes, dtype=float)
