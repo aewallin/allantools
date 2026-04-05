@@ -87,7 +87,7 @@ from .ci import confidence_interval_noiseID
 # noise generation
 from . import noise
 
-from noise import timmer_koenig_from_psd
+from .noise import timmer_koenig_from_psd
 
 from .dataset import Dataset
 from .plot import Plot
