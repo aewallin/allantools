@@ -79,6 +79,7 @@ Utilities
 .. autofunction:: phase2frequency
 .. autofunction:: phase2radians
 .. autofunction:: psd2allan
+.. autofunction:: psd_piecewise_to_adev
 .. autofunction:: tau_generator
 .. autofunction:: edf_simple
 .. autofunction:: edf_greenhall
