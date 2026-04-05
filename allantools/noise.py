@@ -32,7 +32,7 @@ This program is free software: you can redistribute it and/or modify
 """
 
 import math
-import numpy
+import numpy as np
 import scipy.signal  # for welch PSD
 
 
@@ -45,8 +45,8 @@ def numpy_psd(x, f_sample=1.0):
         output has units of [X^2/Hz] where X is the unit of x
     """
     psd_of_x = ((2.0 / (float(len(x)) * f_sample))
-                * numpy.abs(numpy.fft.rfft(x))**2)
-    f_axis = numpy.linspace(0, f_sample/2.0, len(psd_of_x))  # frequency axis
+                * np.abs(np.fft.rfft(x))**2)
+    f_axis = np.linspace(0, f_sample/2.0, len(psd_of_x))  # frequency axis
     return f_axis, psd_of_x
 
 
@@ -83,7 +83,7 @@ def white(num_points=1024, b0=1.0, fs=1.0):
         -------
         White noise sample: numpy.array
     """
-    return math.sqrt(b0*fs/2.0)*numpy.random.randn(num_points)
+    return math.sqrt(b0*fs/2.0)*np.random.randn(num_points)
 
 
 def brown(num_points=1024, b_minus2=1.0, fs=1.0):
@@ -106,7 +106,7 @@ def brown(num_points=1024, b_minus2=1.0, fs=1.0):
         -------
         Random walk sample: numpy.array
     """
-    return (1.0/float(fs))*numpy.cumsum(
+    return (1.0/float(fs))*np.cumsum(
         white(num_points,
               b0=b_minus2*(4.0*math.pi*math.pi),
               fs=fs))
@@ -132,7 +132,7 @@ def violet(num_points=1024, b2=1, fs=1):
         Violet noise sample: numpy.array
     """
     # diff() reduces number of points by one.
-    return (float(fs))*numpy.diff(
+    return (float(fs))*np.diff(
         white(num_points+1, b0=b2/(2.0*math.pi)**2, fs=fs))
 
 
@@ -162,7 +162,7 @@ def pink(num_points=1024, depth=80):
     s = iterpink(depth)
     for n in range(num_points):  # FIXME: num_points is unused here.
         a.append(next(s))
-    return numpy.array(a)
+    return np.array(a)
 
 
 def iterpink(depth=20):
@@ -181,9 +181,9 @@ def iterpink(depth=20):
     Generates a never-ending sequence of floating-point values. Any continuous
     set of these samples will tend to have a 1/f power spectrum.
     """
-    values = numpy.random.randn(depth)
-    smooth = numpy.random.randn(depth)
-    source = numpy.random.randn(depth)
+    values = np.random.randn(depth)
+    smooth = np.random.randn(depth)
+    source = np.random.randn(depth)
     sumvals = values.sum()
     i = 0
     while True:
@@ -194,8 +194,8 @@ def iterpink(depth=20):
         i += 1
         if i == depth:
             i = 0
-            smooth = numpy.random.randn(depth)
-            source = numpy.random.randn(depth)
+            smooth = np.random.randn(depth)
+            source = np.random.randn(depth)
             continue
 
         # count trailing zeros in i
@@ -207,7 +207,6 @@ def iterpink(depth=20):
         sumvals += source[i] - values[c]
         values[c] = source[i]
 
-from numpy.fft import ifft
 
 def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase', seed=None):
     """
@@ -318,7 +317,7 @@ def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase'
 
     X[n // 2 + 1:] = np.conj(X[1:n // 2][::-1])
 
-    x = ifft(X) * np.sqrt((n - 1) / timestep)
+    x = np.fft.ifft(X) * np.sqrt((n - 1) / timestep)
     x = x.real
 
     if output == 'phase':
