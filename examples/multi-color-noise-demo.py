@@ -1,19 +1,17 @@
 #!/usr/bin/env python
 
-# import numpy as np
+
 import matplotlib.pyplot as plt
 import allantools as at
-import math
 # note that latex requires e.g. a texlive installation and dvipng
-plt.rc('text', usetex=True)  # for latex
-plt.rc('font', family='serif')
+# plt.rc('text', usetex=True)  # for latex
+# plt.rc('font', family='serif')
 
 """
 
 multi-colored noise example startinng from the ADEV
 
-This example uses the ADEV->PSD conversion () class and Kasdin&Walter
-updated 2018-01
+
 """
 
 
@@ -29,14 +27,17 @@ def main():
     
     # 1) ADEV -> PSD parameters
     f_nodes, Sy_nodes, h, alpha = at.adev2psd_piecewise_approx(adevs, taus, vartype="adev")
+    print("adev2psd_piecewise_approx() done")
     
     # 2) PSD -> ADEV
     adev_from_psd = at.psd_piecewise_to_adev(h, alpha, f_nodes, taus)
+    print("psd_piecewise_to_adev() done")
     
     # 3) PSD -> noise 
     duration = taus[-1] * 100
     timestep = taus[0] / 2
     noise = at.noise.timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase', seed=1)
+    print("timmer_koening noise generation done")
     
     # 4) noise -> ADEV
     taus_noise, adev_noise, _, _ = at.adev(noise, rate=1/timestep, data_type='phase', taus=taus)
