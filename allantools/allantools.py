@@ -1822,7 +1822,7 @@ def adev2psd_piecewise_approx(adev, taus, vartype="adev", mu_tol=1e-5):
 
     References
     ----------
-    F. De Marchi, M. K. Plumaris, E. A. Burt, and L. Iess,
+    [DeMarchi2024]_ F. De Marchi, M. K. Plumaris, E. A. Burt, and L. Iess,
     "An Algorithm to Estimate the Power Spectral Density From Allan Deviation,"
     IEEE Trans. UFFC, vol. 71, no. 4, pp. 506–515, 2024.
     """
@@ -1949,7 +1949,7 @@ def psd_piecewise_to_adev(h, alpha, f_nodes, taus):
 
     References
     ----------
-    NIST SP 1065, "Handbook of Frequency Stability Analysis", Eq. (65).
+    NIST [SP1065]_, "Handbook of Frequency Stability Analysis", Eq. (65).
     """
     #from scipy.integrate import quad, IntegrationWarning
     h = np.asarray(h, dtype=float)

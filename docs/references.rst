@@ -36,6 +36,11 @@ Papers
     Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
     https://doi.org/10.1109/TUFFC.2007.337
 
+..  [DeMarchi2024] F. De Marchi, M. K. Plumaris, E. A. Burt, and L. Iess,
+    "An Algorithm to Estimate the Power Spectral Density From Allan Deviation,"
+    IEEE Trans. UFFC, vol. 71, no. 4, pp. 506–515, 2024.
+    https://doi.org/10.1109/TUFFC.2024.3372395
+    
 .. [Dobrogowski2007] Dobrogowski & Kasznia
     Real-time Assessment of Allan Deviation and Time Deviation
     2007 IEEE International Frequency Control Symposium Joint with the 21st European Frequency and Time Forum
@@ -114,6 +119,10 @@ Papers
     presence of long periods of missing data and outliers.
     2008 Metrologia 45 S134 http://dx.doi.org/10.1088/0026-1394/45/6/S19
 
+..  [Timmer1995] J. Timmer and M. Koenig, "On generating power law noise",
+    Astronomy and Astrophysics, vol. 300, pp. 707–710, 1995.
+    available online at https://blog.ioces.com/matt/posts/colouring-noise/timmer-konig-1995.pdf
+    
 .. [Vernotte2011] F. Vernotte, "Variance Measurements", 2011 IFCS & EFTF
     http://www.ieee-uffc.org/frequency-control/learning/pdf/Vernotte-Varience_Measurements.pdf
 

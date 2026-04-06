@@ -259,7 +259,7 @@ def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase'
 
     References
     ----------
-    J. Timmer and M. Koenig, "On generating power law noise",
+    [Timmer1995]_ J. Timmer and M. Koenig, "On generating power law noise",
     Astronomy and Astrophysics, vol. 300, pp. 707–710, 1995.
     """
     f_nodes = np.asarray(f_nodes, dtype=float)
