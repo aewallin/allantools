@@ -19,7 +19,7 @@ The deviation functions are generally of the form::
     * **data** = list of phase measurements in seconds, or list of fractional frequency measurements (nondimensional)
     * **rate**  = sample rate of data in Hz , i.e. interval between phase measurements is 1/rate seconds.
     * **data_type=** = either "phase" or "freq"
-    * **taus**  = list of tau-values for ADEV computation. The keywords "all", "octave", or "decade" can also be used.
+    * **taus**  = list of tau-values for ADEV computation. The keywords "all", "octave", "decade", or "log10" can also be used.
 
 *Outputs*
 

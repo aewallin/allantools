@@ -1767,7 +1767,7 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
 def adev2psd_piecewise_approx(adev, taus, vartype="adev", mu_tol=1e-5):
     """
     Approximate inverse mapping from deviation (ADEV/HDEV) to a piecewise
-    power-law one-sided fractional-frequency PSD Sy(f). This algorithm replaces
+    power-law one-sided fractional-frequency PSD :math:`S_y(f)`. This algorithm replaces
     an ill-posed inverse problem (ADEV → PSD) with a well-posed constrained reconstruction,
     by assuming local power-law behavior, enforcing continuity, and using the exact Allan 
     integral to map time-domain slopes into frequency-domain energy.
@@ -1777,18 +1777,18 @@ def adev2psd_piecewise_approx(adev, taus, vartype="adev", mu_tol=1e-5):
 
         mu_i = 2 * (log(adev_{i+1}) - log(adev_i)) / (log(tau_{i+1}) - log(tau_i))
 
-    which corresponds to sigma_y^2(tau) ∝ tau^{mu_i}.
+    which corresponds to :math:`\\sigma_y^2(\\tau) \\propto \\tau^{\\mu_i}`.
 
-    Each mu_i maps to a PSD exponent
+    Each :math:`\\mu_i` maps to a PSD exponent
 
-        alpha_i = -mu_i - 1
+        :math:`\\alpha_i = -\\mu_i - 1`
 
     and the PSD is modeled as piecewise
 
-        Sy(f) = h_i * f^{alpha_i}
+        :math:`S_y(f) = h_i * f^{\\alpha_i}`
 
-    The coefficients h_i are obtained from the exact Allan/Hadamard integral
-    (De Marchi et al. 2024) through
+    The coefficients :math:`h_i` are obtained from the exact Allan/Hadamard integral
+    ([DeMarchi2024]_) through
 
         J(mu) = ∫_0^∞ q(z) * sin^4(z) / z^{3+mu} dz
 
@@ -1796,6 +1796,7 @@ def adev2psd_piecewise_approx(adev, taus, vartype="adev", mu_tol=1e-5):
 
     Convergence conditions:
         ADEV: -2 <= mu <= 2
+        
         HDEV: -2 <= mu <= 4
 
     Parameters
@@ -1996,7 +1997,7 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     """ pre-processing of the tau-list given by the user (Helper function)
 
     Does sanity checks, sorts data, removes duplicates and invalid values.
-    Generates a tau-list based on keywords 'all', 'decade', 'octave'.
+    Generates a tau-list based on keywords 'all', 'decade', 'octave', 'log10'.
     Uses 'octave' by default if no taus= argument is given.
 
     Parameters
