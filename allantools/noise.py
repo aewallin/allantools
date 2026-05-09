@@ -213,11 +213,14 @@ def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase'
     Generate time-domain clock noise from a piecewise power-law one-sided PSD :math:`S_y(f)`
     using a Timmer–Koenig-style Fourier synthesis.
 
-     Frequency grid (old convention used in your validated script):
-        n  = int(duration/dt)
-        f1 = 1 / ((n - 1) * dt)
-        fn = 1 / (2 * dt)
-        f_k = linspace(f1, fn, n/2 + 1)
+    Frequency grid:
+    
+    .. :math:
+     
+        n  &= int(duration/dt) \\
+        f_1 &= 1 / ((n - 1) dt) \\
+        f_n &= 1 / (2  dt) \\
+        f_k &= linspace(f_1, f_n, n/2 + 1)
 
     Sample one-sided fractional-frequency PSD:
         :math:`S_y(f) = h_i f^{\\alpha_i}`
@@ -226,10 +229,10 @@ def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase'
         :math:`S_x(f) = S_y(f) / (2 \\pi f)^2`
 
     Generate complex spectrum coefficients (Timmer–Koenig style):
-        :math:`X_k = \\sqrt{S_x(f_k)}/2 * (N(0,1) + i N(0,1))`
+        :math:`X_k = \\sqrt{S_x(f_k)}/2 \\cdot (N(0,1) + i N(0,1))`
 
     Impose Hermitian symmetry and inverse FFT:
-        x = ifft(X) * sqrt((n-1)/dt)
+        :math:`x = ifft(X) \\cdot \\sqrt{(n-1)/dt}`
 
     Parameters
     ----------
