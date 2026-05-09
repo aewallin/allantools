@@ -1924,14 +1924,16 @@ def psd_piecewise_to_adev(h, alpha, f_nodes, taus):
 
     .. math::
     
-        \\sigma_y^2(\\tau) = 2 \\int_0^\\infty{S_y(f)\\frac{\\sin^4(\\pi f \\tau)}{  (\\pi f \\tau)^2}}df 
+        \\sigma_y^2(\\tau) = 2 \\int_0^\\infty{S_y(f)\\frac{\\sin^4(\\pi \\tau f)}{  (\\pi \\tau f)^2}}df 
         
     For piecewise :math:`S_y(f)=h_i f^{\\alpha_i}`, split the integral over
     [0,f1), [f1,f2), ..., [f_last, +inf) and use :math:`z = \\pi\\tau f`:
 
-        sigma_y^2(tau) = 2 * Σ_i h_i / (pi*tau)^{alpha_i+1}
-                         * ∫_{pi*tau*f_{i-1}}^{pi*tau*f_i}
-                           sin^4(z) / z^{2-alpha_i} dz
+    .. math::
+
+        \\sigma_y^2(\\tau) = 2 \\sum_i  \\frac{h_i}{(\\pi \\tau)^{\\alpha_i+1}}
+                         \\int_{\\pi \\tau f_{i-1}}^{\\pi \\tau f_i}
+                           \\frac{\\sin^4(z)}{z^{2-\\alpha_i}} dz
 
     Parameters
     ----------
