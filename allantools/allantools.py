@@ -1922,10 +1922,12 @@ def psd_piecewise_to_adev(h, alpha, f_nodes, taus):
     Compute Allan deviation from a piecewise power-law one-sided PSD :math:`S_y(f)`.
     Allan variance is related to :math:`S_y(f)` by (NIST SP 1065):
 
-        sigma_y^2(tau) = 2 * ∫_0^∞ Sy(f) * sin^4(pi f tau) / (pi f tau)^2 df
-
+    .. math::
+    
+        \\sigma_y^2(\\tau) = 2 \\int_0^\\infty{S_y(f)\\frac{\\sin^4(\\pi f \\tau)}{  (\\pi f \\tau)^2}}df 
+        
     For piecewise :math:`S_y(f)=h_i f^{\\alpha_i}`, split the integral over
-    [0,f1), [f1,f2), ..., [f_last, +inf) and use z = pi*tau*f:
+    [0,f1), [f1,f2), ..., [f_last, +inf) and use :math:`z = \\pi\\tau f`:
 
         sigma_y^2(tau) = 2 * Σ_i h_i / (pi*tau)^{alpha_i+1}
                          * ∫_{pi*tau*f_{i-1}}^{pi*tau*f_i}
