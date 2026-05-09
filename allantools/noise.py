@@ -217,9 +217,9 @@ def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase'
     
     .. :math:
      
-        n  &= int(duration/dt) \\\
-        f_1 &= 1 / ((n - 1) dt) \\\
-        f_n &= 1 / (2  dt) \\\
+        n  &= int(duration/dt) \\\\
+        f_1 &= 1 / ((n - 1) dt) \\\\
+        f_n &= 1 / (2  dt) \\\\
         f_k &= linspace(f_1, f_n, n/2 + 1)
 
     Sample one-sided fractional-frequency PSD:
@@ -232,7 +232,7 @@ def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase'
         :math:`X_k = \\sqrt{S_x(f_k)}/2 \\cdot (N(0,1) + i N(0,1))`
 
     Impose Hermitian symmetry and inverse FFT:
-        :math:`x = ifft(X) \\cdot \\sqrt{(n-1)/dt}`
+        :math:`x = \\operatorname{ifft}(X) \\cdot \\sqrt{(n-1)/dt}`
 
     Parameters
     ----------
