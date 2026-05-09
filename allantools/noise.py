@@ -217,9 +217,9 @@ def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase'
     
     .. :math:
      
-        n  &= int(duration/dt) \\
-        f_1 &= 1 / ((n - 1) dt) \\
-        f_n &= 1 / (2  dt) \\
+        n  &= int(duration/dt) \\\
+        f_1 &= 1 / ((n - 1) dt) \\\
+        f_n &= 1 / (2  dt) \\\
         f_k &= linspace(f_1, f_n, n/2 + 1)
 
     Sample one-sided fractional-frequency PSD:
