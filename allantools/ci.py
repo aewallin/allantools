@@ -816,7 +816,7 @@ def edf_simple(N, m, alpha):
 
         if alpha == -1:
             if m == 1:
-                edf = 2 * (N - 2)/(2.3 * N - 4.9)
+                edf = 2 * (N - 2) **2 /(2.3 * N - 4.9)
             if m >= 2:
                 edf = 5 * N**2 / (4 * m * (N + (3 * m)))
 
