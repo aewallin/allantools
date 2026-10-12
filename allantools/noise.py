@@ -240,7 +240,9 @@ def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase'
     ----------
     f_nodes : array_like
         Break frequencies (Hz) defining PSD intervals, ascending.
-        Length is typically nseg-1.
+        Length is typically nseg-1; the single-segment two-endpoint form
+        returned by :func:`allantools.adev2psd_piecewise_approx` is also
+        accepted (it is normalised to "no breaks" internally).
     h : array_like
         PSD coefficients for each interval, length nseg.
         Defines Sy(f) = h_i * f**alpha_i in each interval.
@@ -276,8 +278,14 @@ def timmer_koenig_from_psd(f_nodes, h, alpha, duration, timestep, output='phase'
     if h.size != alpha.size:
         raise ValueError("h and alpha must have the same length.")
     if f_nodes.size not in (0, h.size - 1):
-        # Typical output of your reconstruction: len(f_nodes)=len(h)-1
-        raise ValueError("Expected len(f_nodes) == len(h)-1 (or 0 for single segment).")
+        # adev2psd_piecewise_approx() returns the two 1/tau endpoints in the
+        # single-segment case (plotting convenience); a single power law has
+        # no break frequencies, so normalise that form to "no breaks".
+        if h.size == 1:
+            f_nodes = np.array([])
+        else:
+            raise ValueError(
+                "Expected len(f_nodes) == len(h)-1 (or 0 for single segment).")
 
     # Seed behavior: match numpy global RNG behavior used in your original code
     if seed is not None:
