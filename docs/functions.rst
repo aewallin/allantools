@@ -73,6 +73,13 @@ Noise Generation
 .. autofunction:: allantools.noise.violet
 .. autofunction:: allantools.noise.pink
 
+Confidence Intervals and Noise Identification
+---------------------------------------------
+
+.. autofunction:: confidence_interval
+.. autofunction:: confidence_interval_noiseID
+.. autofunction:: autocorr_noise_id
+
 Utilities
 ---------
 
