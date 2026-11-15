@@ -863,13 +863,13 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
 
     Parameters
     ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either
-        frequency or phase.
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
     rate: float
-        The sampling rate for phase or frequency, in Hz
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
     taus: np.array
         Array of tau values for which to compute measurement
 
@@ -1180,7 +1180,7 @@ def calc_htotdev_freq(freq, m):
 
     Parameters
     ----------
-    frequency: np.array
+    freq: np.array
         Fractional frequency data (nondimensional).
     m: int
         Averaging factor. tau = m*tau0, where tau0=1/rate.
