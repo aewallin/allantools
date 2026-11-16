@@ -1455,18 +1455,18 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
                 raise ValueError("`window` is too long.")
 
             mj = int(mj)
-            currMax = np.max(phase[0:mj])
-            currMin = np.min(phase[0:mj])
+            currMax = np.max(phase[0:mj + 1])
+            currMin = np.min(phase[0:mj + 1])
             dev = currMax - currMin
             for winStartIdx in range(1, int(phase.shape[0] - mj)):
                 winEndIdx = mj + winStartIdx
                 if currMax == phase[winStartIdx - 1]:
-                    currMax = np.max(phase[winStartIdx:winEndIdx])
+                    currMax = np.max(phase[winStartIdx:winEndIdx + 1])
                 elif currMax < phase[winEndIdx]:
                     currMax = phase[winEndIdx]
 
                 if currMin == phase[winStartIdx - 1]:
-                    currMin = np.min(phase[winStartIdx:winEndIdx])
+                    currMin = np.min(phase[winStartIdx:winEndIdx + 1])
                 elif currMin > phase[winEndIdx]:
                     currMin = phase[winEndIdx]
 
