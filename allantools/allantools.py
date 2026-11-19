@@ -1764,40 +1764,135 @@ def psd2allan(S_y, f=1.0, kind='adev', base=2):
     return taus_used, ad
 
 
-def adev2psd_piecewise_approx(adev, taus, vartype="adev", mu_tol=1e-5):
+# ----------------------------------------------------------------------
+# ADEV/HDEV -> piecewise power-law PSD  (De Marchi et al. 2024)
+#
+# The kernel integrals below have a slowly decaying oscillatory tail whose
+# naive quad() evaluation silently plateaus as mu -> -2 while the true
+# integral diverges like 3/(8(2+mu)); the tail is therefore evaluated
+# analytically (constant term in closed form, oscillatory terms via
+# cosine-weighted QAWF quadrature), keeping the conversion accurate
+# arbitrarily close to the convergence boundaries.
+#
+# q(z) sin^4(z) expanded in cosines: q sin^4 = c0 + sum_k c_k cos(w_k z).
+#   ADEV: sin^4(z)       = 3/8  - (1/2)cos(2z) + (1/8)cos(4z)
+#   HDEV: (4/3) sin^6(z) = 5/12 - (5/8)cos(2z) + (1/4)cos(4z) - (1/24)cos(6z)
+# ----------------------------------------------------------------------
+_KERNEL_COS_TERMS = {
+    "adev": (3.0 / 8.0, ((-0.5, 2.0), (0.125, 4.0))),
+    "hdev": (5.0 / 12.0, ((-5.0 / 8.0, 2.0), (0.25, 4.0), (-1.0 / 24.0, 6.0))),
+}
+_KERNEL_TAIL_SPLIT = 10.0 * np.pi
+
+
+def _psd_kernel(z, vartype):
+    s4 = np.sin(z) ** 4
+    return s4 if vartype == "adev" else (4.0 / 3.0) * s4 * np.sin(z) ** 2
+
+
+def _kernel_tail_integral(p, a, vartype):
+    """:math:`\\int_a^\\infty q(z) \\sin^4(z) / z^p dz` for ``a > 0``, ``p > 1``.
+
+    The constant term of the cosine expansion carries the near-divergence as
+    p -> 1 and is integrated in closed form; the oscillatory terms converge
+    and are handled by QAWF (cosine-weighted) quadrature.
     """
-    Approximate inverse mapping from deviation (ADEV/HDEV) to a piecewise
-    power-law one-sided fractional-frequency PSD :math:`S_y(f)`. This algorithm replaces
-    an ill-posed inverse problem (ADEV → PSD) with a well-posed constrained reconstruction,
-    by assuming local power-law behavior, enforcing continuity, and using the exact Allan 
-    integral to map time-domain slopes into frequency-domain energy.
+    c0, cos_terms = _KERNEL_COS_TERMS[vartype]
+    total = c0 * a ** (1.0 - p) / (p - 1.0)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=IntegrationWarning)
+        for ck, wk in cos_terms:
+            I, _ = quad(lambda z: z ** -p, a, np.inf, weight="cos", wvar=wk)
+            total += ck * I
+    return total
 
-    Between consecutive tau nodes, the deviation is approximated as a power law.
-    Define the local slope
 
-        mu_i = 2 * (log(adev_{i+1}) - log(adev_i)) / (log(tau_{i+1}) - log(tau_i))
+def _kernel_integral(a, b, p, vartype):
+    """:math:`\\int_a^b q(z) \\sin^4(z) / z^p dz` with an accurate oscillatory tail.
 
-    which corresponds to :math:`\\sigma_y^2(\\tau) \\propto \\tau^{\\mu_i}`.
+    Valid for ``0 <= a < b <= inf`` and ``1 < p < 5`` (ADEV) resp.
+    ``1 < p < 7`` (HDEV) -- guaranteed by the convergence guards upstream.
+    """
+    if a >= _KERNEL_TAIL_SPLIT:
+        return _kernel_tail_integral(p, a, vartype) - (
+            0.0 if np.isinf(b) else _kernel_tail_integral(p, b, vartype)
+        )
+    total = 0.0
+    head_hi = min(b, _KERNEL_TAIL_SPLIT)
+    if head_hi > a:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=IntegrationWarning)
+            I, _ = quad(lambda z: _psd_kernel(z, vartype) / z ** p, a, head_hi,
+                        limit=200)
+        total += I
+    if b > _KERNEL_TAIL_SPLIT:
+        total += _kernel_tail_integral(p, _KERNEL_TAIL_SPLIT, vartype) - (
+            0.0 if np.isinf(b) else _kernel_tail_integral(p, b, vartype)
+        )
+    return total
 
-    Each :math:`\\mu_i` maps to a PSD exponent
 
-        :math:`\\alpha_i = -\\mu_i - 1`
+def _normalize_f_nodes(f_nodes, nseg):
+    """Return break frequencies with ``len == nseg - 1``.
 
-    and the PSD is modeled as piecewise
+    ``adev2psd_piecewise_approx`` returns the two 1/tau endpoints in the
+    single-segment case (a plotting convenience); as segment *edges* a single
+    power law has no breaks, so that form is normalised to an empty array.
+    """
+    f_nodes = np.asarray(f_nodes, dtype=float)
+    if f_nodes.size == nseg - 1:
+        return f_nodes
+    if nseg == 1:
+        return np.array([])
+    raise ValueError(
+        "Expected %d f_nodes for %d PSD segments, got %d."
+        % (nseg - 1, nseg, f_nodes.size))
 
-        :math:`S_y(f) = h_i * f^{\\alpha_i}`
 
-    The coefficients :math:`h_i` are obtained from the exact Allan/Hadamard integral
-    ([DeMarchi2024]_) through
+def adev2psd_piecewise_approx(adev, taus, vartype="adev", mu_tol=1e-5):
+    """ Approximate inverse mapping from a deviation (ADEV/HDEV) to a
+    piecewise power-law one-sided fractional-frequency PSD :math:`S_y(f)`.
 
-        J(mu) = ∫_0^∞ q(z) * sin^4(z) / z^{3+mu} dz
+    This replaces an ill-posed inverse problem (ADEV :math:`\\rightarrow` PSD)
+    with a well-posed constrained reconstruction, by assuming local power-law
+    behavior, enforcing continuity, and using the exact Allan integral to map
+    time-domain slopes into frequency-domain energy [DeMarchi2024]_.
 
-    with q(z)=1 (ADEV) and q(z)=(4/3)sin^2(z) (HDEV).
+    Between consecutive :math:`\\tau` nodes the deviation is approximated as a
+    power law with local log-log slope
 
-    Convergence conditions:
-        ADEV: -2 <= mu <= 2
-        
-        HDEV: -2 <= mu <= 4
+    .. math::
+
+        \\mu_i = 2 \\, { \\ln\\sigma_y(\\tau_{i+1}) - \\ln\\sigma_y(\\tau_i)
+        \\over \\ln\\tau_{i+1} - \\ln\\tau_i }
+
+    corresponding to :math:`\\sigma_y^2(\\tau) \\propto \\tau^{\\mu_i}`. Each
+    slope maps to a PSD exponent :math:`\\alpha_i = -\\mu_i - 1`, and the PSD
+    is modeled as piecewise
+
+    .. math::
+
+        S_y(f) = h_i \\, f^{\\alpha_i}
+
+    The intensity coefficients :math:`h_i` are obtained from the exact
+    Allan/Hadamard integral
+
+    .. math::
+
+        J^\\infty(\\mu) = \\int_0^\\infty q(z)
+        { \\sin^4 z \\over z^{3+\\mu} } \\, dz
+
+    with :math:`q(z)=1` (ADEV) and :math:`q(z)={4 \\over 3}\\sin^2 z` (HDEV),
+    through :math:`h_i = B_i / (2 J^\\infty(\\mu_i) \\pi^{\\mu_i})` where
+    :math:`B_i` is the variance level of segment :math:`i`.
+
+    The integral converges only for :math:`-2 < \\mu < 2` (ADEV) and
+    :math:`-2 < \\mu < 4` (HDEV); slopes outside these *open* intervals raise
+    ``ValueError``. The :math:`\\mu \\rightarrow -2` edge is the
+    :math:`\\tau^{-1}` white-PM/flicker-PM region, where the ADEV is
+    fundamentally ambiguous (use MDEV to separate the two); the
+    :math:`\\mu \\rightarrow +2` edge is :math:`\\tau`-linear drift, which
+    should be removed beforehand or handled through the Hadamard branch.
 
     Parameters
     ----------
@@ -1813,19 +1908,40 @@ def adev2psd_piecewise_approx(adev, taus, vartype="adev", mu_tol=1e-5):
     Returns
     -------
     f_nodes : ndarray
-        Break frequencies (Hz), ascending. Length is nseg-1 in the general case.
+        Break frequencies (Hz), ascending. Length is ``nseg-1`` in the
+        general case; in the single-segment case the two :math:`1/\\tau`
+        endpoints are returned for plotting convenience (both
+        :func:`psd_piecewise_to_adev` and
+        :func:`allantools.noise.timmer_koenig_from_psd` accept either form).
     Sy_nodes : ndarray
-        Sy(f) evaluated at f_nodes (for convenience/plotting).
+        :math:`S_y(f)` evaluated at `f_nodes` (for convenience/plotting).
     h : ndarray
-        PSD coefficients for each interval, length nseg.
+        PSD coefficients for each interval, length ``nseg``.
     alpha : ndarray
-        PSD exponents for each interval, length nseg.
+        PSD exponents for each interval, length ``nseg``.
+
+    Notes
+    -----
+    Near :math:`\\mu = -2` the integrand of :math:`J^\\infty` decays only as
+    :math:`z^{-(1+\\epsilon)}` with :math:`\\epsilon = 2+\\mu` while
+    oscillating, a regime adaptive quadrature cannot resolve reliably: the
+    divergence builds up over arbitrarily many oscillation periods and a
+    naive ``quad`` call silently underestimates the integral (by up to
+    :math:`\\sim 100\\times` at :math:`\\mu = -1.99`). The implementation
+    therefore integrates the divergent constant term of the cosine expansion
+    of :math:`q(z)\\sin^4 z` in closed form and the bounded oscillatory
+    remainder with cosine-weighted quadrature, so the conversion is accurate
+    arbitrarily close to the convergence boundaries. Single-slope inputs
+    recover their analytic coefficients (e.g. white FM
+    :math:`h_0 = 2 A^2` for :math:`\\sigma_y = A\\tau^{-1/2}`, flicker FM
+    :math:`h_{-1} = \\sigma_y^2 / (2\\ln 2)` for a flat ADEV) to machine
+    precision.
 
     References
     ----------
     [DeMarchi2024]_ F. De Marchi, M. K. Plumaris, E. A. Burt, and L. Iess,
-    "An Algorithm to Estimate the Power Spectral Density From Allan Deviation,"
-    IEEE Trans. UFFC, vol. 71, no. 4, pp. 506–515, 2024.
+    "An Algorithm to Estimate the Power Spectral Density From Allan
+    Deviation," IEEE Trans. UFFC, vol. 71, no. 4, pp. 506-515, 2024.
     """
     adev = np.asarray(adev, dtype=float)
     taus = np.asarray(taus, dtype=float)
@@ -1843,64 +1959,58 @@ def adev2psd_piecewise_approx(adev, taus, vartype="adev", mu_tol=1e-5):
     if vt not in ("adev", "hdev"):
         raise ValueError("vartype must be 'adev' or 'hdev'.")
 
-    def q(z):
-        return 1.0 if vt == "adev" else (4.0 / 3.0) * (np.sin(z) ** 2)
-
-    # --- match your original filtering of mu segments ---
+    # local log-log slopes, merging consecutive segments of equal slope
     mus = []
     filtered_adev = [float(adev[0])]
     filtered_tau = [float(taus[0])]
-
     for i in range(1, adev.size):
         mu = 2.0 * (np.log(adev[i]) - np.log(adev[i - 1])) / (np.log(taus[i]) - np.log(taus[i - 1]))
         if (not mus) or (abs(mu - mus[-1]) > mu_tol):
             mus.append(mu)
             filtered_adev.append(float(adev[i]))
             filtered_tau.append(float(taus[i]))
-
     mus = np.asarray(mus, dtype=float)
     filtered_adev = np.asarray(filtered_adev, dtype=float)
     filtered_tau = np.asarray(filtered_tau, dtype=float)
 
-    # Convergence checks (exactly like your original)
+    # strict convergence guards, with guidance on what to do instead
+    mu_max = 2.0 if vt == "adev" else 4.0
     for i, mu in enumerate(mus):
-        if vt == "adev" and not (-2.0 <= mu <= 2.0):
+        if not (-2.0 < mu < mu_max):
+            if mu <= -2.0:
+                hint = ("sigma_y ~ tau^-1 or steeper is the white-PM/flicker-PM "
+                        "region, which the ADEV cannot disambiguate -- use MDEV, "
+                        "or drop these nodes")
+            elif vt == "adev":
+                hint = ("tau-linear drift or steeper -- remove deterministic "
+                        "drift before converting, or use vartype='hdev'")
+            else:
+                hint = "slope beyond the HDEV convergence range"
             raise ValueError(
-                "Input ADEV cannot be converted to PSD: integral not convergent "
-                f"between nodes {filtered_tau[i]} [s] and {filtered_tau[i+1]} [s]."
-            )
-        if vt == "hdev" and not (-2.0 <= mu <= 4.0):
-            raise ValueError(
-                "Input HDEV cannot be converted to PSD: integral not convergent "
-                f"between nodes {filtered_tau[i]} [s] and {filtered_tau[i+1]} [s]."
-            )
+                "Input %s cannot be converted to PSD: integral not convergent "
+                "between nodes %s [s] and %s [s] (mu = %.4g; %s)."
+                % (vt.upper(), filtered_tau[i], filtered_tau[i + 1], mu, hint))
 
-    # Bi coefficients (same indexing as your original)
+    # per-segment variance levels B_i
     Bi = np.array(
         [filtered_adev[i] ** 2 * filtered_tau[i] ** (-mus[i - 1]) for i in range(1, mus.size + 1)],
         dtype=float,
     )
 
-    # hi coefficients (time-order), plus integral_values
+    # intensity coefficients h_i (time order) from the exact kernel integral
     hi = []
     integral_values = []
     for i in range(Bi.size):
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=IntegrationWarning)
-            I, _ = quad(lambda z: q(z) * (np.sin(z) ** 4) / (z ** (3.0 + mus[i])), 0.0, np.inf)
+        I = _kernel_integral(0.0, np.inf, 3.0 + mus[i], vt)
         integral_values.append(I)
         hi.append(Bi[i] / (2.0 * I * (np.pi ** mus[i])))
-
     integral_values = np.asarray(integral_values, dtype=float)
     hi = np.asarray(hi, dtype=float)
 
-    # reverse hi for frequency ordering (exactly like your original)
+    # reverse for frequency ordering (low f <-> high tau)
     hi = hi[::-1].copy()
-
-    # alphas derived from reversed mus (exactly like your original)
     alphas = np.array([-mus[-(i + 1)] - 1.0 for i in range(mus.size)], dtype=float)
 
-    # frequency nodes and Sy(f_nodes) values (exactly like your original)
     if filtered_adev.size == 2:
         f_nodes = np.array([1.0 / t for t in filtered_tau], dtype=float)[::-1]
         Sy_nodes = np.array([hi[0] * (f_nodes[i] ** alphas[0]) for i in range(f_nodes.size)], dtype=float)
@@ -1918,22 +2028,30 @@ def adev2psd_piecewise_approx(adev, taus, vartype="adev", mu_tol=1e-5):
     return f_nodes, Sy_nodes, hi, alphas
 
 def psd_piecewise_to_adev(h, alpha, f_nodes, taus):
-    """
-    Compute Allan deviation from a piecewise power-law one-sided PSD :math:`S_y(f)`.
-    Allan variance is related to :math:`S_y(f)` by (NIST SP 1065):
+    """ Compute Allan deviation from a piecewise power-law one-sided PSD
+    :math:`S_y(f)`.
 
-    .. math::
-    
-        \\sigma_y^2(\\tau) = 2 \\int_0^\\infty{S_y(f)\\frac{\\sin^4(\\pi \\tau f)}{  (\\pi \\tau f)^2}}df 
-        
-    For piecewise :math:`S_y(f)=h_i f^{\\alpha_i}`, split the integral over
-    [0,f1), [f1,f2), ..., [f_last, +inf) and use :math:`z = \\pi\\tau f`:
+    The Allan variance is related to :math:`S_y(f)` by ([SP1065]_, Eq. 65):
 
     .. math::
 
-        \\sigma_y^2(\\tau) = 2 \\sum_i  \\frac{h_i}{(\\pi \\tau)^{\\alpha_i+1}}
-                         \\int_{\\pi \\tau f_{i-1}}^{\\pi \\tau f_i}
-                           \\frac{\\sin^4(z)}{z^{2-\\alpha_i}} dz
+        \\sigma_y^2(\\tau) = 2 \\int_0^\\infty S_y(f)
+        { \\sin^4(\\pi \\tau f) \\over  (\\pi \\tau f)^2 } \\, df
+
+    For piecewise :math:`S_y(f)=h_i f^{\\alpha_i}`, the integral is split over
+    :math:`[0,f_1), [f_1,f_2), \\ldots, [f_{last}, +\\infty)` and evaluated
+    with the substitution :math:`z = \\pi\\tau f`:
+
+    .. math::
+
+        \\sigma_y^2(\\tau) = 2 \\sum_i  { h_i \\over (\\pi \\tau)^{\\alpha_i+1} }
+        \\int_{\\pi \\tau f_{i-1}}^{\\pi \\tau f_i}
+        { \\sin^4 z \\over z^{2-\\alpha_i} } \\, dz
+
+    The infinite upper edge of the last segment is evaluated with the same
+    analytic-tail treatment as :func:`adev2psd_piecewise_approx`, so the
+    round trip stays accurate for exponents arbitrarily close to
+    :math:`\\alpha = 1`.
 
     Parameters
     ----------
@@ -1942,10 +2060,11 @@ def psd_piecewise_to_adev(h, alpha, f_nodes, taus):
     alpha : array_like
         PSD exponents for each frequency interval, length nseg.
     f_nodes : array_like
-        Frequency break nodes (Hz), ascending. Length nseg-1.
+        Frequency break nodes (Hz), ascending. Length ``nseg-1``; the
+        single-segment two-endpoint form returned by
+        :func:`adev2psd_piecewise_approx` is also accepted.
     taus : array_like
         Averaging times tau (seconds) at which to compute ADEV.
-
 
     Returns
     -------
@@ -1956,30 +2075,25 @@ def psd_piecewise_to_adev(h, alpha, f_nodes, taus):
     ----------
     NIST [SP1065]_, "Handbook of Frequency Stability Analysis", Eq. (65).
     """
-    #from scipy.integrate import quad, IntegrationWarning
     h = np.asarray(h, dtype=float)
     alpha = np.asarray(alpha, dtype=float)
-    f_nodes = np.asarray(f_nodes, dtype=float)
     taus = np.asarray(taus, dtype=float)
-
-    def integrand(z, a):
-        return (np.sin(z) ** 4) / (z ** (2.0 - a))
+    if h.size != alpha.size:
+        raise ValueError("h and alpha must have the same length.")
+    f_nodes = _normalize_f_nodes(f_nodes, h.size)
 
     edges = np.concatenate(([0.0], f_nodes, [np.inf]))
     adev = np.empty_like(taus, dtype=float)
-
     for k, tau in enumerate(taus):
         sigma_y2 = 0.0
         for i in range(h.size):
             factor = h[i] / ((np.pi * tau) ** (alpha[i] + 1.0))
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore", category=IntegrationWarning)
-                I, _ = quad(integrand, np.pi * tau * edges[i], np.pi * tau * edges[i + 1], args=(alpha[i],))
-            sigma_y2 += factor * I
+            sigma_y2 += factor * _kernel_integral(
+                np.pi * tau * edges[i], np.pi * tau * edges[i + 1],
+                2.0 - alpha[i], "adev")
         adev[k] = np.sqrt(2.0 * sigma_y2)
-
     return adev
-    
+
 ########################################################################
 #
 #  Various helper functions and utilities
